@@ -26,20 +26,31 @@ export class UsersService {
     email: string;
     role: 'INTERN' | 'ENGINEER' | 'ADMIN';
   }) {
-    const usersByHighestId = this.users.sort((a, b) => b.id - a.id);
+    const usersByHighestId = [...this.users].sort((a, b) => (b.id = a.id));
     const newUser = { ...user, id: usersByHighestId[0].id + 1 };
     return this.users.push(newUser);
   }
 
-  update(id: number, updatedUser: { name: string; email: string; role: 'INTERN' | 'ENGINEER' | 'ADMIN' }) {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index !== -1) {
-      this.users[index] = { ...this.users[index], ...updatedUser };
-    }
-    return this.users[index];
+  update(
+    id: number,
+    updatedUser: {
+      name?: string;
+      email?: string;
+      role?: 'INTERN' | 'ENGINEER' | 'ADMIN';
+    },
+  ) {
+    this.users = this.users.map((user) => {
+      if (user.id === id) {
+        return { ...user, ...updatedUser };
+      }
+      return user;
+    });
   }
 
   delete(id: number) {
-    return this.users.filter((user) => user.id !== id);
+    const removedUser = this.findOne(id);
+    this.users = this.users.filter((user) => user.id !== id);
+
+    return removedUser;
   }
 }

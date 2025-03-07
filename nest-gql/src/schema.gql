@@ -1,0 +1,44 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateUserDto {
+  email: String
+  name: String!
+}
+
+input DeleteUserDto {
+  id: Int!
+}
+
+input FindAllUsersDto {
+  limit: Int
+  offset: Int
+}
+
+input FindOneUserDto {
+  id: Int!
+}
+
+type Mutation {
+  createUser(data: CreateUserDto!): User!
+  removeUser(data: DeleteUserDto!): Boolean!
+  updateUser(data: UpdateUserDto!): User!
+}
+
+type Query {
+  findAllUsers(data: FindAllUsersDto!): [User!]!
+  findOneUser(data: FindOneUserDto!): User
+}
+
+input UpdateUserDto {
+  email: String
+  id: Int!
+  name: String
+}
+
+type User {
+  email: String
+  id: ID!
+  name: String!
+}
