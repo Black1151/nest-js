@@ -1,8 +1,10 @@
 // base.resolver.ts
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ClassType } from 'type-graphql';
 import { BaseService } from './base.service';
 import { DeepPartial } from 'typeorm';
+import { FindAllInput, IdInput } from './base.inputs'; // <-- import them
+import { AbstractBaseEntity } from './base.entity';
 
 /**
  * Creates a fully-functional resolver with unique operation names:
@@ -12,15 +14,15 @@ import { DeepPartial } from 'typeorm';
  *   - queryNameUpdate
  *   - queryNameRemove
  *
- * @param queryName        A unique prefix (e.g. "user", "location") used in operation names
- * @param entityClass      The runtime class for the entity (e.g. `User`)
- * @param createDtoClass   The runtime class for the create DTO (e.g. `CreateUserDto`)
- * @param updateDtoClass   The runtime class for the update DTO (e.g. `UpdateUserDto`)
+ * BUT each method now expects its parameters in the shape:
+ *   data: { ...actualFields }
+ *
+ * e.g. "userCreate(data: CreateUserDto) { ... }"
  */
 export function createBaseResolver<
-  T extends { id: number },
+  T extends AbstractBaseEntity,
   CreateDto extends DeepPartial<T>,
-  UpdateDto extends DeepPartial<T> & { id: T['id'] },
+  UpdateDto extends DeepPartial<T> & { id: number },
 >(
   queryName: string,
   entityClass: ClassType<T>,
@@ -29,44 +31,44 @@ export function createBaseResolver<
 ) {
   @Resolver({ isAbstract: true })
   abstract class BaseResolverHost {
-    public constructor(
+    constructor(
       public readonly service: BaseService<T, CreateDto, UpdateDto>,
     ) {}
 
     @Query(() => [entityClass], { name: `${queryName}FindAll` })
     async findAll(
-      @Args('limit', { type: () => Int, nullable: true }) limit?: number,
-      @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+      @Args('data', { type: () => FindAllInput }) data: FindAllInput,
     ): Promise<T[]> {
+      const { limit, offset } = data;
       return this.service.findAll(limit, offset);
     }
 
     @Query(() => entityClass, { name: `${queryName}FindOne` })
     async findOne(
-      @Args('id', { type: () => Int }) id: T['id'],
+      @Args('data', { type: () => IdInput }) data: IdInput,
     ): Promise<T> {
-      return this.service.findOne(id);
+      return this.service.findOne(data.id);
     }
 
     @Mutation(() => entityClass, { name: `${queryName}Create` })
     async create(
-      @Args('data', { type: () => createDtoClass }) createDto: CreateDto,
+      @Args('data', { type: () => createDtoClass }) data: CreateDto,
     ): Promise<T> {
-      return this.service.create(createDto);
+      return this.service.create(data);
     }
 
     @Mutation(() => entityClass, { name: `${queryName}Update` })
     async update(
-      @Args('data', { type: () => updateDtoClass }) updateDto: UpdateDto,
+      @Args('data', { type: () => updateDtoClass }) data: UpdateDto,
     ): Promise<T> {
-      return this.service.update(updateDto);
+      return this.service.update(data);
     }
 
     @Mutation(() => Boolean, { name: `${queryName}Remove` })
     async remove(
-      @Args('id', { type: () => Int }) id: T['id'],
+      @Args('data', { type: () => IdInput }) data: IdInput,
     ): Promise<boolean> {
-      await this.service.remove(id);
+      await this.service.remove(data.id);
       return true;
     }
   }
