@@ -10,6 +10,7 @@ services:
     environment:
       NODE_ENV: development
       CHOKIDAR_USEPOLLING: true
+      CHOKIDAR_INTERVAL: 100
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_USER: postgres
