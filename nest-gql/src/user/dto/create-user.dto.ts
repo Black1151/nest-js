@@ -10,5 +10,5 @@ export class CreateUserDto {
 
   @Field({ nullable: true })
   @IsEmail({}, { message: 'Invalid email address' })
-  email?: string;
+  email: string;
 }

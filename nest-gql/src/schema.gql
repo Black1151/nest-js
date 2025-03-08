@@ -7,28 +7,15 @@ input CreateUserDto {
   name: String!
 }
 
-input DeleteUserDto {
-  id: Int!
-}
-
-input FindAllUsersDto {
-  limit: Int
-  offset: Int
-}
-
-input FindOneUserDto {
-  id: Int!
-}
-
 type Mutation {
-  createUser(data: CreateUserDto!): User!
-  removeUser(data: DeleteUserDto!): Boolean!
-  updateUser(data: UpdateUserDto!): User!
+  userCreate(data: CreateUserDto!): User!
+  userRemove(id: Int!): Boolean!
+  userUpdate(data: UpdateUserDto!): User!
 }
 
 type Query {
-  findAllUsers(data: FindAllUsersDto!): [User!]!
-  findOneUser(data: FindOneUserDto!): User
+  userFindAll(limit: Int, offset: Int): [User!]!
+  userFindOne(id: Int!): User!
 }
 
 input UpdateUserDto {
