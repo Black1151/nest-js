@@ -6,7 +6,6 @@ import { UsersService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-// The 'user' prefix => "userFindAll", "userFindOne", etc.
 const BaseUserResolver = createBaseResolver<User, CreateUserDto, UpdateUserDto>(
   'user',
   User,

@@ -19,7 +19,7 @@ export class CreateUserDto {
 
   @Field({ nullable: true })
   @IsPhoneNumberValid()
-  @TransformPhoneNumber('country') // Pass 'country' field name to the transformer
+  @TransformPhoneNumber('country')
   phoneNumber?: string;
 
   @Field({ nullable: true })

@@ -4,7 +4,7 @@ import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
 import { AbstractBaseEntity } from './base.entity';
 
 export abstract class BaseService<
-  T extends AbstractBaseEntity, // now T must be a BaseEntity or subclass
+  T extends AbstractBaseEntity,
   CreateDto extends DeepPartial<T>,
   UpdateDto extends DeepPartial<T> & { id: number },
 > {
