@@ -6,13 +6,14 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
-import { UserModule } from 'src/user/user.module';  // or wherever your User stuff is
+import { UserModule } from 'src/user/user.module'; // or wherever your User stuff is
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
-    ConfigModule,  
-    UserModule,    
+    ConfigModule,
+    UserModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -30,6 +31,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     AuthResolver,
     LocalStrategy,
     JwtStrategy,
+    GoogleStrategy,
   ],
   exports: [AuthService],
 })

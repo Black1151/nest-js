@@ -14,11 +14,26 @@ services:
       NODE_ENV: development
       CHOKIDAR_USEPOLLING: "true"
       CHOKIDAR_INTERVAL: "100"
+      ### DATABASE ###
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_USER: postgres
       DATABASE_PASSWORD: password
       DATABASE_NAME: nestjs_db
+      ### SSO ###
+      # Google
+      GOOGLE_CLIENT_ID: "123-abc.apps.googleusercontent.com"
+      GOOGLE_CLIENT_SECRET: "secret_google_key"
+      GOOGLE_CALLBACK_URL: "http://localhost:3000/auth/google/callback"
+      # Apple
+      APPLE_SERVICE_ID: "com.your.app.service"
+      APPLE_TEAM_ID: "ABCDE12345"
+      APPLE_KEY_ID: "ZZZZ9999"
+      APPLE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkq...\n-----END PRIVATE KEY-----"
+      APPLE_CALLBACK_URL: "http://localhost:3000/auth/apple/callback"
+      # JWT
+      JWT_SECRET: "..."
+      JWT_REFRESH_SECRET: "..."
     command: npm run start:dev
     depends_on:
       - postgres
