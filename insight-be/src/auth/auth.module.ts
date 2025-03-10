@@ -9,6 +9,9 @@ import { JwtStrategy } from './jwt.strategy';
 import { UserModule } from 'src/user/user.module'; // or wherever your User stuff is
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { AppleStrategy } from './strategies/apple.strategy';
+import { MicrosoftStrategy } from './strategies/microsoft.strategy';
+import { UsersService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -28,10 +31,16 @@ import { GoogleStrategy } from './strategies/google.strategy';
   ],
   providers: [
     AuthService,
+    UsersService,
     AuthResolver,
     LocalStrategy,
     JwtStrategy,
     GoogleStrategy,
+    AuthService,
+    UsersService,
+    GoogleStrategy,
+    AppleStrategy,
+    MicrosoftStrategy,
   ],
   exports: [AuthService],
 })

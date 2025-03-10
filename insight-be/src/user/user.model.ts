@@ -55,4 +55,13 @@ export class User extends AbstractBaseEntity {
 
   @Column()
   password: string;
+
+  @Column({ nullable: true })
+  googleId?: string;
+
+  @Column({ nullable: true })
+  appleId?: string;
+
+  @Column({ nullable: true })
+  microsoftId?: string;
 }

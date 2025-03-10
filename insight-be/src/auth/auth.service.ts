@@ -39,51 +39,46 @@ export class AuthService {
   async validateOAuthUser(profile: any, provider: string): Promise<User> {
     let providerId: string;
     let email: string | undefined;
-
+  
     switch (provider) {
       case 'google':
         providerId = profile.id;
         email = profile.emails?.[0]?.value;
         break;
       case 'apple':
-        // Apple uses "sub" for the user’s unique ID. Email might be in "email".
         providerId = profile.sub;
         email = profile.email;
         break;
-      // If you add more providers (Microsoft, etc.), handle them here
+      case 'microsoft':
+        // Will fill in details below for Azure AD
+        providerId = profile.id; // or something from the MS profile
+        email = profile.emails?.[0]?.value; // depends on the library
+        break;
       default:
         throw new UnauthorizedException(`Unknown provider: ${provider}`);
     }
-
+  
     if (!providerId) {
-      throw new UnauthorizedException(`No providerId found for provider: ${provider}`);
+      throw new UnauthorizedException(
+        `No providerId found for provider: ${provider}`,
+      );
     }
-
-    // Find if we have a user with this providerId
-    let user = await this.userService.findByProviderId(provider, providerId);
-
+  
+    // 1. Find user by providerId
+    const user = await this.userService.findByProviderId(provider, providerId);
+  
     if (!user) {
-      // Optionally, see if we have an existing user with the same email to link
-      if (email) {
-        user = await this.userService.findByEmail(email);
-      }
-
-      // If still no user, create a new one
-      if (!user) {
-        user = await this.userService.create({
-          email: email || '', // Apple might not always provide email
-          firstName: '',      // Google might give profile.name.givenName
-          lastName: '',       // ...
-          password: '',       // Not needed for SSO-based accounts
-        });
-      }
-
-      // Store the provider-specific ID so we can look up next time
-      user = await this.userService.linkProviderId(user, provider, providerId);
+      // 2. If not found by providerId, consider finding by email to see if
+      //    we can link an existing user. If you prefer to do an explicit link
+      //    process, skip automatically linking. Instead just throw an error:
+      throw new UnauthorizedException(
+        `No user is linked with ${provider} account ID "${providerId}".`,
+      );
     }
-
-    return user;
+  
+    return user; // user found => done
   }
+  
   
 
   /**
