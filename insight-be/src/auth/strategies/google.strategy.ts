@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Strategy, StrategyOptions, VerifyCallback } from 'passport-google-oauth20';
 import { AuthService } from '../auth.service';
 
 
@@ -12,7 +12,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/auth/google/callback',
       scope: ['email', 'profile'],
-    });
+      passReqToCallback: false,
+    } as StrategyOptions);
   }
 
   async validate(

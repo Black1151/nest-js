@@ -6,7 +6,7 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/user.model';
 import { UsersService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
-import { AuthTokens } from './dto/res/auth-tokens.dto'; 
+import { AuthTokens } from './dto/res/auth-tokens.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,34 +39,29 @@ export class AuthService {
   async validateOAuthUser(profile: any, provider: string): Promise<User> {
     let providerId: string;
     let email: string | undefined;
-  
+
     switch (provider) {
       case 'google':
         providerId = profile.id;
         email = profile.emails?.[0]?.value;
         break;
-      case 'apple':
-        providerId = profile.sub;
-        email = profile.email;
-        break;
       case 'microsoft':
-        // Will fill in details below for Azure AD
-        providerId = profile.id; // or something from the MS profile
-        email = profile.emails?.[0]?.value; // depends on the library
+        providerId = profile.id;
+        email = profile.emails?.[0]?.value;
         break;
       default:
         throw new UnauthorizedException(`Unknown provider: ${provider}`);
     }
-  
+
     if (!providerId) {
       throw new UnauthorizedException(
         `No providerId found for provider: ${provider}`,
       );
     }
-  
+
     // 1. Find user by providerId
     const user = await this.userService.findByProviderId(provider, providerId);
-  
+
     if (!user) {
       // 2. If not found by providerId, consider finding by email to see if
       //    we can link an existing user. If you prefer to do an explicit link
@@ -75,11 +70,9 @@ export class AuthService {
         `No user is linked with ${provider} account ID "${providerId}".`,
       );
     }
-  
+
     return user; // user found => done
   }
-  
-  
 
   /**
    * Login: return both an access token and a refresh token.
@@ -92,7 +85,8 @@ export class AuthService {
     });
     const refreshToken = this.jwtService.sign(payload, {
       expiresIn: '7d',
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET') || 'myRefreshKey',
+      secret:
+        this.configService.get<string>('JWT_REFRESH_SECRET') || 'myRefreshKey',
     });
     return { accessToken, refreshToken };
   }
@@ -103,13 +97,17 @@ export class AuthService {
   async refreshToken(token: string): Promise<AuthTokens> {
     try {
       const payload = this.jwtService.verify(token, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET') || 'myRefreshKey',
+        secret:
+          this.configService.get<string>('JWT_REFRESH_SECRET') ||
+          'myRefreshKey',
       });
       const userId = payload.sub;
 
       const user = await this.userService.findOne(userId);
       if (!user) {
-        throw new UnauthorizedException('Invalid refresh token (user not found)');
+        throw new UnauthorizedException(
+          'Invalid refresh token (user not found)',
+        );
       }
 
       return this.login(user);

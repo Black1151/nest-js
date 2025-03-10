@@ -20,7 +20,7 @@ export class SsoController {
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: SSOAuthRequest, @Res() res: Response) {
     const user = req.user;
-    if (!user) {
+    if (!user) { 
       throw new Error('User not found');
     }
     const tokens = await this.authService.login(user);
