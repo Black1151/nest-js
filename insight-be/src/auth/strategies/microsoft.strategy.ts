@@ -23,6 +23,7 @@ export class MicrosoftStrategy extends PassportStrategy(
       // "scope" might include: openid, profile, email, offline_access
       scope: ['openid', 'profile', 'email'],
       passReqToCallback: false,
+      allowHttpForRedirectUrl: process.env.NODE_ENV === 'development',
     });
   }
 

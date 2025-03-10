@@ -6,12 +6,11 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
-import { UserModule } from 'src/user/user.module'; // or wherever your User stuff is
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UserModule } from 'src/user/user.module';
 import { GoogleStrategy } from './strategies/google.strategy';
-import { AppleStrategy } from './strategies/apple.strategy';
 import { MicrosoftStrategy } from './strategies/microsoft.strategy';
-import { UsersService } from 'src/user/user.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SsoController } from './sso.controller';
 
 @Module({
   imports: [
@@ -29,17 +28,13 @@ import { UsersService } from 'src/user/user.service';
       inject: [ConfigService],
     }),
   ],
+  controllers: [SsoController],
   providers: [
     AuthService,
-    UsersService,
     AuthResolver,
     LocalStrategy,
     JwtStrategy,
     GoogleStrategy,
-    AuthService,
-    UsersService,
-    GoogleStrategy,
-    AppleStrategy,
     MicrosoftStrategy,
   ],
   exports: [AuthService],

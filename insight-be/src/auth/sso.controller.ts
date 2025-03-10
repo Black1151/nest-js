@@ -2,62 +2,49 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
+import { SSOAuthRequest } from './strategies/interfaces/sso-auth-request.interface';
 
 @Controller('auth')
 export class SsoController {
   constructor(private readonly authService: AuthService) {}
 
-  //-------------------------
-  //       GOOGLE
-  //-------------------------
+  // 1) The 'initiate' route
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth() {
-    // Initiates Google OAuth2 login flow
+  async googleLogin() {
+    // Starts Google OAuth (Passport auto-redirects to Google)
   }
 
+  // 2) The callback route
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleCallback(@Req() req: Request, @Res() res: Response) {
-    // user is attached to req.user
-    const user = req.user as any;
-    // sign them in with your existing JWT approach
+  async googleCallback(@Req() req: SSOAuthRequest, @Res() res: Response) {
+    const user = req.user;
+    if (!user) {
+      throw new Error('User not found');
+    }
     const tokens = await this.authService.login(user);
-    // redirect or respond
-    return res.redirect(`http://localhost:3001/some-route?at=${tokens.accessToken}`);
+    return res.redirect(
+      `http://localhost:3001/auth/sso?at=${tokens.accessToken}&rt=${tokens.refreshToken}`,
+    );
   }
 
-  //-------------------------
-  //       APPLE
-  //-------------------------
-  @Get('apple')
-  @UseGuards(AuthGuard('apple'))
-  async appleAuth() {
-    // Initiates Apple login flow
-  }
-
-  @Get('apple/callback')
-  @UseGuards(AuthGuard('apple'))
-  async appleCallback(@Req() req: Request, @Res() res: Response) {
-    const user = req.user as any;
-    const tokens = await this.authService.login(user);
-    return res.redirect(`http://localhost:3001/some-route?at=${tokens.accessToken}`);
-  }
-
-  //-------------------------
-  //     MICROSOFT
-  //-------------------------
   @Get('microsoft')
   @UseGuards(AuthGuard('microsoft'))
-  async microsoftAuth() {
-    // Initiates Microsoft/Azure login flow
+  async microsoftLogin() {
+    // Starts Microsoft/Azure OAuth
   }
 
   @Get('microsoft/callback')
   @UseGuards(AuthGuard('microsoft'))
-  async microsoftCallback(@Req() req: Request, @Res() res: Response) {
-    const user = req.user as any;
+  async microsoftCallback(@Req() req: SSOAuthRequest, @Res() res: Response) {
+    const user = req.user;
+    if (!user) {
+      throw new Error('User not found');
+    }
     const tokens = await this.authService.login(user);
-    return res.redirect(`http://localhost:3001/some-route?at=${tokens.accessToken}`);
+    return res.redirect(
+      `http://localhost:3001/auth/sso?at=${tokens.accessToken}&rt=${tokens.refreshToken}`,
+    );
   }
 }

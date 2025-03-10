@@ -1,16 +1,8 @@
-// pages/auth/login.tsx
 "use client";
-
 import { useRouter } from "next/navigation";
-
-import { from, useMutation } from "@apollo/client";
-
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { setAccessToken } from "@/lib/apolloClient";
-import { LOGIN_MUTATION } from "@/graphql/auth/mutations";
 import {
   Container,
   Box,
@@ -21,6 +13,11 @@ import {
   FormErrorMessage,
   Button,
 } from "@chakra-ui/react";
+
+// GraphQL/Apollo-related imports
+import { from, useMutation } from "@apollo/client";
+import { LOGIN_MUTATION } from "@/graphql/auth/mutations";
+import { setAccessToken } from "@/lib/apolloClient";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -33,7 +30,6 @@ export default function LoginPage() {
   const router = useRouter();
 
   const [loginMutation, { loading, error }] = useMutation(LOGIN_MUTATION);
-
   const {
     register,
     handleSubmit,
@@ -46,7 +42,7 @@ export default function LoginPage() {
     },
   });
 
-  // Handle form submission
+  // Handle form submission for standard email/password
   const onSubmit = async (formData: LoginSchema) => {
     try {
       const { data } = await loginMutation({
@@ -62,6 +58,16 @@ export default function LoginPage() {
     }
   };
 
+  // 1) Handler for "Sign in with Google"
+  const handleGoogleSignIn = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
+  };
+
+  // 2) Handler for "Sign in with Microsoft"
+  const handleMicrosoftSignIn = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/microsoft`;
+  };
+
   return (
     <Container maxW="sm" mt="40px">
       <Box textAlign="center" mb="6">
@@ -69,6 +75,7 @@ export default function LoginPage() {
       </Box>
 
       <Box p="6" boxShadow="lg" borderRadius="md">
+        {/* Standard email/password form */}
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl mb="4" isInvalid={!!errors.email}>
             <FormLabel>Email</FormLabel>
@@ -109,6 +116,16 @@ export default function LoginPage() {
             Login
           </Button>
         </form>
+
+        {/* SSO Buttons */}
+        <Box display="flex" flexDirection="column" gap={2} mt={4}>
+          <Button onClick={handleGoogleSignIn}>Sign in with Google</Button>
+          <Button onClick={handleMicrosoftSignIn}>
+            Sign in with Microsoft
+          </Button>
+          {/* If you had Apple (removed, but for reference) */}
+          {/* <Button onClick={handleAppleSignIn}>Sign in with Apple</Button> */}
+        </Box>
       </Box>
     </Container>
   );
