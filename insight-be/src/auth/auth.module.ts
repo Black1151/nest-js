@@ -7,10 +7,9 @@ import { AuthResolver } from './auth.resolver';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { UserModule } from 'src/user/user.module';
-import { GoogleStrategy } from './strategies/google.strategy';
-import { MicrosoftStrategy } from './strategies/microsoft.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SsoController } from './sso.controller';
+import { OktaStrategy } from './strategies/okta.strategy';
+import { OktaController } from './okta.controller';
 
 @Module({
   imports: [
@@ -28,14 +27,13 @@ import { SsoController } from './sso.controller';
       inject: [ConfigService],
     }),
   ],
-  controllers: [SsoController],
+  controllers: [OktaController],
   providers: [
     AuthService,
     AuthResolver,
     LocalStrategy,
     JwtStrategy,
-    GoogleStrategy,
-    MicrosoftStrategy,
+    OktaStrategy,
   ],
   exports: [AuthService],
 })

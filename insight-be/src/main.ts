@@ -9,25 +9,6 @@ declare const module: any;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const expressApp = app.getHttpAdapter().getInstance();
-  expressApp.set('trust proxy', 1);
-
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET || '',
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        secure: true,
-        httpOnly: true,
-        sameSite: 'none',
-      },
-    }),
-  );
-
-  app.use(passport.initialize());
-  app.use(passport.session());
-
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -37,7 +18,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: 'https://insight.local',
+    origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['content-type', 'authorization'],

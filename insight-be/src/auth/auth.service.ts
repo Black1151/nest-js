@@ -32,49 +32,6 @@ export class AuthService {
   }
 
   /**
-   * For external SSO providers like Google, Apple, Microsoft, etc.
-   * `profile` is the user profile object from the strategy.
-   * `provider` is a string like 'google', 'apple', etc.
-   */
-  async validateOAuthUser(profile: any, provider: string): Promise<User> {
-    let providerId: string;
-    let email: string | undefined;
-
-    switch (provider) {
-      case 'google':
-        providerId = profile.id;
-        email = profile.emails?.[0]?.value;
-        break;
-      case 'microsoft':
-        providerId = profile.id;
-        email = profile.emails?.[0]?.value;
-        break;
-      default:
-        throw new UnauthorizedException(`Unknown provider: ${provider}`);
-    }
-
-    if (!providerId) {
-      throw new UnauthorizedException(
-        `No providerId found for provider: ${provider}`,
-      );
-    }
-
-    // 1. Find user by providerId
-    const user = await this.userService.findByProviderId(provider, providerId);
-
-    if (!user) {
-      // 2. If not found by providerId, consider finding by email to see if
-      //    we can link an existing user. If you prefer to do an explicit link
-      //    process, skip automatically linking. Instead just throw an error:
-      throw new UnauthorizedException(
-        `No user is linked with ${provider} account ID "${providerId}".`,
-      );
-    }
-
-    return user; // user found => done
-  }
-
-  /**
    * Login: return both an access token and a refresh token.
    */
   async login(user: User): Promise<AuthTokens> {
@@ -125,5 +82,38 @@ export class AuthService {
       ...userData,
       password: hashedPassword,
     });
+  }
+
+  async validateOAuthUser(profile: any, provider: string): Promise<User> {
+    let email: string | undefined;
+    switch (provider) {
+      case 'okta':
+        // Depending on the shape of `profile`, usually:
+        email = profile.emails?.[0]?.value || profile.email;
+        break;
+      // If you handle other providers, add them here.
+      // case 'google':
+      //   ...
+      //   break;
+      default:
+        throw new UnauthorizedException(`Unknown provider: ${provider}`);
+    }
+
+    // If we cannot extract an email from the profile, bail out.
+    if (!email) {
+      throw new UnauthorizedException(`No email in ${provider} profile`);
+    }
+
+    // Check if a user with this email is in the database
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      // We do NOT create a new user here. Instead, we deny access.
+      throw new UnauthorizedException(
+        `User with email ${email} does not exist in the DB, cannot sign in with ${provider}.`,
+      );
+    }
+
+    // If found, return the existing user => login success
+    return user;
   }
 }
