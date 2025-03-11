@@ -8,13 +8,18 @@ declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.set('trust proxy', 1);
+
   app.use(
     session({
-      secret: process.env.SESSION_SECRET || 'mySuperSecret',
+      secret: process.env.SESSION_SECRET || '',
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
+        httpOnly: true,
         sameSite: 'none',
       },
     }),
@@ -32,7 +37,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: 'http://localhost:3001',
+    origin: 'https://insight.local',
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['content-type', 'authorization'],

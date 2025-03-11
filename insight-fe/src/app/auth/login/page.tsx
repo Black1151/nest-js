@@ -58,16 +58,6 @@ export default function LoginPage() {
     }
   };
 
-  // 1) Handler for "Sign in with Google"
-  const handleGoogleSignIn = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
-  };
-
-  // 2) Handler for "Sign in with Microsoft"
-  const handleMicrosoftSignIn = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/microsoft`;
-  };
-
   return (
     <Container maxW="sm" mt="40px">
       <Box textAlign="center" mb="6">
@@ -117,14 +107,20 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        {/* SSO Buttons */}
+        {/* SSO Links */}
         <Box display="flex" flexDirection="column" gap={2} mt={4}>
-          <Button onClick={handleGoogleSignIn}>Sign in with Google</Button>
-          <Button onClick={handleMicrosoftSignIn}>
-            Sign in with Microsoft
-          </Button>
-          {/* If you had Apple (removed, but for reference) */}
-          {/* <Button onClick={handleAppleSignIn}>Sign in with Apple</Button> */}
+          <a
+            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`}
+            style={{ textDecoration: "none" }}
+          >
+            <Button width="full">Sign in with Google</Button>
+          </a>
+          <a
+            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/microsoft`}
+            style={{ textDecoration: "none" }}
+          >
+            <Button width="full">Sign in with Microsoft</Button>
+          </a>
         </Box>
       </Box>
     </Container>

@@ -12,7 +12,7 @@ let accessToken: string | null = null;
 
 // Create an HttpLink pointing to your NestJS GraphQL
 const httpLink = new HttpLink({
-  uri: "http://localhost:3000/graphql", // or whatever your Nest server URL
+  uri: `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
 });
 
 // Middleware to attach the Authorization header if we have an access token
