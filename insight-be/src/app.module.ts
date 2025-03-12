@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { join } from 'path';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/user.model';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './modules/auth-modules/auth/auth.module';
+import { LocalAuthModule } from './modules/auth-modules/local-auth/local-auth.module';
+import { OktaAuthModule } from './modules/auth-modules/okta-auth/okta-auth.module';
+import { GoogleAuthModule } from './modules/auth-modules/google-auth/google-auth.module';
+import { MicrosoftAuthModule } from './modules/auth-modules/microsoft-auth/microsoft-auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -25,8 +29,15 @@ import { AuthModule } from './auth/auth.module';
       entities: [User],
       synchronize: true,
     }),
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes ConfigService available in any module
+    }),
     UserModule,
     AuthModule,
+    LocalAuthModule,
+    OktaAuthModule,
+    GoogleAuthModule,
+    MicrosoftAuthModule,
   ],
 })
 export class AppModule {}

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "passport-google-oauth20": "^2.0.0",
+    "passport-microsoft": "^2.1.0"
+  }
+}
