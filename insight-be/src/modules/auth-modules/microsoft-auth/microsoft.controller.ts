@@ -13,7 +13,7 @@ export class MicrosoftController {
   @Get('callback')
   @UseGuards(AuthGuard('microsoft'))
   async microsoftCallback(@Req() req, @Res() res) {
-    // If successful, req.user is set by MicrosoftStrategy
+    // If successful, req.user is set by MicrosoftStrategy - change this to something meaningful 
     return res.send('Microsoft login successful!');
   }
 }

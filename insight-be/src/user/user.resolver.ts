@@ -1,26 +1,23 @@
-// user.resolver.ts
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { createBaseResolver } from '../common/base.resolver';
 import { User } from './user.model';
 import { UsersService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-
-const BaseUserResolver = createBaseResolver<User, CreateUserDto, UpdateUserDto>(
-  'user',
-  User,
-  CreateUserDto,
-  UpdateUserDto,
-);
+import { EmailInput, IdInput } from './user.inputs';
 
 @Resolver(() => User)
-export class UserResolver extends BaseUserResolver {
-  constructor(service: UsersService) {
-    super(service);
-  }
+export class UserResolver {
+  constructor(private readonly service: UsersService) {}
 
   @Query(() => User, { name: 'userFindOneByEmail' })
-  async userFindOneByEmail(@Args('email') email: string): Promise<User> {
-    return this.service.findOneBy({ email });
+  async userFindOneByEmail(
+    @Args('data', { type: () => EmailInput }) data: EmailInput,
+  ): Promise<User> {
+    return this.service.findOneBy({ email: data.email });
+  }
+
+  @Query(() => User, { name: 'userFindOneById' })
+  async userFindOneById(
+    @Args('data', { type: () => IdInput }) data: IdInput,
+  ): Promise<User> {
+    return this.service.findOneBy({ id: data.id });
   }
 }

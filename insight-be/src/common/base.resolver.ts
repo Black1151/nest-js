@@ -1,10 +1,10 @@
 // base.resolver.ts
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ClassType } from 'type-graphql';
-import { BaseService } from './base.service';
 import { DeepPartial } from 'typeorm';
 import { FindAllInput, IdInput } from './base.inputs'; // <-- import them
 import { AbstractBaseEntity } from './base.entity';
+import { BaseService } from './base.service';
 
 /**
  * Creates a fully-functional resolver with unique operation names:
@@ -47,6 +47,7 @@ export function createBaseResolver<
     async findOne(
       @Args('data', { type: () => IdInput }) data: IdInput,
     ): Promise<T> {
+      console.log('FindOne data:', data);
       return this.service.findOne(data.id);
     }
 
