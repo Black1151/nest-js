@@ -18,6 +18,10 @@ import { ConfigModule } from '@nestjs/config';
       autoSchemaFile: true,
       sortSchema: true,
       csrfPrevention: false,
+      context: ({ req, res }) => ({
+        req,
+        res,
+      }),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',

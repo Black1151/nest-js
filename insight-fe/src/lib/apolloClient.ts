@@ -40,6 +40,8 @@ const errorLink = onError(
 export const apolloClient = new ApolloClient({
   link: ApolloLink.from([errorLink, authLink.concat(httpLink)]),
   cache: new InMemoryCache(),
+  uri: "http://localhost:3000/graphql",
+  credentials: "include",
 });
 
 // Helper function to set the access token

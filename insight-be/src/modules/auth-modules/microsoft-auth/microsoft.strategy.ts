@@ -14,9 +14,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     super({
       clientID: configService.get<string>('AZURE_CLIENT_ID'),
       clientSecret: configService.get<string>('AZURE_CLIENT_SECRET'),
-      callbackURL:
-        configService.get<string>('AZURE_REDIRECT_URL') ||
-        'http://localhost:3000/auth/microsoft/callback',
+      callbackURL: `${configService.get<string>('BACKEND_BASE_URL')}/auth/microsoft/callback`,
       scope: ['user.read'],
       tenant: 'common', // For "common" tenant, or set a specific tenant ID
       // authorizationURL: ... // If needed, or override defaults

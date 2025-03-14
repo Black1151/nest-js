@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 
 // GraphQL/Apollo-related imports
-import { from, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { LOGIN_MUTATION } from "@/graphql/auth/mutations";
 import { setAccessToken } from "@/lib/apolloClient";
 
@@ -45,18 +45,19 @@ export default function LoginPage() {
   // Handle form submission for standard email/password
   const onSubmit = async (formData: LoginSchema) => {
     try {
-      const { data } = await loginMutation({
-        variables: formData,
-      });
+      const { data } = await loginMutation({ variables: formData });
       if (data?.login?.accessToken) {
         setAccessToken(data.login.accessToken);
         localStorage.setItem("refreshToken", data.login.refreshToken);
-        router.push("/dashboard");
+        // router.push("/dashboard");
       }
     } catch (err) {
       console.error(err);
     }
   };
+
+  // Use NEXT_PUBLIC_BACKEND_URL to build auth links
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   return (
     <Container maxW="sm" mt="40px">
@@ -107,16 +108,19 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        {/* SSO Links */}
+        {/* Social/SSO Links */}
         <Box display="flex" flexDirection="column" gap={2} mt={4}>
+          {/* Google SSO */}
           <a
-            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`}
+            href={`${backendUrl}/auth/google`}
             style={{ textDecoration: "none" }}
           >
             <Button width="full">Sign in with Google</Button>
           </a>
+
+          {/* Microsoft SSO */}
           <a
-            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/microsoft`}
+            href={`${backendUrl}/auth/microsoft`}
             style={{ textDecoration: "none" }}
           >
             <Button width="full">Sign in with Microsoft</Button>
