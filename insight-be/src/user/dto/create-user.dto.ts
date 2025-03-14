@@ -1,7 +1,7 @@
 // create-user.dto.ts
 import { InputType, Field } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { IsISO8601, IsString, IsStrongPassword } from 'class-validator';
+import { IsDate, IsString, IsStrongPassword } from 'class-validator';
 import { CountryCode } from 'libphonenumber-js';
 import { IsPhoneNumberValid } from 'src/validators/phone-number/phone.decorator';
 import { TransformPhoneNumber } from 'src/validators/phone-number/phone.transformer';
@@ -41,7 +41,7 @@ export class CreateUserDto {
   country?: CountryCode;
 
   @Field({ nullable: true })
-  @IsISO8601()
+  @IsDate()
   @Type(() => Date)
   dateOfBirth?: Date;
 
