@@ -5,6 +5,7 @@ import theme from "@/theme/theme";
 import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "@/lib/apolloClient";
 import { ReactNode } from "react";
+import { AuthProvider } from "@/context/AuthContext";
 
 interface Props {
   children: ReactNode;
@@ -13,7 +14,9 @@ interface Props {
 const TopLevelProviders: React.FC<Props> = ({ children }) => {
   return (
     <ApolloProvider client={apolloClient}>
-      <ChakraProvider theme={theme}>{children}</ChakraProvider>
+      <AuthProvider>
+        <ChakraProvider theme={theme}>{children}</ChakraProvider>
+      </AuthProvider>
     </ApolloProvider>
   );
 };

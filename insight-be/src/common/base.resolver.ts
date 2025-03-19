@@ -47,7 +47,6 @@ export function createBaseResolver<
     async findOne(
       @Args('data', { type: () => IdInput }) data: IdInput,
     ): Promise<T> {
-      console.log('FindOne data:', data);
       return this.service.findOne(data.id);
     }
 

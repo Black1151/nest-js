@@ -5,9 +5,3 @@ export class EmailInput {
   @Field()
   email: string;
 }
-
-@InputType()
-export class IdInput {
-  @Field(() => Int)
-  id: number;
-}

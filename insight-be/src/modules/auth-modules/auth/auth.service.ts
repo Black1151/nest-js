@@ -20,7 +20,7 @@ export class AuthService {
    * Called by (Local) strategies to validate user credentials.
    */
   async validateUser(email: string, pass: string): Promise<User> {
-    const user = await this.userService.findByEmail(email);
+    const user = await this.userService.findOneByEmail(email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -43,19 +43,19 @@ export class AuthService {
     });
   }
 
-  /**
-   * Login: return both an access token and a refresh token.
-   */
+  // auth.service.ts
   async login(user: User): Promise<AuthTokens> {
-    const payload = { sub: user.id, email: user.email };
+    const foundUser = await this.userService.findOneByEmail(user.email);
+    const payload = {
+      publicId: foundUser.publicId,
+    };
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: '15m',
       secret: this.configService.get<string>('JWT_SECRET') || 'mySecretKey',
     });
     const refreshToken = this.jwtService.sign(payload, {
       expiresIn: '7d',
-      secret:
-        this.configService.get<string>('JWT_REFRESH_SECRET') || 'myRefreshKey',
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET') || 'zxcxzc',
     });
     return { accessToken, refreshToken };
   }
@@ -74,14 +74,12 @@ export class AuthService {
 
       const user = await this.userService.findOne(userId);
       if (!user) {
-        throw new UnauthorizedException(
-          'Invalid refresh token (user not found)',
-        );
+        throw new UnauthorizedException('An error occured during refresh');
       }
 
       return this.login(user);
     } catch (e) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException('An error occured during refresh');
     }
   }
 
@@ -103,7 +101,7 @@ export class AuthService {
       throw new UnauthorizedException(`No email in ${provider} profile`);
     }
 
-    const user = await this.userService.findByEmail(email);
+    const user = await this.userService.findOneByEmail(email);
     if (!user) {
       // Option: automatically create user if not found. Here, we deny access:
       throw new UnauthorizedException(

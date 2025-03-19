@@ -5,6 +5,7 @@ import { IsDate, IsString, IsStrongPassword } from 'class-validator';
 import { CountryCode } from 'libphonenumber-js';
 import { IsPhoneNumberValid } from 'src/validators/phone-number/phone.decorator';
 import { TransformPhoneNumber } from 'src/validators/phone-number/phone.transformer';
+import { Column } from 'typeorm';
 
 @InputType()
 export class CreateUserDto {

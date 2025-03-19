@@ -10,6 +10,9 @@ import { OktaAuthModule } from './modules/auth-modules/okta-auth/okta-auth.modul
 import { GoogleAuthModule } from './modules/auth-modules/google-auth/google-auth.module';
 import { MicrosoftAuthModule } from './modules/auth-modules/microsoft-auth/microsoft-auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { RbacModule } from './modules/rbac/rbac.module';
+import { Role } from './modules/rbac/role/role.entity';
+import { Permission } from './modules/rbac/permission/permission.entity';
 
 @Module({
   imports: [
@@ -26,13 +29,14 @@ import { ConfigModule } from '@nestjs/config';
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User],
+      entities: [User, Role, Permission],
       synchronize: true,
     }),
     ConfigModule.forRoot({
-      isGlobal: true, // Makes ConfigService available in any module
+      isGlobal: true, 
     }),
     UserModule,
+    RbacModule,
     AuthModule,
     LocalAuthModule,
     OktaAuthModule,

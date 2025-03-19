@@ -1,7 +1,9 @@
 // user.model.ts
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { v4 as uuidv4 } from 'uuid';
 import { AbstractBaseEntity } from 'src/common/base.entity';
-import { Entity, Column } from 'typeorm';
+import { Role } from 'src/modules/rbac/role/role.entity';
+import { Entity, Column, ManyToMany, JoinTable, BeforeInsert } from 'typeorm';
 
 @ObjectType()
 @Entity('users')
@@ -36,7 +38,7 @@ export class User extends AbstractBaseEntity {
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  state?: string;
+  county?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -64,4 +66,23 @@ export class User extends AbstractBaseEntity {
 
   @Column({ nullable: true })
   microsoftId?: string;
+
+  @Column({ unique: true })
+  publicId: string;
+
+  @BeforeInsert()
+  generatePublicId() {
+    if (!this.publicId) {
+      this.publicId = uuidv4();
+    }
+  }
+
+  @Field(() => [Role], { nullable: true })
+  @ManyToMany(() => Role, (role) => role.users, { cascade: true })
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: { name: 'user_id' },
+    inverseJoinColumn: { name: 'role_id' },
+  })
+  roles?: Role[];
 }
