@@ -8,11 +8,16 @@ import { User } from 'src/user/user.model';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { AuthTokens } from 'src/modules/auth-modules/auth/dto/res/auth-tokens.dto';
 import { LoginRequest } from 'src/modules/auth-modules/auth/dto/req/login-request.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @Resolver()
 export class LocalAuthResolver {
   constructor(private readonly authService: AuthService) {}
 
+  /**
+   * Register a new user, hashing the password before storing.
+   */
+  @Public()
   @Mutation(() => User)
   async register(@Args('data') data: CreateUserDto): Promise<User> {
     return this.authService.register(data);
@@ -21,6 +26,7 @@ export class LocalAuthResolver {
   /**
    * Login with email + password => returns access + refresh tokens
    */
+  @Public()
   @UseGuards(GqlLocalAuthGuard)
   @Mutation(() => AuthTokens)
   async login(

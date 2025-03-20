@@ -13,6 +13,8 @@ import { ConfigModule } from '@nestjs/config';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { Role } from './modules/rbac/role/role.entity';
 import { Permission } from './modules/rbac/permission/permission.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { GqlJwtAuthGuard } from './guards/gql-jwt-auth.guard';
 
 @Module({
   imports: [
@@ -42,6 +44,12 @@ import { Permission } from './modules/rbac/permission/permission.entity';
     OktaAuthModule,
     GoogleAuthModule,
     MicrosoftAuthModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: GqlJwtAuthGuard,
+    },
   ],
 })
 export class AppModule {}
