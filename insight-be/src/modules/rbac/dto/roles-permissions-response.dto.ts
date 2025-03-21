@@ -1,11 +1,30 @@
-// dto/roles-permissions-response.dto.ts
+// roles-permissions-response.dto.ts
+
 import { Field, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
-export class RolesPermissionsResponse {
-  @Field(() => [String])
-  roles: string[];
+export class RoleDTO {
+  @Field()
+  id: number;
 
-  @Field(() => [String])
-  permissions: string[];
+  @Field()
+  name: string;
+}
+
+@ObjectType()
+export class PermissionDTO {
+  @Field()
+  id: number;
+
+  @Field()
+  name: string;
+}
+
+@ObjectType()
+export class RolesPermissionsResponse {
+  @Field(() => [RoleDTO])
+  roles: RoleDTO[];
+
+  @Field(() => [PermissionDTO])
+  permissions: PermissionDTO[];
 }

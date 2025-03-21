@@ -3,6 +3,9 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { UsersService } from './user.service';
 import { User } from './user.model';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UseGuards } from '@nestjs/common';
+import { PermissionsGuard } from 'src/guards/permissions.guard';
+import { Permissions } from 'src/decorators/permissions.decorator';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -16,12 +19,10 @@ export class UserResolver {
     return this.userService.findAllUsers(limit, offset);
   }
 
-  // dont htink we need this, we can encode the necessary user data in the JWT token?
   @Query(() => User)
   async user(@Args('publicId', { type: () => String }) publicId: string) {
     return this.userService.findOneByPublicId(publicId);
   }
-
 
   @Mutation(() => User)
   async updateUser(
@@ -31,7 +32,6 @@ export class UserResolver {
     return this.userService.updateByPublicId(publicId, data);
   }
 
-  // There must be a more secure way of accomplishing this rather than exposing a mutation that can just remove users?
   @Mutation(() => Boolean)
   async removeUser(@Args('publicId', { type: () => String }) publicId: string) {
     await this.userService.removeByPublicId(publicId);
