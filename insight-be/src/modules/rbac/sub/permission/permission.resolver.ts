@@ -10,13 +10,14 @@ const BasePermissionResolver = createBaseResolver<
   Permission,
   CreatePermissionInput,
   UpdatePermissionInput
->('permission', Permission, CreatePermissionInput, UpdatePermissionInput);
+>(Permission, CreatePermissionInput, UpdatePermissionInput, {
+  queryName: 'permission',
+  stableKeyPrefix: 'PERMISSION_KEY',
+});
 
 @Resolver(() => Permission)
 export class PermissionResolver extends BasePermissionResolver {
   constructor(private readonly permissionService: PermissionService) {
     super(permissionService);
   }
-
-  // Add custom queries/mutations if needed
 }

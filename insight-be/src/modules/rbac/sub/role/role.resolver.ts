@@ -5,12 +5,16 @@ import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
 import { createBaseResolver } from 'src/common/base.resolver';
 import { Role } from './role.entity';
+import { RbacPermissionKey } from '../../decorators/resolver-permission-key.decorator';
 
 const BaseRoleResolver = createBaseResolver<
   Role,
   CreateRoleInput,
   UpdateRoleInput
->('role', Role, CreateRoleInput, UpdateRoleInput);
+>(Role, CreateRoleInput, UpdateRoleInput, {
+  queryName: 'role',
+  stableKeyPrefix: 'ROLE',
+});
 
 @Resolver(() => Role)
 export class RoleResolver extends BaseRoleResolver {
@@ -19,6 +23,7 @@ export class RoleResolver extends BaseRoleResolver {
   }
 
   @Mutation(() => Role)
+  @RbacPermissionKey('ROLE.addPermissionsToRole')
   async addPermissionsToRole(
     @Args('roleId', { type: () => Int }) roleId: number,
     @Args('permissionIds', { type: () => [Int] }) permissionIds: number[],
@@ -27,6 +32,7 @@ export class RoleResolver extends BaseRoleResolver {
   }
 
   @Mutation(() => Role)
+  @RbacPermissionKey('ROLE.removePermissionsFromRole')
   async removePermissionsFromRole(
     @Args('roleId', { type: () => Int }) roleId: number,
     @Args('permissionIds', { type: () => [Int] }) permissionIds: number[],

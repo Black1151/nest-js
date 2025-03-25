@@ -2,15 +2,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
-import { BaseService } from '../common/base.service';
+import { BaseService } from '../../common/base.service';
 import { User } from './user.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Role } from 'src/modules/rbac/role/role.entity';
+import { Role } from 'src/modules/rbac/sub/role/role.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
-
-// still extend the base service and add
 export class UsersService extends BaseService<
   User,
   CreateUserDto,
@@ -26,45 +25,16 @@ export class UsersService extends BaseService<
     super(userRepository);
   }
 
-  /**
-   * CREATE
-   * Create a new user with a new publicId (auto-generated in entity).
-   * If you want to do extra business logic (e.g. set default roles),
-   * you can do it here.
-   */
-  async createUser(createDto: CreateUserDto): Promise<User> {
-    // Use the repository to create & save the user
-    const user = this.userRepository.create(createDto);
-    return this.userRepository.save(user);
+  async hashPassword(plainPass: string): Promise<string> {
+    const saltRounds = 10;
+    return await bcrypt.hash(plainPass, saltRounds);
   }
 
-  /**
-   * READ (ALL)
-   * Optionally load roles (or other relations).
-   * Limit & offset for pagination.
-   */
-  async findAllUsers(limit?: number, offset?: number): Promise<User[]> {
-    return this.userRepository.find({
-      relations: ['roles'],
-      take: limit,
-      skip: offset,
-    });
-  }
-
-  /**
-   * READ (ONE) by publicId
-   */
-  async findOneByPublicId(publicId: string): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { publicId },
-      relations: ['roles'],
-    });
-    if (!user) {
-      throw new NotFoundException(
-        `User with publicId '${publicId}' not found.`,
-      );
+  override async create(createDto: CreateUserDto): Promise<User> {
+    if (createDto.password) {
+      createDto.password = await this.hashPassword(createDto.password);
     }
-    return user;
+    return super.create(createDto);
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -77,23 +47,13 @@ export class UsersService extends BaseService<
     return user;
   }
 
-  /**
-   * UPDATE by publicId
-   * Merges the fields from DTO into the existing user,
-   * then saves. (We do NOT trust the numeric ID from the client.)
-   */
   async updateByPublicId(
     publicId: string,
     updateDto: UpdateUserDto,
   ): Promise<User> {
-    // Find the existing user by publicId
-    const user = await this.findOneByPublicId(publicId);
+    const user = await this.findOneBy({ publicId });
 
-    // Merge in the incoming fields
     Object.assign(user, updateDto);
-
-    // Make sure we don't overwrite the user.publicId or user.id accidentally
-    // e.g., user.id = user.id; user.publicId = user.publicId;
 
     return this.userRepository.save(user);
   }
@@ -102,7 +62,7 @@ export class UsersService extends BaseService<
    * DELETE by publicId
    */
   async removeByPublicId(publicId: string): Promise<void> {
-    const user = await this.findOneByPublicId(publicId);
+    const user = await this.findOneBy({ publicId });
     // We remove by numeric id under the hood
     await this.userRepository.delete(user.id);
   }
@@ -111,7 +71,7 @@ export class UsersService extends BaseService<
    * ADD ROLES
    */
   async addRoles(publicId: string, roleIds: number[]): Promise<User> {
-    const user = await this.findOneByPublicId(publicId);
+    const user = await this.findOneBy({ publicId });
     const roles = await this.roleRepository.find({
       where: { id: In(roleIds) },
     });
@@ -123,7 +83,7 @@ export class UsersService extends BaseService<
    * REMOVE ROLES
    */
   async removeRoles(publicId: string, roleIds: number[]): Promise<User> {
-    const user = await this.findOneByPublicId(publicId);
+    const user = await this.findOneBy({ publicId });
     user.roles = user.roles?.filter((role) => !roleIds.includes(role.id));
     return this.userRepository.save(user);
   }
@@ -131,11 +91,11 @@ export class UsersService extends BaseService<
   async getUserWithRolesAndPermissions(publicId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { publicId },
-      relations: ["roles", "roles.permissions"], // nest the permissions relation
+      relations: ['roles', 'roles.permissions'],
     });
 
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
 
     return user;

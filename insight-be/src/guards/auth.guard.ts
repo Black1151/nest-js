@@ -8,7 +8,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from 'src/decorators/public.decorator';
-import { UsersService } from 'src/user/user.service';
+import { UsersService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class GqlJwtAuthGuard extends AuthGuard('jwt') {
@@ -51,8 +51,6 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
     if (!dbUser) {
       throw new UnauthorizedException('User not found');
     }
-
-    const roleNames = dbUser.roles?.map((r) => r.name) || [];
     const permissionNames = new Set<string>();
     dbUser.roles?.forEach((role) => {
       role.permissions?.forEach((perm) => permissionNames.add(perm.name));
@@ -62,8 +60,6 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
       ...user,
       permissions: Array.from(permissionNames),
     };
-
-    console.log(req.user);
 
     return true;
   }

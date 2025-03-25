@@ -1,11 +1,9 @@
 import { Column, Entity, ManyToMany, JoinTable } from 'typeorm';
 import { Field, ObjectType } from '@nestjs/graphql';
 
-// If you want to relate Roles directly to Users, import User:
-
 import { AbstractBaseEntity } from 'src/common/base.entity';
 import { Permission } from '../permission/permission.entity';
-import { User } from 'src/user/user.model';
+import { User } from 'src/modules/user/user.model';
 
 @ObjectType()
 @Entity('roles')
@@ -21,7 +19,7 @@ export class Role extends AbstractBaseEntity {
   @Field(() => [Permission], { nullable: true })
   @ManyToMany(() => Permission, (permission) => permission.roles, {
     cascade: true,
-    eager: false, 
+    eager: false,
   })
   @JoinTable({
     name: 'role_permissions',

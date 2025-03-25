@@ -8,7 +8,6 @@ import { BaseService } from 'src/common/base.service';
 import { Permission } from './permission.entity';
 
 @Injectable()
-
 export class PermissionService extends BaseService<
   Permission,
   CreatePermissionInput,
@@ -20,6 +19,4 @@ export class PermissionService extends BaseService<
   ) {
     super(permissionRepository);
   }
-
-  // Add custom methods if needed for permission-specific logic
 }

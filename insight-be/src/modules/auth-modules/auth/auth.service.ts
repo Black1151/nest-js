@@ -2,9 +2,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { User } from 'src/user/user.model';
-import { UsersService } from 'src/user/user.service';
+import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
+import { User } from 'src/modules/user/user.model';
+import { UsersService } from 'src/modules/user/user.service';
 import { ConfigService } from '@nestjs/config';
 import { AuthTokens } from './dto/res/auth-tokens.dto';
 
@@ -92,7 +92,6 @@ export class AuthService {
       case 'okta':
         email = profile.emails?.[0]?.value || profile.email;
         break;
-      // Add additional provider cases here as needed (Google, Microsoft, etc.)
       default:
         throw new UnauthorizedException(`Unknown provider: ${provider}`);
     }

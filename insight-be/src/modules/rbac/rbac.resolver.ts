@@ -1,14 +1,18 @@
+// rbac.resolver.ts
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { RolesPermissionsResponse } from './dto/roles-permissions-response.dto';
-import { UsersService } from 'src/user/user.service';
+import { UsersService } from 'src/modules/user/user.service';
 import { UserPermissionsInput } from './dto/roles-permissions-input.dto';
 import { NotFoundException } from '@nestjs/common';
+import { RbacPermissionKey } from './decorators/resolver-permission-key.decorator';
+import { Public } from 'src/decorators/public.decorator';
 
 @Resolver()
 export class UserPermissionsResolver {
   constructor(private readonly userService: UsersService) {}
 
   @Query(() => RolesPermissionsResponse)
+  @Public()
   async userPermissions(
     @Args('data') data: UserPermissionsInput,
   ): Promise<RolesPermissionsResponse> {

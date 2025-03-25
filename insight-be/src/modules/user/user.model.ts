@@ -2,7 +2,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { v4 as uuidv4 } from 'uuid';
 import { AbstractBaseEntity } from 'src/common/base.entity';
-import { Role } from 'src/modules/rbac/role/role.entity';
+import { Role } from 'src/modules/rbac/sub/role/role.entity';
 import { Entity, Column, ManyToMany, JoinTable, BeforeInsert } from 'typeorm';
 
 @ObjectType()

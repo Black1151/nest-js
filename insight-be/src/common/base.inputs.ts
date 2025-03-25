@@ -11,9 +11,9 @@ export class FindAllInput {
 }
 
 @InputType()
-export class FieldInput {
+export class FindOneByInput {
   @Field()
-  fieldName: string;
+  column: string;
 
   @Field()
   value: string;
