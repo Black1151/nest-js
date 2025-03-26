@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { RequestLoggerMiddleware } from './audit/request-logger.middleware';
+import { AllExceptionsFilter } from './filters/all-exception.filter';
 
 declare const module: any;
 
@@ -21,6 +23,9 @@ async function bootstrap() {
     credentials: true,
     allowedHeaders: ['content-type', 'authorization'],
   });
+
+  app.use(new RequestLoggerMiddleware().use);
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   if (module.hot) {
     module.hot.accept();
