@@ -72,7 +72,7 @@ export class AuthService {
       });
       const userId = payload.sub;
 
-      const user = await this.userService.findOne(userId);
+      const user = await this.userService.findOneByPublicId(userId);
       if (!user) {
         throw new UnauthorizedException('An error occured during refresh');
       }

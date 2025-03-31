@@ -12,7 +12,16 @@ const BasePermissionResolver = createBaseResolver<
   UpdatePermissionInput
 >(Permission, CreatePermissionInput, UpdatePermissionInput, {
   queryName: 'permission',
-  stableKeyPrefix: 'PERMISSION_KEY',
+  stableKeyPrefix: 'permission',
+  enabledOperations: [
+    'findAll',
+    'findOne',
+    'findOneBy',
+    'create',
+    'update',
+    'remove',
+  ],
+  immutableOperations: ['create', 'update', 'remove'],
 });
 
 @Resolver(() => Permission)

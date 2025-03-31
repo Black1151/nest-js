@@ -2,7 +2,6 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AuthTokens } from './dto/res/auth-tokens.dto';
-import { RbacPermissionKey } from 'src/modules/rbac/decorators/resolver-permission-key.decorator';
 import { Public } from 'src/decorators/public.decorator';
 
 @Resolver()

@@ -5,14 +5,15 @@ import { UsersService } from 'src/modules/user/user.service';
 import { UserPermissionsInput } from './dto/roles-permissions-input.dto';
 import { NotFoundException } from '@nestjs/common';
 import { RbacPermissionKey } from './decorators/resolver-permission-key.decorator';
-import { Public } from 'src/decorators/public.decorator';
+import { ImmutableLogging } from '../audit/decorators/immutable-logging.decorator';
 
 @Resolver()
 export class UserPermissionsResolver {
   constructor(private readonly userService: UsersService) {}
 
   @Query(() => RolesPermissionsResponse)
-  @Public()
+  @RbacPermissionKey('user.get-roles-and-permissions')
+  @ImmutableLogging()
   async userPermissions(
     @Args('data') data: UserPermissionsInput,
   ): Promise<RolesPermissionsResponse> {

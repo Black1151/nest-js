@@ -46,8 +46,6 @@ export class BootstrapSuperAdminService implements OnModuleInit {
       console.log(`Dev super admin user not found`);
     }
 
-    console.log('XXX', superAdminUser.roles);
-
     if (!superAdminUser) {
       const newAdminData: CreateUserDto = {
         firstName: process.env.SUPER_ADMIN_EMAIL!,

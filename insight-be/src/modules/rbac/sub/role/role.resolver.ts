@@ -6,6 +6,7 @@ import { UpdateRoleInput } from './dto/update-role.input';
 import { createBaseResolver } from 'src/common/base.resolver';
 import { Role } from './role.entity';
 import { RbacPermissionKey } from '../../decorators/resolver-permission-key.decorator';
+import { ImmutableLogging } from 'src/modules/audit/decorators/immutable-logging.decorator';
 
 const BaseRoleResolver = createBaseResolver<
   Role,
@@ -13,7 +14,16 @@ const BaseRoleResolver = createBaseResolver<
   UpdateRoleInput
 >(Role, CreateRoleInput, UpdateRoleInput, {
   queryName: 'role',
-  stableKeyPrefix: 'ROLE',
+  stableKeyPrefix: 'role',
+  enabledOperations: [
+    'findAll',
+    'findOne',
+    'findOneBy',
+    'create',
+    'update',
+    'remove',
+  ],
+  immutableOperations: ['create', 'update', 'remove'],
 });
 
 @Resolver(() => Role)
@@ -23,7 +33,8 @@ export class RoleResolver extends BaseRoleResolver {
   }
 
   @Mutation(() => Role)
-  @RbacPermissionKey('ROLE.addPermissionsToRole')
+  @RbacPermissionKey('role.addPermissionsToRole')
+  @ImmutableLogging()
   async addPermissionsToRole(
     @Args('roleId', { type: () => Int }) roleId: number,
     @Args('permissionIds', { type: () => [Int] }) permissionIds: number[],
@@ -32,7 +43,8 @@ export class RoleResolver extends BaseRoleResolver {
   }
 
   @Mutation(() => Role)
-  @RbacPermissionKey('ROLE.removePermissionsFromRole')
+  @RbacPermissionKey('role.removePermissionsFromRole')
+  @ImmutableLogging()
   async removePermissionsFromRole(
     @Args('roleId', { type: () => Int }) roleId: number,
     @Args('permissionIds', { type: () => [Int] }) permissionIds: number[],

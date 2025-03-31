@@ -2,7 +2,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
-import { BaseService } from '../../common/base.service';
 import { User } from './user.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -10,31 +9,26 @@ import { Role } from 'src/modules/rbac/sub/role/role.entity';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
-export class UsersService extends BaseService<
-  User,
-  CreateUserDto,
-  UpdateUserDto
-> {
+export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
-  ) {
-    super(userRepository);
-  }
+  ) {}
 
   async hashPassword(plainPass: string): Promise<string> {
     const saltRounds = 10;
     return await bcrypt.hash(plainPass, saltRounds);
   }
 
-  override async create(createDto: CreateUserDto): Promise<User> {
+  async create(createDto: CreateUserDto): Promise<User> {
     if (createDto.password) {
       createDto.password = await this.hashPassword(createDto.password);
     }
-    return super.create(createDto);
+    const user = this.userRepository.create(createDto);
+    return this.userRepository.save(user);
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -47,11 +41,21 @@ export class UsersService extends BaseService<
     return user;
   }
 
+  async findOneByPublicId(publicId: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { publicId },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
   async updateByPublicId(
     publicId: string,
     updateDto: UpdateUserDto,
   ): Promise<User> {
-    const user = await this.findOneBy({ publicId });
+    const user = await this.findOneByPublicId(publicId);
 
     Object.assign(user, updateDto);
 
@@ -62,8 +66,7 @@ export class UsersService extends BaseService<
    * DELETE by publicId
    */
   async removeByPublicId(publicId: string): Promise<void> {
-    const user = await this.findOneBy({ publicId });
-    // We remove by numeric id under the hood
+    const user = await this.findOneByPublicId(publicId);
     await this.userRepository.delete(user.id);
   }
 
@@ -71,7 +74,7 @@ export class UsersService extends BaseService<
    * ADD ROLES
    */
   async addRoles(publicId: string, roleIds: number[]): Promise<User> {
-    const user = await this.findOneBy({ publicId });
+    const user = await this.findOneByPublicId(publicId);
     const roles = await this.roleRepository.find({
       where: { id: In(roleIds) },
     });
@@ -83,7 +86,7 @@ export class UsersService extends BaseService<
    * REMOVE ROLES
    */
   async removeRoles(publicId: string, roleIds: number[]): Promise<User> {
-    const user = await this.findOneBy({ publicId });
+    const user = await this.findOneByPublicId(publicId);
     user.roles = user.roles?.filter((role) => !roleIds.includes(role.id));
     return this.userRepository.save(user);
   }

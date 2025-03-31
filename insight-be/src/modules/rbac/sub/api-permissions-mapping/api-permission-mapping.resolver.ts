@@ -2,7 +2,8 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ApiPermissionMapping } from './api-permission-mapping.entity';
 import { ApiPermissionMappingService } from './api-permission-mapping.service';
-
+import { RbacPermissionKey } from 'src/modules/rbac/decorators/resolver-permission-key.decorator';
+import { ImmutableLogging } from 'src/modules/audit/decorators/immutable-logging.decorator';
 @Resolver(() => ApiPermissionMapping)
 export class ApiPermissionMappingResolver {
   constructor(private readonly mappingService: ApiPermissionMappingService) {}
@@ -13,6 +14,8 @@ export class ApiPermissionMappingResolver {
   }
 
   @Mutation(() => ApiPermissionMapping)
+  @RbacPermissionKey('api-permission-mapping.set-route-permissions')
+  @ImmutableLogging()
   async setRoutePermissions(
     @Args('routeKey') routeKey: string,
     @Args('permissionIds', { type: () => [Number] }) permissionIds: number[],
@@ -21,6 +24,8 @@ export class ApiPermissionMappingResolver {
   }
 
   @Mutation(() => Boolean)
+  @RbacPermissionKey('api-permission-mapping.remove-route-permissions')
+  @ImmutableLogging()
   async removeRoutePermissions(
     @Args('routeKey') routeKey: string,
   ): Promise<boolean> {

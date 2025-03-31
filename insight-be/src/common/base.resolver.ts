@@ -1,17 +1,44 @@
-// base.resolver.ts
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+// src/common/base.resolver.ts
+import { Resolver, Args } from '@nestjs/graphql';
 import { ClassType } from 'type-graphql';
 import { DeepPartial, FindOptionsWhere } from 'typeorm';
+
 import { FindAllInput, FindOneByInput, IdInput } from './base.inputs';
 import { AbstractBaseEntity } from './base.entity';
 import { BaseService } from './base.service';
-import { RbacPermissionKey } from 'src/modules/rbac/decorators/resolver-permission-key.decorator';
 
+// Conditional GQL decorators
+import { QueryIf } from 'src/common/decorators/query-if.decorator';
+import { MutationIf } from 'src/common/decorators/mutation-if.decorator';
+import { ImmutableLoggingIf } from 'src/common/decorators/immutable-logging-if.decorator';
+import { RbacPermissionKeyIf } from './decorators/rbac-permission-key-if.decorator';
+
+// Optional: immutability/tamper-proof logging
+
+type OperationName =
+  | 'findAll'
+  | 'findOne'
+  | 'findOneBy'
+  | 'create'
+  | 'update'
+  | 'remove';
+
+/**
+ * Options for the base resolver.
+ * - `enabledOperations`: only these operations appear in the GraphQL schema
+ * - `immutableOperations`: which ops should also get immutability logging
+ */
 interface BaseResolverOptions<T extends AbstractBaseEntity> {
   queryName: string;
   stableKeyPrefix: string;
+  enabledOperations?: OperationName[];
+  immutableOperations?: OperationName[];
 }
 
+/**
+ * Create a generic CRUD resolver for any Entity T, with optional
+ * "enabledOperations" and "immutableOperations".
+ */
 export function createBaseResolver<
   T extends AbstractBaseEntity,
   CreateDto extends DeepPartial<T>,
@@ -22,7 +49,17 @@ export function createBaseResolver<
   updateDtoClass: ClassType<UpdateDto>,
   options: BaseResolverOptions<T>,
 ) {
-  const { queryName, stableKeyPrefix } = options;
+  // Destructure
+  const {
+    queryName,
+    stableKeyPrefix,
+    enabledOperations = [], // default to empty => no ops exposed
+    immutableOperations = [], // default to empty => no immutability
+  } = options;
+
+  // Helpers
+  const isEnabled = (op: OperationName) => enabledOperations.includes(op);
+  const isImmutable = (op: OperationName) => immutableOperations.includes(op);
 
   @Resolver({ isAbstract: true })
   abstract class BaseResolverHost {
@@ -30,11 +67,15 @@ export function createBaseResolver<
       public readonly service: BaseService<T, CreateDto, UpdateDto>,
     ) {}
 
-    @Query(() => [entityClass], {
+    // ---------------------------------------------------
+    // findAll
+    // ---------------------------------------------------
+    @QueryIf(isEnabled('findAll'), () => [entityClass], {
       name: `${queryName}FindAll`,
       description: `Find all ${queryName}`,
     })
-    @RbacPermissionKey(`${stableKeyPrefix}.findAll`)
+    @RbacPermissionKeyIf(isEnabled('findAll'), `${stableKeyPrefix}.findAll`)
+    @ImmutableLoggingIf(isImmutable('findAll'))
     async findAll(
       @Args('data', { type: () => FindAllInput }) data: FindAllInput,
     ): Promise<T[]> {
@@ -42,22 +83,30 @@ export function createBaseResolver<
       return this.service.findAll(limit, offset);
     }
 
-    @Query(() => entityClass, {
+    // ---------------------------------------------------
+    // findOne
+    // ---------------------------------------------------
+    @QueryIf(isEnabled('findOne'), () => entityClass, {
       name: `${queryName}FindOne`,
       description: `Find one ${queryName}`,
     })
-    @RbacPermissionKey(`${stableKeyPrefix}.findOne`)
+    @RbacPermissionKeyIf(isEnabled('findOne'), `${stableKeyPrefix}.findOne`)
+    @ImmutableLoggingIf(isImmutable('findOne'))
     async findOne(
       @Args('data', { type: () => IdInput }) data: IdInput,
     ): Promise<T> {
       return this.service.findOne(data.id);
     }
 
-    @Query(() => entityClass, {
+    // ---------------------------------------------------
+    // findOneBy
+    // ---------------------------------------------------
+    @QueryIf(isEnabled('findOneBy'), () => entityClass, {
       name: `${queryName}FindOneBy`,
       description: `Find one ${queryName} by given conditions`,
     })
-    @RbacPermissionKey(`${stableKeyPrefix}.findOneBy`)
+    @RbacPermissionKeyIf(isEnabled('findOneBy'), `${stableKeyPrefix}.findOneBy`)
+    @ImmutableLoggingIf(isImmutable('findOneBy'))
     async findOneBy(
       @Args('data', { type: () => FindOneByInput }) data: FindOneByInput,
     ): Promise<T> {
@@ -66,33 +115,45 @@ export function createBaseResolver<
       } as FindOptionsWhere<T>);
     }
 
-    @Mutation(() => entityClass, {
+    // ---------------------------------------------------
+    // create
+    // ---------------------------------------------------
+    @MutationIf(isEnabled('create'), () => entityClass, {
       name: `${queryName}Create`,
       description: `Create one ${queryName}`,
     })
-    @RbacPermissionKey(`${stableKeyPrefix}.create`)
+    @RbacPermissionKeyIf(isEnabled('create'), `${stableKeyPrefix}.create`)
+    @ImmutableLoggingIf(isImmutable('create'))
     async create(
       @Args('data', { type: () => createDtoClass }) data: CreateDto,
     ): Promise<T> {
       return this.service.create(data);
     }
 
-    @Mutation(() => entityClass, {
+    // ---------------------------------------------------
+    // update
+    // ---------------------------------------------------
+    @MutationIf(isEnabled('update'), () => entityClass, {
       name: `${queryName}Update`,
       description: `Update one ${queryName}`,
     })
-    @RbacPermissionKey(`${stableKeyPrefix}.update`)
+    @RbacPermissionKeyIf(isEnabled('update'), `${stableKeyPrefix}.update`)
+    @ImmutableLoggingIf(isImmutable('update'))
     async update(
       @Args('data', { type: () => updateDtoClass }) data: UpdateDto,
     ): Promise<T> {
       return this.service.update(data);
     }
 
-    @Mutation(() => Boolean, {
+    // ---------------------------------------------------
+    // remove
+    // ---------------------------------------------------
+    @MutationIf(isEnabled('remove'), () => Boolean, {
       name: `${queryName}Remove`,
       description: `Remove one ${queryName}`,
     })
-    @RbacPermissionKey(`${stableKeyPrefix}.remove`)
+    @RbacPermissionKeyIf(isEnabled('remove'), `${stableKeyPrefix}.remove`)
+    @ImmutableLoggingIf(isImmutable('remove'))
     async remove(
       @Args('data', { type: () => IdInput }) data: IdInput,
     ): Promise<boolean> {

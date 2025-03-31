@@ -13,11 +13,11 @@ import { ConfigModule } from '@nestjs/config';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { Role } from './modules/rbac/sub/role/role.entity';
 import { Permission } from './modules/rbac/sub/permission/permission.entity';
-import { APP_GUARD, DiscoveryModule } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, DiscoveryModule } from '@nestjs/core';
 import { GqlJwtAuthGuard } from './guards/auth.guard';
 import { ApiPermissionsGuard } from './modules/rbac/guards/api-permissions.guard';
 import { ApiPermissionMapping } from './modules/rbac/sub/api-permissions-mapping/api-permission-mapping.entity';
-import { BootstrapSuperAdminService } from './modules/user/user-super-admin-bootstrap.service';
+import { AuditModule } from './modules/audit/audit.module';
 
 @Module({
   imports: [
@@ -48,6 +48,7 @@ import { BootstrapSuperAdminService } from './modules/user/user-super-admin-boot
     OktaAuthModule,
     GoogleAuthModule,
     MicrosoftAuthModule,
+    AuditModule,
   ],
   providers: [
     {

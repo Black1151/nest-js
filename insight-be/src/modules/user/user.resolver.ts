@@ -3,35 +3,24 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { UsersService } from './user.service';
 import { User } from './user.model';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { createBaseResolver } from 'src/common/base.resolver';
 import { CreateUserDto } from './dto/create-user.dto';
-import { IdInput } from 'src/common/base.inputs';
 import { RbacPermissionKey } from '../rbac/decorators/resolver-permission-key.decorator';
-
-const BaseUserResolver = createBaseResolver<User, CreateUserDto, UpdateUserDto>(
-  User,
-  CreateUserDto,
-  UpdateUserDto,
-  {
-    queryName: 'user',
-    stableKeyPrefix: 'USER',
-  },
-);
+import { ImmutableLogging } from '../audit/decorators/immutable-logging.decorator';
 
 @Resolver(() => User)
-export class UserResolver extends BaseUserResolver {
-  constructor(private readonly userService: UsersService) {
-    super(userService);
-  }
+export class UserResolver {
+  constructor(private readonly userService: UsersService) {}
 
   @Mutation(() => User)
-  @RbacPermissionKey('USER.create')
-  override async create(data: CreateUserDto): Promise<User> {
+  @RbacPermissionKey('user.create')
+  @ImmutableLogging()
+  async create(@Args('data') data: CreateUserDto): Promise<User> {
     return this.userService.create(data);
   }
 
   @Mutation(() => User)
-  @RbacPermissionKey('USER.update')
+  @RbacPermissionKey('user.update')
+  @ImmutableLogging()
   async updateUserByPublicId(
     @Args('publicId', { type: () => String }) publicId: string,
     @Args('data') data: UpdateUserDto,
@@ -40,7 +29,8 @@ export class UserResolver extends BaseUserResolver {
   }
 
   @Mutation(() => User)
-  @RbacPermissionKey('USER.addRoles')
+  @RbacPermissionKey('user.addRoles')
+  @ImmutableLogging()
   async addRolesToUser(
     @Args('publicId', { type: () => String }) publicId: string,
     @Args('roleIds', { type: () => [Int] }) roleIds: number[],
@@ -49,11 +39,22 @@ export class UserResolver extends BaseUserResolver {
   }
 
   @Mutation(() => User)
-  @RbacPermissionKey('USER.removeRoles')
+  @RbacPermissionKey('user.removeRoles')
+  @ImmutableLogging()
   async removeRolesFromUser(
     @Args('publicId', { type: () => String }) publicId: string,
     @Args('roleIds', { type: () => [Int] }) roleIds: number[],
   ) {
     return this.userService.removeRoles(publicId, roleIds);
+  }
+
+  @Mutation(() => Boolean)
+  @RbacPermissionKey('user.remove')
+  @ImmutableLogging()
+  async removeUser(
+    @Args('publicId', { type: () => String }) publicId: string,
+  ): Promise<boolean> {
+    await this.userService.removeByPublicId(publicId);
+    return true;
   }
 }
