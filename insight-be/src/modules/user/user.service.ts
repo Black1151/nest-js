@@ -91,16 +91,33 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
+  /**
+   * Load user with roles, role-based permissions, and group-based permissions.
+   * Then flatten all permissions into `user.combinedPermissions`.
+   */
   async getUserWithRolesAndPermissions(publicId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { publicId },
-      relations: ['roles', 'roles.permissions'],
+      relations: [
+        'roles',
+        'roles.permissions',
+        'roles.permissionGroups',
+        'roles.permissionGroups.permissions',
+      ],
     });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    const permSet = new Set<string>();
 
+    user.roles?.forEach((role) => {
+      role.permissions?.forEach((perm) => permSet.add(perm.name));
+      role.permissionGroups?.forEach((group) => {
+        group.permissions?.forEach((perm) => permSet.add(perm.name));
+      });
+    });
+    user['combinedPermissions'] = Array.from(permSet);
     return user;
   }
 }

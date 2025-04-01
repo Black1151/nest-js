@@ -51,4 +51,24 @@ export class RoleResolver extends BaseRoleResolver {
   ) {
     return this.roleService.removePermissionsFromRole(roleId, permissionIds);
   }
+
+  @Mutation(() => Role)
+  @RbacPermissionKey('role.addPermissionGroupsToRole')
+  @ImmutableLogging()
+  async addPermissionGroupsToRole(
+    @Args('roleId', { type: () => Int }) roleId: number,
+    @Args('groupIds', { type: () => [Int] }) groupIds: number[],
+  ) {
+    return this.roleService.addPermissionGroupsToRole(roleId, groupIds);
+  }
+
+  @Mutation(() => Role)
+  @RbacPermissionKey('role.removePermissionGroupsFromRole')
+  @ImmutableLogging()
+  async removePermissionGroupsFromRole(
+    @Args('roleId', { type: () => Int }) roleId: number,
+    @Args('groupIds', { type: () => [Int] }) groupIds: number[],
+  ) {
+    return this.roleService.removePermissionGroupsFromRole(roleId, groupIds);
+  }
 }

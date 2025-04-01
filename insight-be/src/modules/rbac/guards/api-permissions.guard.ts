@@ -6,10 +6,10 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { ApiPermissionMappingService } from 'src/modules/rbac/sub/api-permissions-mapping/api-permission-mapping.service';
 import { Reflector } from '@nestjs/core';
-import { PERMISSION_KEY_METADATA } from '../decorators/resolver-permission-key.decorator';
+import { ApiPermissionMappingService } from 'src/modules/rbac/sub/api-permissions-mapping/api-permission-mapping.service';
 import { UsersService } from 'src/modules/user/user.service';
+import { PERMISSION_KEY_METADATA } from '../decorators/resolver-permission-key.decorator';
 import { IS_PUBLIC_KEY } from 'src/decorators/public.decorator';
 
 @Injectable()
@@ -37,7 +37,6 @@ export class ApiPermissionsGuard implements CanActivate {
       PERMISSION_KEY_METADATA,
       handler,
     );
-
     if (!permissionKey) {
       throw new UnauthorizedException(
         'No permission key found on a non-public route',
@@ -45,7 +44,6 @@ export class ApiPermissionsGuard implements CanActivate {
     }
 
     const mapping = await this.mappingService.findByRouteKey(permissionKey);
-
     if (!mapping) {
       throw new ForbiddenException(
         `No permission mapping found for key: ${permissionKey}. Access denied.`,
@@ -57,7 +55,7 @@ export class ApiPermissionsGuard implements CanActivate {
     }
 
     const user = await this.userService.getUserWithRolesAndPermissions(
-      req?.user?.publicId,
+      req.user.publicId,
     );
 
     if (
@@ -68,8 +66,13 @@ export class ApiPermissionsGuard implements CanActivate {
     }
 
     const requiredPermissions = mapping.requiredPermissions.map((p) => p.name);
-    const userPerms = req.user.permissions || [];
-    const hasAll = requiredPermissions.every((p) => userPerms.includes(p));
+
+    req.user.permissions = user['combinedPermissions'] || [];
+
+    const hasAll = requiredPermissions.every((perm) =>
+      req.user.permissions.includes(perm),
+    );
+
     if (!hasAll) {
       throw new ForbiddenException('Insufficient permissions');
     }
