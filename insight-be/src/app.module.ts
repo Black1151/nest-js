@@ -27,6 +27,7 @@ import { AuditModule } from './modules/audit/audit.module';
       autoSchemaFile: true,
       sortSchema: true,
       csrfPrevention: false,
+      playground: true,
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
