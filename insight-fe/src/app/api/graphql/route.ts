@@ -1,45 +1,72 @@
 import { NextRequest, NextResponse } from "next/server";
-import { attemptRefresh } from "@/lib/authUtils";
+
+/**
+ * GraphQL API route handler that proxies requests to the NestJS backend.
+ * Handles authentication by:
+ * 1. Forwarding the access token from cookies to the backend
+ * 2. Automatically refreshing expired tokens and retrying failed requests
+ * 3. Returning appropriate error responses if authentication fails
+ *
+ * @param req The incoming Next.js request containing GraphQL query/mutation
+ * @returns NextResponse with the GraphQL response from the backend
+ */
 
 export async function POST(req: NextRequest) {
   try {
-    // 1) Read the original GraphQL body
     const originalBody = await req.text();
+    const accessToken = req.cookies.get("accessToken")?.value;
 
-    // 2) Forward to Nest
-    let nestResp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: req.headers.get("Authorization") || "",
-      },
-      body: originalBody,
-    });
-
-    // 3) If 401 => attempt refresh
-    if (nestResp.status === 401) {
-      const refreshed = await attemptRefresh();
-      if (!refreshed) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-
-      // 4) If refresh succeeded, retry the original request
-      nestResp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`, {
+    let nestResp = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // If Nest strictly requires Authorization, decode the new cookie
-          // or rely on Nest to read from the cookie. 
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: originalBody,
-      });
+      }
+    );
 
-      if (nestResp.status === 401) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (nestResp.status === 401) {
+      const refreshResp = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/refresh`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (refreshResp.ok) {
+        const data = await refreshResp.json();
+        if (data?.accessToken) {
+          nestResp = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${data.accessToken}`,
+              },
+              body: originalBody,
+            }
+          );
+        } else {
+          return new NextResponse(
+            JSON.stringify({ error: "Invalid refresh response" }),
+            {
+              status: 401,
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+        }
+      } else {
+        return new NextResponse(JSON.stringify({ error: "Refresh failed" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        });
       }
     }
 
-    // 5) Pass along the final response
     const respText = await nestResp.text();
     return new NextResponse(respText, {
       status: nestResp.status,
