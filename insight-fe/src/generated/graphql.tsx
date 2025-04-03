@@ -429,6 +429,30 @@ export type RefreshMutationVariables = Exact<{
 
 export type RefreshMutation = { __typename?: 'Mutation', refresh: { __typename?: 'AuthTokens', accessToken: string, refreshToken: string } };
 
+export type CreatePermissionMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+}>;
+
+
+export type CreatePermissionMutation = { __typename?: 'Mutation', permissionCreate: { __typename?: 'Permission', id: string, name: string, description?: string | null, createdAt: any, updatedAt: any } };
+
+export type UpdatePermissionMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+}>;
+
+
+export type UpdatePermissionMutation = { __typename?: 'Mutation', permissionUpdate: { __typename?: 'Permission', id: string, name: string, description?: string | null, createdAt: any, updatedAt: any } };
+
+export type RemovePermissionMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+
+export type RemovePermissionMutation = { __typename?: 'Mutation', permissionRemove: boolean };
+
 
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
@@ -499,3 +523,111 @@ export function useRefreshMutation(baseOptions?: Apollo.MutationHookOptions<Refr
 export type RefreshMutationHookResult = ReturnType<typeof useRefreshMutation>;
 export type RefreshMutationResult = Apollo.MutationResult<RefreshMutation>;
 export type RefreshMutationOptions = Apollo.BaseMutationOptions<RefreshMutation, RefreshMutationVariables>;
+export const CreatePermissionDocument = gql`
+    mutation CreatePermission($name: String!, $description: String!) {
+  permissionCreate(data: {name: $name, description: $description}) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type CreatePermissionMutationFn = Apollo.MutationFunction<CreatePermissionMutation, CreatePermissionMutationVariables>;
+
+/**
+ * __useCreatePermissionMutation__
+ *
+ * To run a mutation, you first call `useCreatePermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePermissionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPermissionMutation, { data, loading, error }] = useCreatePermissionMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      description: // value for 'description'
+ *   },
+ * });
+ */
+export function useCreatePermissionMutation(baseOptions?: Apollo.MutationHookOptions<CreatePermissionMutation, CreatePermissionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePermissionMutation, CreatePermissionMutationVariables>(CreatePermissionDocument, options);
+      }
+export type CreatePermissionMutationHookResult = ReturnType<typeof useCreatePermissionMutation>;
+export type CreatePermissionMutationResult = Apollo.MutationResult<CreatePermissionMutation>;
+export type CreatePermissionMutationOptions = Apollo.BaseMutationOptions<CreatePermissionMutation, CreatePermissionMutationVariables>;
+export const UpdatePermissionDocument = gql`
+    mutation UpdatePermission($id: Int!, $name: String!, $description: String!) {
+  permissionUpdate(data: {id: $id, name: $name, description: $description}) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type UpdatePermissionMutationFn = Apollo.MutationFunction<UpdatePermissionMutation, UpdatePermissionMutationVariables>;
+
+/**
+ * __useUpdatePermissionMutation__
+ *
+ * To run a mutation, you first call `useUpdatePermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePermissionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePermissionMutation, { data, loading, error }] = useUpdatePermissionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      description: // value for 'description'
+ *   },
+ * });
+ */
+export function useUpdatePermissionMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePermissionMutation, UpdatePermissionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePermissionMutation, UpdatePermissionMutationVariables>(UpdatePermissionDocument, options);
+      }
+export type UpdatePermissionMutationHookResult = ReturnType<typeof useUpdatePermissionMutation>;
+export type UpdatePermissionMutationResult = Apollo.MutationResult<UpdatePermissionMutation>;
+export type UpdatePermissionMutationOptions = Apollo.BaseMutationOptions<UpdatePermissionMutation, UpdatePermissionMutationVariables>;
+export const RemovePermissionDocument = gql`
+    mutation RemovePermission($id: Int!) {
+  permissionRemove(data: {id: $id})
+}
+    `;
+export type RemovePermissionMutationFn = Apollo.MutationFunction<RemovePermissionMutation, RemovePermissionMutationVariables>;
+
+/**
+ * __useRemovePermissionMutation__
+ *
+ * To run a mutation, you first call `useRemovePermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemovePermissionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removePermissionMutation, { data, loading, error }] = useRemovePermissionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemovePermissionMutation(baseOptions?: Apollo.MutationHookOptions<RemovePermissionMutation, RemovePermissionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemovePermissionMutation, RemovePermissionMutationVariables>(RemovePermissionDocument, options);
+      }
+export type RemovePermissionMutationHookResult = ReturnType<typeof useRemovePermissionMutation>;
+export type RemovePermissionMutationResult = Apollo.MutationResult<RemovePermissionMutation>;
+export type RemovePermissionMutationOptions = Apollo.BaseMutationOptions<RemovePermissionMutation, RemovePermissionMutationVariables>;
