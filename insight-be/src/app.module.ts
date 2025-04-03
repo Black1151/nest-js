@@ -50,6 +50,7 @@ import { PermissionGroup } from './modules/rbac/sub/permission-group/permission-
     OktaAuthModule,
     GoogleAuthModule,
     MicrosoftAuthModule,
+
     AuditModule,
   ],
   providers: [

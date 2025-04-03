@@ -1,0 +1,18 @@
+# codegen.yml
+schema: "http://localhost:3000/graphql"
+# ^ This should be the URL of your NestJS GraphQL endpoint, or
+#   potentially your Next.js proxy endpoint if it provides the full schema.
+
+documents: "src/**/*.{ts,tsx}"
+# ^ The location of your .graphql files or inline GQL queries
+#   If you use gql-tag within .tsx files, you can point to them too.
+
+generates:
+  ./src/generated/graphql.tsx:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      # For React, if you prefer the Apollo hooks to be generated
+      withHooks: true
