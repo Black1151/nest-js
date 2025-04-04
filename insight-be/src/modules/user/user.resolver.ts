@@ -16,7 +16,7 @@ export class UserResolver {
   @Query(() => [User])
   @RbacPermissionKey('user.findAll')
   @ImmutableLogging()
-  async usersFindAll(
+  async getAllUsers(
     @Args('data', { type: () => FindAllInput }) data: FindAllInput,
   ): Promise<User[]> {
     const { limit, offset } = data;

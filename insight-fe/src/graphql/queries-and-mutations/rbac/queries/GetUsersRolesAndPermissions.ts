@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const GET_USER_ROLES_AND_PERMISSIONS_QUERY = gql`
-  query getUserRolesAndPermissions($data: UserPermissionsInput!) {
-    userPermissions(data: $data) {
+export const GetUsersRolesAndPermissions = gql`
+  query GetUsersRolesAndPermissions($data: UserPermissionsInput!) {
+    getUsersRolesAndPermissions(data: $data) {
       permissions {
         id
         name

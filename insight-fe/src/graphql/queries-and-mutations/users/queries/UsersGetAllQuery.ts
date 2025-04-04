@@ -1,9 +1,10 @@
 import { gql } from "@apollo/client";
 
-export const REGISTER_MUTATION = gql`
-  mutation register($data: CreateUserDto!) {
-    register(data: $data) {
+export const GetAllUsers = gql`
+  query GetAllUsers($data: FindAllInput!) {
+    getAllUsers(data: $data) {
       id
+      publicId
       firstName
       lastName
       email
@@ -18,6 +19,7 @@ export const REGISTER_MUTATION = gql`
       roles {
         id
         name
+        description
       }
       createdAt
       updatedAt

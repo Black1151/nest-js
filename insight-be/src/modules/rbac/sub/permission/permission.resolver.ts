@@ -11,7 +11,7 @@ const BasePermissionResolver = createBaseResolver<
   CreatePermissionInput,
   UpdatePermissionInput
 >(Permission, CreatePermissionInput, UpdatePermissionInput, {
-  queryName: 'permission',
+  queryName: 'Permission',
   stableKeyPrefix: 'permission',
   enabledOperations: [
     'findAll',

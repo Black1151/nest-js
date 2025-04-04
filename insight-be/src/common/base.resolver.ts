@@ -55,8 +55,8 @@ export function createBaseResolver<
     // findAll
     // ---------------------------------------------------
     @QueryIf(isEnabled('findAll'), () => [entityClass], {
-      name: `${queryName}FindAll`,
-      description: `Find all ${queryName}`,
+      name: `getAll${queryName}`,
+      description: `Returns all ${queryName}`,
     })
     @RbacPermissionKeyIf(isEnabled('findAll'), `${stableKeyPrefix}.findAll`)
     @ImmutableLoggingIf(isImmutable('findAll'))
@@ -71,8 +71,8 @@ export function createBaseResolver<
     // findOne
     // ---------------------------------------------------
     @QueryIf(isEnabled('findOne'), () => entityClass, {
-      name: `${queryName}FindOne`,
-      description: `Find one ${queryName}`,
+      name: `get${queryName}`,
+      description: `Returns one ${queryName}`,
     })
     @RbacPermissionKeyIf(isEnabled('findOne'), `${stableKeyPrefix}.findOne`)
     @ImmutableLoggingIf(isImmutable('findOne'))
@@ -86,8 +86,8 @@ export function createBaseResolver<
     // findOneBy
     // ---------------------------------------------------
     @QueryIf(isEnabled('findOneBy'), () => entityClass, {
-      name: `${queryName}FindOneBy`,
-      description: `Find one ${queryName} by given conditions`,
+      name: `get${queryName}By`,
+      description: `Returns one ${queryName} by given conditions`,
     })
     @RbacPermissionKeyIf(isEnabled('findOneBy'), `${stableKeyPrefix}.findOneBy`)
     @ImmutableLoggingIf(isImmutable('findOneBy'))
@@ -103,7 +103,7 @@ export function createBaseResolver<
     // create
     // ---------------------------------------------------
     @MutationIf(isEnabled('create'), () => entityClass, {
-      name: `${queryName}Create`,
+      name: `create${queryName}`,
       description: `Create one ${queryName}`,
     })
     @RbacPermissionKeyIf(isEnabled('create'), `${stableKeyPrefix}.create`)
@@ -118,8 +118,8 @@ export function createBaseResolver<
     // update
     // ---------------------------------------------------
     @MutationIf(isEnabled('update'), () => entityClass, {
-      name: `${queryName}Update`,
-      description: `Update one ${queryName}`,
+      name: `update${queryName}`,
+      description: `Updates one ${queryName}`,
     })
     @RbacPermissionKeyIf(isEnabled('update'), `${stableKeyPrefix}.update`)
     @ImmutableLoggingIf(isImmutable('update'))
@@ -133,8 +133,8 @@ export function createBaseResolver<
     // remove
     // ---------------------------------------------------
     @MutationIf(isEnabled('remove'), () => Boolean, {
-      name: `${queryName}Remove`,
-      description: `Remove one ${queryName}`,
+      name: `delete${queryName}`,
+      description: `Delete one ${queryName}`,
     })
     @RbacPermissionKeyIf(isEnabled('remove'), `${stableKeyPrefix}.remove`)
     @ImmutableLoggingIf(isImmutable('remove'))

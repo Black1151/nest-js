@@ -13,7 +13,7 @@ export class AuthResolver {
    */
   @Mutation(() => AuthTokens)
   @Public()
-  async refresh(
+  async refreshUsersTokens(
     @Args('refreshToken') refreshToken: string,
   ): Promise<AuthTokens> {
     return this.authService.refreshToken(refreshToken);

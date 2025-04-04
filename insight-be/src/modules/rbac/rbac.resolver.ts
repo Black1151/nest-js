@@ -14,7 +14,7 @@ export class UserPermissionsResolver {
   @Query(() => RolesPermissionsResponse)
   @RbacPermissionKey('user.get-roles-and-permissions')
   @ImmutableLogging()
-  async userPermissions(
+  async getUsersRolesAndPermissions(
     @Args('data') data: UserPermissionsInput,
   ): Promise<RolesPermissionsResponse> {
     const user = await this.userService.getUserWithRolesAndPermissions(

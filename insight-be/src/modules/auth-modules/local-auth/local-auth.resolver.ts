@@ -10,7 +10,6 @@ import { AuthTokens } from 'src/modules/auth-modules/auth/dto/res/auth-tokens.dt
 import { LoginRequest } from 'src/modules/auth-modules/auth/dto/req/login-request.dto';
 import { Public } from 'src/decorators/public.decorator';
 import { UsersService } from 'src/modules/user/user.service';
-import { RbacPermissionKey } from 'src/modules/rbac/decorators/resolver-permission-key.decorator';
 
 @Resolver()
 export class LocalAuthResolver {
@@ -24,7 +23,9 @@ export class LocalAuthResolver {
    */
   @Public()
   @Mutation(() => User)
-  async register(@Args('data') data: CreateUserDto): Promise<User> {
+  async registerNewUserLocally(
+    @Args('data') data: CreateUserDto,
+  ): Promise<User> {
     return this.usersService.create(data);
   }
 
@@ -34,7 +35,7 @@ export class LocalAuthResolver {
   @Public()
   @UseGuards(GqlLocalAuthGuard)
   @Mutation(() => AuthTokens)
-  async login(
+  async logUserInWithEmailAndPassword(
     @Args('data') _loginData: LoginRequest,
     @CurrentUser() user: User,
   ): Promise<AuthTokens> {

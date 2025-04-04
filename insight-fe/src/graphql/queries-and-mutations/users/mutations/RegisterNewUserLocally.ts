@@ -1,10 +1,9 @@
 import { gql } from "@apollo/client";
 
-export const FIND_USER_BY_PUBLIC_ID_QUERY = gql`
-  query findUserByPublicId($publicId: String!) {
-    findUserByPublicId(publicId: $publicId) {
+export const RegisterNewUserLocally = gql`
+  mutation RegisterNewUserLocally($data: CreateUserDto!) {
+    registerNewUserLocally(data: $data) {
       id
-      publicId
       firstName
       lastName
       email
@@ -19,7 +18,6 @@ export const FIND_USER_BY_PUBLIC_ID_QUERY = gql`
       roles {
         id
         name
-        description
       }
       createdAt
       updatedAt

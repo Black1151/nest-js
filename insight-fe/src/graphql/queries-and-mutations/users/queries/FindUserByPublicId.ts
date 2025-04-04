@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const FIND_ALL_USERS_QUERY = gql`
-  query findAllUsers($data: FindAllInput!) {
-    usersFindAll(data: $data) {
+export const FindUserByPublicId = gql`
+  query FindUserByPublicId($publicId: String!) {
+    findUserByPublicId(publicId: $publicId) {
       id
       publicId
       firstName

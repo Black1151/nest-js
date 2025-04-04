@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const REMOVE_ROLES_FROM_USER = gql`
-  mutation removeRolesFromUser($publicId: String!, $roleIds: [Int!]!) {
+export const RemoveRolesFromUser = gql`
+  mutation RemoveRolesFromUser($publicId: String!, $roleIds: [Int!]!) {
     removeRolesFromUser(publicId: $publicId, roleIds: $roleIds) {
       id
       firstName
