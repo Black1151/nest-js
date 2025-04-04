@@ -2,18 +2,13 @@
 import { Resolver, Args } from '@nestjs/graphql';
 import { ClassType } from 'type-graphql';
 import { DeepPartial, FindOptionsWhere } from 'typeorm';
-
 import { FindAllInput, FindOneByInput, IdInput } from './base.inputs';
 import { AbstractBaseEntity } from './base.entity';
 import { BaseService } from './base.service';
-
-// Conditional GQL decorators
 import { QueryIf } from 'src/common/decorators/query-if.decorator';
 import { MutationIf } from 'src/common/decorators/mutation-if.decorator';
 import { ImmutableLoggingIf } from 'src/common/decorators/immutable-logging-if.decorator';
 import { RbacPermissionKeyIf } from './decorators/rbac-permission-key-if.decorator';
-
-// Optional: immutability/tamper-proof logging
 
 type OperationName =
   | 'findAll'
@@ -23,11 +18,6 @@ type OperationName =
   | 'update'
   | 'remove';
 
-/**
- * Options for the base resolver.
- * - `enabledOperations`: only these operations appear in the GraphQL schema
- * - `immutableOperations`: which ops should also get immutability logging
- */
 interface BaseResolverOptions<T extends AbstractBaseEntity> {
   queryName: string;
   stableKeyPrefix: string;
@@ -35,10 +25,6 @@ interface BaseResolverOptions<T extends AbstractBaseEntity> {
   immutableOperations?: OperationName[];
 }
 
-/**
- * Create a generic CRUD resolver for any Entity T, with optional
- * "enabledOperations" and "immutableOperations".
- */
 export function createBaseResolver<
   T extends AbstractBaseEntity,
   CreateDto extends DeepPartial<T>,
@@ -49,15 +35,13 @@ export function createBaseResolver<
   updateDtoClass: ClassType<UpdateDto>,
   options: BaseResolverOptions<T>,
 ) {
-  // Destructure
   const {
     queryName,
     stableKeyPrefix,
-    enabledOperations = [], // default to empty => no ops exposed
-    immutableOperations = [], // default to empty => no immutability
+    enabledOperations = [],
+    immutableOperations = [],
   } = options;
 
-  // Helpers
   const isEnabled = (op: OperationName) => enabledOperations.includes(op);
   const isImmutable = (op: OperationName) => immutableOperations.includes(op);
 

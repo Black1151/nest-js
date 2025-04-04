@@ -79,7 +79,7 @@ export type Mutation = {
   addPermissionsToGroup: PermissionGroup;
   addPermissionsToRole: Role;
   addRolesToUser: User;
-  create: User;
+  createUser: User;
   login: AuthTokens;
   /** Create one permission */
   permissionCreate: Permission;
@@ -134,7 +134,7 @@ export type MutationAddRolesToUserArgs = {
 };
 
 
-export type MutationCreateArgs = {
+export type MutationCreateUserArgs = {
   data: CreateUserDto;
 };
 
@@ -246,8 +246,10 @@ export type Permission = {
 
 export type PermissionDto = {
   __typename?: 'PermissionDTO';
+  createdAt: Scalars['DateTime']['output'];
   id: Scalars['Float']['output'];
   name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type PermissionGroup = {
@@ -263,6 +265,7 @@ export type PermissionGroup = {
 
 export type Query = {
   __typename?: 'Query';
+  findUserByPublicId: User;
   /** Find all permission */
   permissionFindAll: Array<Permission>;
   /** Find one permission */
@@ -282,6 +285,12 @@ export type Query = {
   /** Find one role by given conditions */
   roleFindOneBy: Role;
   userPermissions: RolesPermissionsResponse;
+  usersFindAll: Array<User>;
+};
+
+
+export type QueryFindUserByPublicIdArgs = {
+  publicId: Scalars['String']['input'];
 };
 
 
@@ -334,6 +343,11 @@ export type QueryUserPermissionsArgs = {
   data: UserPermissionsInput;
 };
 
+
+export type QueryUsersFindAllArgs = {
+  data: FindAllInput;
+};
+
 export type Role = {
   __typename?: 'Role';
   createdAt: Scalars['DateTime']['output'];
@@ -347,8 +361,10 @@ export type Role = {
 
 export type RoleDto = {
   __typename?: 'RoleDTO';
+  createdAt: Scalars['DateTime']['output'];
   id: Scalars['Float']['output'];
   name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type RolesPermissionsResponse = {
@@ -406,6 +422,7 @@ export type User = {
   lastName: Scalars['String']['output'];
   phoneNumber?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
+  publicId: Scalars['String']['output'];
   roles?: Maybe<Array<Role>>;
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -452,6 +469,64 @@ export type RemovePermissionMutationVariables = Exact<{
 
 
 export type RemovePermissionMutation = { __typename?: 'Mutation', permissionRemove: boolean };
+
+export type CreateUserMutationVariables = Exact<{
+  data: CreateUserDto;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, phoneNumber?: string | null, dateOfBirth?: any | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, county?: string | null, country?: string | null, postalCode?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ __typename?: 'Role', id: string, name: string, description?: string | null }> | null } };
+
+export type RegisterMutationVariables = Exact<{
+  data: CreateUserDto;
+}>;
+
+
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, phoneNumber?: string | null, dateOfBirth?: any | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, county?: string | null, country?: string | null, postalCode?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ __typename?: 'Role', id: string, name: string }> | null } };
+
+export type UserPermissionsQueryVariables = Exact<{
+  publicId: Scalars['String']['input'];
+}>;
+
+
+export type UserPermissionsQuery = { __typename?: 'Query', userPermissions: { __typename?: 'RolesPermissionsResponse', permissions: Array<{ __typename?: 'PermissionDTO', id: number, name: string, createdAt: any, updatedAt: any }>, roles: Array<{ __typename?: 'RoleDTO', id: number, name: string, createdAt: any, updatedAt: any }> } };
+
+export type AddRolesToUserMutationVariables = Exact<{
+  publicId: Scalars['String']['input'];
+  roleIds: Array<Scalars['Int']['input']> | Scalars['Int']['input'];
+}>;
+
+
+export type AddRolesToUserMutation = { __typename?: 'Mutation', addRolesToUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, phoneNumber?: string | null, dateOfBirth?: any | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, county?: string | null, country?: string | null, postalCode?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ __typename?: 'Role', id: string, name: string }> | null } };
+
+export type RemoveRolesFromUserMutationVariables = Exact<{
+  publicId: Scalars['String']['input'];
+  roleIds: Array<Scalars['Int']['input']> | Scalars['Int']['input'];
+}>;
+
+
+export type RemoveRolesFromUserMutation = { __typename?: 'Mutation', removeRolesFromUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, phoneNumber?: string | null, dateOfBirth?: any | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, county?: string | null, country?: string | null, postalCode?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ __typename?: 'Role', id: string, name: string }> | null } };
+
+export type FindAllUsersQueryVariables = Exact<{
+  data: FindAllInput;
+}>;
+
+
+export type FindAllUsersQuery = { __typename?: 'Query', usersFindAll: Array<{ __typename?: 'User', id: string, publicId: string, firstName: string, lastName: string, email: string, phoneNumber?: string | null, dateOfBirth?: any | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, county?: string | null, country?: string | null, postalCode?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ __typename?: 'Role', id: string, name: string, description?: string | null }> | null }> };
+
+export type FindUserByPublicIdQueryVariables = Exact<{
+  publicId: Scalars['String']['input'];
+}>;
+
+
+export type FindUserByPublicIdQuery = { __typename?: 'Query', findUserByPublicId: { __typename?: 'User', id: string, publicId: string, firstName: string, lastName: string, email: string, phoneNumber?: string | null, dateOfBirth?: any | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, county?: string | null, country?: string | null, postalCode?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ __typename?: 'Role', id: string, name: string, description?: string | null }> | null } };
+
+export type GetUserRolesAndPermissionsQueryVariables = Exact<{
+  data: UserPermissionsInput;
+}>;
+
+
+export type GetUserRolesAndPermissionsQuery = { __typename?: 'Query', userPermissions: { __typename?: 'RolesPermissionsResponse', permissions: Array<{ __typename?: 'PermissionDTO', id: number, name: string, createdAt: any, updatedAt: any }>, roles: Array<{ __typename?: 'RoleDTO', id: number, name: string, createdAt: any, updatedAt: any }> } };
 
 
 export const LoginDocument = gql`
@@ -631,3 +706,426 @@ export function useRemovePermissionMutation(baseOptions?: Apollo.MutationHookOpt
 export type RemovePermissionMutationHookResult = ReturnType<typeof useRemovePermissionMutation>;
 export type RemovePermissionMutationResult = Apollo.MutationResult<RemovePermissionMutation>;
 export type RemovePermissionMutationOptions = Apollo.BaseMutationOptions<RemovePermissionMutation, RemovePermissionMutationVariables>;
+export const CreateUserDocument = gql`
+    mutation createUser($data: CreateUserDto!) {
+  createUser(data: $data) {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    dateOfBirth
+    addressLine1
+    addressLine2
+    city
+    county
+    country
+    postalCode
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, CreateUserMutationVariables>;
+
+/**
+ * __useCreateUserMutation__
+ *
+ * To run a mutation, you first call `useCreateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<CreateUserMutation, CreateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, options);
+      }
+export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
+export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
+export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
+export const RegisterDocument = gql`
+    mutation register($data: CreateUserDto!) {
+  register(data: $data) {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    dateOfBirth
+    addressLine1
+    addressLine2
+    city
+    county
+    country
+    postalCode
+    roles {
+      id
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
+      }
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const UserPermissionsDocument = gql`
+    query userPermissions($publicId: String!) {
+  userPermissions(data: {publicId: $publicId}) {
+    permissions {
+      id
+      name
+      createdAt
+      updatedAt
+    }
+    roles {
+      id
+      name
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserPermissionsQuery__
+ *
+ * To run a query within a React component, call `useUserPermissionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserPermissionsQuery({
+ *   variables: {
+ *      publicId: // value for 'publicId'
+ *   },
+ * });
+ */
+export function useUserPermissionsQuery(baseOptions: Apollo.QueryHookOptions<UserPermissionsQuery, UserPermissionsQueryVariables> & ({ variables: UserPermissionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserPermissionsQuery, UserPermissionsQueryVariables>(UserPermissionsDocument, options);
+      }
+export function useUserPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserPermissionsQuery, UserPermissionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserPermissionsQuery, UserPermissionsQueryVariables>(UserPermissionsDocument, options);
+        }
+export function useUserPermissionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UserPermissionsQuery, UserPermissionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<UserPermissionsQuery, UserPermissionsQueryVariables>(UserPermissionsDocument, options);
+        }
+export type UserPermissionsQueryHookResult = ReturnType<typeof useUserPermissionsQuery>;
+export type UserPermissionsLazyQueryHookResult = ReturnType<typeof useUserPermissionsLazyQuery>;
+export type UserPermissionsSuspenseQueryHookResult = ReturnType<typeof useUserPermissionsSuspenseQuery>;
+export type UserPermissionsQueryResult = Apollo.QueryResult<UserPermissionsQuery, UserPermissionsQueryVariables>;
+export const AddRolesToUserDocument = gql`
+    mutation addRolesToUser($publicId: String!, $roleIds: [Int!]!) {
+  addRolesToUser(publicId: $publicId, roleIds: $roleIds) {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    dateOfBirth
+    addressLine1
+    addressLine2
+    city
+    county
+    country
+    postalCode
+    roles {
+      id
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type AddRolesToUserMutationFn = Apollo.MutationFunction<AddRolesToUserMutation, AddRolesToUserMutationVariables>;
+
+/**
+ * __useAddRolesToUserMutation__
+ *
+ * To run a mutation, you first call `useAddRolesToUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddRolesToUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addRolesToUserMutation, { data, loading, error }] = useAddRolesToUserMutation({
+ *   variables: {
+ *      publicId: // value for 'publicId'
+ *      roleIds: // value for 'roleIds'
+ *   },
+ * });
+ */
+export function useAddRolesToUserMutation(baseOptions?: Apollo.MutationHookOptions<AddRolesToUserMutation, AddRolesToUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddRolesToUserMutation, AddRolesToUserMutationVariables>(AddRolesToUserDocument, options);
+      }
+export type AddRolesToUserMutationHookResult = ReturnType<typeof useAddRolesToUserMutation>;
+export type AddRolesToUserMutationResult = Apollo.MutationResult<AddRolesToUserMutation>;
+export type AddRolesToUserMutationOptions = Apollo.BaseMutationOptions<AddRolesToUserMutation, AddRolesToUserMutationVariables>;
+export const RemoveRolesFromUserDocument = gql`
+    mutation removeRolesFromUser($publicId: String!, $roleIds: [Int!]!) {
+  removeRolesFromUser(publicId: $publicId, roleIds: $roleIds) {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    dateOfBirth
+    addressLine1
+    addressLine2
+    city
+    county
+    country
+    postalCode
+    roles {
+      id
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type RemoveRolesFromUserMutationFn = Apollo.MutationFunction<RemoveRolesFromUserMutation, RemoveRolesFromUserMutationVariables>;
+
+/**
+ * __useRemoveRolesFromUserMutation__
+ *
+ * To run a mutation, you first call `useRemoveRolesFromUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveRolesFromUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeRolesFromUserMutation, { data, loading, error }] = useRemoveRolesFromUserMutation({
+ *   variables: {
+ *      publicId: // value for 'publicId'
+ *      roleIds: // value for 'roleIds'
+ *   },
+ * });
+ */
+export function useRemoveRolesFromUserMutation(baseOptions?: Apollo.MutationHookOptions<RemoveRolesFromUserMutation, RemoveRolesFromUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveRolesFromUserMutation, RemoveRolesFromUserMutationVariables>(RemoveRolesFromUserDocument, options);
+      }
+export type RemoveRolesFromUserMutationHookResult = ReturnType<typeof useRemoveRolesFromUserMutation>;
+export type RemoveRolesFromUserMutationResult = Apollo.MutationResult<RemoveRolesFromUserMutation>;
+export type RemoveRolesFromUserMutationOptions = Apollo.BaseMutationOptions<RemoveRolesFromUserMutation, RemoveRolesFromUserMutationVariables>;
+export const FindAllUsersDocument = gql`
+    query findAllUsers($data: FindAllInput!) {
+  usersFindAll(data: $data) {
+    id
+    publicId
+    firstName
+    lastName
+    email
+    phoneNumber
+    dateOfBirth
+    addressLine1
+    addressLine2
+    city
+    county
+    country
+    postalCode
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useFindAllUsersQuery__
+ *
+ * To run a query within a React component, call `useFindAllUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindAllUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindAllUsersQuery({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useFindAllUsersQuery(baseOptions: Apollo.QueryHookOptions<FindAllUsersQuery, FindAllUsersQueryVariables> & ({ variables: FindAllUsersQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindAllUsersQuery, FindAllUsersQueryVariables>(FindAllUsersDocument, options);
+      }
+export function useFindAllUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllUsersQuery, FindAllUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindAllUsersQuery, FindAllUsersQueryVariables>(FindAllUsersDocument, options);
+        }
+export function useFindAllUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<FindAllUsersQuery, FindAllUsersQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FindAllUsersQuery, FindAllUsersQueryVariables>(FindAllUsersDocument, options);
+        }
+export type FindAllUsersQueryHookResult = ReturnType<typeof useFindAllUsersQuery>;
+export type FindAllUsersLazyQueryHookResult = ReturnType<typeof useFindAllUsersLazyQuery>;
+export type FindAllUsersSuspenseQueryHookResult = ReturnType<typeof useFindAllUsersSuspenseQuery>;
+export type FindAllUsersQueryResult = Apollo.QueryResult<FindAllUsersQuery, FindAllUsersQueryVariables>;
+export const FindUserByPublicIdDocument = gql`
+    query findUserByPublicId($publicId: String!) {
+  findUserByPublicId(publicId: $publicId) {
+    id
+    publicId
+    firstName
+    lastName
+    email
+    phoneNumber
+    dateOfBirth
+    addressLine1
+    addressLine2
+    city
+    county
+    country
+    postalCode
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useFindUserByPublicIdQuery__
+ *
+ * To run a query within a React component, call `useFindUserByPublicIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindUserByPublicIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindUserByPublicIdQuery({
+ *   variables: {
+ *      publicId: // value for 'publicId'
+ *   },
+ * });
+ */
+export function useFindUserByPublicIdQuery(baseOptions: Apollo.QueryHookOptions<FindUserByPublicIdQuery, FindUserByPublicIdQueryVariables> & ({ variables: FindUserByPublicIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindUserByPublicIdQuery, FindUserByPublicIdQueryVariables>(FindUserByPublicIdDocument, options);
+      }
+export function useFindUserByPublicIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindUserByPublicIdQuery, FindUserByPublicIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindUserByPublicIdQuery, FindUserByPublicIdQueryVariables>(FindUserByPublicIdDocument, options);
+        }
+export function useFindUserByPublicIdSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<FindUserByPublicIdQuery, FindUserByPublicIdQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FindUserByPublicIdQuery, FindUserByPublicIdQueryVariables>(FindUserByPublicIdDocument, options);
+        }
+export type FindUserByPublicIdQueryHookResult = ReturnType<typeof useFindUserByPublicIdQuery>;
+export type FindUserByPublicIdLazyQueryHookResult = ReturnType<typeof useFindUserByPublicIdLazyQuery>;
+export type FindUserByPublicIdSuspenseQueryHookResult = ReturnType<typeof useFindUserByPublicIdSuspenseQuery>;
+export type FindUserByPublicIdQueryResult = Apollo.QueryResult<FindUserByPublicIdQuery, FindUserByPublicIdQueryVariables>;
+export const GetUserRolesAndPermissionsDocument = gql`
+    query getUserRolesAndPermissions($data: UserPermissionsInput!) {
+  userPermissions(data: $data) {
+    permissions {
+      id
+      name
+      createdAt
+      updatedAt
+    }
+    roles {
+      id
+      name
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserRolesAndPermissionsQuery__
+ *
+ * To run a query within a React component, call `useGetUserRolesAndPermissionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserRolesAndPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserRolesAndPermissionsQuery({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useGetUserRolesAndPermissionsQuery(baseOptions: Apollo.QueryHookOptions<GetUserRolesAndPermissionsQuery, GetUserRolesAndPermissionsQueryVariables> & ({ variables: GetUserRolesAndPermissionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserRolesAndPermissionsQuery, GetUserRolesAndPermissionsQueryVariables>(GetUserRolesAndPermissionsDocument, options);
+      }
+export function useGetUserRolesAndPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserRolesAndPermissionsQuery, GetUserRolesAndPermissionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserRolesAndPermissionsQuery, GetUserRolesAndPermissionsQueryVariables>(GetUserRolesAndPermissionsDocument, options);
+        }
+export function useGetUserRolesAndPermissionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUserRolesAndPermissionsQuery, GetUserRolesAndPermissionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserRolesAndPermissionsQuery, GetUserRolesAndPermissionsQueryVariables>(GetUserRolesAndPermissionsDocument, options);
+        }
+export type GetUserRolesAndPermissionsQueryHookResult = ReturnType<typeof useGetUserRolesAndPermissionsQuery>;
+export type GetUserRolesAndPermissionsLazyQueryHookResult = ReturnType<typeof useGetUserRolesAndPermissionsLazyQuery>;
+export type GetUserRolesAndPermissionsSuspenseQueryHookResult = ReturnType<typeof useGetUserRolesAndPermissionsSuspenseQuery>;
+export type GetUserRolesAndPermissionsQueryResult = Apollo.QueryResult<GetUserRolesAndPermissionsQuery, GetUserRolesAndPermissionsQueryVariables>;

@@ -55,6 +55,10 @@ export class User extends AbstractBaseEntity {
   })
   dateOfBirth?: Date;
 
+  @Field()
+  @Column({ unique: true, update: false })
+  publicId: string;
+
   @Column()
   password: string;
 
@@ -66,9 +70,6 @@ export class User extends AbstractBaseEntity {
 
   @Column({ nullable: true })
   microsoftId?: string;
-
-  @Column({ unique: true })
-  publicId: string;
 
   @BeforeInsert()
   generatePublicId() {

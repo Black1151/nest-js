@@ -18,6 +18,13 @@ export class UsersService {
     private readonly roleRepository: Repository<Role>,
   ) {}
 
+  async findAll(limit?: number, offset?: number): Promise<User[]> {
+    return this.userRepository.find({
+      skip: offset,
+      take: limit,
+    });
+  }
+
   async hashPassword(plainPass: string): Promise<string> {
     const saltRounds = 10;
     return await bcrypt.hash(plainPass, saltRounds);

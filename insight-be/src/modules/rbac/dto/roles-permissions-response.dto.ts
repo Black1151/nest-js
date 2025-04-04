@@ -1,6 +1,6 @@
 // roles-permissions-response.dto.ts
 
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class RoleDTO {
@@ -9,6 +9,12 @@ export class RoleDTO {
 
   @Field()
   name: string;
+
+  @Field()
+  createdAt: Date;
+
+  @Field()
+  updatedAt: Date;
 }
 
 @ObjectType()
@@ -18,6 +24,12 @@ export class PermissionDTO {
 
   @Field()
   name: string;
+
+  @Field()
+  createdAt: Date;
+
+  @Field()
+  updatedAt: Date;
 }
 
 @ObjectType()

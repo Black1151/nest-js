@@ -28,8 +28,13 @@ export class UserPermissionsResolver {
       user.roles?.map((r) => ({
         id: r.id,
         name: r.name,
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
       })) || [];
-    const uniquePermissions = new Map<number, { id: number; name: string }>();
+    const uniquePermissions = new Map<
+      number,
+      { id: number; name: string; createdAt: Date; updatedAt: Date }
+    >();
 
     user.roles?.forEach((role) => {
       role.permissions?.forEach((perm) => {
@@ -37,6 +42,8 @@ export class UserPermissionsResolver {
           uniquePermissions.set(perm.id, {
             id: perm.id,
             name: perm.name,
+            createdAt: perm.createdAt,
+            updatedAt: perm.updatedAt,
           });
         }
       });

@@ -6,15 +6,36 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RbacPermissionKey } from '../rbac/decorators/resolver-permission-key.decorator';
 import { ImmutableLogging } from '../audit/decorators/immutable-logging.decorator';
+import { FindAllInput } from 'src/common/base.inputs';
+import { BaseService } from 'src/common/base.service';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UsersService) {}
 
+  @Query(() => [User])
+  @RbacPermissionKey('user.findAll')
+  @ImmutableLogging()
+  async usersFindAll(
+    @Args('data', { type: () => FindAllInput }) data: FindAllInput,
+  ): Promise<User[]> {
+    const { limit, offset } = data;
+    return this.userService.findAll(limit, offset);
+  }
+
+  @Query(() => User)
+  @RbacPermissionKey('user.get')
+  @ImmutableLogging()
+  async findUserByPublicId(
+    @Args('publicId', { type: () => String }) publicId: string,
+  ): Promise<User> {
+    return this.userService.findOneByPublicId(publicId);
+  }
+
   @Mutation(() => User)
   @RbacPermissionKey('user.create')
   @ImmutableLogging()
-  async create(@Args('data') data: CreateUserDto): Promise<User> {
+  async createUser(@Args('data') data: CreateUserDto): Promise<User> {
     return this.userService.create(data);
   }
 
