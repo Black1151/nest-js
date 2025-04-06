@@ -20,7 +20,7 @@ const queryFetcher: QueryFetcher = async function (
   fetchOptions
 ) {
   // Modify "http://localhost:3000/graphql" if needed
-  const response = await fetch("http://localhost:3000/graphql", {
+  const response = await fetch("http://localhost:3001/api/graphql", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

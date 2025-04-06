@@ -12,6 +12,8 @@ import { NextRequest, NextResponse } from "next/server";
  */
 
 export async function POST(req: NextRequest) {
+  console.log("GraphQL proxy request received");
+
   try {
     const originalBody = await req.text();
     const accessToken = req.cookies.get("accessToken")?.value;
@@ -27,6 +29,8 @@ export async function POST(req: NextRequest) {
         body: originalBody,
       }
     );
+
+    console.log("NestJS response status:", nestResp.status);
 
     if (nestResp.status === 401) {
       const refreshResp = await fetch(
@@ -68,6 +72,8 @@ export async function POST(req: NextRequest) {
     }
 
     const respText = await nestResp.text();
+
+    console.log("NestJS response text:", respText);
     return new NextResponse(respText, {
       status: nestResp.status,
       headers: { "Content-Type": "application/json" },

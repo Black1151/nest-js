@@ -347,7 +347,6 @@ export const generatedSchema = {
   },
   query: {
     __typename: { __type: "String!" },
-    findUserByPublicId: { __type: "User!", __args: { publicId: "String!" } },
     getAllPermission: {
       __type: "[Permission!]!",
       __args: { data: "FindAllInput!" },
@@ -363,6 +362,7 @@ export const generatedSchema = {
       __type: "Permission!",
       __args: { data: "FindOneByInput!" },
     },
+    getUserByPublicId: { __type: "User!", __args: { publicId: "String!" } },
     getUsersRolesAndPermissions: {
       __type: "RolesPermissionsResponse!",
       __args: { data: "UserPermissionsInput!" },
@@ -553,7 +553,6 @@ export interface Mutation {
 
 export interface Query {
   __typename?: "Query";
-  findUserByPublicId: (args: { publicId: ScalarsEnums["String"] }) => User;
   /**
    * Returns all Permission
    */
@@ -577,6 +576,7 @@ export interface Query {
    * Returns one Permission by given conditions
    */
   getPermissionBy: (args: { data: FindOneByInput }) => Permission;
+  getUserByPublicId: (args: { publicId: ScalarsEnums["String"] }) => User;
   getUsersRolesAndPermissions: (args: {
     data: UserPermissionsInput;
   }) => RolesPermissionsResponse;

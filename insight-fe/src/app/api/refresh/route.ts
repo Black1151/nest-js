@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           query: `
           mutation Refresh($refreshToken: String!) {
-            refresh(refreshToken: $refreshToken) {
+            refreshUsersTokens(refreshToken: $refreshToken) {
               accessToken
               refreshToken
             }
@@ -35,14 +35,14 @@ export async function POST(req: NextRequest) {
     }
 
     const { data, errors } = await nestResp.json();
-    if (errors || !data?.refresh?.accessToken) {
+    if (errors || !data?.refreshUsersTokens?.accessToken) {
       return NextResponse.json(
         { error: "Invalid refresh token" },
         { status: 401 }
       );
     }
 
-    const { accessToken, refreshToken: newRefresh } = data.refresh;
+    const { accessToken, refreshToken: newRefresh } = data.refreshUsersTokens;
 
     // 2) Set new cookies
     const res = NextResponse.json({ success: true });

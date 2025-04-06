@@ -26,7 +26,7 @@ export class UserResolver {
   @Query(() => User)
   @RbacPermissionKey('user.get')
   @ImmutableLogging()
-  async findUserByPublicId(
+  async getUserByPublicId(
     @Args('publicId', { type: () => String }) publicId: string,
   ): Promise<User> {
     return this.userService.findOneByPublicId(publicId);

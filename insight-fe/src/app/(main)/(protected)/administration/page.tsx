@@ -1,28 +1,8 @@
 import { ContentGrid } from "@/components/ContentGrid";
-import { ContentCard } from "@/components/layout/Card";
-import DataTable from "@/components/tables/DataTable";
+import AdministrationSearchTableSection from "./_components/sections/user/UserListTable";
+import { UserDetailSection } from "./_components/sections/user/UserDetailSection";
+import { AdministrationPageClient } from "./AdministrationPageClient";
 
 export default function AdministrationPage() {
-  return (
-    <ContentGrid gridTemplateColumns="1fr 1fr">
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard minHeight="500px">Content here </ContentCard>
-      <ContentCard minHeight="300px">Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-      <ContentCard>Content here</ContentCard>
-    </ContentGrid>
-  );
+  return <AdministrationPageClient />;
 }
