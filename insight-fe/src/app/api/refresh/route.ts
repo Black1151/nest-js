@@ -5,9 +5,11 @@ export async function POST(req: NextRequest) {
     const refreshToken = req.cookies.get("refreshToken")?.value;
 
     if (!refreshToken) {
+      console.log("No refresh token");
       return NextResponse.json({ error: "No refresh token" }, { status: 401 });
     }
 
+    // 1) Call your NestJS backend to refresh
     const nestResp = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
       {
@@ -27,7 +29,10 @@ export async function POST(req: NextRequest) {
       }
     );
 
+    // console.log(nestResp.);
+
     if (!nestResp.ok) {
+      console.log("Refresh request failedYYY");
       return NextResponse.json(
         { error: "Refresh request failed" },
         { status: 401 }
@@ -45,6 +50,7 @@ export async function POST(req: NextRequest) {
 
     const { accessToken, refreshToken: newRefresh } = data.refreshUsersTokens;
 
+    // 2) Set new cookies
     const res = NextResponse.json({
       success: true,
       accessToken,
@@ -52,21 +58,22 @@ export async function POST(req: NextRequest) {
     });
     res.cookies.set("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
+      secure: false, // in dev only
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 15,
+      maxAge: 60 * 15, // 15 minutes
     });
     res.cookies.set("refreshToken", newRefresh, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
     return res;
   } catch (err) {
+    console.error("Refresh error: ", err);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
