@@ -1,6 +1,6 @@
 import { useQuery } from "@/gqty";
 import { Card, VStack, Text, Heading, Divider } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 interface UserDetailSectionProps {
   publicId: string | null;
@@ -9,17 +9,29 @@ interface UserDetailSectionProps {
 export const UserDetailSection = ({ publicId }: UserDetailSectionProps) => {
   const query = useQuery();
 
-  console.log("USER DETAILS SECTION RENDER");
+  const selectedUser = useMemo(() => {
+    return publicId ? query.getUserByPublicId({ publicId }) : null;
+  }, [publicId, query]);
 
-  const selectedUser = publicId ? query.getUserByPublicId({ publicId }) : null;
-
-  if (!selectedUser) {
+  const emptyStateCard = useMemo(() => {
     return (
       <Card p={4}>
         <Text>No user selected.</Text>
       </Card>
     );
+  }, []);
+
+  if (!selectedUser) {
+    return emptyStateCard;
   }
+
+  const createdAtFormatted = new Date(selectedUser.createdAt).toLocaleString();
+  const updatedAtFormatted = new Date(selectedUser.updatedAt).toLocaleString();
+
+  // Format roles once during render
+  const rolesFormatted = selectedUser.roles
+    ?.map((role: any) => role.name)
+    .join(", ");
 
   return (
     <Card p={6}>
@@ -66,8 +78,7 @@ export const UserDetailSection = ({ publicId }: UserDetailSectionProps) => {
         <Divider />
 
         <Text>
-          <strong>Roles:</strong>{" "}
-          {selectedUser.roles?.map((role: any) => role.name).join(", ")}
+          <strong>Roles:</strong> {rolesFormatted}
         </Text>
         <Text>
           <strong>User ID:</strong> {selectedUser.id}
@@ -76,12 +87,10 @@ export const UserDetailSection = ({ publicId }: UserDetailSectionProps) => {
           <strong>Public ID:</strong> {selectedUser.publicId}
         </Text>
         <Text>
-          <strong>Created At:</strong>{" "}
-          {new Date(selectedUser.createdAt).toLocaleString()}
+          <strong>Created At:</strong> {createdAtFormatted}
         </Text>
         <Text>
-          <strong>Updated At:</strong>{" "}
-          {new Date(selectedUser.updatedAt).toLocaleString()}
+          <strong>Updated At:</strong> {updatedAtFormatted}
         </Text>
       </VStack>
     </Card>
