@@ -2,7 +2,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AuthTokens } from './dto/res/auth-tokens.dto';
-import { Public } from 'src/decorators/public.decorator';
+import { PublicRoute } from 'src/decorators/public.decorator';
 
 @Resolver()
 export class AuthResolver {
@@ -12,7 +12,7 @@ export class AuthResolver {
    * Refresh your tokens
    */
   @Mutation(() => AuthTokens)
-  @Public()
+  @PublicRoute()
   async refreshUsersTokens(
     @Args('refreshToken') refreshToken: string,
   ): Promise<AuthTokens> {

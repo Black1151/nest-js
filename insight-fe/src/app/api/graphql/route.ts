@@ -1,18 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-/**
- * GraphQL API route handler that proxies requests to the NestJS backend.
- * Handles authentication by:
- * 1. Forwarding the access token from cookies to the backend
- * 2. Automatically refreshing expired tokens and retrying failed requests
- * 3. Returning appropriate error responses if authentication fails
- *
- * @param req The incoming Next.js request containing GraphQL query/mutation
- * @returns NextResponse with the GraphQL response from the backend
- */
-
 export async function POST(req: NextRequest) {
-  console.log("GraphQL proxy request received");
+  let refreshSetCookieHeaders: string[] | undefined;
 
   try {
     const originalBody = await req.text();
@@ -30,30 +19,76 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    console.log("NestJS response status:", nestResp.status);
+    let nestJson;
+    try {
+      nestJson = await nestResp.json();
+    } catch (err) {
+      const text = await nestResp.text();
+      return new NextResponse(text, {
+        status: nestResp.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
-    if (nestResp.status === 401) {
+    const errors = nestJson?.errors;
+
+    const isUnauthorized = Array.isArray(errors)
+      ? errors.some(
+          (e: any) =>
+            e?.extensions?.originalError?.statusCode === 401 ||
+            e?.extensions?.code === "UNAUTHENTICATED"
+        )
+      : false;
+
+    if (isUnauthorized) {
+      const cookieHeader = req.headers.get("cookie") ?? "";
+
       const refreshResp = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/refresh`,
+        `${process.env.NEXT_PUBLIC_URL}/api/refresh`,
         {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: cookieHeader,
+          },
         }
       );
 
+      const setCookies: string[] = [];
+      refreshResp.headers.forEach((value, key) => {
+        if (key.toLowerCase() === "set-cookie") {
+          setCookies.push(value);
+        }
+      });
+      if (setCookies.length > 0) {
+        refreshSetCookieHeaders = setCookies;
+      }
+
       if (refreshResp.ok) {
-        const data = await refreshResp.json();
-        if (data?.accessToken) {
+        const refreshData = await refreshResp.json();
+
+        if (refreshData?.accessToken) {
           nestResp = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${data.accessToken}`,
+                Authorization: `Bearer ${refreshData.accessToken}`,
               },
               body: originalBody,
             }
           );
+
+          try {
+            nestJson = await nestResp.json();
+          } catch (err) {
+            const text = await nestResp.text();
+            return new NextResponse(text, {
+              status: nestResp.status,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
         } else {
           return new NextResponse(
             JSON.stringify({ error: "Invalid refresh response" }),
@@ -71,15 +106,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const respText = await nestResp.text();
-
-    console.log("NestJS response text:", respText);
-    return new NextResponse(respText, {
+    const response = new NextResponse(JSON.stringify(nestJson), {
       status: nestResp.status,
       headers: { "Content-Type": "application/json" },
     });
+
+    if (refreshSetCookieHeaders) {
+      for (const cookie of refreshSetCookieHeaders) {
+        response.headers.append("Set-Cookie", cookie);
+      }
+    }
+
+    return response;
   } catch (err) {
-    console.error("GraphQL proxy error:", err);
     return NextResponse.json(
       { errors: [{ message: "Internal Server Error" }] },
       { status: 500 }

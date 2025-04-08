@@ -22,6 +22,7 @@ const queryFetcher: QueryFetcher = async function (
   // Modify "http://localhost:3000/graphql" if needed
   const response = await fetch("http://localhost:3001/api/graphql", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -30,7 +31,7 @@ const queryFetcher: QueryFetcher = async function (
       variables,
       operationName,
     }),
-    mode: "cors",
+    // mode: "cors",
     ...fetchOptions,
   });
 

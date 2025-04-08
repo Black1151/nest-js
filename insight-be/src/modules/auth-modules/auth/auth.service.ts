@@ -64,6 +64,8 @@ export class AuthService {
    * Verify refresh token, issue new access + refresh tokens
    */
   async refreshToken(token: string): Promise<AuthTokens> {
+    console.log('REFRESH TOKEN BACKEND HIT:', token);
+
     try {
       const payload = this.jwtService.verify(token, {
         secret:

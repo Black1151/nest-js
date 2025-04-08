@@ -10,7 +10,7 @@ import { Reflector } from '@nestjs/core';
 import { ApiPermissionMappingService } from 'src/modules/rbac/sub/api-permissions-mapping/api-permission-mapping.service';
 import { UsersService } from 'src/modules/user/user.service';
 import { PERMISSION_KEY_METADATA } from '../decorators/resolver-permission-key.decorator';
-import { IS_PUBLIC_KEY } from 'src/decorators/public.decorator';
+import { IS_PUBLIC_ROUTE_KEY } from 'src/decorators/public.decorator';
 
 @Injectable()
 export class ApiPermissionsGuard implements CanActivate {
@@ -21,22 +21,26 @@ export class ApiPermissionsGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const ctx = GqlExecutionContext.create(context);
-    const { req } = ctx.getContext();
+    const gqlCtx = GqlExecutionContext.create(context);
+    const { req } = gqlCtx.getContext();
 
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const handler = gqlCtx.getHandler();
+    const clazz = gqlCtx.getClass();
+
+    const isPublic = this.reflector.getAllAndOverride<boolean>(
+      IS_PUBLIC_ROUTE_KEY,
+      [gqlCtx.getHandler(), context.getClass()],
+    );
+
     if (isPublic) {
       return true;
     }
 
-    const handler = context.getHandler();
     const permissionKey = this.reflector.get<string>(
       PERMISSION_KEY_METADATA,
       handler,
     );
+
     if (!permissionKey) {
       throw new UnauthorizedException(
         'No permission key found on a non-public route',

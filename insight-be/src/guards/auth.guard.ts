@@ -1,4 +1,3 @@
-// src/guards/gql-jwt-auth.guard.ts
 import {
   ExecutionContext,
   Injectable,
@@ -7,7 +6,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from 'src/decorators/public.decorator';
+import { IS_PUBLIC_ROUTE_KEY } from 'src/decorators/public.decorator';
 import { UsersService } from 'src/modules/user/user.service';
 
 @Injectable()
@@ -20,10 +19,12 @@ export class GqlJwtAuthGuard extends AuthGuard('jwt') {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const gqlCtx = GqlExecutionContext.create(context);
+
+    const isPublic = this.reflector.getAllAndOverride<boolean>(
+      IS_PUBLIC_ROUTE_KEY,
+      [gqlCtx.getHandler(), gqlCtx.getClass()],
+    );
 
     if (isPublic) {
       return true;

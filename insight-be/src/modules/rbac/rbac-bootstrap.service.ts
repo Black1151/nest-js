@@ -3,7 +3,7 @@ import { DiscoveryService, Reflector } from '@nestjs/core';
 import { ApiPermissionMappingService } from './sub/api-permissions-mapping/api-permission-mapping.service';
 import { PermissionService } from './sub/permission/permission.service';
 import { PERMISSION_KEY_METADATA } from './decorators/resolver-permission-key.decorator';
-import { IS_PUBLIC_KEY } from 'src/decorators/public.decorator';
+import { IS_PUBLIC_ROUTE_KEY } from 'src/decorators/public.decorator';
 
 @Injectable()
 export class RbacBootstrapService implements OnModuleInit {
@@ -40,7 +40,7 @@ export class RbacBootstrapService implements OnModuleInit {
           const methodRef = currentProto[methodName];
 
           const isPublic = this.reflector.getAllAndOverride<boolean>(
-            IS_PUBLIC_KEY,
+            IS_PUBLIC_ROUTE_KEY,
             [methodRef, currentProto.constructor],
           );
 
@@ -48,11 +48,6 @@ export class RbacBootstrapService implements OnModuleInit {
             PERMISSION_KEY_METADATA,
             methodRef,
           );
-
-          // console.log(
-          //   `RbacBootstrapService: Found method "${methodName}" in ${resolverName}`,
-          //   `=> isPublic=${isPublic}, stableKey=${stableKey}`,
-          // );
 
           if (isPublic) {
             continue;

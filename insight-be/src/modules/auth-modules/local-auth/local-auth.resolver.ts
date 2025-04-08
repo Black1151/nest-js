@@ -8,7 +8,7 @@ import { User } from 'src/modules/user/user.model';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { AuthTokens } from 'src/modules/auth-modules/auth/dto/res/auth-tokens.dto';
 import { LoginRequest } from 'src/modules/auth-modules/auth/dto/req/login-request.dto';
-import { Public } from 'src/decorators/public.decorator';
+import { PublicRoute } from 'src/decorators/public.decorator';
 import { UsersService } from 'src/modules/user/user.service';
 
 @Resolver()
@@ -21,8 +21,8 @@ export class LocalAuthResolver {
   /**
    * Register a new user, hashing the password before storing.
    */
-  @Public()
   @Mutation(() => User)
+  @PublicRoute()
   async registerNewUserLocally(
     @Args('data') data: CreateUserDto,
   ): Promise<User> {
@@ -32,9 +32,9 @@ export class LocalAuthResolver {
   /**
    * Login with email + password => returns access + refresh tokens
    */
-  @Public()
-  @UseGuards(GqlLocalAuthGuard)
   @Mutation(() => AuthTokens)
+  @UseGuards(GqlLocalAuthGuard)
+  @PublicRoute()
   async logUserInWithEmailAndPassword(
     @Args('data') _loginData: LoginRequest,
     @CurrentUser() user: User,
