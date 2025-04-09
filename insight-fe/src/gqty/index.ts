@@ -4,8 +4,6 @@
  */
 import { createReactClient } from "@gqty/react";
 import { Cache, createClient, type QueryFetcher } from "gqty";
-// import defaultResponseHandler only if you still want to use it later
-// import { defaultResponseHandler } from "gqty";
 
 import {
   generatedSchema,

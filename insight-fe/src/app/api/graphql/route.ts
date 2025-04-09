@@ -19,10 +19,8 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    // We simply pass along the response from the Nest server
     const textBody = await nestResp.text();
 
-    // Return the response with the same status as Nest gave us
     const response = new NextResponse(textBody, {
       status: nestResp.status,
       headers: { "Content-Type": "application/json" },
