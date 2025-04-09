@@ -3,6 +3,7 @@
 import { ContentCard } from "@/components/layout/Card";
 import { DataTableSimple } from "@/components/tables/DataTableSimple";
 import { useQuery } from "@/gqty";
+import { Button } from "@chakra-ui/react";
 import { useCallback, useMemo } from "react";
 
 interface UserListTableProps {
