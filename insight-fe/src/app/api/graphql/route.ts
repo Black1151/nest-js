@@ -5,6 +5,8 @@ export async function POST(req: NextRequest) {
     const originalBody = await req.text();
     const accessToken = req.cookies.get("accessToken")?.value;
 
+    console.log(originalBody);
+
     const nestResp = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
       {

@@ -12,7 +12,7 @@ import {
   scalarsEnumsHash,
   type GeneratedSchema,
 } from "./schema.generated";
-// import { ensureRefresh } from "@/refreshClient";
+import { ensureRefresh } from "@/refreshClient";
 
 const queryFetcher: QueryFetcher = async function (
   { query, variables, operationName },
@@ -60,14 +60,7 @@ const queryFetcher: QueryFetcher = async function (
   // 2) If unauthorized, attempt refresh and retry once
   if (isUnauthorized) {
     try {
-      const resp = await fetch("/api/refresh", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (!resp.ok) {
-        throw new Error("Refresh failed");
-      }
+      await ensureRefresh();
 
       // 2a) Retry the exact same request
       response = await fetch("/api/graphql", {
@@ -114,8 +107,8 @@ const queryFetcher: QueryFetcher = async function (
 };
 
 const cache = new Cache(undefined, {
-  maxAge: 0,
-  staleWhileRevalidate: 5 * 60 * 1000,
+  maxAge: 60 * 10000, // 10 minutes
+  staleWhileRevalidate: 5 * 60 * 1000, // 5 minutes
   normalization: true,
 });
 
