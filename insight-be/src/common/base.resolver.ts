@@ -9,6 +9,7 @@ import { QueryIf } from 'src/common/decorators/query-if.decorator';
 import { MutationIf } from 'src/common/decorators/mutation-if.decorator';
 import { ImmutableLoggingIf } from 'src/common/decorators/immutable-logging-if.decorator';
 import { RbacPermissionKeyIf } from './decorators/rbac-permission-key-if.decorator';
+import { UiErrorMessageOverride } from 'src/decorators/error-message-override.decorator';
 
 type OperationName =
   | 'findAll'
@@ -108,6 +109,12 @@ export function createBaseResolver<
     })
     @RbacPermissionKeyIf(isEnabled('create'), `${stableKeyPrefix}.create`)
     @ImmutableLoggingIf(isImmutable('create'))
+    @UiErrorMessageOverride([
+      {
+        codeName: 'unique_violation',
+        message: `Cannot create: A ${queryName} with this name alrady exists.`,
+      },
+    ])
     async create(
       @Args('data', { type: () => createDtoClass }) data: CreateDto,
     ): Promise<T> {
@@ -123,6 +130,12 @@ export function createBaseResolver<
     })
     @RbacPermissionKeyIf(isEnabled('update'), `${stableKeyPrefix}.update`)
     @ImmutableLoggingIf(isImmutable('update'))
+    @UiErrorMessageOverride([
+      {
+        codeName: 'unique_violation',
+        message: `Cannot update: A ${queryName} with this name alrady exists.`,
+      },
+    ])
     async update(
       @Args('data', { type: () => updateDtoClass }) data: UpdateDto,
     ): Promise<T> {

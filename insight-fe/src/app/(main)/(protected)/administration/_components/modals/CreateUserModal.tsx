@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -15,23 +17,23 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { CreateUserDto, useMutation, useQuery } from "@/gqty";
+import { CreateUserDto, useMutation } from "@/gqty";
 
 interface CreateUserModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-// Example placeholder mutation (adjust to your schema/mutation).
-// This assumes you have a mutation createUser(data: CreateUserDto) returning some response
 export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
-  const [createUserMutation, { data, error }] = useMutation(
+  const [createUser, { data, error, isLoading }] = useMutation(
     (mutation, args: { data: CreateUserDto }) => {
-      return mutation.createUser({
+      const user = mutation.createUser({
         data: {
           ...args.data,
         },
       });
+      user.id;
+      return user;
     }
   );
 
@@ -44,11 +46,15 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
 
   const onSubmit = async (formData: CreateUserDto) => {
     try {
-      await createUserMutation({ args: { data: formData } });
+      const preparedData = {
+        ...formData,
+        dateOfBirth: formData.dateOfBirth || undefined,
+      };
+      await createUser({ args: { data: preparedData } });
       reset();
       onClose();
     } catch (e) {
-      console.error("Error creating user", e);
+      console.error("Error creating user:", e);
     }
   };
 
@@ -77,7 +83,9 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
               <FormLabel>Last Name</FormLabel>
               <Input
                 type="text"
-                {...register("lastName", { required: "Last name is required" })}
+                {...register("lastName", {
+                  required: "Last name is required",
+                })}
               />
               <FormErrorMessage>{errors.lastName?.message}</FormErrorMessage>
             </FormControl>
@@ -98,6 +106,7 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
               <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
 
+            {/* Phone Number */}
             <FormControl mb={4} isInvalid={!!errors.phoneNumber}>
               <FormLabel>Phone Number</FormLabel>
               <Input
@@ -112,49 +121,47 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
               <FormErrorMessage>{errors.phoneNumber?.message}</FormErrorMessage>
             </FormControl>
 
-            {/* Address Line 1 (optional) */}
+            {/* Address Line 1 */}
             <FormControl mb={4}>
               <FormLabel>Address Line 1</FormLabel>
               <Input type="text" {...register("addressLine1")} />
             </FormControl>
 
-            {/* Address Line 2 (optional) */}
+            {/* Address Line 2 */}
             <FormControl mb={4}>
               <FormLabel>Address Line 2</FormLabel>
               <Input type="text" {...register("addressLine2")} />
             </FormControl>
 
-            {/* City (optional) */}
+            {/* City */}
             <FormControl mb={4}>
               <FormLabel>City</FormLabel>
               <Input type="text" {...register("city")} />
             </FormControl>
 
-            {/* County (optional) */}
+            {/* County */}
             <FormControl mb={4}>
               <FormLabel>County</FormLabel>
               <Input type="text" {...register("county")} />
             </FormControl>
 
-            {/* Postal Code (optional) */}
+            {/* Postal Code */}
             <FormControl mb={4}>
               <FormLabel>Postal Code</FormLabel>
               <Input type="text" {...register("postalCode")} />
             </FormControl>
 
-            {/* Country (optional) */}
+            {/* Country */}
             <FormControl mb={4}>
               <FormLabel>Country</FormLabel>
               <Select placeholder="Select country" {...register("country")}>
-                {/* Populate with country options as needed */}
                 <option value="US">United States</option>
                 <option value="GB">United Kingdom</option>
                 <option value="CA">Canada</option>
-                {/* Add more as necessary */}
               </Select>
             </FormControl>
 
-            {/* Date of Birth (optional) */}
+            {/* Date of Birth */}
             <FormControl mb={4}>
               <FormLabel>Date of Birth</FormLabel>
               <Input type="date" {...register("dateOfBirth")} />
@@ -171,7 +178,6 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
                     value: 12,
                     message: "Password must be at least 12 characters long",
                   },
-                  // If you'd like to check for uppercase, numbers, and symbols:
                   validate: (value: string) => {
                     const hasUpperCase = /[A-Z]/.test(value);
                     const hasLowerCase = /[a-z]/.test(value);

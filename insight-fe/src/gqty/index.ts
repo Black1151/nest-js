@@ -1,33 +1,26 @@
-/**
- * GQty: You can safely modify this file based on your needs.
- * This example assumes Next.js "app/api/graphql" is your proxy route.
- */
+// gqlClient.ts
 import { createReactClient } from "@gqty/react";
 import { Cache, createClient, type QueryFetcher } from "gqty";
-
 import {
   generatedSchema,
   scalarsEnumsHash,
   type GeneratedSchema,
 } from "./schema.generated";
 import { ensureRefresh } from "@/refreshClient";
+import { handleGraphQLErrors } from "@/components/error/gqlErrorHandler";
 
 const queryFetcher: QueryFetcher = async function (
   { query, variables, operationName },
   fetchOptions
 ) {
-  // 1) First request
   let response = await fetch("/api/graphql", {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query, variables, operationName }),
     ...fetchOptions,
   });
 
-  // Parse text manually so we can decide how to handle 401
   let parsedBody: any = null;
   let isUnauthorized = response.status === 401;
 
@@ -36,13 +29,11 @@ const queryFetcher: QueryFetcher = async function (
     try {
       parsedBody = JSON.parse(text);
     } catch (err) {
-      // If JSON parse fails, it might be a server error or non-JSON response
       throw new Error(
         `Invalid JSON response (status: ${response.status}): ${text}`
       );
     }
 
-    // Check for GraphQL-based UNAUTHENTICATED errors
     if (
       Array.isArray(parsedBody?.errors) &&
       parsedBody.errors.some(
@@ -55,23 +46,18 @@ const queryFetcher: QueryFetcher = async function (
     }
   }
 
-  // 2) If unauthorized, attempt refresh and retry once
   if (isUnauthorized) {
     try {
       await ensureRefresh();
 
-      // 2a) Retry the exact same request
       response = await fetch("/api/graphql", {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query, variables, operationName }),
         ...fetchOptions,
       });
 
-      // 2b) parse the second response
       const text = await response.text();
       try {
         parsedBody = JSON.parse(text);
@@ -81,7 +67,6 @@ const queryFetcher: QueryFetcher = async function (
         );
       }
 
-      // If still 401 or an auth error, give up
       if (
         response.status === 401 ||
         (Array.isArray(parsedBody?.errors) &&
@@ -94,13 +79,27 @@ const queryFetcher: QueryFetcher = async function (
         throw new Error("Unauthorized (even after refresh)");
       }
     } catch (err) {
-      // Refresh failed or second call still returned 401
       throw err;
     }
   }
 
-  // 3) If we made it here, either we weren’t unauthorized at all,
-  //    or the refresh + retry succeeded. Return the final data.
+  // dev-time console log
+  if (
+    process.env.NODE_ENV === "development" &&
+    Array.isArray(parsedBody?.errors) &&
+    parsedBody.errors.length > 0
+  ) {
+    console.error(
+      "[queryFetcher] GraphQL Errors detected:",
+      JSON.stringify(parsedBody.errors, null, 2)
+    );
+  }
+
+  // Emit errors to frontend toast
+  if (Array.isArray(parsedBody?.errors) && parsedBody.errors.length > 0) {
+    handleGraphQLErrors(parsedBody.errors);
+  }
+
   return parsedBody;
 };
 
@@ -119,7 +118,6 @@ export const client = createClient<GeneratedSchema>({
   },
 });
 
-// Standard GQty exports
 export const { resolve, subscribe, schema } = client;
 export const {
   query,

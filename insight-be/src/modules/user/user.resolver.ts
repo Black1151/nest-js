@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { RbacPermissionKey } from '../rbac/decorators/resolver-permission-key.decorator';
 import { ImmutableLogging } from '../audit/decorators/immutable-logging.decorator';
 import { FindAllInput } from 'src/common/base.inputs';
-import { BaseService } from 'src/common/base.service';
+import { UiErrorMessageOverride } from 'src/decorators/error-message-override.decorator';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -33,6 +33,12 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UiErrorMessageOverride([
+    {
+      codeName: 'unique_violation',
+      message: 'A user with this email address already exists.',
+    },
+  ])
   @RbacPermissionKey('user.create')
   @ImmutableLogging()
   async createUser(@Args('data') data: CreateUserDto): Promise<User> {
