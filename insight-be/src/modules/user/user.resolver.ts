@@ -33,14 +33,14 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @RbacPermissionKey('user.create')
+  @ImmutableLogging()
   @UiErrorMessageOverride([
     {
       codeName: 'unique_violation',
       message: 'A user with this email address already exists.',
     },
   ])
-  @RbacPermissionKey('user.create')
-  @ImmutableLogging()
   async createUser(@Args('data') data: CreateUserDto): Promise<User> {
     return this.userService.create(data);
   }
@@ -48,6 +48,12 @@ export class UserResolver {
   @Mutation(() => User)
   @RbacPermissionKey('user.update')
   @ImmutableLogging()
+  @UiErrorMessageOverride([
+    {
+      codeName: 'unique_violation',
+      message: 'A user with this email address already exists.',
+    },
+  ])
   async updateUserByPublicId(
     @Args('publicId', { type: () => String }) publicId: string,
     @Args('data') data: UpdateUserDto,

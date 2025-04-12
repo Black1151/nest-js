@@ -109,13 +109,11 @@ export interface UpdateUserDto {
   country?: InputMaybe<Scalars["String"]["input"]>;
   county?: InputMaybe<Scalars["String"]["input"]>;
   dateOfBirth?: InputMaybe<Scalars["DateTime"]["input"]>;
-  email?: InputMaybe<Scalars["String"]["input"]>;
-  firstName?: InputMaybe<Scalars["String"]["input"]>;
-  lastName?: InputMaybe<Scalars["String"]["input"]>;
-  password?: InputMaybe<Scalars["String"]["input"]>;
+  email: Scalars["String"]["input"];
+  firstName: Scalars["String"]["input"];
+  lastName: Scalars["String"]["input"];
   phoneNumber?: InputMaybe<Scalars["String"]["input"]>;
   postalCode?: InputMaybe<Scalars["String"]["input"]>;
-  publicId: Scalars["String"]["input"];
 }
 
 export interface UserPermissionsInput {
@@ -243,13 +241,11 @@ export const generatedSchema = {
     country: { __type: "String" },
     county: { __type: "String" },
     dateOfBirth: { __type: "DateTime" },
-    email: { __type: "String" },
-    firstName: { __type: "String" },
-    lastName: { __type: "String" },
-    password: { __type: "String" },
+    email: { __type: "String!" },
+    firstName: { __type: "String!" },
+    lastName: { __type: "String!" },
     phoneNumber: { __type: "String" },
     postalCode: { __type: "String" },
-    publicId: { __type: "String!" },
   },
   User: {
     __typename: { __type: "String!" },

@@ -3,8 +3,7 @@
 import { ContentGrid } from "@/components/ContentGrid";
 import { useState } from "react";
 import UserListTable from "./_components/sections/user/UserListTable";
-import { UserDetailSection } from "./_components/sections/user/UserDetailSection";
-import { CreateUserModal } from "./_components/modals/CreateUserModal";
+import { UserDetailSection } from "./_components/sections/user/user-details-section/UserDetailSection";
 import { CreateUserSection } from "./_components/sections/user/CreateUserSection";
 
 export const AdministrationPageClient = () => {
