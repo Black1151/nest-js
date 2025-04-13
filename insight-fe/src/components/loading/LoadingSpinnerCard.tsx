@@ -1,4 +1,4 @@
-import { Box, Spinner, Text } from "@chakra-ui/react";
+import { Box, Center, Flex, Spinner, Text } from "@chakra-ui/react";
 import { ContentCard } from "../layout/Card";
 
 interface LoadingSpinnerCardProps {
@@ -8,15 +8,12 @@ interface LoadingSpinnerCardProps {
 export const LoadingSpinnerCard = ({ text }: LoadingSpinnerCardProps) => {
   return (
     <ContentCard>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexDirection="column"
-      >
-        <Spinner />
-        <Text>{text}</Text>
-      </Box>
+      <Center flexDirection="column">
+        <Flex alignItems="center" flexDirection="column" gap={4}>
+          <Spinner size="xl" />
+          <Text fontSize="2xl">{text}</Text>
+        </Flex>
+      </Center>
     </ContentCard>
   );
 };

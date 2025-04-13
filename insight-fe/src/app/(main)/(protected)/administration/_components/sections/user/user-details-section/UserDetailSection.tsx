@@ -54,14 +54,12 @@ export const UserDetailSection = ({ publicId }: UserDetailSectionProps) => {
             <HStack spacing={4} pt={4}>
               <Button
                 colorScheme="blue"
-                // isLoading={!publicId}
                 onClick={() => setIsUpdateUserModalOpen(true)}
               >
                 Update User
               </Button>
               <Button
                 colorScheme="red"
-                // isLoading={!publicId}
                 onClick={() => setIsDeleteUserModalOpen(true)}
               >
                 Delete User
@@ -77,12 +75,12 @@ export const UserDetailSection = ({ publicId }: UserDetailSectionProps) => {
       <UpdateUserModal
         isOpen={isUpdateUserModalOpen}
         onClose={() => setIsUpdateUserModalOpen(false)}
-        publicId={publicId ?? ""}
+        publicId={publicId}
       />
       <DeleteUserModal
         isOpen={isDeleteUserModalOpen}
         onClose={() => setIsDeleteUserModalOpen(false)}
-        publicId={publicId ?? ""}
+        publicId={publicId}
       />
     </>
   );

@@ -16,6 +16,11 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
     mutationReturn.id;
   });
 
+  const handleSubmit = async (data: CreateUserDto) => {
+    await createUser({ args: data });
+    onClose();
+  };
+
   return (
     <BaseModal
       isOpen={isOpen}
@@ -24,9 +29,7 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
       title="Create New User"
       showCloseButton={true}
     >
-      <CreateUserForm
-        onSubmit={(data: CreateUserDto) => createUser({ args: data })}
-      />
+      <CreateUserForm onSubmit={(data: CreateUserDto) => handleSubmit(data)} />
     </BaseModal>
   );
 }

@@ -4,7 +4,7 @@ import { useMutation } from "@/gqty";
 interface DeleteUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  publicId: string;
+  publicId: string | null;
 }
 
 export const DeleteUserModal = ({
@@ -13,7 +13,10 @@ export const DeleteUserModal = ({
   publicId,
 }: DeleteUserModalProps) => {
   const [removeUserByPublicId, { isLoading }] = useMutation(
-    (mutation, publicId: string) => {
+    (mutation, publicId: string | null) => {
+      if (!publicId) {
+        return;
+      }
       const mutationReturn = mutation.removeUserByPublicId({
         publicId,
       });

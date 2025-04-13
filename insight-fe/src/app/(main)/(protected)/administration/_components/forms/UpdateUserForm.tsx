@@ -13,7 +13,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { UpdateUserDto, useMutation, useQuery, User } from "@/gqty";
 
 interface UserFormProps {
-  publicId: string;
+  publicId: string | null;
   onClose: () => void;
 }
 
@@ -28,6 +28,9 @@ export function UpdateUserForm({ publicId, onClose }: UserFormProps) {
   // submitting changes to user record
   const [updateUserByPublicId] = useMutation(
     (mutation, formSubmissionData: UpdateUserDto) => {
+      if (!publicId) {
+        return;
+      }
       const mutationReturn = mutation.updateUserByPublicId({
         data: formSubmissionData,
         publicId,

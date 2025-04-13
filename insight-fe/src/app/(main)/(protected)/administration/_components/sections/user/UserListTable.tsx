@@ -1,16 +1,19 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { ContentCard } from "@/components/layout/Card";
 import { DataTableSimple } from "@/components/tables/DataTableSimple";
 import { useQuery, User } from "@/gqty";
 import { LoadingSpinnerCard } from "@/components/loading/LoadingSpinnerCard";
+import { Button, Flex, VStack } from "@chakra-ui/react";
+import { CreateUserModal } from "../../modals/CreateUserModal";
 
 interface UserListTableProps {
   setSelectedUserPublicId: (publicId: string) => void;
 }
 
 function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
+  const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
   const query = useQuery({ suspense: true });
   const users = query.getAllUsers({ data: { limit: 10, offset: 0 } });
 
@@ -34,13 +37,34 @@ function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
   };
 
   return (
-    <ContentCard>
-      <DataTableSimple
-        data={formattedData}
-        columns={columns}
-        onRowClick={handleRowClick}
+    <>
+      <ContentCard>
+        {formattedData[0].id && (
+          <Flex
+            justifyContent="space-between"
+            flexDirection="column"
+            height="100%"
+            width="100%"
+          >
+            <DataTableSimple
+              data={formattedData}
+              columns={columns}
+              onRowClick={handleRowClick}
+            />
+            <Button
+              colorScheme="green"
+              onClick={() => setIsCreateUserModalOpen(true)}
+            >
+              Create User
+            </Button>
+          </Flex>
+        )}
+      </ContentCard>
+      <CreateUserModal
+        isOpen={isCreateUserModalOpen}
+        onClose={() => setIsCreateUserModalOpen(false)}
       />
-    </ContentCard>
+    </>
   );
 }
 
