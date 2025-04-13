@@ -1,18 +1,13 @@
-import { useQuery, User } from "@/gqty";
-import { Card, VStack, Heading, Divider, Text } from "@chakra-ui/react";
+import { User } from "@/gqty";
+import { VStack, Heading, Divider, Text } from "@chakra-ui/react";
 
 interface UserDetailsDisplayProps {
-  publicId: string;
+  user: User | null;
 }
 
-export const UserDetailsDisplay = ({ publicId }: UserDetailsDisplayProps) => {
-  const query = useQuery();
-  const user: User | null = publicId
-    ? query.getUserByPublicId({ publicId })
-    : null;
-
+export const UserDetailsDisplay = ({ user }: UserDetailsDisplayProps) => {
   if (!user) {
-    return <Text>User not found</Text>;
+    return;
   }
 
   const createdAtFormatted = new Date(user.createdAt).toLocaleString();

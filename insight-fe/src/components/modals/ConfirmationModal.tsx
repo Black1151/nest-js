@@ -2,8 +2,10 @@ import {
   Button,
   HStack,
   ModalBody,
+  ModalContent,
   ModalFooter,
   ModalHeader,
+  ModalOverlay,
 } from "@chakra-ui/react";
 import { Modal } from "@chakra-ui/react";
 
@@ -12,7 +14,8 @@ export interface ConfirmationModalProps {
   bodyText: string;
   isOpen: boolean;
   onConfirm: () => void;
-  onCancel: () => void;
+  onClose: () => void;
+  isLoading?: boolean;
 }
 
 export const ConfirmationModal = ({
@@ -20,20 +23,24 @@ export const ConfirmationModal = ({
   bodyText,
   isOpen,
   onConfirm,
-  onCancel,
+  onClose,
+  isLoading,
 }: ConfirmationModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onCancel}>
-      <ModalHeader>Confirm {action}</ModalHeader>
-      <ModalBody>{bodyText}</ModalBody>
-      <ModalFooter>
-        <HStack>
-          <Button colorScheme="red" onClick={onConfirm}>
-            Confirm
-          </Button>
-          <Button onClick={onCancel}>Cancel</Button>
-        </HStack>
-      </ModalFooter>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Confirm {action}</ModalHeader>
+        <ModalBody>{bodyText}</ModalBody>
+        <ModalFooter>
+          <HStack>
+            <Button colorScheme="red" onClick={onConfirm} isLoading={isLoading}>
+              Confirm
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </HStack>
+        </ModalFooter>
+      </ModalContent>
     </Modal>
   );
 };

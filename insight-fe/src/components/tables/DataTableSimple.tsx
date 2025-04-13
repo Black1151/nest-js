@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 interface Column {
+  /** Must be unique across all columns */
   key: string;
   label: string;
 }
@@ -38,22 +39,26 @@ export function DataTableSimple({
           </Tr>
         </Thead>
         <Tbody>
-          {data.map((item) => (
-            <Tr
-              key={item.id}
-              cursor={onRowClick ? "pointer" : "default"}
-              _hover={onRowClick ? { backgroundColor: hoverBg } : {}}
-              onClick={() => {
-                if (onRowClick) {
-                  onRowClick(item);
-                }
-              }}
-            >
-              {columns.map((col) => (
-                <Td key={`${item.id}-${col.key}`}>{item[col.key]}</Td>
-              ))}
-            </Tr>
-          ))}
+          {data.map((item, rowIndex) => {
+            const rowKey = item.id ?? `row-${rowIndex}`;
+
+            return (
+              <Tr
+                key={rowKey}
+                cursor={onRowClick ? "pointer" : "default"}
+                _hover={onRowClick ? { backgroundColor: hoverBg } : {}}
+                onClick={() => {
+                  if (onRowClick) {
+                    onRowClick(item);
+                  }
+                }}
+              >
+                {columns.map((col) => (
+                  <Td key={`${rowKey}-${col.key}`}>{item[col.key]}</Td>
+                ))}
+              </Tr>
+            );
+          })}
         </Tbody>
       </Table>
     </TableContainer>

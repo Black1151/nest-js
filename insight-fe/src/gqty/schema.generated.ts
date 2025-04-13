@@ -197,6 +197,10 @@ export const generatedSchema = {
     roles: { __type: "[Role!]" },
     updatedAt: { __type: "DateTime!" },
   },
+  RemoveUserResponse: {
+    __typename: { __type: "String!" },
+    id: { __type: "ID!" },
+  },
   Role: {
     __typename: { __type: "String!" },
     createdAt: { __type: "DateTime!" },
@@ -326,7 +330,10 @@ export const generatedSchema = {
       __type: "User!",
       __args: { publicId: "String!", roleIds: "[Int!]!" },
     },
-    removeUser: { __type: "Boolean!", __args: { publicId: "String!" } },
+    removeUserByPublicId: {
+      __type: "RemoveUserResponse!",
+      __args: { publicId: "String!" },
+    },
     updatePermission: {
       __type: "Permission!",
       __args: { data: "UpdatePermissionInput!" },
@@ -411,6 +418,11 @@ export interface PermissionGroup {
   permissions?: Maybe<Array<Permission>>;
   roles?: Maybe<Array<Role>>;
   updatedAt: ScalarsEnums["DateTime"];
+}
+
+export interface RemoveUserResponse {
+  __typename?: "RemoveUserResponse";
+  id: ScalarsEnums["ID"];
 }
 
 export interface Role {
@@ -524,9 +536,9 @@ export interface Mutation {
     publicId: ScalarsEnums["String"];
     roleIds: Array<ScalarsEnums["Int"]>;
   }) => User;
-  removeUser: (args: {
+  removeUserByPublicId: (args: {
     publicId: ScalarsEnums["String"];
-  }) => ScalarsEnums["Boolean"];
+  }) => RemoveUserResponse;
   /**
    * Updates one Permission
    */

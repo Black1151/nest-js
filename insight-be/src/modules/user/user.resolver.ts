@@ -1,5 +1,5 @@
 // user.resolver.ts
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ObjectType, Field, ID } from '@nestjs/graphql';
 import { UsersService } from './user.service';
 import { User } from './user.model';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,6 +8,12 @@ import { RbacPermissionKey } from '../rbac/decorators/resolver-permission-key.de
 import { ImmutableLogging } from '../audit/decorators/immutable-logging.decorator';
 import { FindAllInput } from 'src/common/base.inputs';
 import { UiErrorMessageOverride } from 'src/decorators/error-message-override.decorator';
+
+@ObjectType()
+export class RemoveUserResponse {
+  @Field(() => ID)
+  id!: string;
+}
 
 @Resolver(() => User)
 export class UserResolver {
@@ -81,13 +87,17 @@ export class UserResolver {
     return this.userService.removeRoles(publicId, roleIds);
   }
 
-  @Mutation(() => Boolean)
+
+
+  @Mutation(() => RemoveUserResponse)
   @RbacPermissionKey('user.remove')
   @ImmutableLogging()
-  async removeUser(
+  async removeUserByPublicId(
     @Args('publicId', { type: () => String }) publicId: string,
-  ): Promise<boolean> {
+  ): Promise<RemoveUserResponse> {
     await this.userService.removeByPublicId(publicId);
-    return true;
+    return {
+      id: publicId, 
+    };
   }
 }

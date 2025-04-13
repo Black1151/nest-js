@@ -14,9 +14,10 @@ import { UpdateUserDto, useMutation, useQuery, User } from "@/gqty";
 
 interface UserFormProps {
   publicId: string;
+  onClose: () => void;
 }
 
-export function UpdateUserForm({ publicId }: UserFormProps) {
+export function UpdateUserForm({ publicId, onClose }: UserFormProps) {
   // getting exiting data
   const query = useQuery();
 
@@ -64,6 +65,7 @@ export function UpdateUserForm({ publicId }: UserFormProps) {
 
     await updateUserByPublicId({ args: preparedData });
     reset();
+    onClose();
   };
 
   return (

@@ -20,7 +20,7 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 export interface Column<T> {
   key: keyof T;

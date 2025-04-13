@@ -17,10 +17,10 @@ export const UpdateUserModal = ({
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
-      title="Update User"
+      title="Update user"
       showCloseButton
     >
-      <UpdateUserForm publicId={publicId} />
+      <UpdateUserForm publicId={publicId} onClose={onClose} />
     </BaseModal>
   );
 };
