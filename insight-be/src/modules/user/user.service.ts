@@ -92,17 +92,17 @@ export class UsersService {
 
   // probably dont need these if I am using the updateRolesFromArray
 
-  // /**
-  //  * ADD ROLES
-  //  */
-  // async addRoles(publicId: string, roleIds: number[]): Promise<User> {
-  //   const user = await this.findOneByPublicId(publicId);
-  //   const roles = await this.roleRepository.find({
-  //     where: { id: In(roleIds) },
-  //   });
-  //   user.roles = [...(user.roles || []), ...roles];
-  //   return this.userRepository.save(user);
-  // }
+  /**
+   * ADD ROLES
+   */
+  async addRoles(publicId: string, roleIds: number[]): Promise<User> {
+    const user = await this.findOneByPublicId(publicId);
+    const roles = await this.roleRepository.find({
+      where: { id: In(roleIds) },
+    });
+    user.roles = [...(user.roles || []), ...roles];
+    return this.userRepository.save(user);
+  }
 
   // /**
   //  * REMOVE ROLES
