@@ -64,8 +64,8 @@ export function createBaseResolver<
     async findAll(
       @Args('data', { type: () => FindAllInput }) data: FindAllInput,
     ): Promise<T[]> {
-      const { limit, offset } = data;
-      return this.service.findAll(limit, offset);
+      const { limit, offset, all } = data;
+      return this.service.findAll({ limit, offset, all });
     }
 
     // ---------------------------------------------------

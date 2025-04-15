@@ -15,7 +15,18 @@ export abstract class BaseService<
     return this.repository.save(entity);
   }
 
-  async findAll(limit?: number, offset?: number): Promise<T[]> {
+  async findAll({
+    limit,
+    offset,
+    all,
+  }: {
+    limit?: number;
+    offset?: number;
+    all?: boolean;
+  }): Promise<T[]> {
+    if (all) {
+      return this.repository.find();
+    }
     return this.repository.find({
       take: limit,
       skip: offset,

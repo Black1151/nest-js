@@ -4,6 +4,8 @@ import { PermissionDto } from '../../permission/dto/permission.dto';
 import { Field, Int } from '@nestjs/graphql';
 import { User } from 'src/modules/user/user.model';
 
+/// Unused for now, still considering continuing splitting out entity/dto
+
 @ObjectType()
 export class RoleDto {
   @Field(() => Int)

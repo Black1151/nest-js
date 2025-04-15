@@ -66,7 +66,11 @@ export interface CreateUserRequestDto {
 }
 
 export interface FindAllInput {
+  /** Set to true to return all records, ignoring pagination values */
+  all?: InputMaybe<Scalars["Boolean"]["input"]>;
+  /** Maximum number of records to return */
   limit?: InputMaybe<Scalars["Int"]["input"]>;
+  /** Number of records to skip */
   offset?: InputMaybe<Scalars["Int"]["input"]>;
 }
 
@@ -169,7 +173,11 @@ export const generatedSchema = {
     phoneNumber: { __type: "String" },
     postalCode: { __type: "String" },
   },
-  FindAllInput: { limit: { __type: "Int" }, offset: { __type: "Int" } },
+  FindAllInput: {
+    all: { __type: "Boolean" },
+    limit: { __type: "Int" },
+    offset: { __type: "Int" },
+  },
   FindOneByInput: {
     column: { __type: "String!" },
     value: { __type: "String!" },
@@ -214,7 +222,7 @@ export const generatedSchema = {
   Role: {
     __typename: { __type: "String!" },
     createdAt: { __type: "DateTime!" },
-    description: { __type: "String" },
+    description: { __type: "String!" },
     id: { __type: "ID!" },
     name: { __type: "String!" },
     permissionGroups: { __type: "[PermissionGroup!]" },
@@ -439,7 +447,7 @@ export interface PermissionGroup {
 export interface Role {
   __typename?: "Role";
   createdAt: ScalarsEnums["DateTime"];
-  description?: Maybe<ScalarsEnums["String"]>;
+  description: ScalarsEnums["String"];
   id: ScalarsEnums["ID"];
   name: ScalarsEnums["String"];
   permissionGroups?: Maybe<Array<PermissionGroup>>;

@@ -5,19 +5,22 @@ import {
   dropTargetForElements,
   monitorForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { RoleDnDItem } from "./RoleDnDItem";
+import { Role } from "@/gqty";
 
-interface Item {
+type RoleListItemDnD = {
   id: string;
-  label: string;
-}
+  name: string;
+  description: string;
+};
 
 interface TwoColumnDnDProps {
   leftColHeader: string;
   rightColHeader: string;
   leftColColor: string;
   rightColColor: string;
-  rightColItems: Item[];
-  leftColItems: Item[];
+  initialRightItems: RoleListItemDnD[];
+  initialLeftItems: RoleListItemDnD[];
 }
 
 const TwoColumnDnD: React.FC<TwoColumnDnDProps> = ({
@@ -25,14 +28,29 @@ const TwoColumnDnD: React.FC<TwoColumnDnDProps> = ({
   rightColHeader,
   leftColColor,
   rightColColor,
-  rightColItems: initialRightItems,
-  leftColItems: initialLeftItems,
+  initialRightItems,
+  initialLeftItems,
 }) => {
-  const [leftItems, setLeftItems] = useState<Item[]>(initialLeftItems);
-  const [rightItems, setRightItems] = useState<Item[]>(initialRightItems);
+  const [leftItems, setLeftItems] =
+    useState<RoleListItemDnD[]>(initialLeftItems);
+  const [rightItems, setRightItems] =
+    useState<RoleListItemDnD[]>(initialRightItems);
 
-  // Use a ref so the draggedItemId doesn't get recreated on re-renders
+  useEffect(() => {
+    setLeftItems(initialLeftItems);
+    setRightItems(initialRightItems);
+  }, [initialLeftItems, initialRightItems]);
+
+  // Refs for tracking the dragged item and which column it came from
   const draggedItemIdRef = useRef<string | null>(null);
+  const draggedItemSourceRef = useRef<"left" | "right" | null>(null);
+
+  // Helper to figure out which column an item is in
+  const getItemSourceColumn = (itemId: string): "left" | "right" | null => {
+    if (leftItems.some((item) => item.id === itemId)) return "left";
+    if (rightItems.some((item) => item.id === itemId)) return "right";
+    return null;
+  };
 
   // One-time registration of the drop targets
   useEffect(() => {
@@ -44,9 +62,15 @@ const TwoColumnDnD: React.FC<TwoColumnDnDProps> = ({
     dropTargetForElements({
       element: leftColumn,
       onDrop: () => {
-        if (!draggedItemIdRef.current) return;
-        moveItem(draggedItemIdRef.current, "left");
+        // Only move if the item came from the other column
+        if (
+          draggedItemIdRef.current &&
+          draggedItemSourceRef.current === "right"
+        ) {
+          moveItem(draggedItemIdRef.current, "left");
+        }
         draggedItemIdRef.current = null;
+        draggedItemSourceRef.current = null;
       },
     });
 
@@ -54,9 +78,15 @@ const TwoColumnDnD: React.FC<TwoColumnDnDProps> = ({
     dropTargetForElements({
       element: rightColumn,
       onDrop: () => {
-        if (!draggedItemIdRef.current) return;
-        moveItem(draggedItemIdRef.current, "right");
+        // Only move if the item came from the other column
+        if (
+          draggedItemIdRef.current &&
+          draggedItemSourceRef.current === "left"
+        ) {
+          moveItem(draggedItemIdRef.current, "right");
+        }
         draggedItemIdRef.current = null;
+        draggedItemSourceRef.current = null;
       },
     });
 
@@ -67,25 +97,26 @@ const TwoColumnDnD: React.FC<TwoColumnDnDProps> = ({
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [leftItems, rightItems]);
 
-  // Register draggables for items in both columns.
-  // If the same item is re‑rendered again, make sure not to double-register.
-  // A simple approach: each render tries to call `draggable(...)`,
-  // but only if we haven't already added a specific data attribute.
+  // Register draggables for items in both columns
   useEffect(() => {
-    [...leftItems, ...rightItems].forEach((item) => {
+    const allItems = [...leftItems, ...rightItems];
+
+    allItems.forEach((item) => {
       const element = document.getElementById(item.id);
       if (!element) return;
 
-      // If you want to guard against re-registering, check a custom attribute:
+      // If not already registered, make it draggable
       if (!element.hasAttribute("data-draggable-registered")) {
         draggable({
           element,
           onDragStart: () => {
             draggedItemIdRef.current = item.id;
+            draggedItemSourceRef.current = getItemSourceColumn(item.id);
           },
         });
+
         element.setAttribute("data-draggable-registered", "true");
       }
     });
@@ -112,7 +143,6 @@ const TwoColumnDnD: React.FC<TwoColumnDnDProps> = ({
       align="start"
       gap="8"
       p="8"
-      height="80vh"
       width="100%"
       boxSizing="border-box"
     >
@@ -129,17 +159,13 @@ const TwoColumnDnD: React.FC<TwoColumnDnDProps> = ({
           {leftColHeader}
         </Heading>
         {leftItems.map((item) => (
-          <Box
+          <RoleDnDItem
             key={item.id}
             id={item.id}
-            bg={leftColColor}
-            p="2"
-            mb="2"
-            borderRadius="md"
-            cursor="grab"
-          >
-            <Text>{item.label}</Text>
-          </Box>
+            name={item.name}
+            description={item.description}
+            bgColor={leftColColor}
+          />
         ))}
       </Box>
 
@@ -156,17 +182,15 @@ const TwoColumnDnD: React.FC<TwoColumnDnDProps> = ({
           {rightColHeader}
         </Heading>
         {rightItems.map((item) => (
-          <Box
-            key={item.id}
+          // <Box key={item.id} id={item.id}>
+          <RoleDnDItem
             id={item.id}
-            bg={rightColColor}
-            p="2"
-            mb="2"
-            borderRadius="md"
-            cursor="grab"
-          >
-            <Text>{item.label}</Text>
-          </Box>
+            key={item.id}
+            name={item.name}
+            description={item.description}
+            bgColor={rightColColor}
+          />
+          // </Box>
         ))}
       </Box>
     </Flex>

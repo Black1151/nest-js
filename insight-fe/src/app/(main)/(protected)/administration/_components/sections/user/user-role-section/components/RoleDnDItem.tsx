@@ -3,14 +3,25 @@ import { Role } from "@/gqty";
 import { Flex, Text } from "@chakra-ui/react";
 
 interface RoleDnDItemProps {
-  role: Role;
+  id: string;
+  name: string;
+  description: string;
+  bgColor: string;
 }
 
-export const RoleDnDItem = ({ role }: RoleDnDItemProps) => {
+export const RoleDnDItem = ({
+  id,
+  name,
+  description,
+  bgColor,
+}: RoleDnDItemProps) => {
   return (
-    <ContentCard>
-      <Flex>
-        <Text>Role</Text>
+    <ContentCard id={id} key={id} bg={bgColor} cursor="grab">
+      <Flex flexDirection="column" gap={2}>
+        <Text fontSize={20} fontWeight="bold">
+          {name}
+        </Text>
+        <Text fontSize={14}>{description}</Text>
       </Flex>
     </ContentCard>
   );

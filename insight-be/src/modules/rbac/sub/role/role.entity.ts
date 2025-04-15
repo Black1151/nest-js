@@ -15,9 +15,9 @@ export class Role extends AbstractBaseEntity {
   @Column({ unique: true })
   name: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  description?: string;
+  @Field()
+  @Column()
+  description: string;
 
   @Field(() => [Permission], { nullable: true })
   @ManyToMany(() => Permission, (permission) => permission.roles, {

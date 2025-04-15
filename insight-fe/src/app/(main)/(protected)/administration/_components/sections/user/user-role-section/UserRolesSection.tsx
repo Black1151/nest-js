@@ -1,52 +1,86 @@
 import { ContentCard } from "@/components/layout/Card";
 import { Role, useQuery } from "@/gqty";
 import TwoColumnDnD from "./components/TwoColumnDnD";
+import { Button, Center, Text } from "@chakra-ui/react";
+import { useState } from "react";
+import { CreateRoleModal } from "./sub/modals/CreateRoleModal";
 
 interface UserRolesSectionProps {
   publicId: string | null;
 }
 
-export const prepareUserRoles = (userRoles: Role[]) => {
-  userRoles.forEach((role) => {
-    role.id;
-    role.name;
-    role.description;
-  });
-};
+// export const prepareUserRoles = (userRoles: Role[]) => {
+//   userRoles.forEach((role) => {
+//     role.id;
+//     role.name;
+//     role.description;
+//   });
+// };
 
 export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
-  const query = useQuery({
-    prepare({ query: { getRolesForUser } }) {
-      if (!publicId) return;
-      const userRoles = getRolesForUser({ data: { publicId } });
-      prepareUserRoles(userRoles);
-    },
-  });
+  const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState(false);
 
-  const roles = publicId
-    ? query.getUsersRolesAndPermissions({ data: { publicId } })
-    : null;
+  const query = useQuery();
+
+  if (!publicId)
+    return (
+      <ContentCard height={700}>
+        <Center flex={1}>
+          <Text fontSize="2xl">No user selected</Text>
+        </Center>
+      </ContentCard>
+    );
+
+  // const query = useQuery({
+  //   prepare({ query: { getRolesForUser } }) {
+  //     if (!publicId) return;
+  //     const userRoles = getRolesForUser({ data: { publicId } });
+  //     prepareUserRoles(userRoles);
+  //   },
+  // });
+
+  const availableRoles = query.getAllRole({ data: { all: true } });
+
+  const userRoles = query.getRolesForUser({ data: { publicId } });
+
+  const userRolesListItems = userRoles?.map((role) => ({
+    id: role.id,
+    name: role.name,
+    description: role.description,
+  }));
+
+  // also should filter out roles that are already in the user roles list
+  const availableRolesListItems = availableRoles?.filter(
+    (role) => !userRolesListItems?.some((userRole) => userRole.id === role.id)
+  );
 
   const TwoColumnDnDProps = {
     leftColHeader: "Users roles",
     rightColHeader: "Available roles",
     leftColColor: "teal.100",
     rightColColor: "orange.100",
-    rightColItems: [
-      { id: "item-1", label: "Item 1" },
-      { id: "item-2", label: "Item 2" },
-      { id: "item-3", label: "Item 3" },
-    ],
-    leftColItems: [
-      { id: "item-4", label: "Item 4" },
-      { id: "item-5", label: "Item 5" },
-      { id: "item-6", label: "Item 6" },
-    ],
+    initialRightItems: availableRolesListItems,
+    initialLeftItems: userRolesListItems,
   };
 
+  console.log(TwoColumnDnDProps);
+
   return (
-    <ContentCard>
-      <TwoColumnDnD {...TwoColumnDnDProps} />
-    </ContentCard>
+    <>
+      <ContentCard>
+        {/* <TwoColumnDnD /> */}
+        <TwoColumnDnD {...TwoColumnDnDProps} />
+        <Button
+          colorScheme="green"
+          onClick={() => setIsCreateRoleModalOpen(true)}
+        >
+          Create new role
+        </Button>
+      </ContentCard>
+      <CreateRoleModal
+        isOpen={isCreateRoleModalOpen}
+        onClose={() => setIsCreateRoleModalOpen(false)}
+      />
+    </>
   );
 };
