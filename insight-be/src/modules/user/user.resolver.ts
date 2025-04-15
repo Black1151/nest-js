@@ -79,24 +79,31 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @RbacPermissionKey('user.addRoles')
+  @RbacPermissionKey('user.updateRoles')
   @ImmutableLogging()
-  async addRolesToUser(
+  async updateRolesFromArray(
     @Args('publicId', { type: () => String }) publicId: string,
     @Args('roleIds', { type: () => [Int] }) roleIds: number[],
-  ) {
-    return this.userService.addRoles(publicId, roleIds);
+  ): Promise<User> {
+    return this.userService.updateRolesFromArray(publicId, roleIds);
   }
 
-  @Mutation(() => User)
-  @RbacPermissionKey('user.removeRoles')
-  @ImmutableLogging()
-  async removeRolesFromUser(
-    @Args('publicId', { type: () => String }) publicId: string,
-    @Args('roleIds', { type: () => [Int] }) roleIds: number[],
-  ) {
-    return this.userService.removeRoles(publicId, roleIds);
-  }
+  // async addRolesToUser(
+  //   @Args('publicId', { type: () => String }) publicId: string,
+  //   @Args('roleIds', { type: () => [Int] }) roleIds: number[],
+  // ) {
+  //   return this.userService.addRoles(publicId, roleIds);
+  // }
+
+  // @Mutation(() => User)
+  // @RbacPermissionKey('user.removeRoles')
+  // @ImmutableLogging()
+  // async removeRolesFromUser(
+  //   @Args('publicId', { type: () => String }) publicId: string,
+  //   @Args('roleIds', { type: () => [Int] }) roleIds: number[],
+  // ) {
+  //   return this.userService.removeRoles(publicId, roleIds);
+  // }
 
   @Query(() => [Role])
   @RbacPermissionKey('user.getRolesForUser')

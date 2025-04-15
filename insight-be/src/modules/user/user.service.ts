@@ -78,26 +78,40 @@ export class UsersService {
     return user;
   }
 
-  /**
-   * ADD ROLES
-   */
-  async addRoles(publicId: string, roleIds: number[]): Promise<User> {
+  async updateRolesFromArray(
+    publicId: string,
+    roleIds: number[],
+  ): Promise<User> {
     const user = await this.findOneByPublicId(publicId);
     const roles = await this.roleRepository.find({
       where: { id: In(roleIds) },
     });
-    user.roles = [...(user.roles || []), ...roles];
+    user.roles = roles;
     return this.userRepository.save(user);
   }
 
-  /**
-   * REMOVE ROLES
-   */
-  async removeRoles(publicId: string, roleIds: number[]): Promise<User> {
-    const user = await this.findOneByPublicId(publicId);
-    user.roles = user.roles?.filter((role) => !roleIds.includes(role.id));
-    return this.userRepository.save(user);
-  }
+  // probably dont need these if I am using the updateRolesFromArray
+
+  // /**
+  //  * ADD ROLES
+  //  */
+  // async addRoles(publicId: string, roleIds: number[]): Promise<User> {
+  //   const user = await this.findOneByPublicId(publicId);
+  //   const roles = await this.roleRepository.find({
+  //     where: { id: In(roleIds) },
+  //   });
+  //   user.roles = [...(user.roles || []), ...roles];
+  //   return this.userRepository.save(user);
+  // }
+
+  // /**
+  //  * REMOVE ROLES
+  //  */
+  // async removeRoles(publicId: string, roleIds: number[]): Promise<User> {
+  //   const user = await this.findOneByPublicId(publicId);
+  //   user.roles = user.roles?.filter((role) => !roleIds.includes(role.id));
+  //   return this.userRepository.save(user);
+  // }
 
   async getRolesForUser(publicId: string): Promise<Role[]> {
     const user = await this.userRepository.findOne({
