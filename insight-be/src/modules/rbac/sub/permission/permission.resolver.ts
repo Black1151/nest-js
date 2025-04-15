@@ -1,7 +1,7 @@
 import { Resolver } from '@nestjs/graphql';
 
-import { CreatePermissionInput } from './dto/create-permission.input';
-import { UpdatePermissionInput } from './dto/update-permission.input';
+import { CreatePermissionInput } from './inputs/create-permission.input';
+import { UpdatePermissionInput } from './inputs/update-permission.input';
 import { Permission } from './permission.entity';
 import { createBaseResolver } from 'src/common/base.resolver';
 import { PermissionService } from './permission.service';

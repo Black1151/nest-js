@@ -2,7 +2,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
+import { CreateUserRequestDto } from 'src/modules/user/dto/req/create-user.request.dto';
 import { User } from 'src/modules/user/user.model';
 import { UsersService } from 'src/modules/user/user.service';
 import { ConfigService } from '@nestjs/config';
@@ -35,7 +35,7 @@ export class AuthService {
    * Register a new user, hashing the password before storing.
    * (Local-only flow—could be moved to LocalAuthService if you prefer.)
    */
-  async register(userData: CreateUserDto): Promise<User> {
+  async register(userData: CreateUserRequestDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     return this.userService.create({
       ...userData,

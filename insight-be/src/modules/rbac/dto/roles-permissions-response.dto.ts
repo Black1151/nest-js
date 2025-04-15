@@ -37,6 +37,8 @@ export class RolesPermissionsResponse {
   @Field(() => [RoleDTO])
   roles: RoleDTO[];
 
+  //// need to add permission groups to this ?
+
   @Field(() => [PermissionDTO])
   permissions: PermissionDTO[];
 }

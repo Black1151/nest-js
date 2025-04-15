@@ -1,10 +1,10 @@
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
-import { useMutation } from "@/gqty";
+import { PublicIdRequestDto, useMutation } from "@/gqty";
 
 interface DeleteUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  publicId: string | null;
+  publicId: string;
 }
 
 export const DeleteUserModal = ({
@@ -13,13 +13,8 @@ export const DeleteUserModal = ({
   publicId,
 }: DeleteUserModalProps) => {
   const [removeUserByPublicId, { isLoading }] = useMutation(
-    (mutation, publicId: string | null) => {
-      if (!publicId) {
-        return;
-      }
-      const mutationReturn = mutation.removeUserByPublicId({
-        publicId,
-      });
+    (mutation, data: PublicIdRequestDto) => {
+      const mutationReturn = mutation.removeUserByPublicId({ data });
       mutationReturn.id;
     }
   );
@@ -32,9 +27,7 @@ export const DeleteUserModal = ({
       action="delete user"
       bodyText="Are you sure you want to delete this user?"
       onConfirm={async () => {
-        await removeUserByPublicId({
-          args: publicId,
-        });
+        await removeUserByPublicId({ args: { publicId } });
         onClose();
       }}
     />

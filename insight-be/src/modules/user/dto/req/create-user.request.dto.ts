@@ -14,7 +14,7 @@ import { TransformPhoneNumber } from 'src/validators/phone-number/phone.transfor
 import { Column } from 'typeorm';
 
 @InputType()
-export class CreateUserDto {
+export class CreateUserRequestDto {
   @Field()
   firstName: string;
 

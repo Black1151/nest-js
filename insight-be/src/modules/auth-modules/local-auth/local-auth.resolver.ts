@@ -5,7 +5,7 @@ import { AuthService } from 'src/modules/auth-modules/auth/auth.service';
 import { GqlLocalAuthGuard } from 'src/guards/gql-local-auth.guard';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { User } from 'src/modules/user/user.model';
-import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
+import { CreateUserRequestDto } from 'src/modules/user/dto/req/create-user.request.dto';
 import { AuthTokens } from 'src/modules/auth-modules/auth/dto/res/auth-tokens.dto';
 import { LoginRequest } from 'src/modules/auth-modules/auth/dto/req/login-request.dto';
 import { PublicRoute } from 'src/decorators/public.decorator';
@@ -24,7 +24,7 @@ export class LocalAuthResolver {
   @Mutation(() => User)
   @PublicRoute()
   async registerNewUserLocally(
-    @Args('data') data: CreateUserDto,
+    @Args('data') data: CreateUserRequestDto,
   ): Promise<User> {
     return this.usersService.create(data);
   }

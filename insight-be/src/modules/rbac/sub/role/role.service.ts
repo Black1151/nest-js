@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
-import { CreateRoleInput } from './dto/create-role.input';
-import { UpdateRoleInput } from './dto/update-role.input';
+import { CreateRoleInput } from './inputs/create-role.input';
+import { UpdateRoleInput } from './inputs/update-role.input';
 import { BaseService } from 'src/common/base.service';
 import { Permission } from '../permission/permission.entity';
 import { Role } from './role.entity';

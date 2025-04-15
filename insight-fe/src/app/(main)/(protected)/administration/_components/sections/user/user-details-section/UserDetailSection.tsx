@@ -34,43 +34,33 @@ export const UserDetailSection = ({ publicId }: UserDetailSectionProps) => {
   const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false);
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
 
-  const query = useQuery({
-    suspense: Boolean(publicId),
-    prepare({ query: { getUserByPublicId } }) {
-      if (!publicId) return;
-      const user = getUserByPublicId({ publicId });
-      prepareUser(user);
-    },
-  });
-
-  const user = publicId ? query.getUserByPublicId({ publicId }) : null;
+  if (!publicId)
+    return (
+      <ContentCard height={700}>
+        <Center flex={1}>
+          <Text fontSize="2xl">No user selected</Text>
+        </Center>
+      </ContentCard>
+    );
 
   return (
     <>
-      <ContentCard height={700}>
-        {publicId ? (
-          <>
-            <UserDetailsDisplay user={user} />
-            <HStack spacing={4} pt={4}>
-              <Button
-                colorScheme="blue"
-                onClick={() => setIsUpdateUserModalOpen(true)}
-              >
-                Update User
-              </Button>
-              <Button
-                colorScheme="red"
-                onClick={() => setIsDeleteUserModalOpen(true)}
-              >
-                Delete User
-              </Button>
-            </HStack>
-          </>
-        ) : (
-          <Center flex={1}>
-            <Text fontSize="2xl">No user selected</Text>
-          </Center>
-        )}
+      <ContentCard>
+        <UserDetailsDisplay publicId={publicId} />
+        <HStack spacing={4} pt={4}>
+          <Button
+            colorScheme="blue"
+            onClick={() => setIsUpdateUserModalOpen(true)}
+          >
+            Update User
+          </Button>
+          <Button
+            colorScheme="red"
+            onClick={() => setIsDeleteUserModalOpen(true)}
+          >
+            Delete User
+          </Button>
+        </HStack>
       </ContentCard>
       <UpdateUserModal
         isOpen={isUpdateUserModalOpen}

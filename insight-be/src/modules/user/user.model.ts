@@ -5,6 +5,8 @@ import { AbstractBaseEntity } from 'src/common/base.entity';
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
 import { Entity, Column, ManyToMany, JoinTable, BeforeInsert } from 'typeorm';
 
+/// needs to be separated into an entity and dto
+
 @ObjectType()
 @Entity('users')
 export class User extends AbstractBaseEntity {

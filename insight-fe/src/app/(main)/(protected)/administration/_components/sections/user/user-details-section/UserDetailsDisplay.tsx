@@ -1,13 +1,27 @@
-import { User } from "@/gqty";
-import { VStack, Heading, Divider, Text } from "@chakra-ui/react";
+import { ContentCard } from "@/components/layout/Card";
+import { useQuery, User } from "@/gqty";
+import { VStack, Heading, Divider, Text, Center } from "@chakra-ui/react";
+import { prepareUser } from "./UserDetailSection";
 
 interface UserDetailsDisplayProps {
-  user: User | null;
+  publicId: string;
 }
 
-export const UserDetailsDisplay = ({ user }: UserDetailsDisplayProps) => {
+export const UserDetailsDisplay = ({ publicId }: UserDetailsDisplayProps) => {
+  const query = useQuery({
+    prepare({ query: { getUserByPublicId } }) {
+      if (!publicId) return;
+      const user = getUserByPublicId({ data: { publicId } });
+      prepareUser(user);
+    },
+  });
+
+  const user = publicId
+    ? query.getUserByPublicId({ data: { publicId } })
+    : null;
+
   if (!user) {
-    return;
+    return null;
   }
 
   const createdAtFormatted = new Date(user.createdAt).toLocaleString();

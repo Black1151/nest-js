@@ -4,7 +4,7 @@ import { UsersService } from 'src/modules/user/user.service';
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
+import { CreateUserRequestDto } from 'src/modules/user/dto/req/create-user.request.dto';
 import { User } from './user.model';
 
 @Injectable()
@@ -47,7 +47,7 @@ export class BootstrapSuperAdminService implements OnModuleInit {
     }
 
     if (!superAdminUser) {
-      const newAdminData: CreateUserDto = {
+      const newAdminData: CreateUserRequestDto = {
         firstName: process.env.SUPER_ADMIN_EMAIL!,
         lastName: process.env.SUPER_ADMIN_LAST_NAME!,
         email: process.env.SUPER_ADMIN_EMAIL!,

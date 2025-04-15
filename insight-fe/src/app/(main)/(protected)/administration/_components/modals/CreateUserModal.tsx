@@ -2,7 +2,7 @@
 
 import React from "react";
 import { BaseModal } from "@/components/modals/BaseModal";
-import { CreateUserDto, useMutation } from "@/gqty";
+import { CreateUserRequestDto, useMutation } from "@/gqty";
 import { CreateUserForm } from "../forms/CreateUserForm";
 
 interface CreateUserModalProps {
@@ -11,12 +11,12 @@ interface CreateUserModalProps {
 }
 
 export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
-  const [createUser] = useMutation((mutation, data: CreateUserDto) => {
+  const [createUser] = useMutation((mutation, data: CreateUserRequestDto) => {
     const mutationReturn = mutation.createUser({ data });
     mutationReturn.id;
   });
 
-  const handleSubmit = async (data: CreateUserDto) => {
+  const handleSubmit = async (data: CreateUserRequestDto) => {
     await createUser({ args: data });
     onClose();
   };
@@ -29,7 +29,9 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
       title="Create New User"
       showCloseButton={true}
     >
-      <CreateUserForm onSubmit={(data: CreateUserDto) => handleSubmit(data)} />
+      <CreateUserForm
+        onSubmit={(data: CreateUserRequestDto) => handleSubmit(data)}
+      />
     </BaseModal>
   );
 }

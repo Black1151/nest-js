@@ -10,24 +10,21 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { CreateUserDto } from "@/gqty";
+import { CreateUserRequestDto } from "@/gqty";
 
 interface UserFormProps {
-  onSubmit: (data: CreateUserDto) => Promise<void>;
-  initialData?: Partial<CreateUserDto>;
+  onSubmit: (data: CreateUserRequestDto) => Promise<void>;
 }
 
-export function CreateUserForm({ onSubmit, initialData = {} }: UserFormProps) {
+export function CreateUserForm({ onSubmit }: UserFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<CreateUserDto>({
-    defaultValues: initialData as CreateUserDto,
-  });
+  } = useForm<CreateUserRequestDto>();
 
-  const submitHandler: SubmitHandler<CreateUserDto> = async (data) => {
+  const submitHandler: SubmitHandler<CreateUserRequestDto> = async (data) => {
     const preparedData = {
       ...data,
       dateOfBirth: data.dateOfBirth || undefined,

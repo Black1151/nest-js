@@ -10,7 +10,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { UpdateUserDto, useMutation, useQuery, User } from "@/gqty";
+import { UpdateUserRequestDto, useMutation, useQuery, User } from "@/gqty";
 
 interface UserFormProps {
   publicId: string | null;
@@ -22,12 +22,12 @@ export function UpdateUserForm({ publicId, onClose }: UserFormProps) {
   const query = useQuery();
 
   const user: User | null = publicId
-    ? query.getUserByPublicId({ publicId })
+    ? query.getUserByPublicId({ data: { publicId } })
     : null;
 
   // submitting changes to user record
   const [updateUserByPublicId] = useMutation(
-    (mutation, formSubmissionData: UpdateUserDto) => {
+    (mutation, formSubmissionData: UpdateUserRequestDto) => {
       if (!publicId) {
         return;
       }
@@ -44,7 +44,7 @@ export function UpdateUserForm({ publicId, onClose }: UserFormProps) {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<UpdateUserDto>({
+  } = useForm<UpdateUserRequestDto>({
     defaultValues: {
       firstName: user?.firstName,
       lastName: user?.lastName,
@@ -60,7 +60,7 @@ export function UpdateUserForm({ publicId, onClose }: UserFormProps) {
     },
   });
 
-  const submitHandler: SubmitHandler<UpdateUserDto> = async (data) => {
+  const submitHandler: SubmitHandler<UpdateUserRequestDto> = async (data) => {
     const preparedData = {
       ...data,
       dateOfBirth: data.dateOfBirth || undefined,

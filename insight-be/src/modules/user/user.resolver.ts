@@ -1,13 +1,24 @@
 // user.resolver.ts
-import { Resolver, Query, Mutation, Args, Int, ObjectType, Field, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ObjectType,
+  Field,
+  ID,
+} from '@nestjs/graphql';
 import { UsersService } from './user.service';
 import { User } from './user.model';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserRequestDto } from './dto/req/update-user.request.dto';
+import { CreateUserRequestDto } from './dto/req/create-user.request.dto';
 import { RbacPermissionKey } from '../rbac/decorators/resolver-permission-key.decorator';
 import { ImmutableLogging } from '../audit/decorators/immutable-logging.decorator';
-import { FindAllInput } from 'src/common/base.inputs';
 import { UiErrorMessageOverride } from 'src/decorators/error-message-override.decorator';
+import { PublicIdRequestDto } from './dto/req/public-id.request.dto';
+import { PaginatedGetAllRequestDto } from './dto/req/paginated-get-all.request.dto';
+import { Role } from '../rbac/sub/role/role.entity';
 
 @ObjectType()
 export class RemoveUserResponse {
@@ -23,7 +34,7 @@ export class UserResolver {
   @RbacPermissionKey('user.findAll')
   @ImmutableLogging()
   async getAllUsers(
-    @Args('data', { type: () => FindAllInput }) data: FindAllInput,
+    @Args('data') data: PaginatedGetAllRequestDto,
   ): Promise<User[]> {
     const { limit, offset } = data;
     return this.userService.findAll(limit, offset);
@@ -33,9 +44,9 @@ export class UserResolver {
   @RbacPermissionKey('user.get')
   @ImmutableLogging()
   async getUserByPublicId(
-    @Args('publicId', { type: () => String }) publicId: string,
+    @Args('data') data: PublicIdRequestDto,
   ): Promise<User> {
-    return this.userService.findOneByPublicId(publicId);
+    return this.userService.findOneByPublicId(data.publicId);
   }
 
   @Mutation(() => User)
@@ -47,7 +58,7 @@ export class UserResolver {
       message: 'A user with this email address already exists.',
     },
   ])
-  async createUser(@Args('data') data: CreateUserDto): Promise<User> {
+  async createUser(@Args('data') data: CreateUserRequestDto): Promise<User> {
     return this.userService.create(data);
   }
 
@@ -62,7 +73,7 @@ export class UserResolver {
   ])
   async updateUserByPublicId(
     @Args('publicId', { type: () => String }) publicId: string,
-    @Args('data') data: UpdateUserDto,
+    @Args('data') data: UpdateUserRequestDto,
   ): Promise<User> {
     return this.userService.updateByPublicId(publicId, data);
   }
@@ -87,17 +98,21 @@ export class UserResolver {
     return this.userService.removeRoles(publicId, roleIds);
   }
 
+  @Query(() => [Role])
+  @RbacPermissionKey('user.getRolesForUser')
+  @ImmutableLogging()
+  async getRolesForUser(
+    @Args('data') data: PublicIdRequestDto,
+  ): Promise<Role[]> {
+    return this.userService.getRolesForUser(data.publicId);
+  }
 
-
-  @Mutation(() => RemoveUserResponse)
+  @Mutation(() => User)
   @RbacPermissionKey('user.remove')
   @ImmutableLogging()
   async removeUserByPublicId(
-    @Args('publicId', { type: () => String }) publicId: string,
-  ): Promise<RemoveUserResponse> {
-    await this.userService.removeByPublicId(publicId);
-    return {
-      id: publicId, 
-    };
+    @Args('data') data: PublicIdRequestDto,
+  ): Promise<User> {
+    return this.userService.removeByPublicId(data.publicId);
   }
 }

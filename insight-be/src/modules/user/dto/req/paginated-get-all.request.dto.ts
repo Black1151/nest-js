@@ -2,7 +2,7 @@ import { InputType, Field, Int } from '@nestjs/graphql';
 import { IsInt, IsOptional, Min } from 'class-validator';
 
 @InputType()
-export class FindAllUsersDto {
+export class PaginatedGetAllRequestDto {
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()

@@ -1,8 +1,8 @@
 import { Resolver, Mutation, Args, Int } from '@nestjs/graphql';
 
 import { RoleService } from './role.service';
-import { CreateRoleInput } from './dto/create-role.input';
-import { UpdateRoleInput } from './dto/update-role.input';
+import { CreateRoleInput } from './inputs/create-role.input';
+import { UpdateRoleInput } from './inputs/update-role.input';
 import { createBaseResolver } from 'src/common/base.resolver';
 import { Role } from './role.entity';
 import { RbacPermissionKey } from '../../decorators/resolver-permission-key.decorator';
@@ -13,7 +13,7 @@ const BaseRoleResolver = createBaseResolver<
   CreateRoleInput,
   UpdateRoleInput
 >(Role, CreateRoleInput, UpdateRoleInput, {
-  queryName: 'role',
+  queryName: 'Role',
   stableKeyPrefix: 'role',
   enabledOperations: [
     'findAll',
@@ -60,15 +60,5 @@ export class RoleResolver extends BaseRoleResolver {
     @Args('groupIds', { type: () => [Int] }) groupIds: number[],
   ) {
     return this.roleService.addPermissionGroupsToRole(roleId, groupIds);
-  }
-
-  @Mutation(() => Role)
-  @RbacPermissionKey('role.removePermissionGroupsFromRole')
-  @ImmutableLogging()
-  async removePermissionGroupsFromRole(
-    @Args('roleId', { type: () => Int }) roleId: number,
-    @Args('groupIds', { type: () => [Int] }) groupIds: number[],
-  ) {
-    return this.roleService.removePermissionGroupsFromRole(roleId, groupIds);
   }
 }

@@ -11,15 +11,14 @@ import { GoogleAuthModule } from './modules/auth-modules/google-auth/google-auth
 import { MicrosoftAuthModule } from './modules/auth-modules/microsoft-auth/microsoft-auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { RbacModule } from './modules/rbac/rbac.module';
-import { Role } from './modules/rbac/sub/role/role.entity';
 import { Permission } from './modules/rbac/sub/permission/permission.entity';
 import { APP_FILTER, APP_GUARD, DiscoveryModule } from '@nestjs/core';
 import { GqlJwtAuthGuard } from './guards/auth.guard';
 import { ApiPermissionsGuard } from './modules/rbac/guards/api-permissions.guard';
 import { ApiPermissionMapping } from './modules/rbac/sub/api-permissions-mapping/api-permission-mapping.entity';
-import { AuditModule } from './modules/audit/audit.module';
 import { PermissionGroup } from './modules/rbac/sub/permission-group/permission-group.entity';
 import { UiErrorMessagesFilter } from './filters/ui-error-messages-filter';
+import { Role } from './modules/rbac/sub/role/role.entity';
 
 @Module({
   imports: [

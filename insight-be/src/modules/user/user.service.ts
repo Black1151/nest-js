@@ -3,8 +3,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { User } from './user.model';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserRequestDto } from './dto/req/create-user.request.dto';
+import { UpdateUserRequestDto } from './dto/req/update-user.request.dto';
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
 import * as bcrypt from 'bcryptjs';
 
@@ -30,7 +30,7 @@ export class UsersService {
     return await bcrypt.hash(plainPass, saltRounds);
   }
 
-  async create(createDto: CreateUserDto): Promise<User> {
+  async create(createDto: CreateUserRequestDto): Promise<User> {
     if (createDto.password) {
       createDto.password = await this.hashPassword(createDto.password);
     }
@@ -60,7 +60,7 @@ export class UsersService {
 
   async updateByPublicId(
     publicId: string,
-    updateDto: UpdateUserDto,
+    updateDto: UpdateUserRequestDto,
   ): Promise<User> {
     const user = await this.findOneByPublicId(publicId);
 
@@ -72,9 +72,10 @@ export class UsersService {
   /**
    * DELETE by publicId
    */
-  async removeByPublicId(publicId: string): Promise<void> {
+  async removeByPublicId(publicId: string): Promise<User> {
     const user = await this.findOneByPublicId(publicId);
     await this.userRepository.delete(user.id);
+    return user;
   }
 
   /**
@@ -98,10 +99,20 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
+  async getRolesForUser(publicId: string): Promise<Role[]> {
+    const user = await this.userRepository.findOne({
+      where: { publicId },
+      relations: ['roles'],
+    });
+    console.log(user?.roles);
+    return user?.roles || [];
+  }
+
   /**
    * Load user with roles, role-based permissions, and group-based permissions.
    * Then flatten all permissions into `user.combinedPermissions`.
    */
+  /// USED BY RBAC GUARD DO NOT CHANGE
   async getUserWithRolesAndPermissions(publicId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { publicId },

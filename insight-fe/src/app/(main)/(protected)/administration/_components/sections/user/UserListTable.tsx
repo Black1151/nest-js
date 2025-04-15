@@ -14,7 +14,7 @@ interface UserListTableProps {
 
 function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
-  const query = useQuery({ suspense: true });
+  const query = useQuery();
   const users = query.getAllUsers({ data: { limit: 10, offset: 0 } });
 
   const formattedData = users.map((u: User) => ({
