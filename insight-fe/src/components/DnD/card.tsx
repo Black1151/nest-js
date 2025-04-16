@@ -1,13 +1,7 @@
 import React, { Fragment, memo, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import invariant from "tiny-invariant";
-
 import { Box, useMergeRefs } from "@chakra-ui/react";
-
-// You can replace the below icons with whatever best suits your needs.
-// For a "more" icon, you might use the HamburgerIcon or any other from @chakra-ui/icons.
-// import { HamburgerIcon } from "@chakra-ui/icons";
-
 import {
   attachClosestEdge,
   type Edge,
@@ -25,43 +19,7 @@ import { useBoardContext } from "./BoardContext";
 import { Person } from "./data/people";
 
 import { CardPrimitive } from "./card-primitive";
-
-// -----------------------------------------------------------------------------
-// Types and context stubs (replace these with your actual definitions)
-// -----------------------------------------------------------------------------
-// import { type ColumnType, type Person } from '../../data/people';
-// import { useBoardContext } from './board-context';
-// import { useColumnContext } from './column-context';
-// -----------------------------------------------------------------------------
-
-export type State =
-  | { type: "idle" }
-  | { type: "preview"; container: HTMLElement; rect: DOMRect }
-  | { type: "dragging" };
-
-export const idleState: State = { type: "idle" };
-export const draggingState: State = { type: "dragging" };
-
-export const getStateStyle = (state: State["type"]) => {
-  switch (state) {
-    case "idle":
-      return {
-        cursor: "grab",
-        boxShadow: "md",
-        opacity: 1,
-      };
-    case "dragging":
-      return {
-        opacity: 0.4,
-        boxShadow: "md",
-      };
-    case "preview":
-      // No shadow for preview, the browser drag image handles that.
-      return {};
-    default:
-      return {};
-  }
-};
+import { draggingState, idleState, State } from "./types";
 
 // -----------------------------------------------------------------------------
 // Main Card component

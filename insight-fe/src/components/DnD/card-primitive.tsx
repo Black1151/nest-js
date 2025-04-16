@@ -20,7 +20,7 @@ import { type Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import { Person } from "./data/people";
 import { Menu as MenuIcon } from "lucide-react";
-import { getStateStyle, State } from "./Card";
+import { getStateStyle, State } from "./types";
 
 type CardPrimitiveProps = {
   closestEdge: Edge | null;
