@@ -19,16 +19,122 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
 
-import {
-  type ColumnMap,
-  type ColumnType,
-  getBasicData,
-  type Person,
-} from "./data/people";
+// import {
+//   BallSack,
+//   type ColumnMap,
+//   type ColumnType,
+//   getBasicData,
+//   // type Person,
+// } from "./data/people";
 import Board from "./board";
 import { BoardContext, type BoardContextValue } from "./BoardContext";
 import { Column } from "./column";
 import { createRegistry } from "./registry";
+
+export type BallSack = {
+  id: string;
+  name: string;
+  role: string;
+  avatarUrl: string;
+};
+
+export type ColumnType<T> = {
+  title: string;
+  columnId: string;
+  items: T[];
+};
+
+export type ColumnMap = { [columnId: string]: ColumnType<BallSack> };
+
+export function getBasicData() {
+  const columnMap: ColumnMap = {
+    confluence: {
+      title: "Confluence",
+      columnId: "confluence",
+      items: [
+        {
+          id: "1",
+          name: "John",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+        {
+          id: "2",
+          name: "Jane",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+        {
+          id: "3",
+          name: "John",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+        {
+          id: "4",
+          name: "Jane",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+        {
+          id: "5",
+          name: "John",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+        {
+          id: "6",
+          name: "Jane",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+      ],
+    },
+    jira: {
+      title: "Jira",
+      columnId: "jira",
+      items: [
+        {
+          id: "7",
+          name: "John",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+        {
+          id: "8",
+          name: "Jane",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+        {
+          id: "9",
+          name: "John",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+        {
+          id: "10",
+          name: "Jane",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+        {
+          id: "11",
+          name: "John",
+          role: "Doe",
+          avatarUrl: "https://via.placeholder.com/150",
+        },
+      ],
+    },
+  };
+
+  const orderedColumnIds = ["confluence", "jira"];
+
+  return {
+    columnMap,
+    orderedColumnIds,
+  };
+}
 
 // -----------------------------------------------------------------------------
 // Type definitions for the various outcomes of a drag-and-drop operation
@@ -148,7 +254,7 @@ export default function BoardExample() {
       const item = column.items[finishIndex];
 
       // Trigger a post-move flash on the dropped card
-      const entry = registry.getCard(item.userId);
+      const entry = registry.getCard(item.id);
       triggerPostMoveFlash(entry.element);
 
       // Only announce if this is a keyboard operation (pointer = no announcement)
@@ -187,7 +293,7 @@ export default function BoardExample() {
           : destinationColumn.items.length;
 
       // Trigger a post-move flash on the dropped card
-      const entry = registry.getCard(item.userId);
+      const entry = registry.getCard(item.id);
       triggerPostMoveFlash(entry.element);
 
       // Only announce and focus if this is a keyboard operation
@@ -292,7 +398,7 @@ export default function BoardExample() {
         });
 
         // Create an updated copy of the source column
-        const updatedSourceColumn: ColumnType = {
+        const updatedSourceColumn: ColumnType<BallSack> = {
           ...sourceColumn,
           items: updatedItems,
         };
@@ -349,7 +455,7 @@ export default function BoardExample() {
       setData((data) => {
         const sourceColumn = data.columnMap[startColumnId];
         const destinationColumn = data.columnMap[finishColumnId];
-        const item: Person = sourceColumn.items[itemIndexInStartColumn];
+        const item: BallSack = sourceColumn.items[itemIndexInStartColumn];
 
         // Calculate the new index for the item in the destination column
         const newIndexInDestination = itemIndexInFinishColumn ?? 0;
@@ -361,7 +467,7 @@ export default function BoardExample() {
           ...data.columnMap,
           [startColumnId]: {
             ...sourceColumn,
-            items: sourceColumn.items.filter((i) => i.userId !== item.userId),
+            items: sourceColumn.items.filter((i) => i.id !== item.id),
           },
           [finishColumnId]: {
             ...destinationColumn,
@@ -407,6 +513,9 @@ export default function BoardExample() {
         onDrop(args) {
           const { location, source } = args;
 
+          console.log("location", location);
+          console.log("source", source);
+
           // If no drop targets, do nothing
           if (!location.current.dropTargets.length) {
             return;
@@ -447,7 +556,7 @@ export default function BoardExample() {
             invariant(typeof sourceId === "string");
             const sourceColumn = data.columnMap[sourceId];
             const itemIndex = sourceColumn.items.findIndex(
-              (item) => item.userId === itemId
+              (item) => item.id === itemId
             );
 
             // If there is only one drop target, it's a column drop
@@ -496,7 +605,7 @@ export default function BoardExample() {
 
               // Find the index of the card that was hovered
               const indexOfTarget = destinationColumn.items.findIndex(
-                (item) => item.userId === destinationCardRecord.data.itemId
+                (item) => item.id === destinationCardRecord.data.itemId
               );
               const closestEdgeOfTarget: Edge | null = extractClosestEdge(
                 destinationCardRecord.data

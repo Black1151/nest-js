@@ -43,7 +43,7 @@ import { centerUnderPointer } from "@atlaskit/pragmatic-drag-and-drop/element/ce
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 
 // Types and context from your own code
-import { type ColumnType } from "./data/people";
+import { BallSack, type ColumnType } from "./data/people";
 import { useBoardContext } from "./BoardContext";
 import { Card } from "./card";
 import {
@@ -109,7 +109,11 @@ type State =
 const idle: State = { type: "idle" };
 const isCardOver: State = { type: "is-card-over" };
 
-export const Column = memo(function Column({ column }: { column: ColumnType }) {
+export const Column = memo(function Column({
+  column,
+}: {
+  column: ColumnType<BallSack>;
+}) {
   const columnId = column.columnId;
   const columnRef = useRef<HTMLDivElement | null>(null);
   const columnInnerRef = useRef<HTMLDivElement | null>(null);
@@ -291,7 +295,7 @@ export const Column = memo(function Column({ column }: { column: ColumnType }) {
             <Box ref={scrollableRef} sx={scrollContainerStyles}>
               <Stack sx={cardListStyles}>
                 {column.items.map((item: any, index: number) => (
-                  <Card item={item} key={index} />
+                  <Card item={item} key={item.id} />
                 ))}
               </Stack>
             </Box>
@@ -309,7 +313,7 @@ export const Column = memo(function Column({ column }: { column: ColumnType }) {
   );
 });
 
-function SafariColumnPreview({ column }: { column: ColumnType }) {
+function SafariColumnPreview({ column }: { column: ColumnType<BallSack> }) {
   // Simple styling for the Safari fallback
   const safariPreviewStyles = {
     width: "250px",

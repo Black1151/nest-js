@@ -16,14 +16,14 @@ export type ColumnEntry = {
  * so that we can restore focus to the trigger when a card moves between columns.
  */
 export function createRegistry() {
-  const cards = new Map<string, CardEntry>();
+  const cards = new Map<string | number, CardEntry>();
   const columns = new Map<string, ColumnEntry>();
 
   function registerCard({
     cardId,
     entry,
   }: {
-    cardId: string;
+    cardId: string | number;
     entry: CardEntry;
   }): CleanupFn {
     cards.set(cardId, entry);

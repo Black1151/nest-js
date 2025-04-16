@@ -18,13 +18,14 @@ import {
 
 import { type Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
-import { Person } from "./data/people";
+// import { Person } from "./data/people";
 import { Menu as MenuIcon } from "lucide-react";
 import { getStateStyle, State } from "./types";
+import { BallSack } from "./DnDBoardMain";
 
 type CardPrimitiveProps = {
   closestEdge: Edge | null;
-  item: Person;
+  item: BallSack;
   state: State;
   actionMenuTriggerRef?: Ref<HTMLButtonElement>;
 };
@@ -34,13 +35,13 @@ export const CardPrimitive = forwardRef<HTMLDivElement, CardPrimitiveProps>(
     { closestEdge, item, state, actionMenuTriggerRef },
     ref
   ) {
-    const { avatarUrl, name, role, userId } = item;
+    const { avatarUrl, name, role, id } = item;
     const stateStyleProps = getStateStyle(state.type);
 
     return (
       <Grid
         ref={ref}
-        data-testid={`item-${userId}`}
+        data-testid={`item-${id}`}
         templateColumns="auto 1fr auto"
         alignItems="center"
         gap={4}

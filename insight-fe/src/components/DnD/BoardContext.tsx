@@ -3,10 +3,10 @@ import { createContext, useContext } from "react";
 import invariant from "tiny-invariant";
 
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/types";
-import { ColumnType } from "./data/people";
+import { BallSack, ColumnType } from "./data/people";
 
 export type BoardContextValue = {
-  getColumns: () => ColumnType[];
+  getColumns: () => ColumnType<BallSack>[];
 
   reorderColumn: (args: { startIndex: number; finishIndex: number }) => void;
 

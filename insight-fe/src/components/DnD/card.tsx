@@ -16,18 +16,18 @@ import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/elemen
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { dropTargetForExternal } from "@atlaskit/pragmatic-drag-and-drop/external/adapter";
 import { useBoardContext } from "./BoardContext";
-import { Person } from "./data/people";
 
 import { CardPrimitive } from "./card-primitive";
 import { draggingState, idleState, State } from "./types";
+import { BallSack } from "./DnDBoardMain";
 
-// -----------------------------------------------------------------------------
-// Main Card component
-// -----------------------------------------------------------------------------
-export const Card = memo(function Card({ item }: { item: any }) {
+interface CardProps {
+  item: BallSack;
+}
+
+export const Card = memo(function Card({ item }: CardProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  // const ref = useRef<HTMLDivElement | null>(null);
-  const { userId: cardId } = item;
+  const { id: cardId } = item;
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
   const [state, setState] = useState<State>(idleState);
 
@@ -39,7 +39,7 @@ export const Card = memo(function Card({ item }: { item: any }) {
     invariant(ref.current);
 
     return registerCard({
-      cardId,
+      cardId: item.id,
       entry: {
         element: ref.current,
         actionMenuTrigger: actionMenuTriggerRef.current,
