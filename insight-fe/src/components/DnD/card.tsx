@@ -24,9 +24,10 @@ import { draggingState, idleState, State } from "./types";
 // -----------------------------------------------------------------------------
 // Main Card component
 // -----------------------------------------------------------------------------
-export const Card = memo(function Card({ item }: { item: Person }) {
+export const Card = memo(function Card({ item }: { item: any }) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const { userId } = item;
+  // const ref = useRef<HTMLDivElement | null>(null);
+  const { userId: cardId } = item;
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
   const [state, setState] = useState<State>(idleState);
 
@@ -38,13 +39,13 @@ export const Card = memo(function Card({ item }: { item: Person }) {
     invariant(ref.current);
 
     return registerCard({
-      cardId: userId,
+      cardId,
       entry: {
         element: ref.current,
         actionMenuTrigger: actionMenuTriggerRef.current,
       },
     });
-  }, [registerCard, userId]);
+  }, [registerCard, cardId]);
 
   useEffect(() => {
     const element = ref.current;
@@ -53,7 +54,7 @@ export const Card = memo(function Card({ item }: { item: Person }) {
     return combine(
       draggable({
         element: element,
-        getInitialData: () => ({ type: "card", itemId: userId, instanceId }),
+        getInitialData: () => ({ type: "card", itemId: cardId, instanceId }),
         onGenerateDragPreview: ({ location, source, nativeSetDragImage }) => {
           const rect = source.element.getBoundingClientRect();
 
@@ -84,7 +85,7 @@ export const Card = memo(function Card({ item }: { item: Person }) {
         },
         getIsSticky: () => true,
         getData: ({ input, element: targetEl }) => {
-          const data = { type: "card", itemId: userId };
+          const data = { type: "card", itemId: cardId };
           return attachClosestEdge(data, {
             input,
             element: targetEl,
@@ -92,12 +93,12 @@ export const Card = memo(function Card({ item }: { item: Person }) {
           });
         },
         onDragEnter: (args) => {
-          if (args.source.data.itemId !== userId) {
+          if (args.source.data.itemId !== cardId) {
             setClosestEdge(extractClosestEdge(args.self.data));
           }
         },
         onDrag: (args) => {
-          if (args.source.data.itemId !== userId) {
+          if (args.source.data.itemId !== cardId) {
             setClosestEdge(extractClosestEdge(args.self.data));
           }
         },
@@ -109,7 +110,7 @@ export const Card = memo(function Card({ item }: { item: Person }) {
         },
       })
     );
-  }, [instanceId, item, userId]);
+  }, [instanceId, item, cardId]);
 
   // Merge the card ref with Chakra's ref (if needed). Alternatively, you can
   // just use ref directly if you don't have multiple references to merge.

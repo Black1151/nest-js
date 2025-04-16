@@ -45,7 +45,7 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 // Types and context from your own code
 import { type ColumnType } from "./data/people";
 import { useBoardContext } from "./BoardContext";
-import { Card } from "./Card";
+import { Card } from "./card";
 import {
   ColumnContext,
   type ColumnContextProps,
@@ -290,8 +290,8 @@ export const Column = memo(function Column({ column }: { column: ColumnType }) {
 
             <Box ref={scrollableRef} sx={scrollContainerStyles}>
               <Stack sx={cardListStyles}>
-                {column.items.map((item: any) => (
-                  <Card item={item} key={item.userId} />
+                {column.items.map((item: any, index: number) => (
+                  <Card item={item} key={index} />
                 ))}
               </Stack>
             </Box>
