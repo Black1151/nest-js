@@ -1,31 +1,8 @@
-import React, {
-  forwardRef,
-  Fragment,
-  memo,
-  type Ref,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { Fragment, memo, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import invariant from "tiny-invariant";
 
-import {
-  Avatar,
-  Box,
-  Divider,
-  Grid,
-  Heading,
-  Menu,
-  IconButton,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Text,
-  VStack,
-  useMergeRefs,
-} from "@chakra-ui/react";
+import { Box, useMergeRefs } from "@chakra-ui/react";
 
 // You can replace the below icons with whatever best suits your needs.
 // For a "more" icon, you might use the HamburgerIcon or any other from @chakra-ui/icons.
@@ -36,7 +13,6 @@ import {
   type Edge,
   extractClosestEdge,
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
-import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import {
   draggable,
@@ -46,9 +22,9 @@ import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/elemen
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { dropTargetForExternal } from "@atlaskit/pragmatic-drag-and-drop/external/adapter";
 import { useBoardContext } from "./BoardContext";
-import { ColumnType, Person } from "./data/people";
-import { useColumnContext } from "./ColumnContext";
-import { Menu as MenuIcon } from "lucide-react";
+import { Person } from "./data/people";
+
+import { CardPrimitive } from "./card-primitive";
 
 // -----------------------------------------------------------------------------
 // Types and context stubs (replace these with your actual definitions)
@@ -58,15 +34,15 @@ import { Menu as MenuIcon } from "lucide-react";
 // import { useColumnContext } from './column-context';
 // -----------------------------------------------------------------------------
 
-type State =
+export type State =
   | { type: "idle" }
   | { type: "preview"; container: HTMLElement; rect: DOMRect }
   | { type: "dragging" };
 
-const idleState: State = { type: "idle" };
-const draggingState: State = { type: "dragging" };
+export const idleState: State = { type: "idle" };
+export const draggingState: State = { type: "dragging" };
 
-const getStateStyle = (state: State["type"]) => {
+export const getStateStyle = (state: State["type"]) => {
   switch (state) {
     case "idle":
       return {
@@ -86,96 +62,6 @@ const getStateStyle = (state: State["type"]) => {
       return {};
   }
 };
-
-// -----------------------------------------------------------------------------
-// Dropdown items for moving a card to another column
-// -----------------------------------------------------------------------------
-function MoveToOtherColumnItem({
-  targetColumn,
-  startIndex,
-}: {
-  targetColumn: ColumnType;
-  startIndex: number;
-}) {
-  const { moveCard } = useBoardContext();
-  const { columnId } = useColumnContext();
-
-  const onClick = useCallback(() => {
-    moveCard({
-      startColumnId: columnId,
-      finishColumnId: targetColumn.columnId,
-      itemIndexInStartColumn: startIndex,
-    });
-  }, [columnId, moveCard, startIndex, targetColumn.columnId]);
-
-  return <MenuItem onClick={onClick}>{targetColumn.title}</MenuItem>;
-}
-
-// -----------------------------------------------------------------------------
-// CardPrimitive
-// -----------------------------------------------------------------------------
-type CardPrimitiveProps = {
-  closestEdge: Edge | null;
-  item: Person;
-  state: State;
-  actionMenuTriggerRef?: Ref<HTMLButtonElement>;
-};
-
-export const CardPrimitive = forwardRef<HTMLDivElement, CardPrimitiveProps>(
-  function CardPrimitive(
-    { closestEdge, item, state, actionMenuTriggerRef },
-    ref
-  ) {
-    const { avatarUrl, name, role, userId } = item;
-    const stateStyleProps = getStateStyle(state.type);
-
-    return (
-      <Grid
-        ref={ref}
-        data-testid={`item-${userId}`}
-        templateColumns="auto 1fr auto"
-        alignItems="center"
-        gap={4}
-        bg="white"
-        p={4}
-        borderRadius="md"
-        position="relative"
-        _hover={{ bg: "gray.100" }}
-        {...stateStyleProps}
-      >
-        {/* Avatar */}
-        <Box pointerEvents="none">
-          <Avatar size="lg" name={name} src={avatarUrl} />
-        </Box>
-
-        {/* Name and role */}
-        <VStack spacing={1} align="start">
-          <Heading as="span" size="xs">
-            {name}
-          </Heading>
-          <Text fontSize="sm" m={0}>
-            {role}
-          </Text>
-        </VStack>
-
-        {/* Menu button */}
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={<MenuIcon />}
-            aria-label={`Move ${name}`}
-            variant="ghost"
-            size="sm"
-            ref={actionMenuTriggerRef}
-          />
-        </Menu>
-
-        {/* Drop indicator if needed */}
-        {closestEdge && <DropIndicator edge={closestEdge} gap="0.5rem" />}
-      </Grid>
-    );
-  }
-);
 
 // -----------------------------------------------------------------------------
 // Main Card component
