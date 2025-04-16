@@ -111,66 +111,6 @@ function MoveToOtherColumnItem({
   return <MenuItem onClick={onClick}>{targetColumn.title}</MenuItem>;
 }
 
-function LazyDropdownItems({ userId }: { userId: string }) {
-  const { getColumns, reorderCard } = useBoardContext();
-  const { columnId, getCardIndex, getNumCards } = useColumnContext();
-
-  const numCards = getNumCards();
-  const startIndex = getCardIndex(userId);
-
-  const moveToTop = useCallback(() => {
-    reorderCard({ columnId, startIndex, finishIndex: 0 });
-  }, [columnId, reorderCard, startIndex]);
-
-  const moveUp = useCallback(() => {
-    reorderCard({ columnId, startIndex, finishIndex: startIndex - 1 });
-  }, [columnId, reorderCard, startIndex]);
-
-  const moveDown = useCallback(() => {
-    reorderCard({ columnId, startIndex, finishIndex: startIndex + 1 });
-  }, [columnId, reorderCard, startIndex]);
-
-  const moveToBottom = useCallback(() => {
-    reorderCard({ columnId, startIndex, finishIndex: numCards - 1 });
-  }, [columnId, reorderCard, startIndex, numCards]);
-
-  const isMoveUpDisabled = startIndex === 0;
-  const isMoveDownDisabled = startIndex === numCards - 1;
-
-  const moveColumnOptions = getColumns().filter(
-    (column) => column.columnId !== columnId
-  );
-
-  return (
-    <Fragment>
-      {/* "Reorder" grouping */}
-      <MenuItem onClick={moveToTop} isDisabled={isMoveUpDisabled}>
-        Move to top
-      </MenuItem>
-      <MenuItem onClick={moveUp} isDisabled={isMoveUpDisabled}>
-        Move up
-      </MenuItem>
-      <MenuItem onClick={moveDown} isDisabled={isMoveDownDisabled}>
-        Move down
-      </MenuItem>
-      <MenuItem onClick={moveToBottom} isDisabled={isMoveDownDisabled}>
-        Move to bottom
-      </MenuItem>
-
-      {moveColumnOptions.length ? <Divider /> : null}
-
-      {/* "Move to" grouping */}
-      {moveColumnOptions.map((column) => (
-        <MoveToOtherColumnItem
-          key={column.columnId}
-          targetColumn={column}
-          startIndex={startIndex}
-        />
-      ))}
-    </Fragment>
-  );
-}
-
 // -----------------------------------------------------------------------------
 // CardPrimitive
 // -----------------------------------------------------------------------------
@@ -228,9 +168,6 @@ export const CardPrimitive = forwardRef<HTMLDivElement, CardPrimitiveProps>(
             size="sm"
             ref={actionMenuTriggerRef}
           />
-          <MenuList>
-            <LazyDropdownItems userId={userId} />
-          </MenuList>
         </Menu>
 
         {/* Drop indicator if needed */}
