@@ -2,7 +2,7 @@ import { ContentCard } from "@/components/layout/Card";
 import { Role } from "@/gqty";
 import { Flex, Text } from "@chakra-ui/react";
 
-interface RoleDnDItemProps {
+export interface RoleDnDItemProps {
   id: string;
   name: string;
   description: string;

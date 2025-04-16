@@ -68,7 +68,8 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
   return (
     <>
       <ContentCard>
-        {/* <TwoColumnDnD /> */}
+        <TwoColumnDnD {...TwoColumnDnDProps} />
+        {/* <Board initial={} /> */}
         <TwoColumnDnD {...TwoColumnDnDProps} />
         <Button
           colorScheme="green"

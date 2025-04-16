@@ -1,257 +1,359 @@
-"use client";
+import React, {
+  forwardRef,
+  Fragment,
+  memo,
+  type Ref,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import ReactDOM from "react-dom";
+import invariant from "tiny-invariant";
 
-import { Box, Flex } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Divider,
+  Grid,
+  Heading,
+  Menu,
+  IconButton,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+  VStack,
+  useMergeRefs,
+} from "@chakra-ui/react";
+
+// You can replace the below icons with whatever best suits your needs.
+// For a "more" icon, you might use the HamburgerIcon or any other from @chakra-ui/icons.
+// import { HamburgerIcon } from "@chakra-ui/icons";
+
+import {
+  attachClosestEdge,
+  type Edge,
+  extractClosestEdge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
-import { createPortal } from "react-dom";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
-import invariant from "tiny-invariant";
-import {
-  attachClosestEdge,
-  extractClosestEdge,
-  Edge,
-} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { dropTargetForExternal } from "@atlaskit/pragmatic-drag-and-drop/external/adapter";
+import { useBoardContext } from "./BoardContext";
+import { ColumnType, Person } from "./data/people";
+import { useColumnContext } from "./ColumnContext";
+import { Menu as MenuIcon } from "lucide-react";
 
-import {
-  getCardData,
-  getCardDropTargetData,
-  isCardData,
-  isDraggingACard,
-  TCard,
-} from "./data";
-import { isSafari } from "./isSafari";
-import { isShallowEqual } from "./is-shallow-equal";
+// -----------------------------------------------------------------------------
+// Types and context stubs (replace these with your actual definitions)
+// -----------------------------------------------------------------------------
+// import { type ColumnType, type Person } from '../../data/people';
+// import { useBoardContext } from './board-context';
+// import { useColumnContext } from './column-context';
+// -----------------------------------------------------------------------------
 
-/**
- * Represents the different states this Card can be in.
- */
-type TCardState =
+type State =
   | { type: "idle" }
-  | { type: "is-dragging" }
-  | { type: "is-dragging-and-left-self" }
-  | { type: "is-over"; dragging: DOMRect; closestEdge: Edge }
-  | { type: "preview"; container: HTMLElement; dragging: DOMRect };
+  | { type: "preview"; container: HTMLElement; rect: DOMRect }
+  | { type: "dragging" };
 
-const idleState: TCardState = { type: "idle" };
+const idleState: State = { type: "idle" };
+const draggingState: State = { type: "dragging" };
 
-/**
- * Styles that apply to the INNER element (the draggable Box).
- * We must have an entry for each TCardState["type"] to satisfy the Record type.
- */
-const innerStyles: Record<TCardState["type"], any> = {
-  idle: {
-    cursor: "grab",
-    _hover: { outline: "2px solid", outlineColor: "gray.50" },
-  },
-  "is-dragging": { opacity: 0.4 },
-  "is-dragging-and-left-self": {}, // no special style
-  "is-over": {}, // no special style
-  preview: {}, // no special style
+const getStateStyle = (state: State["type"]) => {
+  switch (state) {
+    case "idle":
+      return {
+        cursor: "grab",
+        boxShadow: "md",
+        opacity: 1,
+      };
+    case "dragging":
+      return {
+        opacity: 0.4,
+        boxShadow: "md",
+      };
+    case "preview":
+      // No shadow for preview, the browser drag image handles that.
+      return {};
+    default:
+      return {};
+  }
 };
 
-/**
- * Styles that apply to the OUTER element (the flex wrapper).
- * Likewise must have an entry for each TCardState["type"].
- */
-const outerStyles: Record<TCardState["type"], any> = {
-  idle: {},
-  "is-dragging": {},
-  "is-dragging-and-left-self": { display: "none" },
-  "is-over": {},
-  preview: {},
-};
-
-export function CardShadow({ dragging }: { dragging: DOMRect }) {
-  return (
-    <Box
-      flexShrink={0}
-      borderRadius="md"
-      bg="gray.900"
-      height={`${dragging.height}px`}
-    />
-  );
-}
-
-export function CardDisplay({
-  card,
-  state,
-  outerRef,
-  innerRef,
+// -----------------------------------------------------------------------------
+// Dropdown items for moving a card to another column
+// -----------------------------------------------------------------------------
+function MoveToOtherColumnItem({
+  targetColumn,
+  startIndex,
 }: {
-  card: TCard;
-  state: TCardState;
-  outerRef?: MutableRefObject<HTMLDivElement | null>;
-  innerRef?: MutableRefObject<HTMLDivElement | null>;
+  targetColumn: ColumnType;
+  startIndex: number;
 }) {
-  const outerStyle = outerStyles[state.type] || {};
-  const innerStyle = innerStyles[state.type] || {};
-  const transformStyle =
-    state.type === "preview" && !isSafari() ? "rotate(4deg)" : undefined;
+  const { moveCard } = useBoardContext();
+  const { columnId } = useColumnContext();
+
+  const onClick = useCallback(() => {
+    moveCard({
+      startColumnId: columnId,
+      finishColumnId: targetColumn.columnId,
+      itemIndexInStartColumn: startIndex,
+    });
+  }, [columnId, moveCard, startIndex, targetColumn.columnId]);
+
+  return <MenuItem onClick={onClick}>{targetColumn.title}</MenuItem>;
+}
+
+function LazyDropdownItems({ userId }: { userId: string }) {
+  const { getColumns, reorderCard } = useBoardContext();
+  const { columnId, getCardIndex, getNumCards } = useColumnContext();
+
+  const numCards = getNumCards();
+  const startIndex = getCardIndex(userId);
+
+  const moveToTop = useCallback(() => {
+    reorderCard({ columnId, startIndex, finishIndex: 0 });
+  }, [columnId, reorderCard, startIndex]);
+
+  const moveUp = useCallback(() => {
+    reorderCard({ columnId, startIndex, finishIndex: startIndex - 1 });
+  }, [columnId, reorderCard, startIndex]);
+
+  const moveDown = useCallback(() => {
+    reorderCard({ columnId, startIndex, finishIndex: startIndex + 1 });
+  }, [columnId, reorderCard, startIndex]);
+
+  const moveToBottom = useCallback(() => {
+    reorderCard({ columnId, startIndex, finishIndex: numCards - 1 });
+  }, [columnId, reorderCard, startIndex, numCards]);
+
+  const isMoveUpDisabled = startIndex === 0;
+  const isMoveDownDisabled = startIndex === numCards - 1;
+
+  const moveColumnOptions = getColumns().filter(
+    (column) => column.columnId !== columnId
+  );
 
   return (
-    <Flex
-      ref={outerRef}
-      flexDir="column"
-      flexShrink={0}
-      gap={2}
-      px={3}
-      py={1}
-      {...outerStyle}
-    >
-      {/* Put a shadow above the item if we are closest to the 'top' edge */}
-      {state.type === "is-over" && state.closestEdge === "top" && (
-        <CardShadow dragging={state.dragging} />
-      )}
+    <Fragment>
+      {/* "Reorder" grouping */}
+      <MenuItem onClick={moveToTop} isDisabled={isMoveUpDisabled}>
+        Move to top
+      </MenuItem>
+      <MenuItem onClick={moveUp} isDisabled={isMoveUpDisabled}>
+        Move up
+      </MenuItem>
+      <MenuItem onClick={moveDown} isDisabled={isMoveDownDisabled}>
+        Move down
+      </MenuItem>
+      <MenuItem onClick={moveToBottom} isDisabled={isMoveDownDisabled}>
+        Move to bottom
+      </MenuItem>
 
-      <Box
-        ref={innerRef}
-        borderRadius="md"
-        bg="gray.700"
-        color="gray.300"
-        p={2}
-        style={
-          state.type === "preview"
-            ? {
-                width: `${state.dragging.width}px`,
-                height: `${state.dragging.height}px`,
-                transform: transformStyle,
-              }
-            : {}
-        }
-        {...innerStyle}
-      >
-        {card.description}
-      </Box>
+      {moveColumnOptions.length ? <Divider /> : null}
 
-      {/* Put a shadow below the item if we are closest to the 'bottom' edge */}
-      {state.type === "is-over" && state.closestEdge === "bottom" && (
-        <CardShadow dragging={state.dragging} />
-      )}
-    </Flex>
+      {/* "Move to" grouping */}
+      {moveColumnOptions.map((column) => (
+        <MoveToOtherColumnItem
+          key={column.columnId}
+          targetColumn={column}
+          startIndex={startIndex}
+        />
+      ))}
+    </Fragment>
   );
 }
 
-export function Card({ card, columnId }: { card: TCard; columnId: string }) {
-  const outerRef = useRef<HTMLDivElement | null>(null);
-  const innerRef = useRef<HTMLDivElement | null>(null);
-  const [state, setState] = useState<TCardState>(idleState);
+// -----------------------------------------------------------------------------
+// CardPrimitive
+// -----------------------------------------------------------------------------
+type CardPrimitiveProps = {
+  closestEdge: Edge | null;
+  item: Person;
+  state: State;
+  actionMenuTriggerRef?: Ref<HTMLButtonElement>;
+};
+
+export const CardPrimitive = forwardRef<HTMLDivElement, CardPrimitiveProps>(
+  function CardPrimitive(
+    { closestEdge, item, state, actionMenuTriggerRef },
+    ref
+  ) {
+    const { avatarUrl, name, role, userId } = item;
+    const stateStyleProps = getStateStyle(state.type);
+
+    return (
+      <Grid
+        ref={ref}
+        data-testid={`item-${userId}`}
+        templateColumns="auto 1fr auto"
+        alignItems="center"
+        gap={4}
+        bg="white"
+        p={4}
+        borderRadius="md"
+        position="relative"
+        _hover={{ bg: "gray.100" }}
+        {...stateStyleProps}
+      >
+        {/* Avatar */}
+        <Box pointerEvents="none">
+          <Avatar size="lg" name={name} src={avatarUrl} />
+        </Box>
+
+        {/* Name and role */}
+        <VStack spacing={1} align="start">
+          <Heading as="span" size="xs">
+            {name}
+          </Heading>
+          <Text fontSize="sm" m={0}>
+            {role}
+          </Text>
+        </VStack>
+
+        {/* Menu button */}
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<MenuIcon />}
+            aria-label={`Move ${name}`}
+            variant="ghost"
+            size="sm"
+            ref={actionMenuTriggerRef}
+          />
+          <MenuList>
+            <LazyDropdownItems userId={userId} />
+          </MenuList>
+        </Menu>
+
+        {/* Drop indicator if needed */}
+        {closestEdge && <DropIndicator edge={closestEdge} gap="0.5rem" />}
+      </Grid>
+    );
+  }
+);
+
+// -----------------------------------------------------------------------------
+// Main Card component
+// -----------------------------------------------------------------------------
+export const Card = memo(function Card({ item }: { item: Person }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const { userId } = item;
+  const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+  const [state, setState] = useState<State>(idleState);
+
+  const actionMenuTriggerRef = useRef<HTMLButtonElement>(null);
+
+  const { instanceId, registerCard } = useBoardContext();
+  useEffect(() => {
+    invariant(actionMenuTriggerRef.current);
+    invariant(ref.current);
+
+    return registerCard({
+      cardId: userId,
+      entry: {
+        element: ref.current,
+        actionMenuTrigger: actionMenuTriggerRef.current,
+      },
+    });
+  }, [registerCard, userId]);
 
   useEffect(() => {
-    const outer = outerRef.current;
-    const inner = innerRef.current;
-    invariant(outer && inner);
+    const element = ref.current;
+    invariant(element);
 
     return combine(
       draggable({
-        element: inner,
-        getInitialData: ({ element }) =>
-          getCardData({
-            card,
-            columnId,
-            rect: element.getBoundingClientRect(),
-          }),
-        onGenerateDragPreview({ nativeSetDragImage, location, source }) {
-          const data = source.data;
-          if (!isCardData(data)) return;
+        element: element,
+        getInitialData: () => ({ type: "card", itemId: userId, instanceId }),
+        onGenerateDragPreview: ({ location, source, nativeSetDragImage }) => {
+          const rect = source.element.getBoundingClientRect();
 
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: preserveOffsetOnSource({
-              element: inner,
+              element,
               input: location.current.input,
             }),
             render({ container }) {
-              setState({
-                type: "preview",
-                container,
-                dragging: inner.getBoundingClientRect(),
-              });
+              setState({ type: "preview", container, rect });
+              return () => setState(draggingState);
             },
           });
         },
-        onDragStart() {
-          setState({ type: "is-dragging" });
-        },
-        onDrop() {
-          setState(idleState);
-        },
+        onDragStart: () => setState(draggingState),
+        onDrop: () => setState(idleState),
+      }),
+      dropTargetForExternal({
+        element: element,
       }),
       dropTargetForElements({
-        element: outer,
+        element: element,
+        canDrop: ({ source }) => {
+          return (
+            source.data.instanceId === instanceId && source.data.type === "card"
+          );
+        },
         getIsSticky: () => true,
-        canDrop: isDraggingACard,
-        getData: ({ element, input }) => {
-          const data = getCardDropTargetData({ card, columnId });
+        getData: ({ input, element: targetEl }) => {
+          const data = { type: "card", itemId: userId };
           return attachClosestEdge(data, {
-            element,
             input,
+            element: targetEl,
             allowedEdges: ["top", "bottom"],
           });
         },
-        onDragEnter({ source, self }) {
-          if (!isCardData(source.data)) return;
-          // If it's the same card, we don't handle
-          if (source.data.card.id === card.id) return;
-
-          const closestEdge = extractClosestEdge(self.data);
-          if (!closestEdge) return;
-
-          setState({
-            type: "is-over",
-            dragging: source.data.rect,
-            closestEdge,
-          });
-        },
-        onDrag({ source, self }) {
-          if (!isCardData(source.data)) return;
-          if (source.data.card.id === card.id) return;
-
-          const closestEdge = extractClosestEdge(self.data);
-          if (!closestEdge) return;
-
-          const proposedState: TCardState = {
-            type: "is-over",
-            dragging: source.data.rect,
-            closestEdge,
-          };
-          setState((current) =>
-            isShallowEqual(proposedState, current) ? current : proposedState
-          );
-        },
-        onDragLeave({ source }) {
-          if (!isCardData(source.data)) return;
-          // The card being dragged just left itself
-          if (source.data.card.id === card.id) {
-            setState({ type: "is-dragging-and-left-self" });
-            return;
+        onDragEnter: (args) => {
+          if (args.source.data.itemId !== userId) {
+            setClosestEdge(extractClosestEdge(args.self.data));
           }
-          setState(idleState);
         },
-        onDrop() {
-          setState(idleState);
+        onDrag: (args) => {
+          if (args.source.data.itemId !== userId) {
+            setClosestEdge(extractClosestEdge(args.self.data));
+          }
+        },
+        onDragLeave: () => {
+          setClosestEdge(null);
+        },
+        onDrop: () => {
+          setClosestEdge(null);
         },
       })
     );
-  }, [card, columnId]);
+  }, [instanceId, item, userId]);
+
+  // Merge the card ref with Chakra's ref (if needed). Alternatively, you can
+  // just use ref directly if you don't have multiple references to merge.
+  const mergedRefs = useMergeRefs(ref);
 
   return (
-    <>
-      <CardDisplay
-        outerRef={outerRef}
-        innerRef={innerRef}
+    <Fragment>
+      <CardPrimitive
+        ref={mergedRefs}
+        item={item}
         state={state}
-        card={card}
+        closestEdge={closestEdge}
+        actionMenuTriggerRef={actionMenuTriggerRef}
       />
       {state.type === "preview" &&
-        createPortal(
-          <CardDisplay state={state} card={card} />,
+        ReactDOM.createPortal(
+          <Box
+            boxSizing="border-box"
+            width={`${state.rect.width}px`}
+            height={`${state.rect.height}px`}
+          >
+            <CardPrimitive item={item} state={state} closestEdge={null} />
+          </Box>,
           state.container
         )}
-    </>
+    </Fragment>
   );
-}
+});
