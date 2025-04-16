@@ -25,9 +25,9 @@ import {
   getBasicData,
   type Person,
 } from "./data/people";
-import Board from "./Board";
+import Board from "./board";
 import { BoardContext, type BoardContextValue } from "./BoardContext";
-import { Column } from "./Column";
+import { Column } from "./column";
 import { createRegistry } from "./registry";
 
 // -----------------------------------------------------------------------------
