@@ -1,18 +1,10 @@
 "use client";
 
-// MyPage.tsx
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import { ColumnType } from "@/components/DnD/types";
-import {
-  Avatar,
-  Box,
-  Grid,
-  Heading,
-  VStack,
-  Text,
-  HStack,
-} from "@chakra-ui/react";
+import { Avatar, Box, Grid, Heading, HStack } from "@chakra-ui/react";
 import React from "react";
+import { RoleDnDItem } from "./RoleDnDItem";
 
 interface TestInterface extends BaseCardDnD {
   name: string;
@@ -121,30 +113,6 @@ const columnMap = {
 
 const orderedColumnIds = ["confluence", "jira"];
 
-const MyCustomCard: React.FC<{ item: TestInterface }> = ({ item }) => {
-  const { name, role, avatarUrl } = item;
-
-  return (
-    <Grid
-      templateColumns="auto 1fr auto"
-      alignItems="center"
-      gap={4}
-      p={4}
-      borderRadius="md"
-      position="relative"
-    >
-      <Box pointerEvents="none">
-        <Avatar size="lg" name={name} src={avatarUrl} />
-      </Box>
-      <HStack spacing={1} align="start">
-        <Heading as="span" size="xs">
-          {name} {role}
-        </Heading>
-      </HStack>
-    </Grid>
-  );
-};
-
 export default function MyPage() {
   return (
     <div>
@@ -152,7 +120,7 @@ export default function MyPage() {
       <DnDBoardMain<TestInterface>
         columnMap={columnMap}
         orderedColumnIds={orderedColumnIds}
-        CardComponent={MyCustomCard}
+        CardComponent={RoleDnDItem}
         enableColumnReorder={true}
       />
     </div>

@@ -15,37 +15,39 @@ import {
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { dropTargetForExternal } from "@atlaskit/pragmatic-drag-and-drop/external/adapter";
+
 import { useBoardContext } from "./BoardContext";
-
 import { CardPrimitive } from "./card-primitive";
-import { draggingState, idleState, State } from "./types";
-import { BallSack } from "./DnDBoardMain";
+import { BaseCardDnD, draggingState, idleState, State } from "./types";
 
-interface CardProps {
-  item: BallSack;
+interface CardProps<TCard extends BaseCardDnD> {
+  item: TCard;
+  CardComponent: React.ComponentType<{ item: TCard }>;
 }
 
-export const Card = memo(function Card({ item }: CardProps) {
+/**
+ * 1) Define a base (generic) component without memo().
+ */
+function CardBase<TCard extends BaseCardDnD>({
+  item,
+  CardComponent,
+}: CardProps<TCard>) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const { id: cardId } = item;
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
   const [state, setState] = useState<State>(idleState);
 
-  const actionMenuTriggerRef = useRef<HTMLButtonElement>(null);
-
   const { instanceId, registerCard } = useBoardContext();
-  useEffect(() => {
-    invariant(actionMenuTriggerRef.current);
-    invariant(ref.current);
+  const { id: cardId } = item;
 
+  useEffect(() => {
+    invariant(ref.current);
     return registerCard({
       cardId: item.id,
       entry: {
         element: ref.current,
-        actionMenuTrigger: actionMenuTriggerRef.current,
       },
     });
-  }, [registerCard, cardId]);
+  }, [registerCard, cardId, item.id]);
 
   useEffect(() => {
     const element = ref.current;
@@ -53,7 +55,7 @@ export const Card = memo(function Card({ item }: CardProps) {
 
     return combine(
       draggable({
-        element: element,
+        element,
         getInitialData: () => ({ type: "card", itemId: cardId, instanceId }),
         onGenerateDragPreview: ({ location, source, nativeSetDragImage }) => {
           const rect = source.element.getBoundingClientRect();
@@ -74,17 +76,15 @@ export const Card = memo(function Card({ item }: CardProps) {
         onDrop: () => setState(idleState),
       }),
       dropTargetForExternal({
-        element: element,
+        element,
       }),
       dropTargetForElements({
-        element: element,
-        canDrop: ({ source }) => {
-          return (
-            source.data.instanceId === instanceId && source.data.type === "card"
-          );
-        },
+        element,
+        canDrop: ({ source }) =>
+          source.data.instanceId === instanceId && source.data.type === "card",
         getIsSticky: () => true,
         getData: ({ input, element: targetEl }) => {
+          // Attach info about which edge was dropped on
           const data = { type: "card", itemId: cardId };
           return attachClosestEdge(data, {
             input,
@@ -102,18 +102,13 @@ export const Card = memo(function Card({ item }: CardProps) {
             setClosestEdge(extractClosestEdge(args.self.data));
           }
         },
-        onDragLeave: () => {
-          setClosestEdge(null);
-        },
-        onDrop: () => {
-          setClosestEdge(null);
-        },
+        onDragLeave: () => setClosestEdge(null),
+        onDrop: () => setClosestEdge(null),
       })
     );
-  }, [instanceId, item, cardId]);
+  }, [instanceId, cardId]);
 
-  // Merge the card ref with Chakra's ref (if needed). Alternatively, you can
-  // just use ref directly if you don't have multiple references to merge.
+  // Merge the refs if using Chakra UI’s `useMergeRefs`
   const mergedRefs = useMergeRefs(ref);
 
   return (
@@ -123,7 +118,7 @@ export const Card = memo(function Card({ item }: CardProps) {
         item={item}
         state={state}
         closestEdge={closestEdge}
-        actionMenuTriggerRef={actionMenuTriggerRef}
+        CardComponent={CardComponent}
       />
       {state.type === "preview" &&
         ReactDOM.createPortal(
@@ -132,10 +127,22 @@ export const Card = memo(function Card({ item }: CardProps) {
             width={`${state.rect.width}px`}
             height={`${state.rect.height}px`}
           >
-            <CardPrimitive item={item} state={state} closestEdge={null} />
+            <CardPrimitive
+              item={item}
+              state={state}
+              closestEdge={null}
+              CardComponent={CardComponent}
+            />
           </Box>,
           state.container
         )}
     </Fragment>
   );
-});
+}
+
+/**
+ * 2) Export a memoized version with type assertion
+ */
+export const Card = memo(CardBase) as <TCard extends BaseCardDnD>(
+  props: CardProps<TCard>
+) => JSX.Element;

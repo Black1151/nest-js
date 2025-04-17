@@ -24,6 +24,7 @@ const Board = forwardRef<HTMLDivElement, BoardProps>(
         flexDirection="row"
         height="480px"
         ref={ref}
+        gap={2}
       >
         {children}
       </Box>

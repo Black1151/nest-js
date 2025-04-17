@@ -4,7 +4,6 @@ import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/types";
 
 export type CardEntry = {
   element: HTMLElement;
-  actionMenuTrigger: HTMLElement;
 };
 
 export type ColumnEntry = {

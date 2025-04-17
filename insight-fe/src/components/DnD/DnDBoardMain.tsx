@@ -19,122 +19,11 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
 
-// import {
-//   BallSack,
-//   type ColumnMap,
-//   type ColumnType,
-//   getBasicData,
-//   // type Person,
-// } from "./data/people";
 import Board from "./board";
 import { BoardContext, type BoardContextValue } from "./BoardContext";
 import { Column } from "./column";
 import { createRegistry } from "./registry";
-
-export type BallSack = {
-  id: string;
-  name: string;
-  role: string;
-  avatarUrl: string;
-};
-
-export type ColumnType<T> = {
-  title: string;
-  columnId: string;
-  items: T[];
-};
-
-export type ColumnMap = { [columnId: string]: ColumnType<BallSack> };
-
-export function getBasicData() {
-  const columnMap: ColumnMap = {
-    confluence: {
-      title: "Confluence",
-      columnId: "confluence",
-      items: [
-        {
-          id: "1",
-          name: "John",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-        {
-          id: "2",
-          name: "Jane",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-        {
-          id: "3",
-          name: "John",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-        {
-          id: "4",
-          name: "Jane",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-        {
-          id: "5",
-          name: "John",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-        {
-          id: "6",
-          name: "Jane",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-      ],
-    },
-    jira: {
-      title: "Jira",
-      columnId: "jira",
-      items: [
-        {
-          id: "7",
-          name: "John",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-        {
-          id: "8",
-          name: "Jane",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-        {
-          id: "9",
-          name: "John",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-        {
-          id: "10",
-          name: "Jane",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-        {
-          id: "11",
-          name: "John",
-          role: "Doe",
-          avatarUrl: "https://via.placeholder.com/150",
-        },
-      ],
-    },
-  };
-
-  const orderedColumnIds = ["confluence", "jira"];
-
-  return {
-    columnMap,
-    orderedColumnIds,
-  };
-}
+import { BaseCardDnD, ColumnMap, ColumnStyles, ColumnType } from "./types";
 
 // -----------------------------------------------------------------------------
 // Type definitions for the various outcomes of a drag-and-drop operation
@@ -166,26 +55,45 @@ type Operation = {
   outcome: Outcome;
 };
 
-type BoardState = {
-  columnMap: ColumnMap;
+type BoardState<TCard extends BaseCardDnD> = {
+  columnMap: ColumnMap<TCard>;
   orderedColumnIds: string[];
   lastOperation: Operation | null;
 };
 
-export default function BoardExample() {
+interface DnDBoardMainProps<TCard extends BaseCardDnD> {
+  columnMap: ColumnMap<TCard>;
+  orderedColumnIds: string[];
+  CardComponent: React.ComponentType<{ item: TCard }>;
+  enableColumnReorder?: boolean;
+}
+
+// access thej passed in interface
+export const DnDBoardMain = <TCard extends BaseCardDnD>({
+  columnMap,
+  orderedColumnIds,
+  CardComponent,
+  enableColumnReorder = true,
+}: DnDBoardMainProps<TCard>) => {
   /**
    * Main piece of local state, storing:
    *  - columnMap: the columns and their items
    *  - orderedColumnIds: the current ordering of columns
    *  - lastOperation: the last drag-and-drop operation performed (if any)
    */
-  const [data, setData] = useState<BoardState>(() => {
-    const base = getBasicData();
-    return {
-      ...base,
-      lastOperation: null,
-    };
+  const [data, setData] = useState<BoardState<TCard>>({
+    columnMap,
+    orderedColumnIds,
+    lastOperation: null,
   });
+
+  useEffect(() => {
+    setData({
+      columnMap,
+      orderedColumnIds,
+      lastOperation: null,
+    });
+  }, [columnMap, orderedColumnIds]);
 
   /**
    * We keep a stable reference to our data in `stableData`
@@ -263,11 +171,9 @@ export default function BoardExample() {
       }
 
       liveRegion.announce(
-        `You've moved ${item.name} from position ${
-          startIndex + 1
-        } to position ${finishIndex + 1} of ${column.items.length} in the ${
-          column.title
-        } column.`
+        `You've moved ${item.id} from position ${startIndex + 1} to position ${
+          finishIndex + 1
+        } of ${column.items.length} in the ${column.title} column.`
       );
 
       return;
@@ -302,16 +208,12 @@ export default function BoardExample() {
       }
 
       liveRegion.announce(
-        `You've moved ${item.name} from position ${
+        `You've moved ${item.id} from position ${
           itemIndexInStartColumn + 1
         } to position ${finishPosition} in the ${
           destinationColumn.title
         } column.`
       );
-
-      // Manually restore focus to the card's action menu trigger
-      // because the card has re-mounted in a different column.
-      entry.actionMenuTrigger.focus();
 
       return;
     }
@@ -398,13 +300,13 @@ export default function BoardExample() {
         });
 
         // Create an updated copy of the source column
-        const updatedSourceColumn: ColumnType<BallSack> = {
+        const updatedSourceColumn: ColumnType<TCard> = {
           ...sourceColumn,
           items: updatedItems,
         };
 
         // Build new column map with updated column
-        const updatedMap: ColumnMap = {
+        const updatedMap: ColumnMap<TCard> = {
           ...data.columnMap,
           [columnId]: updatedSourceColumn,
         };
@@ -455,7 +357,7 @@ export default function BoardExample() {
       setData((data) => {
         const sourceColumn = data.columnMap[startColumnId];
         const destinationColumn = data.columnMap[finishColumnId];
-        const item: BallSack = sourceColumn.items[itemIndexInStartColumn];
+        const item: TCard = sourceColumn.items[itemIndexInStartColumn];
 
         // Calculate the new index for the item in the destination column
         const newIndexInDestination = itemIndexInFinishColumn ?? 0;
@@ -653,7 +555,7 @@ export default function BoardExample() {
    * Memoize the context value so it remains stable across re-renders.
    * This context is consumed by child components (`Board`, `Column`, etc.)
    */
-  const contextValue: BoardContextValue = useMemo(() => {
+  const contextValue: BoardContextValue<TCard> = useMemo(() => {
     return {
       getColumns,
       reorderColumn,
@@ -673,9 +575,16 @@ export default function BoardExample() {
     <BoardContext.Provider value={contextValue}>
       <Board>
         {data.orderedColumnIds.map((columnId) => {
-          return <Column column={data.columnMap[columnId]} key={columnId} />;
+          return (
+            <Column
+              column={data.columnMap[columnId]}
+              key={columnId}
+              CardComponent={CardComponent}
+              enableColumnReorder={enableColumnReorder}
+            />
+          );
         })}
       </Board>
     </BoardContext.Provider>
   );
-}
+};

@@ -3,10 +3,11 @@ import { createContext, useContext } from "react";
 import invariant from "tiny-invariant";
 
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/types";
-import { BallSack, ColumnType } from "./data/people";
 
-export type BoardContextValue = {
-  getColumns: () => ColumnType<BallSack>[];
+import { BaseCardDnD, ColumnType } from "./types";
+
+export type BoardContextValue<TCard extends BaseCardDnD> = {
+  getColumns: () => ColumnType<TCard>[];
 
   reorderColumn: (args: { startIndex: number; finishIndex: number }) => void;
 
@@ -27,7 +28,6 @@ export type BoardContextValue = {
     cardId: string;
     entry: {
       element: HTMLElement;
-      actionMenuTrigger: HTMLElement;
     };
   }) => CleanupFn;
 
@@ -41,10 +41,13 @@ export type BoardContextValue = {
   instanceId: symbol;
 };
 
-export const BoardContext = createContext<BoardContextValue | null>(null);
+export const BoardContext =
+  createContext<BoardContextValue<BaseCardDnD> | null>(null);
 
-export function useBoardContext(): BoardContextValue {
+export function useBoardContext<
+  TCard extends BaseCardDnD
+>(): BoardContextValue<TCard> {
   const value = useContext(BoardContext);
   invariant(value, "cannot find BoardContext provider");
-  return value;
+  return value as BoardContextValue<TCard>;
 }

@@ -1,6 +1,6 @@
 import { ContentCard } from "@/components/layout/Card";
 import { Role, useQuery } from "@/gqty";
-import TwoColumnDnD from "./components/TwoColumnDnD";
+
 import { Button, Center, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { CreateRoleModal } from "./sub/modals/CreateRoleModal";
@@ -68,9 +68,6 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
   return (
     <>
       <ContentCard>
-        <TwoColumnDnD {...TwoColumnDnDProps} />
-        {/* <Board initial={} /> */}
-        <TwoColumnDnD {...TwoColumnDnDProps} />
         <Button
           colorScheme="green"
           onClick={() => setIsCreateRoleModalOpen(true)}
