@@ -11,7 +11,9 @@ import {
 import { CountryCode } from 'libphonenumber-js';
 import { IsPhoneNumberValid } from 'src/validators/phone-number/phone.decorator';
 import { TransformPhoneNumber } from 'src/validators/phone-number/phone.transformer';
-import { Column } from 'typeorm';
+import { Int } from '@nestjs/graphql';
+import { IsInt, Min } from 'class-validator';
+import { OmitType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateUserRequestDto {
@@ -72,3 +74,39 @@ export class CreateUserRequestDto {
   })
   password: string;
 }
+
+@InputType()
+export class PaginatedGetAllRequestDto {
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1, { message: 'Limit must be at least 1' })
+  limit?: number;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(0, { message: 'Offset must be at least 0' })
+  offset?: number;
+}
+
+@InputType()
+export class PublicIdRequestDto {
+  @Field(() => String)
+  @IsString()
+  publicId: string;
+}
+
+@InputType()
+export class UpdateUserRolesFromArrayRequestDto {
+  @Field(() => String)
+  publicId: string;
+
+  @Field(() => [Int])
+  roleIds: number[];
+}
+
+@InputType()
+export class UpdateUserRequestDto extends OmitType(CreateUserRequestDto, [
+  'password',
+] as const) {}

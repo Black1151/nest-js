@@ -129,6 +129,11 @@ export interface UpdateUserRequestDto {
   postalCode?: InputMaybe<Scalars["String"]["input"]>;
 }
 
+export interface UpdateUserRolesFromArrayRequestDto {
+  publicId: Scalars["String"]["input"];
+  roleIds: Array<Scalars["Int"]["input"]>;
+}
+
 export interface UserPermissionsInput {
   publicId: Scalars["String"]["input"];
 }
@@ -269,6 +274,10 @@ export const generatedSchema = {
     phoneNumber: { __type: "String" },
     postalCode: { __type: "String" },
   },
+  UpdateUserRolesFromArrayRequestDto: {
+    publicId: { __type: "String!" },
+    roleIds: { __type: "[Int!]!" },
+  },
   User: {
     __typename: { __type: "String!" },
     addressLine1: { __type: "String" },
@@ -303,10 +312,6 @@ export const generatedSchema = {
       __type: "Role!",
       __args: { permissionIds: "[Int!]!", roleId: "Int!" },
     },
-    addRolesToUser: {
-      __type: "User!",
-      __args: { publicId: "String!", roleIds: "[Int!]!" },
-    },
     createPermission: {
       __type: "Permission!",
       __args: { data: "CreatePermissionInput!" },
@@ -340,10 +345,6 @@ export const generatedSchema = {
       __type: "Role!",
       __args: { permissionIds: "[Int!]!", roleId: "Int!" },
     },
-    removeRolesFromUser: {
-      __type: "User!",
-      __args: { publicId: "String!", roleIds: "[Int!]!" },
-    },
     removeUserByPublicId: {
       __type: "User!",
       __args: { data: "PublicIdRequestDto!" },
@@ -356,6 +357,10 @@ export const generatedSchema = {
     updateUserByPublicId: {
       __type: "User!",
       __args: { data: "UpdateUserRequestDto!", publicId: "String!" },
+    },
+    updateUserRolesFromArray: {
+      __type: "User!",
+      __args: { data: "UpdateUserRolesFromArrayRequestDto!" },
     },
     updatepermissionGroup: {
       __type: "PermissionGroup!",
@@ -503,10 +508,6 @@ export interface Mutation {
     permissionIds: Array<ScalarsEnums["Int"]>;
     roleId: ScalarsEnums["Int"];
   }) => Role;
-  addRolesToUser: (args: {
-    publicId: ScalarsEnums["String"];
-    roleIds: Array<ScalarsEnums["Int"]>;
-  }) => User;
   /**
    * Create one Permission
    */
@@ -547,10 +548,6 @@ export interface Mutation {
     permissionIds: Array<ScalarsEnums["Int"]>;
     roleId: ScalarsEnums["Int"];
   }) => Role;
-  removeRolesFromUser: (args: {
-    publicId: ScalarsEnums["String"];
-    roleIds: Array<ScalarsEnums["Int"]>;
-  }) => User;
   removeUserByPublicId: (args: { data: PublicIdRequestDto }) => User;
   /**
    * Updates one Permission
@@ -563,6 +560,9 @@ export interface Mutation {
   updateUserByPublicId: (args: {
     data: UpdateUserRequestDto;
     publicId: ScalarsEnums["String"];
+  }) => User;
+  updateUserRolesFromArray: (args: {
+    data: UpdateUserRolesFromArrayRequestDto;
   }) => User;
   /**
    * Updates one permissionGroup

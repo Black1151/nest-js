@@ -11,14 +11,19 @@ import {
 } from '@nestjs/graphql';
 import { UsersService } from './user.service';
 import { User } from './user.model';
-import { UpdateUserRequestDto } from './dto/req/update-user.request.dto';
-import { CreateUserRequestDto } from './dto/req/create-user.request.dto';
+
 import { RbacPermissionKey } from '../rbac/decorators/resolver-permission-key.decorator';
 import { ImmutableLogging } from '../audit/decorators/immutable-logging.decorator';
 import { UiErrorMessageOverride } from 'src/decorators/error-message-override.decorator';
-import { PublicIdRequestDto } from './dto/req/public-id.request.dto';
-import { PaginatedGetAllRequestDto } from './dto/req/paginated-get-all.request.dto';
+
 import { Role } from '../rbac/sub/role/role.entity';
+import {
+  PaginatedGetAllRequestDto,
+  PublicIdRequestDto,
+  CreateUserRequestDto,
+  UpdateUserRequestDto,
+  UpdateUserRolesFromArrayRequestDto,
+} from './dto/req/req.dto';
 
 @ObjectType()
 export class RemoveUserResponse {
@@ -79,13 +84,15 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @RbacPermissionKey('user.updateRoles')
+  @RbacPermissionKey('user.updateUserRolesFromArray')
   @ImmutableLogging()
-  async updateRolesFromArray(
-    @Args('publicId', { type: () => String }) publicId: string,
-    @Args('roleIds', { type: () => [Int] }) roleIds: number[],
+  async updateUserRolesFromArray(
+    @Args('data') data: UpdateUserRolesFromArrayRequestDto,
   ): Promise<User> {
-    return this.userService.updateRolesFromArray(publicId, roleIds);
+    return this.userService.updateUserRolesFromArray(
+      data.publicId,
+      data.roleIds,
+    );
   }
 
   // async addRolesToUser(

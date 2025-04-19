@@ -1,22 +1,17 @@
 import { ContentCard } from "@/components/layout/Card";
-import { Role } from "@/gqty";
 import { Flex, Text } from "@chakra-ui/react";
 
 export interface RoleDnDItemProps {
   id: string;
   name: string;
   description: string;
-  bgColor: string;
 }
 
-export const RoleDnDItem = ({
-  id,
-  name,
-  description,
-  bgColor,
-}: RoleDnDItemProps) => {
+export const RoleDnDItem = ({ item }: { item: RoleDnDItemProps }) => {
+  const { id, name, description } = item;
+
   return (
-    <ContentCard id={id} key={id} bg={bgColor} cursor="grab">
+    <ContentCard id={id} key={id} cursor="grab">
       <Flex flexDirection="column" gap={2}>
         <Text fontSize={20} fontWeight="bold">
           {name}

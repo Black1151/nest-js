@@ -1,28 +1,19 @@
 import { ContentCard } from "@/components/layout/Card";
-import { Role, useQuery } from "@/gqty";
-
+import { useQuery } from "@/gqty";
 import { Button, Center, Text } from "@chakra-ui/react";
 import { useState } from "react";
-import { CreateRoleModal } from "./sub/modals/CreateRoleModal";
+import { RoleDnDItemProps } from "./components/RoleDnDItem";
+import UserRolesDnD from "./UserRolesDnD";
 
 interface UserRolesSectionProps {
   publicId: string | null;
 }
 
-// export const prepareUserRoles = (userRoles: Role[]) => {
-//   userRoles.forEach((role) => {
-//     role.id;
-//     role.name;
-//     role.description;
-//   });
-// };
-
 export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
-  const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState(false);
-
   const query = useQuery();
 
-  if (!publicId)
+  /* ---------- Early exit when no user ---------- */
+  if (!publicId) {
     return (
       <ContentCard height={700}>
         <Center flex={1}>
@@ -30,55 +21,35 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
         </Center>
       </ContentCard>
     );
+  }
 
-  // const query = useQuery({
-  //   prepare({ query: { getRolesForUser } }) {
-  //     if (!publicId) return;
-  //     const userRoles = getRolesForUser({ data: { publicId } });
-  //     prepareUserRoles(userRoles);
-  //   },
-  // });
+  /* ---------- Read data ---------- */
+  const allRoles = query.getAllRole({ data: { all: true } }) ?? [];
+  const userRoles = query.getRolesForUser({ data: { publicId } }) ?? [];
 
-  const availableRoles = query.getAllRole({ data: { all: true } });
-
-  const userRoles = query.getRolesForUser({ data: { publicId } });
-
-  const userRolesListItems = userRoles?.map((role) => ({
+  /* ---------- Transform for DnD ---------- */
+  const userRoleItems: RoleDnDItemProps[] = userRoles.map((role) => ({
     id: role.id,
     name: role.name,
     description: role.description,
   }));
 
-  // also should filter out roles that are already in the user roles list
-  const availableRolesListItems = availableRoles?.filter(
-    (role) => !userRolesListItems?.some((userRole) => userRole.id === role.id)
-  );
-
-  const TwoColumnDnDProps = {
-    leftColHeader: "Users roles",
-    rightColHeader: "Available roles",
-    leftColColor: "teal.100",
-    rightColColor: "orange.100",
-    initialRightItems: availableRolesListItems,
-    initialLeftItems: userRolesListItems,
-  };
-
-  console.log(TwoColumnDnDProps);
+  const availableRoleItems: RoleDnDItemProps[] = allRoles
+    .filter((role) => !userRoles.some((ur) => ur.id === role.id))
+    .map((role) => ({
+      id: role.id,
+      name: role.name,
+      description: role.description,
+    }));
 
   return (
     <>
       <ContentCard>
-        <Button
-          colorScheme="green"
-          onClick={() => setIsCreateRoleModalOpen(true)}
-        >
-          Create new role
-        </Button>
+        <UserRolesDnD
+          userRoles={userRoleItems}
+          availableRoles={availableRoleItems}
+        />
       </ContentCard>
-      <CreateRoleModal
-        isOpen={isCreateRoleModalOpen}
-        onClose={() => setIsCreateRoleModalOpen(false)}
-      />
     </>
   );
 };

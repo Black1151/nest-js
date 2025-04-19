@@ -66,6 +66,7 @@ interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   orderedColumnIds: string[];
   CardComponent: React.ComponentType<{ item: TCard }>;
   enableColumnReorder?: boolean;
+  onColumnChange?: (idsByColumn: Record<string, string[]>) => void;
 }
 
 // access thej passed in interface
@@ -74,6 +75,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   orderedColumnIds,
   CardComponent,
   enableColumnReorder = true,
+  onColumnChange,
 }: DnDBoardMainProps<TCard>) => {
   /**
    * Main piece of local state, storing:
@@ -86,6 +88,8 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
     orderedColumnIds,
     lastOperation: null,
   });
+
+  console.log("data", data);
 
   useEffect(() => {
     setData({
@@ -566,6 +570,25 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
       instanceId,
     };
   }, [getColumns, reorderColumn, reorderCard, registry, moveCard, instanceId]);
+
+  /**
+   * 🔔 Notify the consumer whenever the set of ids in each column changes.
+   */
+  useEffect(() => {
+    if (!onColumnChange) return;
+
+    const { columnMap, orderedColumnIds } = data;
+
+    const idsByColumn = orderedColumnIds.reduce<Record<string, string[]>>(
+      (acc, columnId) => {
+        acc[columnId] = columnMap[columnId].items.map((i) => i.id);
+        return acc;
+      },
+      {}
+    );
+
+    onColumnChange(idsByColumn);
+  }, [data, onColumnChange]);
 
   /**
    * Render the board, passing in a <BoardContext.Provider> so that

@@ -4,8 +4,8 @@ import { UsersService } from 'src/modules/user/user.service';
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserRequestDto } from 'src/modules/user/dto/req/create-user.request.dto';
 import { User } from './user.model';
+import { CreateUserRequestDto } from './dto/req/req.dto';
 
 @Injectable()
 export class BootstrapSuperAdminService implements OnModuleInit {

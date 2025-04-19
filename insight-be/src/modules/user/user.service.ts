@@ -3,10 +3,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { User } from './user.model';
-import { CreateUserRequestDto } from './dto/req/create-user.request.dto';
-import { UpdateUserRequestDto } from './dto/req/update-user.request.dto';
+
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
 import * as bcrypt from 'bcryptjs';
+import { CreateUserRequestDto, UpdateUserRequestDto } from './dto/req/req.dto';
 
 @Injectable()
 export class UsersService {
@@ -78,7 +78,7 @@ export class UsersService {
     return user;
   }
 
-  async updateRolesFromArray(
+  async updateUserRolesFromArray(
     publicId: string,
     roleIds: number[],
   ): Promise<User> {
@@ -90,7 +90,7 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  // probably dont need these if I am using the updateRolesFromArray
+  // Super admin setup needs to be reconfigured to use the above funtion instead tehn can remove the below.
 
   /**
    * ADD ROLES
