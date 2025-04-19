@@ -5,7 +5,7 @@ import { ContentCard } from "@/components/layout/Card";
 import { DataTableSimple } from "@/components/tables/DataTableSimple";
 import { useQuery, User } from "@/gqty";
 import { LoadingSpinnerCard } from "@/components/loading/LoadingSpinnerCard";
-import { Button, Flex, VStack } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 import { CreateUserModal } from "../../modals/CreateUserModal";
 
 interface UserListTableProps {
@@ -15,6 +15,7 @@ interface UserListTableProps {
 function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
   const query = useQuery();
+  const { isLoading } = query.$state;
   const users = query.getAllUsers({ data: { limit: 10, offset: 0 } });
 
   const formattedData = users.map((u: User) => ({
@@ -35,6 +36,10 @@ function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
   const handleRowClick = (rowData: any) => {
     setSelectedUserPublicId(rowData.publicId);
   };
+
+  if (isLoading) {
+    return <LoadingSpinnerCard text="Loading Users..." />;
+  }
 
   return (
     <>
