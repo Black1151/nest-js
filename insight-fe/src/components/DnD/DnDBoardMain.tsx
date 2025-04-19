@@ -24,6 +24,7 @@ import { BoardContext, type BoardContextValue } from "./BoardContext";
 import { Column } from "./column";
 import { createRegistry } from "./registry";
 import { BaseCardDnD, ColumnMap, ColumnStyles, ColumnType } from "./types";
+import { Button, Flex } from "@chakra-ui/react";
 
 // -----------------------------------------------------------------------------
 // Type definitions for the various outcomes of a drag-and-drop operation
@@ -55,7 +56,7 @@ type Operation = {
   outcome: Outcome;
 };
 
-type BoardState<TCard extends BaseCardDnD> = {
+export type BoardState<TCard extends BaseCardDnD> = {
   columnMap: ColumnMap<TCard>;
   orderedColumnIds: string[];
   lastOperation: Operation | null;
@@ -66,7 +67,8 @@ interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   orderedColumnIds: string[];
   CardComponent: React.ComponentType<{ item: TCard }>;
   enableColumnReorder?: boolean;
-  onColumnChange?: (idsByColumn: Record<string, string[]>) => void;
+  onSubmit?: (boardData: any) => void;
+  isLoading?: boolean;
 }
 
 // access thej passed in interface
@@ -75,7 +77,8 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   orderedColumnIds,
   CardComponent,
   enableColumnReorder = true,
-  onColumnChange,
+  onSubmit,
+  isLoading = false,
 }: DnDBoardMainProps<TCard>) => {
   /**
    * Main piece of local state, storing:
@@ -88,8 +91,6 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
     orderedColumnIds,
     lastOperation: null,
   });
-
-  console.log("data", data);
 
   useEffect(() => {
     setData({
@@ -572,42 +573,31 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   }, [getColumns, reorderColumn, reorderCard, registry, moveCard, instanceId]);
 
   /**
-   * 🔔 Notify the consumer whenever the set of ids in each column changes.
-   */
-  useEffect(() => {
-    if (!onColumnChange) return;
-
-    const { columnMap, orderedColumnIds } = data;
-
-    const idsByColumn = orderedColumnIds.reduce<Record<string, string[]>>(
-      (acc, columnId) => {
-        acc[columnId] = columnMap[columnId].items.map((i) => i.id);
-        return acc;
-      },
-      {}
-    );
-
-    onColumnChange(idsByColumn);
-  }, [data, onColumnChange]);
-
-  /**
    * Render the board, passing in a <BoardContext.Provider> so that
    * columns and cards can access the necessary operations and data.
    */
   return (
     <BoardContext.Provider value={contextValue}>
-      <Board>
-        {data.orderedColumnIds.map((columnId) => {
-          return (
-            <Column
-              column={data.columnMap[columnId]}
-              key={columnId}
-              CardComponent={CardComponent}
-              enableColumnReorder={enableColumnReorder}
-            />
-          );
-        })}
-      </Board>
+      <Flex flexDirection="column" gap={4}>
+        <Board>
+          {data.orderedColumnIds.map((columnId) => {
+            return (
+              <Column
+                column={data.columnMap[columnId]}
+                key={columnId}
+                CardComponent={CardComponent}
+                enableColumnReorder={enableColumnReorder}
+                isLoading={isLoading}
+              />
+            );
+          })}
+        </Board>
+        {onSubmit && (
+          <Button colorScheme="orange" onClick={() => onSubmit(data)}>
+            Submit
+          </Button>
+        )}
+      </Flex>
     </BoardContext.Provider>
   );
 };

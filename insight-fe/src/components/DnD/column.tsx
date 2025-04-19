@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import invariant from "tiny-invariant";
-import { Box, Flex, Heading, HStack, Stack } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Spinner, Stack } from "@chakra-ui/react";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import {
   attachClosestEdge,
@@ -28,6 +28,7 @@ import { useBoardContext } from "./BoardContext";
 import { Card } from "./card";
 import { ColumnContext, type ColumnContextProps } from "./ColumnContext";
 import type { BaseCardDnD, ColumnType } from "./types";
+import { LoadingSpinnerCard } from "../loading/LoadingSpinnerCard";
 
 /* ------------------------------------------------------------------ */
 /*  Static style objects                                               */
@@ -84,12 +85,14 @@ interface ColumnProps<TCard extends BaseCardDnD> {
   CardComponent: React.ComponentType<{ item: TCard }>;
   /** Toggle whether the user can drag / reorder whole columns */
   enableColumnReorder?: boolean;
+  isLoading?: boolean;
 }
 
 function ColumnBase<TCard extends BaseCardDnD>({
   column,
   CardComponent,
   enableColumnReorder = true,
+  isLoading = false,
 }: ColumnProps<TCard>) {
   const columnId = column.columnId;
   const columnRef = useRef<HTMLDivElement | null>(null);
@@ -284,13 +287,17 @@ function ColumnBase<TCard extends BaseCardDnD>({
               <Stack
                 sx={{ ...cardListStyles, ...(column.styles?.cardList ?? {}) }}
               >
-                {column.items.map((item: TCard) => (
-                  <Card
-                    key={item.id}
-                    item={item}
-                    CardComponent={CardComponent}
-                  />
-                ))}
+                {isLoading ? (
+                  <LoadingSpinnerCard />
+                ) : (
+                  column.items.map((item: TCard) => (
+                    <Card
+                      key={item.id}
+                      item={item}
+                      CardComponent={CardComponent}
+                    />
+                  ))
+                )}
               </Stack>
             </Box>
           </Stack>
