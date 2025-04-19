@@ -18,7 +18,6 @@ interface UserFormProps {
 }
 
 export function UpdateUserForm({ publicId, onClose }: UserFormProps) {
-  // getting exiting data
   const query = useQuery();
 
   const user: User | null = publicId
@@ -36,6 +35,20 @@ export function UpdateUserForm({ publicId, onClose }: UserFormProps) {
         publicId,
       });
       mutationReturn.id;
+      mutationReturn.firstName;
+      mutationReturn.lastName;
+      mutationReturn.email;
+      mutationReturn.phoneNumber;
+      mutationReturn.addressLine1;
+      mutationReturn.addressLine2;
+      mutationReturn.city;
+      mutationReturn.county;
+      mutationReturn.postalCode;
+      mutationReturn.country;
+      mutationReturn.dateOfBirth;
+      mutationReturn.createdAt;
+      mutationReturn.updatedAt;
+      mutationReturn.publicId;
     }
   );
 
@@ -65,8 +78,8 @@ export function UpdateUserForm({ publicId, onClose }: UserFormProps) {
       ...data,
       dateOfBirth: data.dateOfBirth || undefined,
     };
-
     await updateUserByPublicId({ args: preparedData });
+    await query.$refetch(true);
     reset();
     onClose();
   };
