@@ -9,7 +9,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { CreateUserRequestDto, Role } from "@/gqty";
+import { Role } from "@/gqty";
 
 interface FormProps {
   onSubmit: (data: Role) => Promise<void>;

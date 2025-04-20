@@ -27,9 +27,7 @@ export const RoleManagerSection = () => {
         >
           Create new role
         </Button>
-
-        {/* TODO: list existing roles, edit / delete, pagination, etc. */}
-        {/* Example: <RoleTable roles={allRoles} /> */}
+        
       </ContentCard>
 
       <CreateRoleModal
