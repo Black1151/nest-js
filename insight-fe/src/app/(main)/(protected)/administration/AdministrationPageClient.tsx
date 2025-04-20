@@ -15,7 +15,7 @@ export const AdministrationPageClient = () => {
     <>
       <ContentGrid gridTemplateColumns="1fr 1fr">
         <UserListTable setSelectedUserPublicId={setSelectedUserPublicId} />
-        <UserDetailSection publicId={selectedUserPublicId} />
+        <UserDetailSection publicId={selectedUserPublicId} setSelectedUserPublicId={setSelectedUserPublicId} />
         <UserRolesSection publicId={selectedUserPublicId} />
       </ContentGrid>
     </>

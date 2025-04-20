@@ -28,9 +28,10 @@ export const prepareUser = (user: User) => {
 
 interface UserDetailSectionProps {
   publicId: string | null;
+  setSelectedUserPublicId: (publicId: null) => void;
 }
 
-export const UserDetailSection = ({ publicId }: UserDetailSectionProps) => {
+export const UserDetailSection = ({ publicId, setSelectedUserPublicId }: UserDetailSectionProps) => {
   const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false);
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
 
@@ -69,7 +70,10 @@ export const UserDetailSection = ({ publicId }: UserDetailSectionProps) => {
       />
       <DeleteUserModal
         isOpen={isDeleteUserModalOpen}
-        onClose={() => setIsDeleteUserModalOpen(false)}
+        onClose={() => {
+          setIsDeleteUserModalOpen(false);
+        }}
+        setSelectedUserPublicId={setSelectedUserPublicId}
         publicId={publicId}
       />
     </>
