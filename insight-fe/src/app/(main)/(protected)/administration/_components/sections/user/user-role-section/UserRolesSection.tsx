@@ -119,7 +119,6 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
   return (
     <ContentCard>
       <DnDBoardMain<RoleDnDItemProps>
-        key={userRoleItems.map((i) => i.id).join("-")}
         columnMap={columnMap}
         orderedColumnIds={orderedColumnIds}
         CardComponent={RoleDnDItem}
