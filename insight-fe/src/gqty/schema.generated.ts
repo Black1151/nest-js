@@ -36,7 +36,7 @@ export interface Scalars {
 }
 
 export interface CreatePermissionGroupInput {
-  description?: InputMaybe<Scalars["String"]["input"]>;
+  description: Scalars["String"]["input"];
   name: Scalars["String"]["input"];
 }
 
@@ -162,7 +162,7 @@ export const generatedSchema = {
     refreshToken: { __type: "String!" },
   },
   CreatePermissionGroupInput: {
-    description: { __type: "String" },
+    description: { __type: "String!" },
     name: { __type: "String!" },
   },
   CreatePermissionInput: {
@@ -226,7 +226,7 @@ export const generatedSchema = {
   PermissionGroup: {
     __typename: { __type: "String!" },
     createdAt: { __type: "DateTime!" },
-    description: { __type: "String" },
+    description: { __type: "String!" },
     id: { __type: "ID!" },
     name: { __type: "String!" },
     permissions: { __type: "[Permission!]" },
@@ -451,7 +451,7 @@ export interface PermissionDTO {
 export interface PermissionGroup {
   __typename?: "PermissionGroup";
   createdAt: ScalarsEnums["DateTime"];
-  description?: Maybe<ScalarsEnums["String"]>;
+  description: ScalarsEnums["String"];
   id: ScalarsEnums["ID"];
   name: ScalarsEnums["String"];
   permissions?: Maybe<Array<Permission>>;
