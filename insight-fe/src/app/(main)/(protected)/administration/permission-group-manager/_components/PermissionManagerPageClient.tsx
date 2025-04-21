@@ -2,6 +2,7 @@
 
 import { ContentGrid } from "@/components/ContentGrid";
 import { useState } from "react";
+import PermissionGroupListTable from "./sections/PermissionGroupListTable";
 
 export const PermissionGroupManagerPageClient = () => {
   const [selectedPermissionGroupId, setSelectedPermissionGroupId] = useState<
@@ -10,7 +11,11 @@ export const PermissionGroupManagerPageClient = () => {
 
   return (
     <>
-      <ContentGrid gridTemplateColumns="1fr 1fr"> asds</ContentGrid>
+      <ContentGrid gridTemplateColumns="1fr 1fr">
+        <PermissionGroupListTable
+          setSelectedPermissionGroupId={setSelectedPermissionGroupId}
+        />
+      </ContentGrid>
     </>
   );
 };
