@@ -16,8 +16,8 @@ function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
   const query = useQuery();
   const { isLoading } = query.$state;
-  const users = query.getAllUsers({ data: { limit: 10, offset: 0 } });
-
+  const users = query.getAllUsers({ data: {limit: 10, offset: 0 } });
+ 
   const formattedData = users.map((u: User) => ({
     id: u.id,
     firstName: u.firstName,

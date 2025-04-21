@@ -30,87 +30,132 @@ export class RoleService extends BaseService<
   /**
    * Add multiple permissions to the given role.
    */
-  async addPermissionsToRole(
-    roleId: number,
-    permissionIds: number[],
-  ): Promise<Role> {
-    const role = await this.roleRepository.findOne({
-      where: { id: roleId },
-      relations: ['permissions'],
-    });
-    if (!role) {
-      throw new NotFoundException(`Role with ID ${roleId} not found.`);
-    }
+  // async addPermissionsToRole(
+  //   roleId: number,
+  //   permissionIds: number[],
+  // ): Promise<Role> {
+  //   const role = await this.roleRepository.findOne({
+  //     where: { id: roleId },
+  //     relations: ['permissions'],
+  //   });
+  //   if (!role) {
+  //     throw new NotFoundException(`Role with ID ${roleId} not found.`);
+  //   }
 
-    const permissions = await this.permissionRepository.find({
-      where: { id: In(permissionIds) },
-    });
+  //   const permissions = await this.permissionRepository.find({
+  //     where: { id: In(permissionIds) },
+  //   });
 
-    const currentPermissions = role.permissions ?? [];
-    role.permissions = [...currentPermissions, ...permissions];
+  //   const currentPermissions = role.permissions ?? [];
+  //   role.permissions = [...currentPermissions, ...permissions];
 
-    return this.roleRepository.save(role);
-  }
+  //   return this.roleRepository.save(role);
+  // }
 
   /**
    * Remove permissions from the given role.
    */
-  async removePermissionsFromRole(
-    roleId: number,
-    permissionIds: number[],
-  ): Promise<Role> {
-    const role = await this.roleRepository.findOne({
-      where: { id: roleId },
-      relations: ['permissions'],
-    });
-    if (!role) {
-      throw new NotFoundException(`Role with ID ${roleId} not found.`);
-    }
+  // async removePermissionsFromRole(
+  //   roleId: number,
+  //   permissionIds: number[],
+  // ): Promise<Role> {
+  //   const role = await this.roleRepository.findOne({
+  //     where: { id: roleId },
+  //     relations: ['permissions'],
+  //   });
+  //   if (!role) {
+  //     throw new NotFoundException(`Role with ID ${roleId} not found.`);
+  //   }
 
-    role.permissions = role.permissions?.filter(
-      (permission) => !permissionIds.includes(permission.id),
-    );
+  //   role.permissions = role.permissions?.filter(
+  //     (permission) => !permissionIds.includes(permission.id),
+  //   );
 
-    return this.roleRepository.save(role);
-  }
-  async addPermissionGroupsToRole(
+  //   return this.roleRepository.save(role);
+  // }
+  // async addPermissionGroupsToRole(
+  //   roleId: number,
+  //   groupIds: number[],
+  // ): Promise<Role> {
+  //   const role = await this.roleRepository.findOne({
+  //     where: { id: roleId },
+  //     relations: ['permissionGroups'],
+  //   });
+  //   if (!role) {
+  //     throw new NotFoundException(`Role with ID ${roleId} not found.`);
+  //   }
+
+  //   const groups = await this.permissionGroupRepository.find({
+  //     where: { id: In(groupIds) },
+  //   });
+
+  //   const currentGroups = role.permissionGroups ?? [];
+  //   role.permissionGroups = [...currentGroups, ...groups];
+
+  //   return this.roleRepository.save(role);
+  // }
+
+  // async removePermissionGroupsFromRole(
+  //   roleId: number,
+  //   groupIds: number[],
+  // ): Promise<Role> {
+  //   const role = await this.roleRepository.findOne({
+  //     where: { id: roleId },
+  //     relations: ['permissionGroups'],
+  //   });
+  //   if (!role) {
+  //     throw new NotFoundException(`Role with ID ${roleId} not found.`);
+  //   }
+
+  //   role.permissionGroups = role.permissionGroups?.filter(
+  //     (group) => !groupIds.includes(group.id),
+  //   );
+
+  //   return this.roleRepository.save(role);
+  // }
+
+  async updatePermissionGroupsForRole(
     roleId: number,
-    groupIds: number[],
+    permissionGroupIds: number[],
   ): Promise<Role> {
     const role = await this.roleRepository.findOne({
       where: { id: roleId },
       relations: ['permissionGroups'],
     });
+
     if (!role) {
       throw new NotFoundException(`Role with ID ${roleId} not found.`);
     }
 
+    // if they're clearing all groups:
+    if (!permissionGroupIds?.length) {
+      role.permissionGroups = [];
+      return this.roleRepository.save(role);
+    }
+
+    // load the actual PermissionGroup entities
     const groups = await this.permissionGroupRepository.find({
-      where: { id: In(groupIds) },
+      where: { id: In(permissionGroupIds) },
     });
 
-    const currentGroups = role.permissionGroups ?? [];
-    role.permissionGroups = [...currentGroups, ...groups];
+    // check for any IDs that don't exist
+    const foundIds = groups.map((g) => g.id);
+    const missing = permissionGroupIds.filter((id) => !foundIds.includes(id));
+    if (missing.length) {
+      throw new NotFoundException(
+        `PermissionGroup(s) with ID(s) ${missing.join(', ')} not found.`,
+      );
+    }
 
+    role.permissionGroups = groups;
     return this.roleRepository.save(role);
   }
 
-  async removePermissionGroupsFromRole(
-    roleId: number,
-    groupIds: number[],
-  ): Promise<Role> {
+  async getPermissionGroupsForRole(roleId: number): Promise<PermissionGroup[]> {
     const role = await this.roleRepository.findOne({
       where: { id: roleId },
       relations: ['permissionGroups'],
     });
-    if (!role) {
-      throw new NotFoundException(`Role with ID ${roleId} not found.`);
-    }
-
-    role.permissionGroups = role.permissionGroups?.filter(
-      (group) => !groupIds.includes(group.id),
-    );
-
-    return this.roleRepository.save(role);
+    return role?.permissionGroups ?? [];
   }
 }

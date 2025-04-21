@@ -14,7 +14,7 @@ const BasePermissionGroupResolver = createBaseResolver<
   CreatePermissionGroupInput,
   UpdatePermissionGroupInput
 >(PermissionGroup, CreatePermissionGroupInput, UpdatePermissionGroupInput, {
-  queryName: 'permissionGroup',
+  queryName: 'PermissionGroup',
   stableKeyPrefix: 'permissionGroup',
   enabledOperations: [
     'findAll',

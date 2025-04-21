@@ -8,9 +8,13 @@ import {
   useMutation,
   UpdateUserRolesFromArrayRequestDto,
 } from "@/gqty";
-import { RoleDnDItem, RoleDnDItemProps } from "./components/RoleDnDItem";
+import { RoleDnDItemProps } from "./components/RoleDnDItem";
 import { Center, Text } from "@chakra-ui/react";
 import { useCallback, useMemo } from "react";
+import {
+  NameAndDescriptionDnDItem,
+  NameAndDescriptionDnDItemProps,
+} from "@/components/DnD/cards/NameAndDescriptionDndCard";
 
 interface UserRolesSectionProps {
   publicId: string | null;
@@ -46,7 +50,7 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
   );
 
   /* ---------- Transform to DnD items ---------- */
-  const userRoleItems = useMemo<RoleDnDItemProps[]>(
+  const userRoleItems = useMemo<NameAndDescriptionDnDItemProps[]>(
     () =>
       userRolesRaw.map((role) => ({
         id: role.id,
@@ -56,7 +60,7 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
     [userRolesRaw]
   );
 
-  const availableRoleItems = useMemo<RoleDnDItemProps[]>(
+  const availableRoleItems = useMemo<NameAndDescriptionDnDItemProps[]>(
     () =>
       allRoles
         .filter((role) => !userRolesRaw.some((ur) => ur.id === role.id))
@@ -69,7 +73,10 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
   );
 
   /* ---------- Board configuration ---------- */
-  const columnMap: Record<string, ColumnType<RoleDnDItemProps>> = useMemo(
+  const columnMap: Record<
+    string,
+    ColumnType<NameAndDescriptionDnDItemProps>
+  > = useMemo(
     () => ({
       userRoles: {
         title: "User Roles",
@@ -99,7 +106,7 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
 
   /* ---------- Submit handler ---------- */
   const handleSubmit = useCallback(
-    async (boardData: BoardState<RoleDnDItemProps>) => {
+    async (boardData: BoardState<NameAndDescriptionDnDItemProps>) => {
       const roleIds = boardData.columnMap.userRoles.items.map((item) =>
         parseInt(item.id)
       );
@@ -121,7 +128,7 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
       <DnDBoardMain<RoleDnDItemProps>
         columnMap={columnMap}
         orderedColumnIds={orderedColumnIds}
-        CardComponent={RoleDnDItem}
+        CardComponent={NameAndDescriptionDnDItem}
         enableColumnReorder={false}
         onSubmit={handleSubmit}
         isLoading={isLoading}

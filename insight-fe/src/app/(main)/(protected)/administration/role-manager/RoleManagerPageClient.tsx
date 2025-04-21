@@ -2,7 +2,8 @@
 
 import { ContentGrid } from "@/components/ContentGrid";
 import { useState } from "react";
-import { RoleManagerSection } from "./_components/sections/role-manager-section/RoleManagerSection";
+import { RoleManagerSection } from "./_components/sections/role-list-table/RoleListTable";
+import { RolePermissionGroupsDnd } from "./_components/sections/role-permission-groups-dnd/RolePermissionGroupsDnd";
 0;
 
 export const RoleManagerPageClient = () => {
@@ -11,7 +12,8 @@ export const RoleManagerPageClient = () => {
   return (
     <>
       <ContentGrid gridTemplateColumns="1fr 1fr">
-        <RoleManagerSection />
+        <RoleManagerSection setSelectedRoleId={setSelectedRoleId} />
+        <RolePermissionGroupsDnd roleId={selectedRoleId} />
       </ContentGrid>
     </>
   );
