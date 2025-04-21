@@ -12,9 +12,9 @@ export class PermissionGroup extends AbstractBaseEntity {
   @Column({ unique: true })
   name: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  description?: string;
+  @Field()
+  @Column()
+  description: string;
 
   /**
    * Many-to-many relationship with Permission.
