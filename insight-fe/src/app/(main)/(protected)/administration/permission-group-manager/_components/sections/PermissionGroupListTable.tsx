@@ -1,10 +1,9 @@
-import { PermissionGroup, useQuery, User } from "@/gqty";
+import { PermissionGroup, useQuery } from "@/gqty";
 import { LoadingSpinnerCard } from "@/components/loading/LoadingSpinnerCard";
-import { Button, Flex } from "@chakra-ui/react";
+import { Button, Center, Flex, Text } from "@chakra-ui/react";
 import { Suspense, useState } from "react";
 import { ContentCard } from "@/components/layout/Card";
 import { DataTableSimple } from "@/components/tables/DataTableSimple";
-import { CreateUserModal } from "../../../user-manager/_components/modals/CreateUserModal";
 import { CreatePermissionGroupModal } from "./modals/CreatePermissionGroupModal";
 
 interface PermissionGroupListTableProps {
@@ -29,6 +28,30 @@ function PermissionGroupListTable({
     description: u.description,
   }));
 
+  console.log(formattedData);
+
+  if (!formattedData[0]) {
+    return (
+      <>
+        <ContentCard height={700}>
+          <Center flex={1}>
+            <Text fontSize="2xl">No permission groups found</Text>
+          </Center>
+          <Button
+            colorScheme="green"
+            onClick={() => setIsCreatePermissionGroupModalOpen(true)}
+          >
+            Create Permission Group
+          </Button>
+        </ContentCard>
+        <CreatePermissionGroupModal
+          isOpen={isCreatePermissionGroupModalOpen}
+          onClose={() => setIsCreatePermissionGroupModalOpen(false)}
+        />
+      </>
+    );
+  }
+
   const columns = [
     { key: "id", label: "ID" },
     { key: "name", label: "Name" },
@@ -45,8 +68,8 @@ function PermissionGroupListTable({
 
   return (
     <>
-      <ContentCard>
-        {formattedData[0].id && (
+      <ContentCard height={700}>
+        {formattedData[0] && (
           <Flex
             justifyContent="space-between"
             flexDirection="column"
