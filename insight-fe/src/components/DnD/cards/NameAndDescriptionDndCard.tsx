@@ -17,10 +17,10 @@ export const NameAndDescriptionDnDItem = ({
   return (
     <ContentCard id={id} key={id} cursor="grab">
       <Flex flexDirection="column" gap={2}>
-        <Text fontSize={20} fontWeight="bold">
+        <Text fontSize={16} fontWeight="bold">
           {name}
         </Text>
-        <Text fontSize={14}>{description}</Text>
+        <Text fontSize={12}>{description}</Text>
       </Flex>
     </ContentCard>
   );
