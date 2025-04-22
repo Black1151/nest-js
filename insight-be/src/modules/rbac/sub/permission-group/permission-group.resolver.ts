@@ -58,10 +58,10 @@ export class PermissionGroupResolver extends BasePermissionGroupResolver {
   //   return this.pgService.removePermissionsFromGroup(groupId, permissionIds);
   // }
 
-  @Query(() => [Permission], { name: 'permissionsByGroup' })
+  @Query(() => [Permission])
   @RbacPermissionKey('permissionGroup.viewPermissions')
   @ImmutableLogging()
-  async permissionsByGroup(
+  async getPermissionsForGroup(
     @Args('data') data: IdRequestDto,
   ): Promise<Permission[]> {
     return this.pgService.getPermissionsForGroup(data.id);
