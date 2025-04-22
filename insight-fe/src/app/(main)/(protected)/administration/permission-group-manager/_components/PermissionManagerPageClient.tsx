@@ -2,7 +2,7 @@
 
 import { ContentGrid } from "@/components/ContentGrid";
 import { useState } from "react";
-import PermissionGroupListTable from "./sections/PermissionGroupListTable";
+import PermissionGroupListTable from "./sections/permission-group-list-table/PermissionGroupListTable";
 
 export const PermissionGroupManagerPageClient = () => {
   const [selectedPermissionGroupId, setSelectedPermissionGroupId] = useState<
