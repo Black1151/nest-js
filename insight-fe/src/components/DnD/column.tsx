@@ -34,11 +34,14 @@ import { LoadingSpinnerCard } from "../loading/LoadingSpinnerCard";
 /*  Static style objects                                               */
 /* ------------------------------------------------------------------ */
 const columnBaseStyles = {
-  width: "250px",
+  width: "100%",
   backgroundColor: "gray.100",
   borderRadius: "md",
-  position: "relative", // fixed typo
+  position: "relative",
   transition: "background 200ms ease-in-out",
+  // maxHeight: "200px",
+  flex: 1,
+  overflowY: "auto",
 };
 
 const idleStyles = { cursor: "grab" };
@@ -56,12 +59,15 @@ const scrollContainerStyles = {
   height: "100%",
   overflowY: "auto",
   py: 1,
+  flex: 1,
+  minH: 0,
 };
 
 const cardListStyles = {
   boxSizing: "border-box",
   minHeight: "100%",
   px: 1,
+  overflowY: "auto",
 };
 
 /* ------------------------------------------------------------------ */
@@ -261,11 +267,12 @@ function ColumnBase<TCard extends BaseCardDnD>({
       >
         <Stack ref={columnInnerRef} flexGrow={1} minH={0}>
           <Stack
-            flexGrow={1}
+            // flexGrow={1}
             minH={0}
             overflow="hidden"
             sx={isDragging ? isDraggingStyles : undefined}
             spacing={0}
+            bg="purple"
           >
             <HStack
               ref={headerRef}
@@ -285,6 +292,8 @@ function ColumnBase<TCard extends BaseCardDnD>({
 
             <Box ref={scrollableRef} sx={scrollContainerStyles}>
               <Stack
+                bg="red"
+                flexGrow={1}
                 sx={{ ...cardListStyles, ...(column.styles?.cardList ?? {}) }}
               >
                 {isLoading ? (
@@ -332,7 +341,6 @@ function SafariColumnPreview<TCard extends BaseCardDnD>({
   return (
     <Box
       sx={{
-        width: "250px",
         backgroundColor: "gray.100",
         borderRadius: "md",
         p: 2,

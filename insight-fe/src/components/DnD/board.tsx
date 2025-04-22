@@ -22,9 +22,12 @@ const Board = forwardRef<HTMLDivElement, BoardProps>(
         display="flex"
         justifyContent="center"
         flexDirection="row"
-        height="480px"
+        // height="480px"
         ref={ref}
         gap={2}
+        flex={1}
+        // overflowY="auto"
+        bg="blue"
       >
         {children}
       </Box>

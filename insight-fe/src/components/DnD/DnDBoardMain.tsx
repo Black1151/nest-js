@@ -578,7 +578,13 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
    */
   return (
     <BoardContext.Provider value={contextValue}>
-      <Flex flexDirection="column" gap={4}>
+      <Flex
+        flexDirection="column"
+        gap={4}
+        flex={1}
+        bg="green"
+        justifyContent="space-between"
+      >
         <Board>
           {data.orderedColumnIds.map((columnId) => {
             return (
