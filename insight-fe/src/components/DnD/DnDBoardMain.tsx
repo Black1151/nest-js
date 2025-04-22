@@ -582,7 +582,6 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         flexDirection="column"
         gap={4}
         flex={1}
-        bg="green"
         justifyContent="space-between"
       >
         <Board>

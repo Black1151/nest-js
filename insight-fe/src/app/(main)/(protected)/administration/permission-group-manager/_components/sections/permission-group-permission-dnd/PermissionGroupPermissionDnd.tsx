@@ -126,7 +126,7 @@ export const PermissionGroupPermissionDnd = ({
 
   /* ---------- Render ---------- */
   return (
-    <ContentCard bg="red">
+    <ContentCard>
       <DnDBoardMain<NameAndDescriptionDnDItemProps>
         columnMap={columnMap}
         orderedColumnIds={orderedColumnIds}

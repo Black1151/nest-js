@@ -264,15 +264,15 @@ function ColumnBase<TCard extends BaseCardDnD>({
         direction="column"
         sx={combinedStyles}
         data-testid={`column-${columnId}`}
+        // minH={0}
       >
         <Stack ref={columnInnerRef} flexGrow={1} minH={0}>
           <Stack
-            // flexGrow={1}
-            minH={0}
+            flexGrow={1}
             overflow="hidden"
             sx={isDragging ? isDraggingStyles : undefined}
             spacing={0}
-            bg="purple"
+            height="10px" // seems to be needed to prevent the column overflowing the parent
           >
             <HStack
               ref={headerRef}
@@ -292,7 +292,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
 
             <Box ref={scrollableRef} sx={scrollContainerStyles}>
               <Stack
-                bg="red"
                 flexGrow={1}
                 sx={{ ...cardListStyles, ...(column.styles?.cardList ?? {}) }}
               >
