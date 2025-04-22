@@ -23,10 +23,78 @@ export class PermissionGroupService extends BaseService<
     super(permissionGroupRepository);
   }
 
+  // /**
+  //  * Add multiple permissions to the given permission group.
+  //  */
+  // async addPermissionsToGroup(
+  //   groupId: number,
+  //   permissionIds: number[],
+  // ): Promise<PermissionGroup> {
+  //   const group = await this.permissionGroupRepository.findOne({
+  //     where: { id: groupId },
+  //     relations: ['permissions'],
+  //   });
+
+  //   if (!group) {
+  //     throw new NotFoundException(
+  //       `Permission Group with ID ${groupId} not found.`,
+  //     );
+  //   }
+
+  //   const permissions = await this.permissionRepository.find({
+  //     where: { id: In(permissionIds) },
+  //   });
+
+  //   const currentPermissions = group.permissions ?? [];
+  //   group.permissions = [...currentPermissions, ...permissions];
+
+  //   return this.permissionGroupRepository.save(group);
+  // }
+
+  // /**
+  //  * Remove permissions from the given group.
+  //  */
+  // async removePermissionsFromGroup(
+  //   groupId: number,
+  //   permissionIds: number[],
+  // ): Promise<PermissionGroup> {
+  //   const group = await this.permissionGroupRepository.findOne({
+  //     where: { id: groupId },
+  //     relations: ['permissions'],
+  //   });
+  //   if (!group) {
+  //     throw new NotFoundException(
+  //       `Permission Group with ID ${groupId} not found.`,
+  //     );
+  //   }
+
+  //   group.permissions = group.permissions?.filter(
+  //     (permission) => !permissionIds.includes(permission.id),
+  //   );
+
+  //   return this.permissionGroupRepository.save(group);
+  // }
+
   /**
-   * Add multiple permissions to the given permission group.
+   * Fetch all permissions for a given permission group.
    */
-  async addPermissionsToGroup(
+  async getPermissionsForGroup(groupId: number): Promise<Permission[]> {
+    const group = await this.permissionGroupRepository.findOne({
+      where: { id: groupId },
+      relations: ['permissions'],
+    });
+    if (!group) {
+      throw new NotFoundException(
+        `Permission Group with ID ${groupId} not found.`,
+      );
+    }
+    return group.permissions ?? [];
+  }
+
+  /**
+   * Replace this group's permissions with exactly the given IDs.
+   */
+  async updatePermissionsFromArray(
     groupId: number,
     permissionIds: number[],
   ): Promise<PermissionGroup> {
@@ -34,44 +102,17 @@ export class PermissionGroupService extends BaseService<
       where: { id: groupId },
       relations: ['permissions'],
     });
-
     if (!group) {
       throw new NotFoundException(
         `Permission Group with ID ${groupId} not found.`,
       );
     }
-
     const permissions = await this.permissionRepository.find({
       where: { id: In(permissionIds) },
     });
 
-    const currentPermissions = group.permissions ?? [];
-    group.permissions = [...currentPermissions, ...permissions];
-
-    return this.permissionGroupRepository.save(group);
-  }
-
-  /**
-   * Remove permissions from the given group.
-   */
-  async removePermissionsFromGroup(
-    groupId: number,
-    permissionIds: number[],
-  ): Promise<PermissionGroup> {
-    const group = await this.permissionGroupRepository.findOne({
-      where: { id: groupId },
-      relations: ['permissions'],
-    });
-    if (!group) {
-      throw new NotFoundException(
-        `Permission Group with ID ${groupId} not found.`,
-      );
-    }
-
-    group.permissions = group.permissions?.filter(
-      (permission) => !permissionIds.includes(permission.id),
-    );
-
+    // overwrite, rather than append/remove
+    group.permissions = permissions;
     return this.permissionGroupRepository.save(group);
   }
 }
