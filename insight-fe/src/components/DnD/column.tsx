@@ -30,16 +30,15 @@ import { ColumnContext, type ColumnContextProps } from "./ColumnContext";
 import type { BaseCardDnD, ColumnType } from "./types";
 import { LoadingSpinnerCard } from "../loading/LoadingSpinnerCard";
 
-/* ------------------------------------------------------------------ */
-/*  Static style objects                                               */
-/* ------------------------------------------------------------------ */
+// ------------------------------------------------------------------
+//  Static style objects
+// ------------------------------------------------------------------
 const columnBaseStyles = {
   width: "100%",
   backgroundColor: "gray.100",
   borderRadius: "md",
   position: "relative",
   transition: "background 200ms ease-in-out",
-  // maxHeight: "200px",
   flex: 1,
   overflowY: "auto",
 };
@@ -70,9 +69,9 @@ const cardListStyles = {
   overflowY: "auto",
 };
 
-/* ------------------------------------------------------------------ */
-/*  Local state types                                                  */
-/* ------------------------------------------------------------------ */
+// ------------------------------------------------------------------
+//  Local state type
+// ------------------------------------------------------------------
 type State =
   | { type: "idle" }
   | { type: "is-card-over" }
@@ -83,9 +82,9 @@ type State =
 const idle: State = { type: "idle" };
 const isCardOver: State = { type: "is-card-over" };
 
-/* ------------------------------------------------------------------ */
-/*  Component                                                          */
-/* ------------------------------------------------------------------ */
+// ------------------------------------------------------------------
+//  Component
+// ------------------------------------------------------------------
 interface ColumnProps<TCard extends BaseCardDnD> {
   column: ColumnType<TCard>;
   CardComponent: React.ComponentType<{ item: TCard }>;
@@ -111,9 +110,9 @@ function ColumnBase<TCard extends BaseCardDnD>({
 
   const { instanceId, registerColumn } = useBoardContext();
 
-  /* -------------------------------------- */
-  /*  DnD + auto‑scroll wiring              */
-  /* -------------------------------------- */
+  // --------------------------------------
+  //  DnD + auto‑scroll wiring
+  // --------------------------------------
   useEffect(() => {
     invariant(columnRef.current);
     invariant(columnInnerRef.current);
@@ -177,7 +176,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
       }),
     ];
 
-    // draggable wiring only if allowed
+    // If column reordering is enabled, make the column draggable.
     if (enableColumnReorder) {
       disposables.push(
         draggable({
@@ -217,17 +216,17 @@ function ColumnBase<TCard extends BaseCardDnD>({
     return combine(...disposables);
   }, [columnId, registerColumn, instanceId, enableColumnReorder]);
 
-  /* -------------------------------------- */
-  /*  Helpers shared via context            */
-  /* -------------------------------------- */
+  // --------------------------------------
+  //  Helpers shared via context
+  // --------------------------------------
   const stableItems = useRef(column.items);
   useEffect(() => {
     stableItems.current = column.items;
   }, [column.items]);
 
   const getCardIndex = useCallback(
-    (userId: string) =>
-      stableItems.current.findIndex((item: any) => item.userId === userId),
+    (id: string) =>
+      stableItems.current.findIndex((item: TCard) => item.id === id),
     []
   );
 
@@ -243,9 +242,35 @@ function ColumnBase<TCard extends BaseCardDnD>({
     [columnId, getCardIndex, getNumCards, column.styles?.card]
   );
 
-  /* -------------------------------------- */
-  /*  Dynamic styles                        */
-  /* -------------------------------------- */
+  // --------------------------------------
+  //  Sorting logic
+  // --------------------------------------
+  const { sortBy, sortDirection } = column;
+
+  const sortedItems = useMemo(() => {
+    // If no sort function or the direction is "none", use raw order
+    if (!sortBy || sortDirection === "none" || !sortDirection) {
+      return column.items;
+    }
+
+    const itemsCopy = [...column.items];
+    itemsCopy.sort((a, b) => {
+      const aVal = sortBy(a) ?? "";
+      const bVal = sortBy(b) ?? "";
+      // Cast to string safely. If numeric sorting is needed, parse floats or integers instead.
+      return String(aVal).localeCompare(String(bVal));
+    });
+
+    if (sortDirection === "desc") {
+      itemsCopy.reverse();
+    }
+
+    return itemsCopy;
+  }, [column.items, sortBy, sortDirection]);
+
+  // --------------------------------------
+  //  Dynamic styles
+  // --------------------------------------
   const combinedStyles = {
     ...columnBaseStyles,
     ...(column.styles?.container ?? {}),
@@ -254,9 +279,9 @@ function ColumnBase<TCard extends BaseCardDnD>({
     ...(state.type === "is-card-over" ? cardOverStyles : {}),
   };
 
-  /* -------------------------------------- */
-  /*  Render                                */
-  /* -------------------------------------- */
+  // --------------------------------------
+  //  Render
+  // --------------------------------------
   return (
     <ColumnContext.Provider value={contextValue}>
       <Flex
@@ -264,7 +289,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
         direction="column"
         sx={combinedStyles}
         data-testid={`column-${columnId}`}
-        // minH={0}
       >
         <Stack ref={columnInnerRef} flexGrow={1} minH={0}>
           <Stack
@@ -272,7 +296,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
             overflow="hidden"
             sx={isDragging ? isDraggingStyles : undefined}
             spacing={0}
-            height="10px" // seems to be needed to prevent the column overflowing the parent
+            height="10px"
           >
             <HStack
               ref={headerRef}
@@ -281,11 +305,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
               sx={{ ...columnHeaderStyles, ...(column.styles?.header ?? {}) }}
               data-testid={`column-header-${columnId}`}
             >
-              <Heading
-                as="span"
-                size="xs"
-                data-testid={`column-header-title-${columnId}`}
-              >
+              <Heading as="span" size="xs">
                 {column.title}
               </Heading>
             </HStack>
@@ -298,7 +318,8 @@ function ColumnBase<TCard extends BaseCardDnD>({
                 {isLoading ? (
                   <LoadingSpinnerCard />
                 ) : (
-                  column.items.map((item: TCard) => (
+                  /** Render sorted or raw items: */
+                  sortedItems.map((item: TCard) => (
                     <Card
                       key={item.id}
                       item={item}
@@ -322,16 +343,9 @@ function ColumnBase<TCard extends BaseCardDnD>({
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Public, memoised export                                            */
-/* ------------------------------------------------------------------ */
-export const Column = memo(ColumnBase) as <TCard extends BaseCardDnD>(
-  props: ColumnProps<TCard>
-) => JSX.Element;
-
-/* ------------------------------------------------------------------ */
-/*  Safari preview helper                                              */
-/* ------------------------------------------------------------------ */
+// ------------------------------------------------------------------
+//  Safari preview helper
+// ------------------------------------------------------------------
 function SafariColumnPreview<TCard extends BaseCardDnD>({
   column,
 }: {
@@ -351,3 +365,10 @@ function SafariColumnPreview<TCard extends BaseCardDnD>({
     </Box>
   );
 }
+
+// ------------------------------------------------------------------
+//  Export a memoized version
+// ------------------------------------------------------------------
+export const Column = memo(ColumnBase) as <TCard extends BaseCardDnD>(
+  props: ColumnProps<TCard>
+) => JSX.Element;

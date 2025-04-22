@@ -82,10 +82,11 @@ export const PermissionGroupPermissionDnd = ({
     () => ({
       groupPermissions: {
         title: "Group Permissions",
+        sortBy: (item) => item.name,
+        sortDirection: "asc",
         columnId: "groupPermissions",
         styles: {
           container: { border: "3px dashed teal", width: "100%" },
-          // column: { height: "100%" },
           header: { bg: "teal.600", color: "white" },
           card: { bg: "teal.100", _hover: { bg: "teal.200" } },
         },
@@ -93,10 +94,11 @@ export const PermissionGroupPermissionDnd = ({
       },
       availablePermissions: {
         title: "Available Permissions",
+        sortBy: (item) => item.name,
+        sortDirection: "asc",
         columnId: "availablePermissions",
         styles: {
           container: { border: "3px dashed gray", width: "100%" },
-          // column: { height: "100%" },
           header: { bg: "gray.700", color: "white" },
           card: { bg: "gray.200", _hover: { bg: "gray.300" } },
         },
