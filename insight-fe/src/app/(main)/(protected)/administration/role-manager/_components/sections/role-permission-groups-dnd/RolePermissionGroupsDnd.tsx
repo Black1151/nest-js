@@ -1,3 +1,5 @@
+"use client";
+
 import { BoardState, DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import { ColumnType } from "@/components/DnD/types";
 import { ContentCard } from "@/components/layout/Card";
@@ -90,6 +92,8 @@ export const RolePermissionGroupsDnd = ({
           header: { bg: "orange.500", color: "white" },
           card: { bg: "orange.200", _hover: { bg: "orange.300" } },
         },
+        sortBy: (item) => item.name,
+        sortDirection: "asc",
         items: permissionGroupsAssignedToRole,
       },
       permissionGroupsNotAssignedToRole: {
@@ -101,9 +105,11 @@ export const RolePermissionGroupsDnd = ({
           card: { bg: "purple.200", _hover: { bg: "purple.300" } },
         },
         items: permissionGroupsNotAssignedToRole,
+        sortBy: (item) => item.name,
+        sortDirection: "asc",
       },
     }),
-    []
+    [permissionGroupsAssignedToRole, permissionGroupsNotAssignedToRole]
   );
 
   const orderedColumnIds = [
@@ -126,12 +132,14 @@ export const RolePermissionGroupsDnd = ({
   );
 
   return (
-    <DnDBoardMain
-      columnMap={columnMap}
-      orderedColumnIds={orderedColumnIds}
-      onSubmit={handleSubmit}
-      isLoading={isLoading}
-      CardComponent={NameAndDescriptionDnDItem}
-    />
+    <ContentCard height={700}>
+      <DnDBoardMain
+        columnMap={columnMap}
+        orderedColumnIds={orderedColumnIds}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+        CardComponent={NameAndDescriptionDnDItem}
+      />
+    </ContentCard>
   );
 };
