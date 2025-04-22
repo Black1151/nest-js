@@ -124,7 +124,7 @@ export const UserRolesSection = ({ publicId }: UserRolesSectionProps) => {
 
   /* ---------- Render ---------- */
   return (
-    <ContentCard>
+    <ContentCard minHeight={700}>
       <DnDBoardMain<RoleDnDItemProps>
         columnMap={columnMap}
         orderedColumnIds={orderedColumnIds}
