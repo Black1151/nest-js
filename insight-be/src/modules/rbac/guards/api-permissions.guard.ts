@@ -27,18 +27,21 @@ export class ApiPermissionsGuard implements CanActivate {
     const handler = gqlCtx.getHandler();
     const clazz = gqlCtx.getClass();
 
+    console.log('PERMISSIONS GUARD HIT');
+
     const isPublic = this.reflector.getAllAndOverride<boolean>(
       IS_PUBLIC_ROUTE_KEY,
       [gqlCtx.getHandler(), context.getClass()],
     );
 
     if (isPublic) {
+      console.log('route is public');
       return true;
     }
 
-    const permissionKey = this.reflector.get<string>(
+    const permissionKey = this.reflector.getAllAndOverride<string>(
       PERMISSION_KEY_METADATA,
-      handler,
+      [handler, clazz],
     );
 
     if (!permissionKey) {
@@ -62,16 +65,21 @@ export class ApiPermissionsGuard implements CanActivate {
       req.user.publicId,
     );
 
+    // console.log('XXX', user);
+
     if (
       process.env.NODE_ENV === 'development' &&
       user?.roles?.some((role) => role.name === 'super_admin')
     ) {
+      console.log('super admin, returning true');
       return true;
     }
 
     const requiredPermissions = mapping.requiredPermissions.map((p) => p.name);
+    console.log('requiredPermissions', requiredPermissions);
 
     req.user.permissions = user['combinedPermissions'] || [];
+    console.log('req.user.permissions', req.user.permissions);
 
     const hasAll = requiredPermissions.every((perm) =>
       req.user.permissions.includes(perm),

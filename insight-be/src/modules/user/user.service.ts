@@ -143,6 +143,10 @@ export class UsersService {
     }
     const permSet = new Set<string>();
 
+    console.log('XXX', user);
+
+    console.log('user', user.roles);
+
     user.roles?.forEach((role) => {
       role.permissions?.forEach((perm) => permSet.add(perm.name));
       role.permissionGroups?.forEach((group) => {

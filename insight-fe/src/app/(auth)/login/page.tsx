@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   // Updated onSubmit to call the Next.js login route instead of a GraphQL mutation
   const onSubmit = async (formData: LoginSchema) => {
-    setServerError(""); // clear any prior errors
+    setServerError("");
     try {
       const res = await fetch("/api/login", {
         method: "POST",
@@ -51,12 +51,7 @@ export default function LoginPage() {
         setServerError(errorData.error || "Login failed.");
         return;
       }
-
-      // Optionally read user info from the response, if your /api/login returns `{ user }`
-      // e.g. const { user } = await res.json();
-
-      // Cookies are now set HTTP-only by /api/login, so we can simply redirect or navigate
-      router.push("/admin"); // or wherever your protected page is
+      router.push("/admin");
     } catch (err) {
       console.error("Login error:", err);
       setServerError("An unexpected error occurred.");
