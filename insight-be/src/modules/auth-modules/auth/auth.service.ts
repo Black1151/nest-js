@@ -72,7 +72,11 @@ export class AuthService {
           this.configService.get<string>('JWT_REFRESH_SECRET') ||
           'myRefreshKey',
       });
-      const userId = payload.sub;
+      const userId = payload.publicId;
+
+      if (!userId) {
+        throw new UnauthorizedException('An error occured during refresh');
+      }
 
       const user = await this.userService.findOneByPublicId(userId);
       if (!user) {

@@ -142,11 +142,6 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
     const permSet = new Set<string>();
-
-    console.log('XXX', user);
-
-    console.log('user', user.roles);
-
     user.roles?.forEach((role) => {
       role.permissions?.forEach((perm) => permSet.add(perm.name));
       role.permissionGroups?.forEach((group) => {
