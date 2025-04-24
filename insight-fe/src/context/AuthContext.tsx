@@ -4,25 +4,29 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 type AuthContextValue = {
   isAuthLoaded: boolean;
-  roles: string[];
+  permissions: string[];
 };
 
 const AuthContext = createContext<AuthContextValue>({
   isAuthLoaded: false,
-  roles: [],
+  permissions: [],
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthLoaded, setIsAuthLoaded] = useState(false);
-  const [roles, setRoles] = useState<string[]>([]);
+  const [permissions, setPermissions] = useState<string[]>([]);
 
   useEffect(() => {
     async function doSilentRefresh() {
       try {
         await ensureRefresh();
+
+        // const { permissions } = await getPermsFromJwt();
+        setPermissions(permissions);
       } catch (err) {
         console.error("Silent refresh error: Possibly not logged in", err);
       } finally {
+    
         setIsAuthLoaded(true);
       }
     }
@@ -31,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthLoaded, roles }}>
+    <AuthContext.Provider value={{ isAuthLoaded, permissions }}>
       {children}
     </AuthContext.Provider>
   );

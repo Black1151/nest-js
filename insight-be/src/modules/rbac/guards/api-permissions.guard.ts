@@ -76,17 +76,19 @@ export class ApiPermissionsGuard implements CanActivate {
     }
 
     const requiredPermissions = mapping.requiredPermissions.map((p) => p.name);
-    console.log('requiredPermissions', requiredPermissions);
+    console.log('required Permissions', requiredPermissions);
 
     req.user.permissions = user['combinedPermissions'] || [];
-    console.log('req.user.permissions', req.user.permissions);
+    console.log('user permissiions', req.user.permissions);
 
     const hasAll = requiredPermissions.every((perm) =>
       req.user.permissions.includes(perm),
     );
 
     if (!hasAll) {
-      throw new ForbiddenException('Insufficient permissions');
+      throw new ForbiddenException(
+        `Insufficient permissions ${requiredPermissions[0]}`,
+      );
     }
 
     return true;

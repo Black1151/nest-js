@@ -45,15 +45,26 @@ export class AuthService {
 
   // auth.service.ts
   async login(user: User): Promise<AuthTokens> {
-    const foundUser = await this.userService.findOneByEmail(user.email);
-    const payload = {
+    // const foundUser = await this.userService.findOneByEmail(user.email);
+
+    const foundUser = await this.userService.getUserWithRolesAndPermissions(
+      user.publicId,
+    );
+
+    const accessPayload = {
+      publicId: foundUser.publicId,
+      permissions: foundUser['combinedPermissions'],
+    };
+
+    const refreshPayload = {
       publicId: foundUser.publicId,
     };
-    const accessToken = this.jwtService.sign(payload, {
+
+    const accessToken = this.jwtService.sign(accessPayload, {
       expiresIn: '15m',
       secret: this.configService.get<string>('JWT_SECRET') || 'mySecretKey',
     });
-    const refreshToken = this.jwtService.sign(payload, {
+    const refreshToken = this.jwtService.sign(refreshPayload, {
       expiresIn: '7d',
       secret: this.configService.get<string>('JWT_REFRESH_SECRET') || 'zxcxzc',
     });
