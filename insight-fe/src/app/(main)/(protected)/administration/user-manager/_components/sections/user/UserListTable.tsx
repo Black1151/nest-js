@@ -7,6 +7,7 @@ import { useQuery, User } from "@/gqty";
 import { LoadingSpinnerCard } from "@/components/loading/LoadingSpinnerCard";
 import { Button, Flex } from "@chakra-ui/react";
 import { CreateUserModal } from "../../modals/CreateUserModal";
+import { RequirePermission } from "@/rbac/RequirePermission";
 
 interface UserListTableProps {
   setSelectedUserPublicId: (publicId: string) => void;
@@ -16,8 +17,8 @@ function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
   const query = useQuery();
   const { isLoading } = query.$state;
-  const users = query.getAllUsers({ data: {limit: 10, offset: 0 } });
- 
+  const users = query.getAllUsers({ data: { limit: 10, offset: 0 } });
+
   const formattedData = users.map((u: User) => ({
     id: u.id,
     firstName: u.firstName,
@@ -65,10 +66,12 @@ function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
           </Flex>
         )}
       </ContentCard>
-      <CreateUserModal
-        isOpen={isCreateUserModalOpen}
-        onClose={() => setIsCreateUserModalOpen(false)}
-      />
+      <RequirePermission permissions={["user.create"]}>
+        <CreateUserModal
+          isOpen={isCreateUserModalOpen}
+          onClose={() => setIsCreateUserModalOpen(false)}
+        />
+      </RequirePermission>
     </>
   );
 }

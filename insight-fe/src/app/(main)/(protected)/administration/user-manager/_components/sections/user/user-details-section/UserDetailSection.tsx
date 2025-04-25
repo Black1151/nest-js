@@ -7,6 +7,7 @@ import { DeleteUserModal } from "../../../modals/DeleteUserModal";
 import { useQuery } from "@/gqty";
 
 import type { User } from "@/gqty";
+import { RequirePermission } from "@/rbac/RequirePermission";
 
 export const prepareUser = (user: User) => {
   user.firstName;
@@ -31,7 +32,10 @@ interface UserDetailSectionProps {
   setSelectedUserPublicId: (publicId: null) => void;
 }
 
-export const UserDetailSection = ({ publicId, setSelectedUserPublicId }: UserDetailSectionProps) => {
+export const UserDetailSection = ({
+  publicId,
+  setSelectedUserPublicId,
+}: UserDetailSectionProps) => {
   const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false);
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
 
@@ -47,20 +51,35 @@ export const UserDetailSection = ({ publicId, setSelectedUserPublicId }: UserDet
   return (
     <>
       <ContentCard>
-        <UserDetailsDisplay publicId={publicId} />
+        <RequirePermission
+          permissions={["user.get"]}
+          fallback={
+            <Text>You do not have permission to view user details</Text>
+          }
+        >
+          <UserDetailsDisplay publicId={publicId} />
+        </RequirePermission>
         <HStack spacing={4} pt={4}>
-          <Button
-            colorScheme="blue"
-            onClick={() => setIsUpdateUserModalOpen(true)}
+          <RequirePermission
+            permissions={["user.get", "user.updateUserByPublicId"]}
           >
-            Update User
-          </Button>
-          <Button
-            colorScheme="red"
-            onClick={() => setIsDeleteUserModalOpen(true)}
+            <Button
+              colorScheme="blue"
+              onClick={() => setIsUpdateUserModalOpen(true)}
+            >
+              Update User
+            </Button>
+          </RequirePermission>
+          <RequirePermission
+            permissions={["user.get", "user.removeUserByPublicId"]}
           >
-            Delete User
-          </Button>
+            <Button
+              colorScheme="red"
+              onClick={() => setIsDeleteUserModalOpen(true)}
+            >
+              Delete User
+            </Button>
+          </RequirePermission>
         </HStack>
       </ContentCard>
       <UpdateUserModal

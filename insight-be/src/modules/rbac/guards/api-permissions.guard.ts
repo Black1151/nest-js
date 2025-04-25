@@ -65,7 +65,12 @@ export class ApiPermissionsGuard implements CanActivate {
       req.user.publicId,
     );
 
-    // console.log('XXX', user);
+    /////////// DISABLE AUTH GUARD FOR DEV
+    if (process.env.NODE_ENV === 'development') {
+      console.log('IN DEVELOPMENT, returning true');
+      return true;
+    }
+    /////////////////
 
     if (
       process.env.NODE_ENV === 'development' &&

@@ -1,20 +1,21 @@
-// components/RequirePermission.tsx
 import { ReactNode } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 interface Props {
-  permission: string;
+  permissions: string[];
   fallback?: ReactNode;
   children: ReactNode;
 }
 
 export function RequirePermission({
-  permission,
+  permissions,
   children,
   fallback = null,
 }: Props) {
   const { userPermissions } = useAuth();
-  const hasPermission = userPermissions.includes(permission);
+  const hasAllPermissions = permissions.every((permission) =>
+    userPermissions.includes(permission)
+  );
 
-  return hasPermission ? <>{children}</> : <>{fallback}</>;
+  return hasAllPermissions ? <>{children}</> : <>{fallback}</>;
 }
