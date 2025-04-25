@@ -1,5 +1,5 @@
 import { UserManagerPageClient } from "./UserManagerPageClient";
 
-export default function AdministrationPage() {
+export default function UserManagerPage() {
   return <UserManagerPageClient />;
 }
