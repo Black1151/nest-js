@@ -36,7 +36,7 @@ export class UserResolver {
   constructor(private readonly userService: UsersService) {}
 
   @Query(() => [User])
-  @RbacPermissionKey('user.findAll')
+  @RbacPermissionKey('user.getAllUsers')
   @ImmutableLogging()
   async getAllUsers(
     @Args('data') data: PaginatedGetAllRequestDto,
@@ -46,7 +46,7 @@ export class UserResolver {
   }
 
   @Query(() => User)
-  @RbacPermissionKey('user.get')
+  @RbacPermissionKey('user.getUserByPublicId')
   @ImmutableLogging()
   async getUserByPublicId(
     @Args('data') data: PublicIdRequestDto,
@@ -55,7 +55,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @RbacPermissionKey('user.create')
+  @RbacPermissionKey('user.createUser')
   @ImmutableLogging()
   @UiErrorMessageOverride([
     {
@@ -68,7 +68,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @RbacPermissionKey('user.update')
+  @RbacPermissionKey('user.updateUserByPublicId')
   @ImmutableLogging()
   @UiErrorMessageOverride([
     {
@@ -122,7 +122,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @RbacPermissionKey('user.remove')
+  @RbacPermissionKey('user.removeUserByPublicId')
   @ImmutableLogging()
   async removeUserByPublicId(
     @Args('data') data: PublicIdRequestDto,
