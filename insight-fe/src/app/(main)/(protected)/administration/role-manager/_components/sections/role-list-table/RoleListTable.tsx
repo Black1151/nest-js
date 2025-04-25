@@ -9,6 +9,8 @@ import { Role, useQuery } from "@/gqty";
 
 import { DataTableSimple } from "@/components/tables/DataTableSimple";
 import { CreateRoleModal } from "./sub/modals/CreateRoleModal";
+import { RequirePermission } from "@/rbac/RequirePermission";
+import { useAuth } from "@/context/AuthContext";
 
 interface RoleManagerSectionProps {
   setSelectedRoleId: (roleId: string) => void;
@@ -19,6 +21,7 @@ export const RoleManagerSection = ({
 }: RoleManagerSectionProps) => {
   const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState(false);
   const query = useQuery();
+  const { userPermissions } = useAuth();
 
   const allRoles = query.getAllRole({ data: { all: true } }) ?? [];
 
@@ -34,6 +37,14 @@ export const RoleManagerSection = ({
     { key: "description", label: "Description" },
   ];
 
+  const handleRowClick = (roleId: string) => {
+    if (!userPermissions.includes("role.getRoleById")) {
+      return;
+    }
+
+    setSelectedRoleId(roleId);
+  };
+
   return (
     <>
       <ContentCard>
@@ -46,15 +57,16 @@ export const RoleManagerSection = ({
           <DataTableSimple
             data={formattedData}
             columns={columns}
-            onRowClick={(item) => setSelectedRoleId(item.id)}
-            // onRowClick={(item) => console.log(item.id)}
+            onRowClick={(item) => handleRowClick(item.id)}
           />
-          <Button
-            colorScheme="green"
-            onClick={() => setIsCreateRoleModalOpen(true)}
-          >
-            Create new role
-          </Button>
+          <RequirePermission permissions={["role.createRole"]}>
+            <Button
+              colorScheme="green"
+              onClick={() => setIsCreateRoleModalOpen(true)}
+            >
+              Create new role
+            </Button>
+          </RequirePermission>
         </Flex>
       </ContentCard>
 
