@@ -16,9 +16,9 @@ export function UserManagerPageClient() {
 
   const { userPermissions } = useAuth();
 
-  if (!userPermissions.includes("user.getAllUsers")) {
-    redirect("/unauthorised");
-  }
+  // if (!userPermissions.includes("user.getAllUsers")) {
+  //   redirect("/unauthorised");
+  // }
 
   return (
     <>
@@ -36,7 +36,7 @@ export function UserManagerPageClient() {
           permissions={[
             "user.getRolesForUser",
             "user.updateUserRolesFromArray",
-            "role.findAllRole",
+            "role.getAllRole",
           ]}
         >
           <UserRolesSection publicId={selectedUserPublicId} />

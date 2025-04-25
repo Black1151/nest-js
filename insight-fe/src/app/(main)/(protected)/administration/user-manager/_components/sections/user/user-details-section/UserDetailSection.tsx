@@ -52,7 +52,7 @@ export const UserDetailSection = ({
     <>
       <ContentCard>
         <RequirePermission
-          permissions={["user.get"]}
+          permissions={["user.getUserByPublicId"]}
           fallback={
             <Text>You do not have permission to view user details</Text>
           }
@@ -61,7 +61,10 @@ export const UserDetailSection = ({
         </RequirePermission>
         <HStack spacing={4} pt={4}>
           <RequirePermission
-            permissions={["user.get", "user.updateUserByPublicId"]}
+            permissions={[
+              "user.getUserByPublicId",
+              "user.updateUserByPublicId",
+            ]}
           >
             <Button
               colorScheme="blue"
@@ -71,7 +74,10 @@ export const UserDetailSection = ({
             </Button>
           </RequirePermission>
           <RequirePermission
-            permissions={["user.get", "user.removeUserByPublicId"]}
+            permissions={[
+              "user.getUserByPublicId",
+              "user.removeUserByPublicId",
+            ]}
           >
             <Button
               colorScheme="red"
