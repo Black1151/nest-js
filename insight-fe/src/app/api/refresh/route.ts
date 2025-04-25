@@ -19,6 +19,10 @@ export async function POST(req: NextRequest) {
             refreshUsersTokens(refreshToken: $refreshToken) {
               accessToken
               refreshToken
+              userDetails {
+                publicId
+                permissions
+              }
             }
           }
         `,
@@ -39,13 +43,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const { accessToken, refreshToken: newRefresh } = data.refreshUsersTokens;
+    const {
+      accessToken,
+      refreshToken: newRefresh,
+      userDetails,
+    } = data.refreshUsersTokens;
 
     // Set the new cookies
     const res = NextResponse.json({
       success: true,
       accessToken,
       refreshToken: newRefresh,
+      userDetails,
     });
 
     // For dev/demo: not secure. Adjust to production needs.
@@ -54,7 +63,7 @@ export async function POST(req: NextRequest) {
       secure: false,
       sameSite: "lax",
       path: "/",
-      maxAge: 15 * 60, // 15 minutes
+      maxAge: 15 * 60,
     });
     res.cookies.set("refreshToken", newRefresh, {
       httpOnly: true,

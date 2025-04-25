@@ -4,29 +4,53 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 type AuthContextValue = {
   isAuthLoaded: boolean;
-  permissions: string[];
+  userPermissions: string[];
+  userPublicId: string;
 };
 
 const AuthContext = createContext<AuthContextValue>({
   isAuthLoaded: false,
-  permissions: [],
+  userPermissions: [],
+  userPublicId: "",
 });
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export interface UserPayload {
+  publicId: string;
+  permissions: string[];
+}
+
+export function AuthProvider({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: UserPayload | null;
+}) {
   const [isAuthLoaded, setIsAuthLoaded] = useState(false);
-  const [permissions, setPermissions] = useState<string[]>([]);
+  const [userPermissions, setUserPermissions] = useState<string[]>([]);
+  const [userPublicId, setUserPublicId] = useState<string>("");
+
+  useEffect(() => {
+    if (user) {
+      setUserPublicId(user.publicId);
+      setUserPermissions(user.permissions);
+    }
+  }, [user]);
 
   useEffect(() => {
     async function doSilentRefresh() {
       try {
-        await ensureRefresh();
+        const resp = await fetch("/api/refresh", {
+          method: "POST",
+          credentials: "include",
+        });
 
-        // const { permissions } = await getPermsFromJwt();
-        setPermissions(permissions);
+        const { userDetails } = await resp.json();
+        setUserPublicId(userDetails.publicId);
+        setUserPermissions(userDetails.permissions);
       } catch (err) {
         console.error("Silent refresh error: Possibly not logged in", err);
       } finally {
-    
         setIsAuthLoaded(true);
       }
     }
@@ -35,7 +59,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthLoaded, permissions }}>
+    <AuthContext.Provider
+      value={{ isAuthLoaded, userPermissions, userPublicId }}
+    >
       {children}
     </AuthContext.Provider>
   );

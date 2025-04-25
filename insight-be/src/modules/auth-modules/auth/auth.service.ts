@@ -7,6 +7,7 @@ import { UsersService } from 'src/modules/user/user.service';
 import { ConfigService } from '@nestjs/config';
 import { AuthTokens } from './dto/res/auth-tokens.dto';
 import { CreateUserRequestDto } from 'src/modules/user/dto/req/req.dto';
+import { LoginResponse } from './dto/res/login-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -44,17 +45,19 @@ export class AuthService {
   }
 
   // auth.service.ts
-  async login(user: User): Promise<AuthTokens> {
+  async login(user: User): Promise<LoginResponse> {
     // const foundUser = await this.userService.findOneByEmail(user.email);
 
     const foundUser = await this.userService.getUserWithRolesAndPermissions(
       user.publicId,
     );
 
-    const accessPayload = {
+    const userDetails = {
       publicId: foundUser.publicId,
       permissions: foundUser['combinedPermissions'],
     };
+
+    const accessPayload = userDetails;
 
     const refreshPayload = {
       publicId: foundUser.publicId,
@@ -68,13 +71,13 @@ export class AuthService {
       expiresIn: '7d',
       secret: this.configService.get<string>('JWT_REFRESH_SECRET') || 'zxcxzc',
     });
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, userDetails };
   }
 
   /**
    * Verify refresh token, issue new access + refresh tokens
    */
-  async refreshToken(token: string): Promise<AuthTokens> {
+  async refreshToken(token: string): Promise<LoginResponse> {
     console.log('REFRESH TOKEN BACKEND HIT:', token);
 
     try {
