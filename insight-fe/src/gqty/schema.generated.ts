@@ -202,6 +202,12 @@ export const generatedSchema = {
     email: { __type: "String!" },
     password: { __type: "String!" },
   },
+  LoginResponse: {
+    __typename: { __type: "String!" },
+    accessToken: { __type: "String!" },
+    refreshToken: { __type: "String!" },
+    userDetails: { __type: "UserDetails!" },
+  },
   PaginatedGetAllRequestDto: {
     limit: { __type: "Int" },
     offset: { __type: "Int" },
@@ -311,6 +317,11 @@ export const generatedSchema = {
     roles: { __type: "[Role!]" },
     updatedAt: { __type: "DateTime!" },
   },
+  UserDetails: {
+    __typename: { __type: "String!" },
+    permissions: { __type: "[String!]!" },
+    publicId: { __type: "String!" },
+  },
   UserPermissionsInput: { publicId: { __type: "String!" } },
   mutation: {
     __typename: { __type: "String!" },
@@ -332,7 +343,7 @@ export const generatedSchema = {
       __args: { data: "LoginRequest!" },
     },
     refreshUsersTokens: {
-      __type: "AuthTokens!",
+      __type: "LoginResponse!",
       __args: { refreshToken: "String!" },
     },
     registerNewUserLocally: {
@@ -429,6 +440,13 @@ export interface AuthTokens {
   refreshToken: ScalarsEnums["String"];
 }
 
+export interface LoginResponse {
+  __typename?: "LoginResponse";
+  accessToken: ScalarsEnums["String"];
+  refreshToken: ScalarsEnums["String"];
+  userDetails: UserDetails;
+}
+
 export interface Permission {
   __typename?: "Permission";
   createdAt: ScalarsEnums["DateTime"];
@@ -504,6 +522,12 @@ export interface User {
   updatedAt: ScalarsEnums["DateTime"];
 }
 
+export interface UserDetails {
+  __typename?: "UserDetails";
+  permissions: Array<ScalarsEnums["String"]>;
+  publicId: ScalarsEnums["String"];
+}
+
 export interface Mutation {
   __typename?: "Mutation";
   /**
@@ -536,7 +560,7 @@ export interface Mutation {
   logUserInWithEmailAndPassword: (args: { data: LoginRequest }) => AuthTokens;
   refreshUsersTokens: (args: {
     refreshToken: ScalarsEnums["String"];
-  }) => AuthTokens;
+  }) => LoginResponse;
   registerNewUserLocally: (args: { data: CreateUserRequestDto }) => User;
   removeUserByPublicId: (args: { data: PublicIdRequestDto }) => User;
   /**
