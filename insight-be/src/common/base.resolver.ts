@@ -59,7 +59,10 @@ export function createBaseResolver<
       name: `getAll${queryName}`,
       description: `Returns all ${queryName}`,
     })
-    @RbacPermissionKeyIf(isEnabled('findAll'), `${stableKeyPrefix}.findAll`)
+    @RbacPermissionKeyIf(
+      isEnabled('findAll'),
+      `${stableKeyPrefix}.getAll${queryName}`,
+    )
     @ImmutableLoggingIf(isImmutable('findAll'))
     async findAll(
       @Args('data', { type: () => FindAllInput }) data: FindAllInput,
@@ -75,7 +78,10 @@ export function createBaseResolver<
       name: `get${queryName}`,
       description: `Returns one ${queryName}`,
     })
-    @RbacPermissionKeyIf(isEnabled('findOne'), `${stableKeyPrefix}.findOne`)
+    @RbacPermissionKeyIf(
+      isEnabled('findOne'),
+      `${stableKeyPrefix}.get${queryName}`,
+    )
     @ImmutableLoggingIf(isImmutable('findOne'))
     async findOne(
       @Args('data', { type: () => IdInput }) data: IdInput,
@@ -90,7 +96,10 @@ export function createBaseResolver<
       name: `get${queryName}By`,
       description: `Returns one ${queryName} by given conditions`,
     })
-    @RbacPermissionKeyIf(isEnabled('findOneBy'), `${stableKeyPrefix}.findOneBy`)
+    @RbacPermissionKeyIf(
+      isEnabled('findOneBy'),
+      `${stableKeyPrefix}.get${queryName}By`,
+    )
     @ImmutableLoggingIf(isImmutable('findOneBy'))
     async findOneBy(
       @Args('data', { type: () => FindOneByInput }) data: FindOneByInput,
@@ -107,7 +116,10 @@ export function createBaseResolver<
       name: `create${queryName}`,
       description: `Create one ${queryName}`,
     })
-    @RbacPermissionKeyIf(isEnabled('create'), `${stableKeyPrefix}.create`)
+    @RbacPermissionKeyIf(
+      isEnabled('create'),
+      `${stableKeyPrefix}.create${queryName}`,
+    )
     @ImmutableLoggingIf(isImmutable('create'))
     @UiErrorMessageOverride([
       {
@@ -128,7 +140,10 @@ export function createBaseResolver<
       name: `update${queryName}`,
       description: `Updates one ${queryName}`,
     })
-    @RbacPermissionKeyIf(isEnabled('update'), `${stableKeyPrefix}.update`)
+    @RbacPermissionKeyIf(
+      isEnabled('update'),
+      `${stableKeyPrefix}.update${queryName}`,
+    )
     @ImmutableLoggingIf(isImmutable('update'))
     @UiErrorMessageOverride([
       {
@@ -149,7 +164,10 @@ export function createBaseResolver<
       name: `delete${queryName}`,
       description: `Delete one ${queryName}`,
     })
-    @RbacPermissionKeyIf(isEnabled('remove'), `${stableKeyPrefix}.remove`)
+    @RbacPermissionKeyIf(
+      isEnabled('remove'),
+      `${stableKeyPrefix}.delete${queryName}`,
+    )
     @ImmutableLoggingIf(isImmutable('remove'))
     async remove(
       @Args('data', { type: () => IdInput }) data: IdInput,
