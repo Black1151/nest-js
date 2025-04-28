@@ -1,5 +1,4 @@
 "use client";
-import { ensureRefresh } from "@/refreshClient";
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 type AuthContextValue = {
@@ -27,8 +26,12 @@ export function AuthProvider({
   user: UserPayload | null;
 }) {
   const [isAuthLoaded, setIsAuthLoaded] = useState(false);
-  const [userPermissions, setUserPermissions] = useState<string[]>([]);
-  const [userPublicId, setUserPublicId] = useState<string>("");
+  const [userPermissions, setUserPermissions] = useState<string[]>(
+    user?.permissions ?? []
+  );
+  const [userPublicId, setUserPublicId] = useState<string>(
+    user?.publicId ?? ""
+  );
 
   useEffect(() => {
     if (user) {
