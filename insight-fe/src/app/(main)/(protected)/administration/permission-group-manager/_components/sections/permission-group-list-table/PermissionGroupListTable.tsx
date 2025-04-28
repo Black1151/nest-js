@@ -5,6 +5,7 @@ import { Suspense, useState } from "react";
 import { ContentCard } from "@/components/layout/Card";
 import { DataTableSimple } from "@/components/tables/DataTableSimple";
 import { CreatePermissionGroupModal } from "./modals/CreatePermissionGroupModal";
+import { RequirePermission } from "@/rbac/RequirePermission";
 
 interface PermissionGroupListTableProps {
   setSelectedPermissionGroupId: (publicId: string) => void;
@@ -81,12 +82,16 @@ function PermissionGroupListTable({
               columns={columns}
               onRowClick={handleRowClick}
             />
-            <Button
-              colorScheme="green"
-              onClick={() => setIsCreatePermissionGroupModalOpen(true)}
+            <RequirePermission
+              permissions={["permissionGroup.createPermissionGroup"]}
             >
-              Create Permission Group
-            </Button>
+              <Button
+                colorScheme="green"
+                onClick={() => setIsCreatePermissionGroupModalOpen(true)}
+              >
+                Create Permission Group
+              </Button>
+            </RequirePermission>
           </Flex>
         )}
       </ContentCard>
