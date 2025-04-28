@@ -7,16 +7,15 @@ import { RolePermissionGroupsDnd } from "./_components/sections/role-permission-
 import { useAuth } from "@/context/AuthContext";
 import { redirect } from "next/navigation";
 import { RequirePermission } from "@/rbac/RequirePermission";
+import { usePermissionRedirect } from "@/hooks/PermissionRedirect";
 0;
 
 export const RoleManagerPageClient = () => {
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
 
-  const { userPermissions } = useAuth();
-
-  if (!userPermissions.includes("role.getAllRole")) {
-    redirect("/unauthorised");
-  }
+  usePermissionRedirect({
+    permissions: ["role.getAllRole"],
+  });
 
   return (
     <>

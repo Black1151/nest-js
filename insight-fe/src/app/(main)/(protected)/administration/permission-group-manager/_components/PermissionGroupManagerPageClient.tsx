@@ -4,19 +4,16 @@ import { ContentGrid } from "@/components/ContentGrid";
 import { useState } from "react";
 import PermissionGroupListTable from "./sections/permission-group-list-table/PermissionGroupListTable";
 import { PermissionGroupPermissionDnd } from "./sections/permission-group-permission-dnd/PermissionGroupPermissionDnd";
-import { useAuth } from "@/context/AuthContext";
-import { redirect } from "next/navigation";
+import { usePermissionRedirect } from "@/hooks/PermissionRedirect";
 
 export const PermissionGroupManagerPageClient = () => {
   const [selectedPermissionGroupId, setSelectedPermissionGroupId] = useState<
     number | null
   >(null);
 
-  const { userPermissions } = useAuth();
-
-  if (!userPermissions.includes("permissionGroup.getAllPermissionGroup")) {
-    redirect("/unauthorised");
-  }
+  usePermissionRedirect({
+    permissions: ["permissionGroup.getAllPermissionGroup"],
+  });
 
   return (
     <>
