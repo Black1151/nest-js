@@ -23,7 +23,7 @@ import Board from "./board";
 import { BoardContext, type BoardContextValue } from "./BoardContext";
 import { Column } from "./column";
 import { createRegistry } from "./registry";
-import { BaseCardDnD, ColumnMap, ColumnStyles, ColumnType } from "./types";
+import { BaseCardDnD, ColumnMap, ColumnType } from "./types";
 import { Button, Flex } from "@chakra-ui/react";
 
 // -----------------------------------------------------------------------------
@@ -67,11 +67,24 @@ interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   orderedColumnIds: string[];
   CardComponent: React.ComponentType<{ item: TCard }>;
   enableColumnReorder?: boolean;
-  onSubmit?: (boardData: any) => void;
+  onSubmit?: (boardData: BoardState<TCard>) => void;
   isLoading?: boolean;
+
+  /**
+   * Optional: Provide an existing instanceId so that
+   * multiple boards can share the same DnD "universe."
+   */
+  providedInstanceId?: symbol;
+
+  /**
+   * The boardId that this instance represents.
+   * We'll store this in the source data so that we can detect
+   * if a drop is within the same board or a different board.
+   */
+  boardId?: string;
 }
 
-// access thej passed in interface
+// Access the passed-in interface
 export const DnDBoardMain = <TCard extends BaseCardDnD>({
   columnMap,
   orderedColumnIds,
@@ -79,12 +92,14 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   enableColumnReorder = true,
   onSubmit,
   isLoading = false,
+  providedInstanceId,
+  boardId = "default-board", // fallback if you prefer
 }: DnDBoardMainProps<TCard>) => {
   /**
    * Main piece of local state, storing:
-   *  - columnMap: the columns and their items
-   *  - orderedColumnIds: the current ordering of columns
-   *  - lastOperation: the last drag-and-drop operation performed (if any)
+   *  - columnMap
+   *  - orderedColumnIds
+   *  - lastOperation
    */
   const [data, setData] = useState<BoardState<TCard>>({
     columnMap,
@@ -102,148 +117,110 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
 
   /**
    * We keep a stable reference to our data in `stableData`
-   * to avoid stale closures in various callbacks and effects.
+   * to avoid stale closures in various callbacks.
    */
   const stableData = useRef(data);
   useEffect(() => {
     stableData.current = data;
   }, [data]);
 
-  /**
-   * Create a registry (via createRegistry()) to store DOM references
-   * for columns and cards. This is useful when we need to manipulate
-   * or focus elements post-drag.
-   */
+  // Create a registry to store references for columns/cards
   const [registry] = useState(createRegistry);
 
-  // Extract the last operation from our data state
   const { lastOperation } = data;
 
   /**
-   * Handle side effects whenever a drag-and-drop operation finishes.
-   * This effect is responsible for:
-   *  - triggering visual flashes on moved elements
-   *  - announcing changes for screen reader accessibility
-   *  - focusing the moved card’s menu trigger if it was a card-move operation
+   * Side effect to handle post-drop flashes and announcements
+   * (unchanged from your original).
    */
   useEffect(() => {
-    if (lastOperation === null) {
+    if (!lastOperation) {
       return;
     }
 
     const { outcome, trigger } = lastOperation;
 
-    // -----------------------------------
-    // Outcome: Column reorder
-    // -----------------------------------
     if (outcome.type === "column-reorder") {
       const { startIndex, finishIndex } = outcome;
-
       const { columnMap, orderedColumnIds } = stableData.current;
       const sourceColumn = columnMap[orderedColumnIds[finishIndex]];
-
-      // Trigger a post-move flash on the DOM element of the dropped column
+      // post-move flash
       const entry = registry.getColumn(sourceColumn.columnId);
       triggerPostMoveFlash(entry.element);
 
-      // Announce the reorder action via live region for screen readers
+      // announce
       liveRegion.announce(
         `You've moved ${sourceColumn.title} from position ${
           startIndex + 1
         } to position ${finishIndex + 1} of ${orderedColumnIds.length}.`
       );
-
       return;
     }
 
-    // -----------------------------------
-    // Outcome: Card reorder in the same column
-    // -----------------------------------
     if (outcome.type === "card-reorder") {
       const { columnId, startIndex, finishIndex } = outcome;
-
       const { columnMap } = stableData.current;
       const column = columnMap[columnId];
       const item = column.items[finishIndex];
 
-      // Trigger a post-move flash on the dropped card
+      // post-move flash
       const entry = registry.getCard(item.id);
       triggerPostMoveFlash(entry.element);
 
-      // Only announce if this is a keyboard operation (pointer = no announcement)
-      if (trigger !== "keyboard") {
-        return;
+      // only announce if keyboard
+      if (trigger === "keyboard") {
+        liveRegion.announce(
+          `You've moved ${item.id} from position ${
+            startIndex + 1
+          } to position ${finishIndex + 1} of ${column.items.length} in the ${
+            column.title
+          } column.`
+        );
       }
-
-      liveRegion.announce(
-        `You've moved ${item.id} from position ${startIndex + 1} to position ${
-          finishIndex + 1
-        } of ${column.items.length} in the ${column.title} column.`
-      );
-
       return;
     }
 
-    // -----------------------------------
-    // Outcome: Moving a card to a different column
-    // -----------------------------------
     if (outcome.type === "card-move") {
       const {
         finishColumnId,
         itemIndexInStartColumn,
         itemIndexInFinishColumn,
       } = outcome;
-
       const data = stableData.current;
       const destinationColumn = data.columnMap[finishColumnId];
       const item = destinationColumn.items[itemIndexInFinishColumn];
 
-      const finishPosition =
-        typeof itemIndexInFinishColumn === "number"
-          ? itemIndexInFinishColumn + 1
-          : destinationColumn.items.length;
-
-      // Trigger a post-move flash on the dropped card
+      // post-move flash
       const entry = registry.getCard(item.id);
       triggerPostMoveFlash(entry.element);
 
-      // Only announce and focus if this is a keyboard operation
-      if (trigger !== "keyboard") {
-        return;
+      // announce if keyboard
+      if (trigger === "keyboard") {
+        const finishPosition = itemIndexInFinishColumn + 1;
+        liveRegion.announce(
+          `You've moved ${item.id} from position ${
+            itemIndexInStartColumn + 1
+          } to position ${finishPosition} in the ${
+            destinationColumn.title
+          } column.`
+        );
       }
-
-      liveRegion.announce(
-        `You've moved ${item.id} from position ${
-          itemIndexInStartColumn + 1
-        } to position ${finishPosition} in the ${
-          destinationColumn.title
-        } column.`
-      );
-
       return;
     }
   }, [lastOperation, registry]);
 
-  /**
-   * Cleanup the live region on unmount.
-   */
+  // Cleanup live region on unmount
   useEffect(() => {
     return liveRegion.cleanup();
   }, []);
 
-  /**
-   * Provide a helper to retrieve all columns in order.
-   * Using useCallback ensures we don't create a new function each render.
-   */
+  // Helper: get columns in order
   const getColumns = useCallback(() => {
     const { columnMap, orderedColumnIds } = stableData.current;
     return orderedColumnIds.map((columnId) => columnMap[columnId]);
   }, []);
 
-  /**
-   * Reorder an entire column (dragging columns themselves).
-   * This is triggered when a column is moved horizontally.
-   */
+  // Reorder entire column
   const reorderColumn = useCallback(
     ({
       startIndex,
@@ -254,19 +231,20 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
       finishIndex: number;
       trigger?: Trigger;
     }) => {
-      setData((data) => {
+      if (!enableColumnReorder) {
+        return;
+      }
+      setData((prev) => {
         const outcome: Outcome = {
           type: "column-reorder",
-          columnId: data.orderedColumnIds[startIndex],
+          columnId: prev.orderedColumnIds[startIndex],
           startIndex,
           finishIndex,
         };
-
         return {
-          ...data,
-          // Use Atlaskit's reorder utility to reorder the array
+          ...prev,
           orderedColumnIds: reorder({
-            list: data.orderedColumnIds,
+            list: prev.orderedColumnIds,
             startIndex,
             finishIndex,
           }),
@@ -277,12 +255,10 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         };
       });
     },
-    []
+    [enableColumnReorder]
   );
 
-  /**
-   * Reorder a card within the same column (dragging cards vertically).
-   */
+  // Reorder a card within the same column
   const reorderCard = useCallback(
     ({
       columnId,
@@ -295,36 +271,29 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
       finishIndex: number;
       trigger?: Trigger;
     }) => {
-      setData((data) => {
-        const sourceColumn = data.columnMap[columnId];
-        // Reorder the list of cards
+      setData((prev) => {
+        const sourceColumn = prev.columnMap[columnId];
         const updatedItems = reorder({
           list: sourceColumn.items,
           startIndex,
           finishIndex,
         });
-
-        // Create an updated copy of the source column
         const updatedSourceColumn: ColumnType<TCard> = {
           ...sourceColumn,
           items: updatedItems,
         };
-
-        // Build new column map with updated column
         const updatedMap: ColumnMap<TCard> = {
-          ...data.columnMap,
+          ...prev.columnMap,
           [columnId]: updatedSourceColumn,
         };
-
         const outcome: Outcome = {
           type: "card-reorder",
           columnId,
           startIndex,
           finishIndex,
         };
-
         return {
-          ...data,
+          ...prev,
           columnMap: updatedMap,
           lastOperation: {
             trigger,
@@ -336,10 +305,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
     []
   );
 
-  /**
-   * Move a card from one column to another. Optionally specify the index
-   * in the destination column. If no index is provided, defaults to 0.
-   */
+  // Move a card to a different column (within the same board)
   const moveCard = useCallback(
     ({
       startColumnId,
@@ -354,24 +320,20 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
       itemIndexInFinishColumn?: number;
       trigger?: Trigger;
     }) => {
-      // If the user is moving a card to the same column, do nothing
       if (startColumnId === finishColumnId) {
         return;
       }
+      setData((prev) => {
+        const sourceColumn = prev.columnMap[startColumnId];
+        const destinationColumn = prev.columnMap[finishColumnId];
+        const item = sourceColumn.items[itemIndexInStartColumn];
 
-      setData((data) => {
-        const sourceColumn = data.columnMap[startColumnId];
-        const destinationColumn = data.columnMap[finishColumnId];
-        const item: TCard = sourceColumn.items[itemIndexInStartColumn];
-
-        // Calculate the new index for the item in the destination column
         const newIndexInDestination = itemIndexInFinishColumn ?? 0;
         const destinationItems = Array.from(destinationColumn.items);
         destinationItems.splice(newIndexInDestination, 0, item);
 
-        // Create updated column map reflecting the removed and inserted item
         const updatedMap = {
-          ...data.columnMap,
+          ...prev.columnMap,
           [startColumnId]: {
             ...sourceColumn,
             items: sourceColumn.items.filter((i) => i.id !== item.id),
@@ -381,16 +343,14 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
             items: destinationItems,
           },
         };
-
         const outcome: Outcome = {
           type: "card-move",
           finishColumnId,
           itemIndexInStartColumn,
           itemIndexInFinishColumn: newIndexInDestination,
         };
-
         return {
-          ...data,
+          ...prev,
           columnMap: updatedMap,
           lastOperation: {
             outcome,
@@ -402,38 +362,43 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
     []
   );
 
-  // Unique ID to ensure only our instance's draggables/droppables monitor each other.
-  const [instanceId] = useState(() => Symbol("instance-id"));
+  // The instanceId we use for monitorForElements
+  // If a parent provided one, use that. Otherwise, generate our own.
+  const [instanceId] = useState(
+    () => providedInstanceId ?? Symbol("instance-id")
+  );
 
   /**
-   * This effect sets up a monitor for elements in our DnD system.
-   * Whenever a drop occurs, it figures out what was dropped and where,
-   * and then updates our state (columns, cards) accordingly.
+   * The local monitor for DnD events that are strictly within *this* board.
+   * If the user is dragging a column/card from a *different* board, we do nothing here.
+   * The parent (BoardSequencer) will handle cross-board moves.
    */
   useEffect(() => {
     return combine(
       monitorForElements({
         canMonitor({ source }) {
-          // Only monitor if the item has the same instance ID (i.e., same board)
+          // Only monitor if the item has the same instanceId
           return source.data.instanceId === instanceId;
         },
         onDrop(args) {
           const { location, source } = args;
-
-          console.log("location", location);
-          console.log("source", source);
-
-          // If no drop targets, do nothing
           if (!location.current.dropTargets.length) {
             return;
           }
 
-          // Determine whether a column or card was dropped
+          // If this source belongs to a different board, skip local logic
+          // (Our "boardId" was put on the source data in registerColumn/registerCard, etc.)
+          const sourceBoardId = source.data.boardId;
+          if (sourceBoardId !== boardId) {
+            // Different board => let parent handle it
+            return;
+          }
+
+          // Now handle local moves (same board):
           if (source.data.type === "column") {
             const startIndex = data.orderedColumnIds.findIndex(
-              (columnId) => columnId === source.data.columnId
+              (colId) => colId === source.data.columnId
             );
-
             const target = location.current.dropTargets[0];
             const indexOfTarget = data.orderedColumnIds.findIndex(
               (id) => id === target.data.columnId
@@ -441,41 +406,34 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
             const closestEdgeOfTarget: Edge | null = extractClosestEdge(
               target.data
             );
-
             const finishIndex = getReorderDestinationIndex({
               startIndex,
               indexOfTarget,
               closestEdgeOfTarget,
               axis: "horizontal",
             });
-
             reorderColumn({ startIndex, finishIndex, trigger: "pointer" });
           }
 
-          // Card was dropped somewhere
           if (source.data.type === "card") {
             const itemId = source.data.itemId;
             invariant(typeof itemId === "string");
 
-            // The second record in initial.dropTargets is the column record
             const [, startColumnRecord] = location.initial.dropTargets;
-            const sourceId = startColumnRecord.data.columnId;
-            invariant(typeof sourceId === "string");
+            const sourceId = startColumnRecord.data.columnId as string;
             const sourceColumn = data.columnMap[sourceId];
             const itemIndex = sourceColumn.items.findIndex(
-              (item) => item.id === itemId
+              (it: TCard) => it.id === itemId
             );
 
-            // If there is only one drop target, it's a column drop
+            // If there's only one drop target, it's a column drop
             if (location.current.dropTargets.length === 1) {
               const [destinationColumnRecord] = location.current.dropTargets;
-              const destinationId = destinationColumnRecord.data.columnId;
-              invariant(typeof destinationId === "string");
+              const destinationId = destinationColumnRecord.data
+                .columnId as string;
               const destinationColumn = data.columnMap[destinationId];
-              invariant(destinationColumn);
-
-              // Reordering within the same column
-              if (sourceColumn === destinationColumn) {
+              if (destinationColumn === sourceColumn) {
+                // reorder in same column
                 const destinationIndex = getReorderDestinationIndex({
                   startIndex: itemIndex,
                   indexOfTarget: sourceColumn.items.length - 1,
@@ -490,36 +448,32 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
                 });
                 return;
               }
-
-              // Moving to a different column
+              // move card to different column (within same board)
               moveCard({
-                itemIndexInStartColumn: itemIndex,
                 startColumnId: sourceColumn.columnId,
                 finishColumnId: destinationColumn.columnId,
+                itemIndexInStartColumn: itemIndex,
                 trigger: "pointer",
               });
               return;
             }
 
-            // If there are two drop targets, the first is the target card,
-            // and the second is the target column
+            // If there are two drop targets, the first is the card, the second is the column
             if (location.current.dropTargets.length === 2) {
               const [destinationCardRecord, destinationColumnRecord] =
                 location.current.dropTargets;
-              const destinationColumnId = destinationColumnRecord.data.columnId;
-              invariant(typeof destinationColumnId === "string");
+              const destinationColumnId = destinationColumnRecord.data
+                .columnId as string;
               const destinationColumn = data.columnMap[destinationColumnId];
-
-              // Find the index of the card that was hovered
               const indexOfTarget = destinationColumn.items.findIndex(
-                (item) => item.id === destinationCardRecord.data.itemId
+                (it) => it.id === destinationCardRecord.data.itemId
               );
               const closestEdgeOfTarget: Edge | null = extractClosestEdge(
                 destinationCardRecord.data
               );
 
-              // Reorder in the same column
               if (sourceColumn === destinationColumn) {
+                // reorder in same column
                 const destinationIndex = getReorderDestinationIndex({
                   startIndex: itemIndex,
                   indexOfTarget,
@@ -535,16 +489,15 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
                 return;
               }
 
-              // Move to a different column, placing card relative to target card
+              // move card to different column within same board
               const destinationIndex =
                 closestEdgeOfTarget === "bottom"
                   ? indexOfTarget + 1
                   : indexOfTarget;
-
               moveCard({
-                itemIndexInStartColumn: itemIndex,
                 startColumnId: sourceColumn.columnId,
                 finishColumnId: destinationColumn.columnId,
+                itemIndexInStartColumn: itemIndex,
                 itemIndexInFinishColumn: destinationIndex,
                 trigger: "pointer",
               });
@@ -554,12 +507,9 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, instanceId, moveCard, reorderCard, reorderColumn]);
+  }, [data, instanceId, boardId, reorderColumn, reorderCard, moveCard]);
 
-  /**
-   * Memoize the context value so it remains stable across re-renders.
-   * This context is consumed by child components (`Board`, `Column`, etc.)
-   */
+  // Provide context
   const contextValue: BoardContextValue<TCard> = useMemo(() => {
     return {
       getColumns,
@@ -572,10 +522,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
     };
   }, [getColumns, reorderColumn, reorderCard, registry, moveCard, instanceId]);
 
-  /**
-   * Render the board, passing in a <BoardContext.Provider> so that
-   * columns and cards can access the necessary operations and data.
-   */
+  // Render
   return (
     <BoardContext.Provider value={contextValue}>
       <Flex
@@ -585,18 +532,17 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         justifyContent="space-between"
       >
         <Board>
-          {data.orderedColumnIds.map((columnId) => {
-            return (
-              <Column
-                column={data.columnMap[columnId]}
-                key={columnId}
-                CardComponent={CardComponent}
-                enableColumnReorder={enableColumnReorder}
-                isLoading={isLoading}
-              />
-            );
-          })}
+          {data.orderedColumnIds.map((columnId) => (
+            <Column
+              column={data.columnMap[columnId]}
+              key={columnId}
+              CardComponent={CardComponent}
+              enableColumnReorder={enableColumnReorder}
+              isLoading={isLoading}
+            />
+          ))}
         </Board>
+
         {onSubmit && (
           <Button colorScheme="orange" onClick={() => onSubmit(data)}>
             Submit

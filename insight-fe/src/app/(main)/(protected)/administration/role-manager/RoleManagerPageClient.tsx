@@ -8,7 +8,6 @@ import { useAuth } from "@/context/AuthContext";
 import { redirect } from "next/navigation";
 import { RequirePermission } from "@/rbac/RequirePermission";
 import { usePermissionRedirect } from "@/hooks/PermissionRedirect";
-0;
 
 export const RoleManagerPageClient = () => {
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
