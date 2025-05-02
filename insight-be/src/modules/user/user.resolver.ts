@@ -24,6 +24,7 @@ import {
   UpdateUserRequestDto,
   UpdateUserRolesFromArrayRequestDto,
 } from './dto/req/req.dto';
+import { CreateUserWithProfileInput } from './input/create-user-with-profile.input';
 
 @ObjectType()
 export class RemoveUserResponse {
@@ -65,6 +66,15 @@ export class UserResolver {
   ])
   async createUser(@Args('data') data: CreateUserRequestDto): Promise<User> {
     return this.userService.create(data);
+  }
+
+  @Mutation(() => User)
+  @RbacPermissionKey('user.createUser')
+  @ImmutableLogging()
+  async createUserWithProfile(
+    @Args('data') data: CreateUserWithProfileInput,
+  ): Promise<User> {
+    return this.userService.createUserWithProfile(data);
   }
 
   @Mutation(() => User)

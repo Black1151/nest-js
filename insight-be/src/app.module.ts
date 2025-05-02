@@ -19,6 +19,10 @@ import { ApiPermissionMapping } from './modules/rbac/sub/api-permissions-mapping
 import { PermissionGroup } from './modules/rbac/sub/permission-group/permission-group.entity';
 import { UiErrorMessagesFilter } from './filters/ui-error-messages-filter';
 import { Role } from './modules/rbac/sub/role/role.entity';
+import { StudentProfileModule } from './modules/timbuktu/user-profiles/student-profile/student-profile.module';
+import { EducatorProfileModule } from './modules/timbuktu/user-profiles/educator-profile/educator-profile.module';
+import { StudentProfileEntity } from './modules/timbuktu/user-profiles/student-profile/student-profile.entity';
+import { EducatorProfileEntity } from './modules/timbuktu/user-profiles/educator-profile/educator-profile.entity';
 
 @Module({
   imports: [
@@ -37,7 +41,15 @@ import { Role } from './modules/rbac/sub/role/role.entity';
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User, Role, Permission, ApiPermissionMapping, PermissionGroup],
+      entities: [
+        User,
+        Role,
+        Permission,
+        ApiPermissionMapping,
+        PermissionGroup,
+        StudentProfileEntity,
+        EducatorProfileEntity,
+      ],
       synchronize: true,
     }),
     ConfigModule.forRoot({
@@ -50,6 +62,8 @@ import { Role } from './modules/rbac/sub/role/role.entity';
     OktaAuthModule,
     GoogleAuthModule,
     MicrosoftAuthModule,
+    StudentProfileModule,
+    EducatorProfileModule,
     // AuditModule,
   ],
   providers: [

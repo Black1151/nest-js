@@ -3,9 +3,18 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { v4 as uuidv4 } from 'uuid';
 import { AbstractBaseEntity } from 'src/common/base.entity';
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
-import { Entity, Column, ManyToMany, JoinTable, BeforeInsert } from 'typeorm';
-
-/// needs to be separated into an entity and dto
+import {
+  Entity,
+  Column,
+  ManyToMany,
+  JoinTable,
+  BeforeInsert,
+  OneToOne,
+} from 'typeorm';
+import { StudentProfileEntity } from '../timbuktu/user-profiles/student-profile/student-profile.entity';
+import { EducatorProfileEntity } from '../timbuktu/user-profiles/educator-profile/educator-profile.entity';
+import { StudentProfileDto } from '../timbuktu/user-profiles/student-profile/dto/student-profile.dto';
+import { EducatorProfileDto } from '../timbuktu/user-profiles/educator-profile/dto/educator-profile.dto';
 
 @ObjectType()
 @Entity('users')
@@ -88,4 +97,15 @@ export class User extends AbstractBaseEntity {
     inverseJoinColumn: { name: 'role_id' },
   })
   roles?: Role[];
+
+  @OneToOne(() => StudentProfileEntity, (studentProfile) => studentProfile.user)
+  @Field(() => StudentProfileDto, { nullable: true })
+  studentProfile?: StudentProfileDto;
+
+  @OneToOne(
+    () => EducatorProfileEntity,
+    (educatorProfile) => educatorProfile.user,
+  )
+  @Field(() => EducatorProfileDto, { nullable: true })
+  educatorProfile?: EducatorProfileDto;
 }

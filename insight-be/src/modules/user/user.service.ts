@@ -1,18 +1,29 @@
 // user.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, DataSource } from 'typeorm';
 import { User } from './user.model';
 
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserRequestDto, UpdateUserRequestDto } from './dto/req/req.dto';
+import { CreateUserWithProfileInput } from './input/create-user-with-profile.input';
+import { StudentProfileEntity } from '../timbuktu/user-profiles/student-profile/student-profile.entity';
+import { EducatorProfileEntity } from '../timbuktu/user-profiles/educator-profile/educator-profile.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly dataSource: DataSource,
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(StudentProfileEntity)
+    private readonly studentProfileRepository: Repository<StudentProfileEntity>,
+
+    @InjectRepository(EducatorProfileEntity)
+    private readonly educatorProfileRepository: Repository<EducatorProfileEntity>,
 
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
@@ -36,6 +47,49 @@ export class UsersService {
     }
     const user = this.userRepository.create(createDto);
     return this.userRepository.save(user);
+  }
+
+  async createUserWithProfile(
+    createDto: CreateUserWithProfileInput,
+  ): Promise<User> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = this.userRepository.create(createDto);
+      await queryRunner.manager.save(user);
+
+      if (createDto.studentId) {
+        const studentProfile = this.studentProfileRepository.create({
+          studentId: Number(createDto.studentId),
+          user,
+        });
+        await queryRunner.manager.save(studentProfile);
+      }
+
+      if (createDto.staffId) {
+        const educatorProfile = this.educatorProfileRepository.create({
+          staffId: Number(createDto.staffId),
+          user,
+        });
+        await queryRunner.manager.save(educatorProfile);
+      }
+
+      await queryRunner.commitTransaction();
+
+      const savedUser = await this.userRepository.findOne({
+        where: { id: user.id },
+        relations: ['studentProfile', 'educatorProfile'],
+      });
+
+      return savedUser!;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async findOneByEmail(email: string): Promise<User> {
