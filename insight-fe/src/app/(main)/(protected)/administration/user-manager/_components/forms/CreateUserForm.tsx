@@ -10,25 +10,37 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { CreateUserRequestDto } from "@/gqty";
+import { CreateUserWithProfileInput } from "@/gqty";
 
 interface UserFormProps {
-  onSubmit: (data: CreateUserRequestDto) => Promise<void>;
+  onSubmit: (data: CreateUserWithProfileInput) => Promise<void>;
+  userType: "student" | "educator";
 }
 
-export function CreateUserForm({ onSubmit }: UserFormProps) {
+export function CreateUserForm({ onSubmit, userType }: UserFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<CreateUserRequestDto>();
+  } = useForm<CreateUserWithProfileInput>();
 
-  const submitHandler: SubmitHandler<CreateUserRequestDto> = async (data) => {
-    const preparedData = {
-      ...data,
-      dateOfBirth: data.dateOfBirth || undefined,
+  const submitHandler: SubmitHandler<CreateUserWithProfileInput> = async (
+    formData
+  ) => {
+    const { studentProfile, educatorProfile, ...userFields } = formData;
+
+    const preparedData: CreateUserWithProfileInput = {
+      ...userFields,
+      userType: userType,
+      dateOfBirth: userFields.dateOfBirth || undefined,
     };
+
+    if (userType === "student") {
+      preparedData.studentProfile = studentProfile;
+    } else if (userType === "educator") {
+      preparedData.educatorProfile = educatorProfile;
+    }
 
     await onSubmit(preparedData);
     reset();
@@ -171,7 +183,70 @@ export function CreateUserForm({ onSubmit }: UserFormProps) {
         />
         <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
       </FormControl>
-      <Button type="submit" colorScheme="blue">
+
+      {/* Conditionally show Student fields */}
+      {userType === "student" && (
+        <>
+          <FormControl
+            isRequired
+            mb={4}
+            isInvalid={!!errors.studentProfile?.studentId}
+          >
+            <FormLabel>Student ID</FormLabel>
+            <Input
+              type="number"
+              {...register("studentProfile.studentId", {
+                required: "Student ID is required",
+                valueAsNumber: true,
+              })}
+            />
+            <FormErrorMessage>
+              {errors.studentProfile?.studentId?.message}
+            </FormErrorMessage>
+          </FormControl>
+
+          <FormControl
+            isRequired
+            mb={4}
+            isInvalid={!!errors.studentProfile?.schoolYear}
+          >
+            <FormLabel>School Year</FormLabel>
+            <Input
+              type="number"
+              {...register("studentProfile.schoolYear", {
+                required: "School year is required",
+                valueAsNumber: true,
+              })}
+            />
+            <FormErrorMessage>
+              {errors.studentProfile?.schoolYear?.message}
+            </FormErrorMessage>
+          </FormControl>
+        </>
+      )}
+
+      {/* Conditionally show Educator fields */}
+      {userType === "educator" && (
+        <FormControl
+          isRequired
+          mb={4}
+          isInvalid={!!errors.educatorProfile?.staffId}
+        >
+          <FormLabel>Staff ID</FormLabel>
+          <Input
+            type="number"
+            {...register("educatorProfile.staffId", {
+              required: "Staff ID is required",
+              valueAsNumber: true,
+            })}
+          />
+          <FormErrorMessage>
+            {errors.educatorProfile?.staffId?.message}
+          </FormErrorMessage>
+        </FormControl>
+      )}
+
+      <Button type="submit" colorScheme="blue" isLoading={isSubmitting}>
         Submit
       </Button>
     </form>

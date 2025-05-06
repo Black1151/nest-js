@@ -2,22 +2,29 @@
 
 import React from "react";
 import { BaseModal } from "@/components/modals/BaseModal";
-import { CreateUserRequestDto, useMutation } from "@/gqty";
+import { CreateUserWithProfileInput, useMutation } from "@/gqty";
 import { CreateUserForm } from "../forms/CreateUserForm";
 
 interface CreateUserModalProps {
   isOpen: boolean;
   onClose: () => void;
+  userType: "student" | "educator";
 }
 
-export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
-  const [createUser] = useMutation((mutation, data: CreateUserRequestDto) => {
-    const mutationReturn = mutation.createUser({ data });
-    mutationReturn.id;
-  });
+export function CreateUserModal({
+  isOpen,
+  onClose,
+  userType,
+}: CreateUserModalProps) {
+  const [createUserWithProfile] = useMutation(
+    (mutation, data: CreateUserWithProfileInput) => {
+      const mutationReturn = mutation.createUserWithProfile({ data });
+      mutationReturn.id;
+    }
+  );
 
-  const handleSubmit = async (data: CreateUserRequestDto) => {
-    await createUser({ args: data });
+  const handleSubmit = async (data: CreateUserWithProfileInput) => {
+    await createUserWithProfile({ args: data });
     onClose();
   };
 
@@ -30,7 +37,8 @@ export function CreateUserModal({ isOpen, onClose }: CreateUserModalProps) {
       showCloseButton={true}
     >
       <CreateUserForm
-        onSubmit={(data: CreateUserRequestDto) => handleSubmit(data)}
+        onSubmit={(data: CreateUserWithProfileInput) => handleSubmit(data)}
+        userType={userType}
       />
     </BaseModal>
   );

@@ -9,24 +9,6 @@ import { useQuery } from "@/gqty";
 import type { User } from "@/gqty";
 import { RequirePermission } from "@/rbac/RequirePermission";
 
-export const prepareUser = (user: User) => {
-  user.firstName;
-  user.lastName;
-  user.email;
-  user.phoneNumber;
-  user.dateOfBirth;
-  user.addressLine1;
-  user.addressLine2;
-  user.city;
-  user.county;
-  user.country;
-  user.postalCode;
-  user.id;
-  user.publicId;
-  user.createdAt;
-  user.updatedAt;
-};
-
 interface UserDetailSectionProps {
   publicId: string | null;
   setSelectedUserPublicId: (publicId: null) => void;

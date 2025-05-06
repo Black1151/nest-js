@@ -35,6 +35,10 @@ export interface Scalars {
   DateTime: { input: string; output: string };
 }
 
+export interface CreateEducatorProfileInput {
+  staffId: Scalars["Float"]["input"];
+}
+
 export interface CreatePermissionGroupInput {
   description: Scalars["String"]["input"];
   name: Scalars["String"]["input"];
@@ -50,6 +54,11 @@ export interface CreateRoleInput {
   name: Scalars["String"]["input"];
 }
 
+export interface CreateStudentProfileInput {
+  schoolYear: Scalars["Float"]["input"];
+  studentId: Scalars["Float"]["input"];
+}
+
 export interface CreateUserRequestDto {
   addressLine1?: InputMaybe<Scalars["String"]["input"]>;
   addressLine2?: InputMaybe<Scalars["String"]["input"]>;
@@ -63,6 +72,25 @@ export interface CreateUserRequestDto {
   password: Scalars["String"]["input"];
   phoneNumber?: InputMaybe<Scalars["String"]["input"]>;
   postalCode?: InputMaybe<Scalars["String"]["input"]>;
+  userType: Scalars["String"]["input"];
+}
+
+export interface CreateUserWithProfileInput {
+  addressLine1?: InputMaybe<Scalars["String"]["input"]>;
+  addressLine2?: InputMaybe<Scalars["String"]["input"]>;
+  city?: InputMaybe<Scalars["String"]["input"]>;
+  country?: InputMaybe<Scalars["String"]["input"]>;
+  county?: InputMaybe<Scalars["String"]["input"]>;
+  dateOfBirth?: InputMaybe<Scalars["DateTime"]["input"]>;
+  educatorProfile?: InputMaybe<CreateEducatorProfileInput>;
+  email: Scalars["String"]["input"];
+  firstName: Scalars["String"]["input"];
+  lastName: Scalars["String"]["input"];
+  password: Scalars["String"]["input"];
+  phoneNumber?: InputMaybe<Scalars["String"]["input"]>;
+  postalCode?: InputMaybe<Scalars["String"]["input"]>;
+  studentProfile?: InputMaybe<CreateStudentProfileInput>;
+  userType: Scalars["String"]["input"];
 }
 
 export interface FindAllInput {
@@ -106,6 +134,11 @@ export interface SubmitIdArrayByIdRequestDto {
   recordId: Scalars["Int"]["input"];
 }
 
+export interface UpdateEducatorProfileInput {
+  id: Scalars["Int"]["input"];
+  staffId?: InputMaybe<Scalars["Float"]["input"]>;
+}
+
 export interface UpdatePermissionGroupInput {
   description?: InputMaybe<Scalars["String"]["input"]>;
   id: Scalars["Int"]["input"];
@@ -124,6 +157,12 @@ export interface UpdateRoleInput {
   name?: InputMaybe<Scalars["String"]["input"]>;
 }
 
+export interface UpdateStudentProfileInput {
+  id: Scalars["Int"]["input"];
+  schoolYear?: InputMaybe<Scalars["Float"]["input"]>;
+  studentId?: InputMaybe<Scalars["Float"]["input"]>;
+}
+
 export interface UpdateUserRequestDto {
   addressLine1?: InputMaybe<Scalars["String"]["input"]>;
   addressLine2?: InputMaybe<Scalars["String"]["input"]>;
@@ -136,6 +175,8 @@ export interface UpdateUserRequestDto {
   lastName: Scalars["String"]["input"];
   phoneNumber?: InputMaybe<Scalars["String"]["input"]>;
   postalCode?: InputMaybe<Scalars["String"]["input"]>;
+  publicId: Scalars["String"]["input"];
+  userType: Scalars["String"]["input"];
 }
 
 export interface UpdateUserRolesFromArrayRequestDto {
@@ -161,6 +202,7 @@ export const generatedSchema = {
     accessToken: { __type: "String!" },
     refreshToken: { __type: "String!" },
   },
+  CreateEducatorProfileInput: { staffId: { __type: "Float!" } },
   CreatePermissionGroupInput: {
     description: { __type: "String!" },
     name: { __type: "String!" },
@@ -172,6 +214,10 @@ export const generatedSchema = {
   CreateRoleInput: {
     description: { __type: "String" },
     name: { __type: "String!" },
+  },
+  CreateStudentProfileInput: {
+    schoolYear: { __type: "Float!" },
+    studentId: { __type: "Float!" },
   },
   CreateUserRequestDto: {
     addressLine1: { __type: "String" },
@@ -186,6 +232,31 @@ export const generatedSchema = {
     password: { __type: "String!" },
     phoneNumber: { __type: "String" },
     postalCode: { __type: "String" },
+    userType: { __type: "String!" },
+  },
+  CreateUserWithProfileInput: {
+    addressLine1: { __type: "String" },
+    addressLine2: { __type: "String" },
+    city: { __type: "String" },
+    country: { __type: "String" },
+    county: { __type: "String" },
+    dateOfBirth: { __type: "DateTime" },
+    educatorProfile: { __type: "CreateEducatorProfileInput" },
+    email: { __type: "String!" },
+    firstName: { __type: "String!" },
+    lastName: { __type: "String!" },
+    password: { __type: "String!" },
+    phoneNumber: { __type: "String" },
+    postalCode: { __type: "String" },
+    studentProfile: { __type: "CreateStudentProfileInput" },
+    userType: { __type: "String!" },
+  },
+  EducatorProfileDto: {
+    __typename: { __type: "String!" },
+    createdAt: { __type: "DateTime!" },
+    id: { __type: "ID!" },
+    staffId: { __type: "Float!" },
+    updatedAt: { __type: "DateTime!" },
   },
   FindAllInput: {
     all: { __type: "Boolean" },
@@ -262,9 +333,21 @@ export const generatedSchema = {
     permissions: { __type: "[PermissionDTO!]!" },
     roles: { __type: "[RoleDTO!]!" },
   },
+  StudentProfileDto: {
+    __typename: { __type: "String!" },
+    createdAt: { __type: "DateTime!" },
+    id: { __type: "ID!" },
+    schoolYear: { __type: "Float!" },
+    studentId: { __type: "Float!" },
+    updatedAt: { __type: "DateTime!" },
+  },
   SubmitIdArrayByIdRequestDto: {
     idArray: { __type: "[Int!]!" },
     recordId: { __type: "Int!" },
+  },
+  UpdateEducatorProfileInput: {
+    id: { __type: "Int!" },
+    staffId: { __type: "Float" },
   },
   UpdatePermissionGroupInput: {
     description: { __type: "String" },
@@ -281,6 +364,11 @@ export const generatedSchema = {
     id: { __type: "Int!" },
     name: { __type: "String" },
   },
+  UpdateStudentProfileInput: {
+    id: { __type: "Int!" },
+    schoolYear: { __type: "Float" },
+    studentId: { __type: "Float" },
+  },
   UpdateUserRequestDto: {
     addressLine1: { __type: "String" },
     addressLine2: { __type: "String" },
@@ -293,6 +381,8 @@ export const generatedSchema = {
     lastName: { __type: "String!" },
     phoneNumber: { __type: "String" },
     postalCode: { __type: "String" },
+    publicId: { __type: "String!" },
+    userType: { __type: "String!" },
   },
   UpdateUserRolesFromArrayRequestDto: {
     publicId: { __type: "String!" },
@@ -307,6 +397,7 @@ export const generatedSchema = {
     county: { __type: "String" },
     createdAt: { __type: "DateTime!" },
     dateOfBirth: { __type: "DateTime" },
+    educatorProfile: { __type: "EducatorProfileDto" },
     email: { __type: "String!" },
     firstName: { __type: "String!" },
     id: { __type: "ID!" },
@@ -315,7 +406,9 @@ export const generatedSchema = {
     postalCode: { __type: "String" },
     publicId: { __type: "String!" },
     roles: { __type: "[Role!]" },
+    studentProfile: { __type: "StudentProfileDto" },
     updatedAt: { __type: "DateTime!" },
+    userType: { __type: "String!" },
   },
   UserDetails: {
     __typename: { __type: "String!" },
@@ -325,6 +418,10 @@ export const generatedSchema = {
   UserPermissionsInput: { publicId: { __type: "String!" } },
   mutation: {
     __typename: { __type: "String!" },
+    createEducatorProfile: {
+      __type: "EducatorProfileDto!",
+      __args: { data: "CreateEducatorProfileInput!" },
+    },
     createPermission: {
       __type: "Permission!",
       __args: { data: "CreatePermissionInput!" },
@@ -334,10 +431,20 @@ export const generatedSchema = {
       __args: { data: "CreatePermissionGroupInput!" },
     },
     createRole: { __type: "Role!", __args: { data: "CreateRoleInput!" } },
+    createStudentProfile: {
+      __type: "StudentProfileDto!",
+      __args: { data: "CreateStudentProfileInput!" },
+    },
     createUser: { __type: "User!", __args: { data: "CreateUserRequestDto!" } },
+    createUserWithProfile: {
+      __type: "User!",
+      __args: { data: "CreateUserWithProfileInput!" },
+    },
+    deleteEducatorProfile: { __type: "Boolean!", __args: { data: "IdInput!" } },
     deletePermission: { __type: "Boolean!", __args: { data: "IdInput!" } },
     deletePermissionGroup: { __type: "Boolean!", __args: { data: "IdInput!" } },
     deleteRole: { __type: "Boolean!", __args: { data: "IdInput!" } },
+    deleteStudentProfile: { __type: "Boolean!", __args: { data: "IdInput!" } },
     logUserInWithEmailAndPassword: {
       __type: "AuthTokens!",
       __args: { data: "LoginRequest!" },
@@ -353,6 +460,10 @@ export const generatedSchema = {
     removeUserByPublicId: {
       __type: "User!",
       __args: { data: "PublicIdRequestDto!" },
+    },
+    updateEducatorProfile: {
+      __type: "EducatorProfileDto!",
+      __args: { data: "UpdateEducatorProfileInput!" },
     },
     updatePermission: {
       __type: "Permission!",
@@ -371,6 +482,10 @@ export const generatedSchema = {
       __args: { data: "SubmitIdArrayByIdRequestDto!" },
     },
     updateRole: { __type: "Role!", __args: { data: "UpdateRoleInput!" } },
+    updateStudentProfile: {
+      __type: "StudentProfileDto!",
+      __args: { data: "UpdateStudentProfileInput!" },
+    },
     updateUserByPublicId: {
       __type: "User!",
       __args: { data: "UpdateUserRequestDto!", publicId: "String!" },
@@ -382,6 +497,10 @@ export const generatedSchema = {
   },
   query: {
     __typename: { __type: "String!" },
+    getAllEducatorProfile: {
+      __type: "[EducatorProfileDto!]!",
+      __args: { data: "FindAllInput!" },
+    },
     getAllPermission: {
       __type: "[Permission!]!",
       __args: { data: "FindAllInput!" },
@@ -391,9 +510,21 @@ export const generatedSchema = {
       __args: { data: "FindAllInput!" },
     },
     getAllRole: { __type: "[Role!]!", __args: { data: "FindAllInput!" } },
+    getAllStudentProfile: {
+      __type: "[StudentProfileDto!]!",
+      __args: { data: "FindAllInput!" },
+    },
     getAllUsers: {
       __type: "[User!]!",
       __args: { data: "PaginatedGetAllRequestDto!" },
+    },
+    getEducatorProfile: {
+      __type: "EducatorProfileDto!",
+      __args: { data: "IdInput!" },
+    },
+    getEducatorProfileBy: {
+      __type: "EducatorProfileDto!",
+      __args: { data: "FindOneByInput!" },
     },
     getPermission: { __type: "Permission!", __args: { data: "IdInput!" } },
     getPermissionBy: {
@@ -422,6 +553,14 @@ export const generatedSchema = {
       __type: "[Role!]!",
       __args: { data: "PublicIdRequestDto!" },
     },
+    getStudentProfile: {
+      __type: "StudentProfileDto!",
+      __args: { data: "IdInput!" },
+    },
+    getStudentProfileBy: {
+      __type: "StudentProfileDto!",
+      __args: { data: "FindOneByInput!" },
+    },
     getUserByPublicId: {
       __type: "User!",
       __args: { data: "PublicIdRequestDto!" },
@@ -438,6 +577,14 @@ export interface AuthTokens {
   __typename?: "AuthTokens";
   accessToken: ScalarsEnums["String"];
   refreshToken: ScalarsEnums["String"];
+}
+
+export interface EducatorProfileDto {
+  __typename?: "EducatorProfileDto";
+  createdAt: ScalarsEnums["DateTime"];
+  id: ScalarsEnums["ID"];
+  staffId: ScalarsEnums["Float"];
+  updatedAt: ScalarsEnums["DateTime"];
 }
 
 export interface LoginResponse {
@@ -502,6 +649,15 @@ export interface RolesPermissionsResponse {
   roles: Array<RoleDTO>;
 }
 
+export interface StudentProfileDto {
+  __typename?: "StudentProfileDto";
+  createdAt: ScalarsEnums["DateTime"];
+  id: ScalarsEnums["ID"];
+  schoolYear: ScalarsEnums["Float"];
+  studentId: ScalarsEnums["Float"];
+  updatedAt: ScalarsEnums["DateTime"];
+}
+
 export interface User {
   __typename?: "User";
   addressLine1?: Maybe<ScalarsEnums["String"]>;
@@ -511,6 +667,7 @@ export interface User {
   county?: Maybe<ScalarsEnums["String"]>;
   createdAt: ScalarsEnums["DateTime"];
   dateOfBirth?: Maybe<ScalarsEnums["DateTime"]>;
+  educatorProfile?: Maybe<EducatorProfileDto>;
   email: ScalarsEnums["String"];
   firstName: ScalarsEnums["String"];
   id: ScalarsEnums["ID"];
@@ -519,7 +676,9 @@ export interface User {
   postalCode?: Maybe<ScalarsEnums["String"]>;
   publicId: ScalarsEnums["String"];
   roles?: Maybe<Array<Role>>;
+  studentProfile?: Maybe<StudentProfileDto>;
   updatedAt: ScalarsEnums["DateTime"];
+  userType: ScalarsEnums["String"];
 }
 
 export interface UserDetails {
@@ -530,6 +689,12 @@ export interface UserDetails {
 
 export interface Mutation {
   __typename?: "Mutation";
+  /**
+   * Create one EducatorProfile
+   */
+  createEducatorProfile: (args: {
+    data: CreateEducatorProfileInput;
+  }) => EducatorProfileDto;
   /**
    * Create one Permission
    */
@@ -544,7 +709,18 @@ export interface Mutation {
    * Create one Role
    */
   createRole: (args: { data: CreateRoleInput }) => Role;
+  /**
+   * Create one StudentProfile
+   */
+  createStudentProfile: (args: {
+    data: CreateStudentProfileInput;
+  }) => StudentProfileDto;
   createUser: (args: { data: CreateUserRequestDto }) => User;
+  createUserWithProfile: (args: { data: CreateUserWithProfileInput }) => User;
+  /**
+   * Delete one EducatorProfile
+   */
+  deleteEducatorProfile: (args: { data: IdInput }) => ScalarsEnums["Boolean"];
   /**
    * Delete one Permission
    */
@@ -557,12 +733,22 @@ export interface Mutation {
    * Delete one Role
    */
   deleteRole: (args: { data: IdInput }) => ScalarsEnums["Boolean"];
+  /**
+   * Delete one StudentProfile
+   */
+  deleteStudentProfile: (args: { data: IdInput }) => ScalarsEnums["Boolean"];
   logUserInWithEmailAndPassword: (args: { data: LoginRequest }) => AuthTokens;
   refreshUsersTokens: (args: {
     refreshToken: ScalarsEnums["String"];
   }) => LoginResponse;
   registerNewUserLocally: (args: { data: CreateUserRequestDto }) => User;
   removeUserByPublicId: (args: { data: PublicIdRequestDto }) => User;
+  /**
+   * Updates one EducatorProfile
+   */
+  updateEducatorProfile: (args: {
+    data: UpdateEducatorProfileInput;
+  }) => EducatorProfileDto;
   /**
    * Updates one Permission
    */
@@ -583,6 +769,12 @@ export interface Mutation {
    * Updates one Role
    */
   updateRole: (args: { data: UpdateRoleInput }) => Role;
+  /**
+   * Updates one StudentProfile
+   */
+  updateStudentProfile: (args: {
+    data: UpdateStudentProfileInput;
+  }) => StudentProfileDto;
   updateUserByPublicId: (args: {
     data: UpdateUserRequestDto;
     publicId: ScalarsEnums["String"];
@@ -594,6 +786,12 @@ export interface Mutation {
 
 export interface Query {
   __typename?: "Query";
+  /**
+   * Returns all EducatorProfile
+   */
+  getAllEducatorProfile: (args: {
+    data: FindAllInput;
+  }) => Array<EducatorProfileDto>;
   /**
    * Returns all Permission
    */
@@ -608,7 +806,21 @@ export interface Query {
    * Returns all Role
    */
   getAllRole: (args: { data: FindAllInput }) => Array<Role>;
+  /**
+   * Returns all StudentProfile
+   */
+  getAllStudentProfile: (args: {
+    data: FindAllInput;
+  }) => Array<StudentProfileDto>;
   getAllUsers: (args: { data: PaginatedGetAllRequestDto }) => Array<User>;
+  /**
+   * Returns one EducatorProfile
+   */
+  getEducatorProfile: (args: { data: IdInput }) => EducatorProfileDto;
+  /**
+   * Returns one EducatorProfile by given conditions
+   */
+  getEducatorProfileBy: (args: { data: FindOneByInput }) => EducatorProfileDto;
   /**
    * Returns one Permission
    */
@@ -638,6 +850,14 @@ export interface Query {
    */
   getRoleBy: (args: { data: FindOneByInput }) => Role;
   getRolesForUser: (args: { data: PublicIdRequestDto }) => Array<Role>;
+  /**
+   * Returns one StudentProfile
+   */
+  getStudentProfile: (args: { data: IdInput }) => StudentProfileDto;
+  /**
+   * Returns one StudentProfile by given conditions
+   */
+  getStudentProfileBy: (args: { data: FindOneByInput }) => StudentProfileDto;
   getUserByPublicId: (args: { data: PublicIdRequestDto }) => User;
   getUsersRolesAndPermissions: (args: {
     data: UserPermissionsInput;

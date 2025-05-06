@@ -66,6 +66,7 @@ export class UsersService {
         const studentProfile = this.studentProfileRepository.create(
           createDto.studentProfile,
         );
+        studentProfile.user = user;
         await queryRunner.manager.save(studentProfile);
       }
 
@@ -73,6 +74,7 @@ export class UsersService {
         const educatorProfile = this.educatorProfileRepository.create(
           createDto.educatorProfile,
         );
+        educatorProfile.user = user;
         await queryRunner.manager.save(educatorProfile);
       }
 
@@ -82,7 +84,6 @@ export class UsersService {
         where: { id: user.id },
         relations: ['studentProfile', 'educatorProfile'],
       });
-
       return savedUser!;
     } catch (err) {
       await queryRunner.rollbackTransaction();
@@ -108,13 +109,28 @@ export class UsersService {
     return user;
   }
 
+  // async findOneByPublicId(publicId: string): Promise<User> {
+  //   const user = await this.userRepository.findOne({
+  //     where: { publicId },
+  //   });
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
+  //   return user;
+  // }
+
   async findOneByPublicId(publicId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { publicId },
+      relations: {
+        // nested eager load :contentReference[oaicite:7]{index=7}
+        studentProfile: true,
+        educatorProfile: true,
+      },
     });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    if (!user) throw new NotFoundException('User not found');
+
+    console.log('XXX', user);
     return user;
   }
 
