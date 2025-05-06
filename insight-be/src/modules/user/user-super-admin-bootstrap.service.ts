@@ -52,6 +52,7 @@ export class BootstrapSuperAdminService implements OnModuleInit {
         lastName: process.env.SUPER_ADMIN_LAST_NAME!,
         email: process.env.SUPER_ADMIN_EMAIL!,
         password: process.env.SUPER_ADMIN_PASSWORD!,
+        userType: 'educator',
       };
 
       superAdminUser = await this.userService.create(newAdminData);

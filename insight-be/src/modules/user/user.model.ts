@@ -82,6 +82,10 @@ export class User extends AbstractBaseEntity {
   @Column({ nullable: true })
   microsoftId?: string;
 
+  @Field()
+  @Column()
+  userType: 'student' | 'educator';
+
   @BeforeInsert()
   generatePublicId() {
     if (!this.publicId) {

@@ -18,6 +18,9 @@ import { OmitType } from '@nestjs/graphql';
 @InputType()
 export class CreateUserRequestDto {
   @Field()
+  userType: 'student' | 'educator';
+
+  @Field()
   firstName: string;
 
   @Field()
@@ -109,4 +112,7 @@ export class UpdateUserRolesFromArrayRequestDto {
 @InputType()
 export class UpdateUserRequestDto extends OmitType(CreateUserRequestDto, [
   'password',
-] as const) {}
+] as const) {
+  @Field()
+  publicId: string;
+}
