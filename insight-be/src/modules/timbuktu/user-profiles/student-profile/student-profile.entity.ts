@@ -8,6 +8,9 @@ export class StudentProfileEntity extends AbstractBaseEntity {
   @Column({ nullable: false })
   studentId: number;
 
+  @Column({ nullable: false })
+  schoolYear: number;
+
   @OneToOne(() => User, (user) => user.studentProfile, {
     onDelete: 'CASCADE',
   })

@@ -5,4 +5,7 @@ import { AbstractBaseEntity } from 'src/common/base.entity';
 export class StudentProfileDto extends AbstractBaseEntity {
   @Field(() => Number)
   studentId: number;
+
+  @Field(() => Number)
+  schoolYear: number;
 }

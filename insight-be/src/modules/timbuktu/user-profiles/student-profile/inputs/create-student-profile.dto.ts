@@ -4,4 +4,7 @@ import { InputType, Field } from '@nestjs/graphql';
 export class CreateStudentProfileInput {
   @Field()
   studentId: number;
+
+  @Field()
+  schoolYear: number;
 }
