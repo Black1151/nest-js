@@ -1,11 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { CreateUserRequestDto } from '../dto/req/req.dto';
+import { CreateStudentProfileInput } from 'src/modules/timbuktu/user-profiles/student-profile/inputs/create-student-profile.dto';
+import { CreateEducatorProfileInput } from 'src/modules/timbuktu/user-profiles/educator-profile/inputs/create-educator-profile.input';
 
 @InputType()
 export class CreateUserWithProfileInput extends CreateUserRequestDto {
-  @Field(() => String, { nullable: true })
-  studentId?: string;
+  @Field(() => CreateStudentProfileInput, { nullable: true })
+  studentProfile?: CreateStudentProfileInput;
 
-  @Field(() => String, { nullable: true })
-  staffId?: string;
+  @Field(() => CreateEducatorProfileInput, { nullable: true })
+  educatorProfile?: CreateEducatorProfileInput;
 }
