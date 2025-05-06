@@ -52,6 +52,8 @@ export class UsersService {
   async createUserWithProfile(
     createDto: CreateUserWithProfileInput,
   ): Promise<User> {
+    console.log(createDto);
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -60,19 +62,17 @@ export class UsersService {
       const user = this.userRepository.create(createDto);
       await queryRunner.manager.save(user);
 
-      if (createDto.studentId) {
-        const studentProfile = this.studentProfileRepository.create({
-          studentId: Number(createDto.studentId),
-          user,
-        });
+      if (createDto.studentProfile) {
+        const studentProfile = this.studentProfileRepository.create(
+          createDto.studentProfile,
+        );
         await queryRunner.manager.save(studentProfile);
       }
 
-      if (createDto.staffId) {
-        const educatorProfile = this.educatorProfileRepository.create({
-          staffId: Number(createDto.staffId),
-          user,
-        });
+      if (createDto.educatorProfile) {
+        const educatorProfile = this.educatorProfileRepository.create(
+          createDto.educatorProfile,
+        );
         await queryRunner.manager.save(educatorProfile);
       }
 
@@ -90,6 +90,12 @@ export class UsersService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async update(updateDto: UpdateUserRequestDto): Promise<User> {
+    const user = await this.findOneByPublicId(updateDto.publicId);
+    Object.assign(user, updateDto);
+    return this.userRepository.save(user);
   }
 
   async findOneByEmail(email: string): Promise<User> {
