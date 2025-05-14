@@ -23,6 +23,21 @@ import { StudentProfileModule } from './modules/timbuktu/user-profiles/student-p
 import { EducatorProfileModule } from './modules/timbuktu/user-profiles/educator-profile/educator-profile.module';
 import { StudentProfileEntity } from './modules/timbuktu/user-profiles/student-profile/student-profile.entity';
 import { EducatorProfileEntity } from './modules/timbuktu/user-profiles/educator-profile/educator-profile.entity';
+import { ClassModule } from './modules/timbuktu/administrative/class/class.module';
+import { KeyStageModule } from './modules/timbuktu/administrative/key-stage/key-stage.module';
+import { LessonModule } from './modules/timbuktu/administrative/lesson/lesson.module';
+import { SubjectModule } from './modules/timbuktu/administrative/subject/subject.module';
+import { YearGroupModule } from './modules/timbuktu/administrative/year-group/year-group.module';
+import { AssignmentSubmissionModule } from './modules/timbuktu/administrative/assignment-submission/assignment-submission.model';
+import { AssignmentModule } from './modules/timbuktu/administrative/assignment/assignment.module';
+import { AssignmentSubmissionEntity } from './modules/timbuktu/administrative/assignment-submission/assignment-submission.entity';
+import { AssignmentEntity } from './modules/timbuktu/administrative/assignment/assignment.entity';
+import { ClassEntity } from './modules/timbuktu/administrative/class/class.entity';
+import { KeyStageEntity } from './modules/timbuktu/administrative/key-stage/key-stage.entity';
+import { LessonEntity } from './modules/timbuktu/administrative/lesson/lesson.entity';
+import { SubjectEntity } from './modules/timbuktu/administrative/subject/subject.entity';
+import { YearGroupEntity } from './modules/timbuktu/administrative/year-group/year-group.entity';
+import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-tables/class-lesson/class-lesson.entity';
 
 @Module({
   imports: [
@@ -49,6 +64,17 @@ import { EducatorProfileEntity } from './modules/timbuktu/user-profiles/educator
         PermissionGroup,
         StudentProfileEntity,
         EducatorProfileEntity,
+        AssignmentSubmissionEntity,
+        AssignmentEntity,
+        ClassEntity,
+        KeyStageEntity,
+        YearGroupEntity,
+        SubjectEntity,
+        LessonEntity,
+        AssignmentSubmissionEntity,
+        AssignmentEntity,
+
+        ClassLessonEntity,
       ],
       synchronize: true,
     }),
@@ -64,6 +90,13 @@ import { EducatorProfileEntity } from './modules/timbuktu/user-profiles/educator
     MicrosoftAuthModule,
     StudentProfileModule,
     EducatorProfileModule,
+    KeyStageModule,
+    YearGroupModule,
+    SubjectModule,
+    ClassModule,
+    LessonModule,
+    AssignmentModule,
+    AssignmentSubmissionModule,
     // AuditModule,
   ],
   providers: [

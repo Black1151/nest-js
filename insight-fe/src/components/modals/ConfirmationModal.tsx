@@ -1,13 +1,5 @@
-import {
-  Button,
-  HStack,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react";
-import { Modal } from "@chakra-ui/react";
+import { Button, HStack } from "@chakra-ui/react";
+import { BaseModal } from "./BaseModal";
 
 export interface ConfirmationModalProps {
   action: string;
@@ -27,20 +19,20 @@ export const ConfirmationModal = ({
   isLoading,
 }: ConfirmationModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Confirm {action}</ModalHeader>
-        <ModalBody>{bodyText}</ModalBody>
-        <ModalFooter>
-          <HStack>
-            <Button colorScheme="red" onClick={onConfirm} isLoading={isLoading}>
-              Confirm
-            </Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </HStack>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`Confirm ${action}`}
+      footer={
+        <HStack>
+          <Button colorScheme="red" onClick={onConfirm} isLoading={isLoading}>
+            Confirm
+          </Button>
+          <Button onClick={onClose}>Cancel</Button>
+        </HStack>
+      }
+    >
+      {bodyText}
+    </BaseModal>
   );
 };

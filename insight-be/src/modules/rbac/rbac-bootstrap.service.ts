@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
+import { EntityNotFoundError } from 'typeorm';
+
 import { ApiPermissionMappingService } from './sub/api-permissions-mapping/api-permission-mapping.service';
 import { PermissionService } from './sub/permission/permission.service';
 import { PERMISSION_KEY_METADATA } from './decorators/resolver-permission-key.decorator';
@@ -14,22 +16,25 @@ export class RbacBootstrapService implements OnModuleInit {
     private readonly reflector: Reflector,
   ) {}
 
-  async onModuleInit() {
+  /**
+   * On application start, walk every GraphQL resolver, collect the
+   * `@RbacPermissionKey()` values, and guarantee a matching Permission entity
+   * exists and is mapped.
+   */
+  async onModuleInit(): Promise<void> {
     const providers = this.discoveryService.getProviders();
 
     for (const provider of providers) {
       const { instance } = provider;
-
-      if (!instance || typeof instance !== 'object') {
-        continue;
-      }
+      if (!instance || typeof instance !== 'object') continue;
 
       const resolverName = instance.constructor.name;
-      if (!resolverName.endsWith('Resolver')) {
-        continue;
-      }
+      if (!resolverName.endsWith('Resolver')) continue;
 
-      let currentProto = Object.getPrototypeOf(instance);
+      /**
+       * Walk the prototype chain so inherited resolver methods are included.
+       */
+      let currentProto: any = Object.getPrototypeOf(instance);
       while (currentProto && currentProto !== Object.prototype) {
         const methodNames = Object.getOwnPropertyNames(currentProto).filter(
           (prop) =>
@@ -44,19 +49,17 @@ export class RbacBootstrapService implements OnModuleInit {
             [methodRef, currentProto.constructor],
           );
 
-          const stableKey = Reflect.getMetadata(
+          if (isPublic) continue;
+
+          const stableKey: string | undefined = Reflect.getMetadata(
             PERMISSION_KEY_METADATA,
             methodRef,
           );
 
-          if (isPublic) {
-            continue;
-          }
-
           if (!stableKey) {
             throw new Error(
-              `[RBAC Bootstrap Error] Method "${methodName}" in "${resolverName}" is neither @Public() nor @RbacPermissionKey(). 
-               All resolvers must be explicitly protected or marked public.`,
+              `[RBAC Bootstrap] Method "${methodName}" in "${resolverName}" is neither @Public() nor @RbacPermissionKey().` +
+                ' Every resolver must be explicitly protected or declared public.',
             );
           }
 
@@ -70,22 +73,40 @@ export class RbacBootstrapService implements OnModuleInit {
       }
     }
 
+    // eslint-disable-next-line no-console
     console.log('RBAC stable keys have been fully registered.');
   }
 
-  private async registerRouteKey(routeKey: string, description: string) {
+  /**
+   * Ensures both:
+   *   1. A Permission row with `name === routeKey` exists (creates if missing)
+   *   2. The ApiPermissionMapping includes that Permission
+   */
+  private async registerRouteKey(
+    routeKey: string,
+    description: string,
+  ): Promise<void> {
     const mapping = await this.mappingService.findOrCreate(routeKey);
 
     let permission;
     try {
       permission = await this.permissionService.findOneBy({ name: routeKey });
     } catch (err) {
-      if (err instanceof NotFoundException) {
+      /**
+       * TypeORM’s repo.findOne*OrFail() throws EntityNotFoundError.
+       * Other code may throw Nest’s NotFoundException.
+       * Treat both the same: the permission doesn’t exist yet.
+       */
+      if (
+        err instanceof NotFoundException ||
+        err instanceof EntityNotFoundError
+      ) {
         permission = await this.permissionService.create({
           name: routeKey,
           description,
         });
       } else {
+        // Bubble up truly unexpected errors.
         throw err;
       }
     }
@@ -93,6 +114,7 @@ export class RbacBootstrapService implements OnModuleInit {
     const alreadyAssigned = mapping.requiredPermissions.some(
       (p) => p.id === permission.id,
     );
+
     if (!alreadyAssigned) {
       mapping.requiredPermissions.push(permission);
       await this.mappingService.saveMapping(mapping);

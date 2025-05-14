@@ -1,4 +1,3 @@
-// src/common/base.resolver.ts
 import { Resolver, Args } from '@nestjs/graphql';
 import { ClassType } from 'type-graphql';
 import { DeepPartial, FindOptionsWhere } from 'typeorm';
@@ -52,12 +51,12 @@ export function createBaseResolver<
       public readonly service: BaseService<T, CreateDto, UpdateDto>,
     ) {}
 
-    // ---------------------------------------------------
-    // findAll
-    // ---------------------------------------------------
+    /* ------------------------------------------------------------------ */
+    /* findAll                                                            */
+    /* ------------------------------------------------------------------ */
     @QueryIf(isEnabled('findAll'), () => [entityClass], {
       name: `getAll${queryName}`,
-      description: `Returns all ${queryName}`,
+      description: `Returns all ${queryName} (optionally filtered)`,
     })
     @RbacPermissionKeyIf(
       isEnabled('findAll'),
@@ -67,13 +66,13 @@ export function createBaseResolver<
     async findAll(
       @Args('data', { type: () => FindAllInput }) data: FindAllInput,
     ): Promise<T[]> {
-      const { limit, offset, all } = data;
-      return this.service.findAll({ limit, offset, all });
+      const { limit, offset, all, relations, filters } = data;
+      return this.service.findAll({ limit, offset, all, relations, filters });
     }
 
-    // ---------------------------------------------------
-    // findOne
-    // ---------------------------------------------------
+    /* ------------------------------------------------------------------ */
+    /* findOne (by id)                                                    */
+    /* ------------------------------------------------------------------ */
     @QueryIf(isEnabled('findOne'), () => entityClass, {
       name: `get${queryName}`,
       description: `Returns one ${queryName}`,
@@ -86,12 +85,12 @@ export function createBaseResolver<
     async findOne(
       @Args('data', { type: () => IdInput }) data: IdInput,
     ): Promise<T> {
-      return this.service.findOne(data.id);
+      return this.service.findOne(data.id, data.relations);
     }
 
-    // ---------------------------------------------------
-    // findOneBy
-    // ---------------------------------------------------
+    /* ------------------------------------------------------------------ */
+    /* findOneBy (arbitrary column)                                       */
+    /* ------------------------------------------------------------------ */
     @QueryIf(isEnabled('findOneBy'), () => entityClass, {
       name: `get${queryName}By`,
       description: `Returns one ${queryName} by given conditions`,
@@ -104,14 +103,15 @@ export function createBaseResolver<
     async findOneBy(
       @Args('data', { type: () => FindOneByInput }) data: FindOneByInput,
     ): Promise<T> {
-      return this.service.findOneBy({
-        [data.column]: data.value,
-      } as FindOptionsWhere<T>);
+      return this.service.findOneBy(
+        { [data.column]: data.value } as FindOptionsWhere<T>,
+        data.relations,
+      );
     }
 
-    // ---------------------------------------------------
-    // create
-    // ---------------------------------------------------
+    /* ------------------------------------------------------------------ */
+    /* create                                                             */
+    /* ------------------------------------------------------------------ */
     @MutationIf(isEnabled('create'), () => entityClass, {
       name: `create${queryName}`,
       description: `Create one ${queryName}`,
@@ -124,7 +124,7 @@ export function createBaseResolver<
     @UiErrorMessageOverride([
       {
         codeName: 'unique_violation',
-        message: `Cannot create: A ${queryName} with this name alrady exists.`,
+        message: `Cannot create: A ${queryName} with this name already exists.`,
       },
     ])
     async create(
@@ -133,9 +133,9 @@ export function createBaseResolver<
       return this.service.create(data);
     }
 
-    // ---------------------------------------------------
-    // update
-    // ---------------------------------------------------
+    /* ------------------------------------------------------------------ */
+    /* update                                                             */
+    /* ------------------------------------------------------------------ */
     @MutationIf(isEnabled('update'), () => entityClass, {
       name: `update${queryName}`,
       description: `Updates one ${queryName}`,
@@ -148,7 +148,7 @@ export function createBaseResolver<
     @UiErrorMessageOverride([
       {
         codeName: 'unique_violation',
-        message: `Cannot update: A ${queryName} with this name alrady exists.`,
+        message: `Cannot update: A ${queryName} with this name already exists.`,
       },
     ])
     async update(
@@ -157,9 +157,9 @@ export function createBaseResolver<
       return this.service.update(data);
     }
 
-    // ---------------------------------------------------
-    // remove
-    // ---------------------------------------------------
+    /* ------------------------------------------------------------------ */
+    /* remove                                                             */
+    /* ------------------------------------------------------------------ */
     @MutationIf(isEnabled('remove'), () => Boolean, {
       name: `delete${queryName}`,
       description: `Delete one ${queryName}`,
@@ -171,9 +171,8 @@ export function createBaseResolver<
     @ImmutableLoggingIf(isImmutable('remove'))
     async remove(
       @Args('data', { type: () => IdInput }) data: IdInput,
-    ): Promise<boolean> {
-      await this.service.remove(data.id);
-      return true;
+    ): Promise<number> {
+      return this.service.remove(data.id);
     }
   }
 

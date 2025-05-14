@@ -17,11 +17,11 @@ export function RequirePermission({
     userPermissions.includes(permission)
   );
 
-  ///// DEV BYPASS
-  // if (process.env.NODE_ENV === "development") {
-  //   return <>{children}</>;
-  // }
-  /////
+  /// DEV BYPASS
+  if (process.env.NODE_ENV === "development") {
+    return <>{children}</>;
+  }
+  ///
 
   return hasAllPermissions ? <>{children}</> : <>{fallback}</>;
 }

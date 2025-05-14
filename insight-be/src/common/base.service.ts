@@ -1,66 +1,164 @@
-// base.service.ts
-import { NotFoundException } from '@nestjs/common';
-import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
-import { AbstractBaseEntity } from './base.entity';
+/* -------------------------------------------------------------------------- */
+/* BaseService ‒ generic CRUD + relation-hydration                            */
+/* -------------------------------------------------------------------------- */
+import {
+  DeepPartial,
+  FindManyOptions,
+  FindOptionsWhere,
+  In,
+  Repository,
+} from 'typeorm';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
-export abstract class BaseService<
-  T extends AbstractBaseEntity,
+import { RelationIdsInput } from './base.inputs';
+
+/* -------------------------------------------------------------------------- */
+/* Helper types                                                               */
+/* -------------------------------------------------------------------------- */
+type AugmentedDto<T> = DeepPartial<T> & {
+  /** Generic typed-array field we added to create / update DTOs */
+  relationIds?: RelationIdsInput[];
+
+  /** Dynamic “fooIds” / “fooId” props created at runtime */
+  [key: string]: any;
+};
+
+interface FindAllOpts {
+  limit?: number;
+  offset?: number;
+  all?: boolean;
+  relations?: string[];
+  filters?: { column: string; value: any }[];
+}
+
+/* -------------------------------------------------------------------------- */
+/* Service                                                                    */
+/* -------------------------------------------------------------------------- */
+@Injectable()
+export class BaseService<
+  T extends { id: number },
   CreateDto extends DeepPartial<T>,
   UpdateDto extends DeepPartial<T> & { id: number },
 > {
-  constructor(protected readonly repository: Repository<T>) {}
+  constructor(protected readonly repo: Repository<T>) {}
 
-  async create(createDto: CreateDto): Promise<T> {
-    const entity = this.repository.create(createDto);
-    return this.repository.save(entity);
-  }
+  /* ───────────────────────── private helpers ──────────────────────────── */
 
-  async findAll({
-    limit,
-    offset,
-    all,
-  }: {
-    limit?: number;
-    offset?: number;
-    all?: boolean;
-  }): Promise<T[]> {
-    if (all) {
-      return this.repository.find();
+  /** 0️⃣  Expand the generic relationIds[] array into fooIds properties */
+  private expandGenericRelationArray(raw: AugmentedDto<T>): void {
+    if (!Array.isArray(raw.relationIds)) return;
+
+    const obj = raw as Record<string, any>; // ← cast once
+
+    for (const { relation, ids } of raw.relationIds) {
+      obj[`${relation}Ids`] = ids; // ← write via the casted ref
     }
-    return this.repository.find({
-      take: limit,
-      skip: offset,
-    });
+    delete obj.relationIds;
   }
 
-  async findOne(id: T['id']): Promise<T> {
-    const entity = await this.repository.findOne({
-      where: { id } as FindOptionsWhere<T>,
-    });
-    if (!entity) {
-      throw new NotFoundException(`Entity with ID ${id} not found`);
+  /**
+   * 1️⃣  Convert any “fooId(s)” fields to actual entities, validate they exist,
+   *     and return a DeepPartial<T> ready for repo.create / repo.merge.
+   */
+  private async hydrateRelations<K extends AugmentedDto<T>>(
+    raw: K,
+  ): Promise<DeepPartial<T>> {
+    if (!raw) return raw;
+
+    /* STEP 0 – fan-out generic array once */
+    this.expandGenericRelationArray(raw);
+
+    const meta = this.repo.metadata;
+    const dto = { ...raw }; // shallow copy
+    const result: any = { ...dto };
+
+    for (const rel of meta.relations) {
+      const prop = rel.propertyName; // e.g. “yearGroups”
+      const singleKey = `${prop}Id`;
+      const manyKey = `${prop}Ids`;
+
+      let ids: number | number[] | undefined =
+        dto[manyKey] ?? dto[singleKey] ?? dto[prop];
+
+      if (ids === undefined) continue; // caller didn’t send this rel
+
+      const idsArr = Array.isArray(ids) ? ids.map(Number) : [Number(ids)];
+
+      // strip raw fields so they don’t pollute the entity
+      delete result[manyKey];
+      delete result[singleKey];
+      delete result[prop];
+
+      const relRepo = this.repo.manager.getRepository(rel.type as any);
+      const found = await relRepo.find({ where: { id: In(idsArr) } as any });
+
+      if (found.length !== idsArr.length) {
+        const missing = idsArr.filter((id) => !found.some((f) => f.id === id));
+        throw new BadRequestException(
+          `Invalid ${prop} ID${missing.length > 1 ? 's' : ''}: ${missing.join(', ')}`,
+        );
+      }
+
+      result[prop] = Array.isArray(ids) ? found : found[0];
     }
-    return entity;
+
+    return result as DeepPartial<T>;
   }
 
-  async findOneBy(conditions: FindOptionsWhere<T>): Promise<T> {
-    const entity = await this.repository.findOne({ where: conditions });
-    if (!entity) {
-      throw new NotFoundException(`Entity not found by given conditions.`);
+  /* ───────────────────────── public CRUD API ──────────────────────────── */
+
+  async findAll(opts: FindAllOpts): Promise<T[]> {
+    const { limit, offset, all, relations, filters } = opts;
+
+    const options: FindManyOptions<T> = { relations };
+
+    if (!all) {
+      options.take = limit ?? 50;
+      options.skip = offset ?? 0;
     }
-    return entity;
-  }
 
-  async update(updateDto: UpdateDto): Promise<T> {
-    const entity = await this.repository.preload(updateDto);
-    if (!entity) {
-      throw new NotFoundException(`Entity with ID ${updateDto.id} not found`);
+    if (filters?.length) {
+      const where: FindOptionsWhere<T> = filters.reduce(
+        (acc, f) => ({ ...acc, [f.column as keyof T]: f.value }) as any,
+        {} as FindOptionsWhere<T>,
+      );
+      options.where = where;
     }
-    return this.repository.save(entity);
+
+    return this.repo.find(options);
   }
 
-  async remove(id: T['id']): Promise<void> {
-    const entity = await this.findOne(id);
-    await this.repository.delete(entity.id);
+  async findOne(id: number, relations?: string[]): Promise<T> {
+    return this.repo.findOneOrFail({ where: { id } as any, relations });
+  }
+
+  async findOneBy(
+    where: FindOptionsWhere<T>,
+    relations?: string[],
+  ): Promise<T> {
+    return this.repo.findOneOrFail({ where, relations });
+  }
+
+  /** CREATE – relation-aware & validated */
+  async create(dto: CreateDto): Promise<T> {
+    const data = await this.hydrateRelations(dto as AugmentedDto<T>);
+    const entity = this.repo.create(data);
+    return this.repo.save(entity); // only reached if validation passes
+  }
+
+  /** UPDATE – relation-aware & validated */
+  async update(dto: UpdateDto): Promise<T> {
+    const { id, ...rest } = dto as any;
+    let entity = await this.repo.findOneOrFail({ where: { id } as any });
+
+    const data = await this.hydrateRelations(rest as AugmentedDto<T>);
+    entity = this.repo.merge(entity, data);
+
+    return this.repo.save(entity);
+  }
+
+  async remove(id: number): Promise<number> {
+    await this.repo.delete(id);
+    return id;
   }
 }

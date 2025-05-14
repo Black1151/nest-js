@@ -13,9 +13,10 @@ export function UserManagerPageClient() {
     string | null
   >(null);
 
-  usePermissionRedirect({
-    permissions: ["user.getAllUsers"],
-  });
+  /////////// THIS IS BUGGED AND TRIGGERING A REDIRECT BEFORE PERMS HAVE LOADED
+  // usePermissionRedirect({
+  //   permissions: ["user.getAllUsers"],
+  // });
 
   return (
     <>

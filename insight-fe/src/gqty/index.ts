@@ -105,8 +105,8 @@ const queryFetcher: QueryFetcher = async function (
 
 const cache = new Cache(undefined, {
   maxAge: 60 * 10000, // 10 minutes
-  staleWhileRevalidate: 5 * 60 * 1000, // 5 minutes
-  normalization: true,
+  staleWhileRevalidate: 30 * 60 * 1000, // 30 minutes
+  // normalization: true,
 });
 
 export const client = createClient<GeneratedSchema>({

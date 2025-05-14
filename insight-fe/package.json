@@ -10,6 +10,7 @@
     "gqty:generate": "gqty generate http://localhost:3000/graphql"
   },
   "dependencies": {
+    "@apollo/client": "^3.13.8",
     "@atlaskit/pragmatic-drag-and-drop": "^1.5.2",
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^2.1.0",
     "@atlaskit/pragmatic-drag-and-drop-flourish": "^2.0.2",
@@ -23,7 +24,7 @@
     "@hookform/resolvers": "^4.1.3",
     "framer-motion": "^12.4.10",
     "gqty": "^3.4.1",
-    "graphql": "^16.10.0",
+    "graphql": "^16.11.0",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.488.0",
