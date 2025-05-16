@@ -1,0 +1,726 @@
+type AssignmentEntity {
+  class: ClassEntity!
+  createdAt: DateTime!
+  description: String
+  dueDate: DateTime
+  id: ID!
+  lesson: LessonEntity!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type AssignmentSubmissionEntity {
+  assignment: AssignmentEntity!
+  createdAt: DateTime!
+  feedback: String
+  grade: String
+  id: ID!
+  student: StudentProfileDto!
+  submissionContent: String
+  submittedAt: DateTime
+  updatedAt: DateTime!
+}
+
+type AuthTokens {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type ClassEntity {
+  createdAt: DateTime!
+  educators: [EducatorProfileDto!]
+  id: ID!
+  name: String!
+  students: [StudentProfileDto!]
+  subject: SubjectEntity
+  updatedAt: DateTime!
+  yearGroup: YearGroupEntity
+}
+
+input CreateAssignmentInput {
+  classId: ID!
+  description: String
+  dueDate: DateTime
+  lessonId: ID!
+  title: String!
+}
+
+input CreateAssignmentSubmissionInput {
+  assignmentId: ID!
+  feedback: String
+  grade: String
+  studentId: ID!
+  submissionContent: String
+  submittedAt: DateTime
+}
+
+input CreateClassInput {
+  educatorIds: [ID]
+  name: String!
+  studentIds: [ID]
+  subjectId: ID
+  yearGroupId: ID
+}
+
+input CreateEducatorProfileInput {
+  staffId: Float!
+}
+
+input CreateKeyStageInput {
+  description: String
+  name: String!
+}
+
+input CreateLessonInput {
+  content: String
+  createdByEducatorId: ID
+  recommendedYearGroupIds: [ID]
+  subjectId: ID
+  title: String!
+}
+
+input CreatePermissionGroupInput {
+  description: String!
+  name: String!
+}
+
+input CreatePermissionInput {
+  description: String
+  name: String!
+}
+
+input CreateRoleInput {
+  description: String
+  name: String!
+}
+
+input CreateStudentProfileInput {
+  schoolYear: Float!
+  studentId: Float!
+}
+
+input CreateSubjectInput {
+  name: String!
+
+  """Generic hook for attaching any relations by IDs"""
+  relationIds: [RelationIdsInput!]
+}
+
+input CreateUserRequestDto {
+  addressLine1: String
+  addressLine2: String
+  city: String
+  country: String
+  county: String
+  dateOfBirth: DateTime
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  phoneNumber: String
+  postalCode: String
+  userType: String!
+}
+
+input CreateUserWithProfileInput {
+  addressLine1: String
+  addressLine2: String
+  city: String
+  country: String
+  county: String
+  dateOfBirth: DateTime
+  educatorProfile: CreateEducatorProfileInput
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  phoneNumber: String
+  postalCode: String
+  studentProfile: CreateStudentProfileInput
+  userType: String!
+}
+
+input CreateYearGroupInput {
+  keyStageId: ID
+  year: ValidYear!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type EducatorProfileDto {
+  createdAt: DateTime!
+  id: ID!
+  staffId: Float!
+  updatedAt: DateTime!
+}
+
+input FilterInput {
+  """Column (property) name to filter on"""
+  column: String!
+
+  """Exact value the column must equal"""
+  value: String!
+}
+
+input FindAllInput {
+  """Set to true to return all records, ignoring pagination values"""
+  all: Boolean
+
+  """Column/value pairs to filter by (records must satisfy **all** filters)"""
+  filters: [FilterInput!]
+
+  """Maximum number of records to return"""
+  limit: Int
+
+  """Number of records to skip"""
+  offset: Int
+
+  """Names of relations to eager-load (e.g. ["keyStage", "author"])"""
+  relations: [String!]
+}
+
+input FindOneByInput {
+  column: String!
+
+  """Relations to eager-load with this single record"""
+  relations: [String!]
+  value: String!
+}
+
+input IdInput {
+  id: Int!
+
+  """Relations to eager-load with this single record"""
+  relations: [String!]
+}
+
+input IdRequestDto {
+  id: Int!
+}
+
+type KeyStageEntity {
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  name: String
+  stage: ValidKeyStage!
+  updatedAt: DateTime!
+  yearGroups: [YearGroupEntity!]!
+}
+
+type LessonEntity {
+  content: String
+  createdAt: DateTime!
+  createdBy: EducatorProfileDto
+  createdById: ID
+  id: ID!
+  recommendedYearGroups: [YearGroupEntity!]
+  subject: SubjectEntity
+  title: String!
+  updatedAt: DateTime!
+}
+
+input LoginRequest {
+  email: String!
+  password: String!
+}
+
+type LoginResponse {
+  accessToken: String!
+  refreshToken: String!
+  userDetails: UserDetails!
+}
+
+type Mutation {
+  """Create one Assignment"""
+  createAssignment(data: CreateAssignmentInput!): AssignmentEntity!
+
+  """Create one AssignmentSubmission"""
+  createAssignmentSubmission(data: CreateAssignmentSubmissionInput!): AssignmentSubmissionEntity!
+
+  """Create one Class"""
+  createClass(data: CreateClassInput!): ClassEntity!
+
+  """Create one EducatorProfile"""
+  createEducatorProfile(data: CreateEducatorProfileInput!): EducatorProfileDto!
+
+  """Create one KeyStage"""
+  createKeyStage(data: CreateKeyStageInput!): KeyStageEntity!
+
+  """Create one Lesson"""
+  createLesson(data: CreateLessonInput!): LessonEntity!
+
+  """Create one Permission"""
+  createPermission(data: CreatePermissionInput!): Permission!
+
+  """Create one PermissionGroup"""
+  createPermissionGroup(data: CreatePermissionGroupInput!): PermissionGroup!
+
+  """Create one Role"""
+  createRole(data: CreateRoleInput!): Role!
+
+  """Create one StudentProfile"""
+  createStudentProfile(data: CreateStudentProfileInput!): StudentProfileDto!
+
+  """Create one Subject"""
+  createSubject(data: CreateSubjectInput!): SubjectEntity!
+  createUser(data: CreateUserRequestDto!): User!
+  createUserWithProfile(data: CreateUserWithProfileInput!): User!
+
+  """Create one YearGroup"""
+  createYearGroup(data: CreateYearGroupInput!): YearGroupEntity!
+
+  """Delete one Assignment"""
+  deleteAssignment(data: IdInput!): Boolean!
+
+  """Delete one AssignmentSubmission"""
+  deleteAssignmentSubmission(data: IdInput!): Boolean!
+
+  """Delete one Class"""
+  deleteClass(data: IdInput!): Boolean!
+
+  """Delete one EducatorProfile"""
+  deleteEducatorProfile(data: IdInput!): Boolean!
+
+  """Delete one KeyStage"""
+  deleteKeyStage(data: IdInput!): Boolean!
+
+  """Delete one Lesson"""
+  deleteLesson(data: IdInput!): Boolean!
+
+  """Delete one Permission"""
+  deletePermission(data: IdInput!): Boolean!
+
+  """Delete one PermissionGroup"""
+  deletePermissionGroup(data: IdInput!): Boolean!
+
+  """Delete one Role"""
+  deleteRole(data: IdInput!): Boolean!
+
+  """Delete one StudentProfile"""
+  deleteStudentProfile(data: IdInput!): Boolean!
+
+  """Delete one Subject"""
+  deleteSubject(data: IdInput!): Boolean!
+
+  """Delete one YearGroup"""
+  deleteYearGroup(data: IdInput!): Boolean!
+  logUserInWithEmailAndPassword(data: LoginRequest!): AuthTokens!
+  refreshUsersTokens(refreshToken: String!): LoginResponse!
+  registerNewUserLocally(data: CreateUserRequestDto!): User!
+  removeUserByPublicId(data: PublicIdRequestDto!): User!
+
+  """Updates one Assignment"""
+  updateAssignment(data: UpdateAssignmentInput!): AssignmentEntity!
+
+  """Updates one AssignmentSubmission"""
+  updateAssignmentSubmission(data: UpdateAssignmentSubmissionInput!): AssignmentSubmissionEntity!
+
+  """Updates one Class"""
+  updateClass(data: UpdateClassInput!): ClassEntity!
+
+  """Updates one EducatorProfile"""
+  updateEducatorProfile(data: UpdateEducatorProfileInput!): EducatorProfileDto!
+
+  """Updates one KeyStage"""
+  updateKeyStage(data: UpdateKeyStageInput!): KeyStageEntity!
+
+  """Updates one Lesson"""
+  updateLesson(data: UpdateLessonInput!): LessonEntity!
+
+  """Updates one Permission"""
+  updatePermission(data: UpdatePermissionInput!): Permission!
+
+  """Updates one PermissionGroup"""
+  updatePermissionGroup(data: UpdatePermissionGroupInput!): PermissionGroup!
+  updatePermissionGroupPermissionsFromArray(data: SubmitIdArrayByIdRequestDto!): PermissionGroup!
+  updatePermissionGroupsForRole(data: SubmitIdArrayByIdRequestDto!): Role!
+
+  """Updates one Role"""
+  updateRole(data: UpdateRoleInput!): Role!
+
+  """Updates one StudentProfile"""
+  updateStudentProfile(data: UpdateStudentProfileInput!): StudentProfileDto!
+
+  """Updates one Subject"""
+  updateSubject(data: UpdateSubjectInput!): SubjectEntity!
+  updateUserByPublicId(data: UpdateUserRequestDto!, publicId: String!): User!
+  updateUserRolesFromArray(data: UpdateUserRolesFromArrayRequestDto!): User!
+
+  """Updates one YearGroup"""
+  updateYearGroup(data: UpdateYearGroupInput!): YearGroupEntity!
+}
+
+input PaginatedGetAllRequestDto {
+  limit: Int
+  offset: Int
+}
+
+type Permission {
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  name: String!
+  permissionGroups: [PermissionGroup!]
+  roles: [Role!]
+  updatedAt: DateTime!
+}
+
+type PermissionDTO {
+  createdAt: DateTime!
+  id: Float!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type PermissionGroup {
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  name: String!
+  permissions: [Permission!]
+  roles: [Role!]
+  updatedAt: DateTime!
+}
+
+input PublicIdRequestDto {
+  publicId: String!
+}
+
+type Query {
+  """Returns all Assignment (optionally filtered)"""
+  getAllAssignment(data: FindAllInput!): [AssignmentEntity!]!
+
+  """Returns all AssignmentSubmission (optionally filtered)"""
+  getAllAssignmentSubmission(data: FindAllInput!): [AssignmentSubmissionEntity!]!
+
+  """Returns all Class (optionally filtered)"""
+  getAllClass(data: FindAllInput!): [ClassEntity!]!
+
+  """Returns all EducatorProfile (optionally filtered)"""
+  getAllEducatorProfile(data: FindAllInput!): [EducatorProfileDto!]!
+
+  """Returns all KeyStage (optionally filtered)"""
+  getAllKeyStage(data: FindAllInput!): [KeyStageEntity!]!
+
+  """Returns all Lesson (optionally filtered)"""
+  getAllLesson(data: FindAllInput!): [LessonEntity!]!
+
+  """Returns all Permission (optionally filtered)"""
+  getAllPermission(data: FindAllInput!): [Permission!]!
+
+  """Returns all PermissionGroup (optionally filtered)"""
+  getAllPermissionGroup(data: FindAllInput!): [PermissionGroup!]!
+
+  """Returns all Role (optionally filtered)"""
+  getAllRole(data: FindAllInput!): [Role!]!
+
+  """Returns all StudentProfile (optionally filtered)"""
+  getAllStudentProfile(data: FindAllInput!): [StudentProfileDto!]!
+
+  """Returns all Subject (optionally filtered)"""
+  getAllSubject(data: FindAllInput!): [SubjectEntity!]!
+  getAllUsers(data: PaginatedGetAllRequestDto!): [User!]!
+
+  """Returns all YearGroup (optionally filtered)"""
+  getAllYearGroup(data: FindAllInput!): [YearGroupEntity!]!
+
+  """Returns one Assignment"""
+  getAssignment(data: IdInput!): AssignmentEntity!
+
+  """Returns one Assignment by given conditions"""
+  getAssignmentBy(data: FindOneByInput!): AssignmentEntity!
+
+  """Returns one AssignmentSubmission"""
+  getAssignmentSubmission(data: IdInput!): AssignmentSubmissionEntity!
+
+  """Returns one AssignmentSubmission by given conditions"""
+  getAssignmentSubmissionBy(data: FindOneByInput!): AssignmentSubmissionEntity!
+
+  """Returns one Class"""
+  getClass(data: IdInput!): ClassEntity!
+
+  """Returns one Class by given conditions"""
+  getClassBy(data: FindOneByInput!): ClassEntity!
+
+  """Returns one EducatorProfile"""
+  getEducatorProfile(data: IdInput!): EducatorProfileDto!
+
+  """Returns one EducatorProfile by given conditions"""
+  getEducatorProfileBy(data: FindOneByInput!): EducatorProfileDto!
+
+  """Returns one KeyStage"""
+  getKeyStage(data: IdInput!): KeyStageEntity!
+
+  """Returns one KeyStage by given conditions"""
+  getKeyStageBy(data: FindOneByInput!): KeyStageEntity!
+
+  """Returns one Lesson"""
+  getLesson(data: IdInput!): LessonEntity!
+
+  """Returns one Lesson by given conditions"""
+  getLessonBy(data: FindOneByInput!): LessonEntity!
+
+  """Returns one Permission"""
+  getPermission(data: IdInput!): Permission!
+
+  """Returns one Permission by given conditions"""
+  getPermissionBy(data: FindOneByInput!): Permission!
+
+  """Returns one PermissionGroup"""
+  getPermissionGroup(data: IdInput!): PermissionGroup!
+
+  """Returns one PermissionGroup by given conditions"""
+  getPermissionGroupBy(data: FindOneByInput!): PermissionGroup!
+  getPermissionGroupsForRole(data: IdRequestDto!): [PermissionGroup!]!
+  getPermissionsForGroup(data: IdRequestDto!): [Permission!]!
+
+  """Returns one Role"""
+  getRole(data: IdInput!): Role!
+
+  """Returns one Role by given conditions"""
+  getRoleBy(data: FindOneByInput!): Role!
+  getRolesForUser(data: PublicIdRequestDto!): [Role!]!
+
+  """Returns one StudentProfile"""
+  getStudentProfile(data: IdInput!): StudentProfileDto!
+
+  """Returns one StudentProfile by given conditions"""
+  getStudentProfileBy(data: FindOneByInput!): StudentProfileDto!
+
+  """Returns one Subject"""
+  getSubject(data: IdInput!): SubjectEntity!
+
+  """Returns one Subject by given conditions"""
+  getSubjectBy(data: FindOneByInput!): SubjectEntity!
+  getUserByPublicId(data: PublicIdRequestDto!): User!
+  getUsersRolesAndPermissions(data: UserPermissionsInput!): RolesPermissionsResponse!
+
+  """Returns one YearGroup"""
+  getYearGroup(data: IdInput!): YearGroupEntity!
+
+  """Returns one YearGroup by given conditions"""
+  getYearGroupBy(data: FindOneByInput!): YearGroupEntity!
+}
+
+input RelationIdsInput {
+  """IDs to link"""
+  ids: [Int!]!
+
+  """Relation name, exactly as on the entity (e.g. "yearGroups")"""
+  relation: String!
+}
+
+type Role {
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  name: String!
+  permissionGroups: [PermissionGroup!]
+  permissions: [Permission!]
+  updatedAt: DateTime!
+}
+
+type RoleDTO {
+  createdAt: DateTime!
+  id: Float!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type RolesPermissionsResponse {
+  permissions: [PermissionDTO!]!
+  roles: [RoleDTO!]!
+}
+
+type StudentProfileDto {
+  createdAt: DateTime!
+  id: ID!
+  schoolYear: Float!
+  studentId: Float!
+  updatedAt: DateTime!
+}
+
+type SubjectEntity {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+  yearGroups: [YearGroupEntity!]
+}
+
+input SubmitIdArrayByIdRequestDto {
+  idArray: [Int!]!
+  recordId: Int!
+}
+
+input UpdateAssignmentInput {
+  classId: ID
+  description: String
+  dueDate: DateTime
+  id: ID!
+  lessonId: ID
+  title: String
+}
+
+input UpdateAssignmentSubmissionInput {
+  assignmentId: ID
+  feedback: String
+  grade: String
+  id: ID!
+  studentId: ID
+  submissionContent: String
+  submittedAt: DateTime
+}
+
+input UpdateClassInput {
+  educatorIds: [ID!]
+  id: ID!
+  name: String
+  studentIds: [ID!]
+  subjectId: ID
+  yearGroupId: ID
+}
+
+input UpdateEducatorProfileInput {
+  id: Int!
+  staffId: Float
+}
+
+input UpdateKeyStageInput {
+  description: String
+  id: ID!
+  name: String
+}
+
+input UpdateLessonInput {
+  content: String
+  createdByEducatorId: ID
+  id: ID!
+  recommendedYearGroupIds: [ID!]
+  subjectId: ID
+  title: String
+}
+
+input UpdatePermissionGroupInput {
+  description: String
+  id: Int!
+  name: String
+}
+
+input UpdatePermissionInput {
+  description: String
+  id: Int!
+  name: String
+}
+
+input UpdateRoleInput {
+  description: String
+  id: Int!
+  name: String
+}
+
+input UpdateStudentProfileInput {
+  id: Int!
+  schoolYear: Float
+  studentId: Float
+}
+
+input UpdateSubjectInput {
+  id: ID!
+  name: String
+
+  """Generic hook for attaching any relations by IDs"""
+  relationIds: [RelationIdsInput!]
+}
+
+input UpdateUserRequestDto {
+  addressLine1: String
+  addressLine2: String
+  city: String
+  country: String
+  county: String
+  dateOfBirth: DateTime
+  email: String!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String
+  postalCode: String
+  publicId: String!
+  userType: String!
+}
+
+input UpdateUserRolesFromArrayRequestDto {
+  publicId: String!
+  roleIds: [Int!]!
+}
+
+input UpdateYearGroupInput {
+  id: ID!
+  keyStageId: ID
+  year: ValidYear
+}
+
+type User {
+  addressLine1: String
+  addressLine2: String
+  city: String
+  country: String
+  county: String
+  createdAt: DateTime!
+  dateOfBirth: DateTime
+  educatorProfile: EducatorProfileDto
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+  phoneNumber: String
+  postalCode: String
+  publicId: String!
+  roles: [Role!]
+  studentProfile: StudentProfileDto
+  updatedAt: DateTime!
+  userType: String!
+}
+
+type UserDetails {
+  permissions: [String!]!
+  publicId: String!
+}
+
+input UserPermissionsInput {
+  publicId: String!
+}
+
+"""National Curriculum Key Stage (3, 4 or 5)"""
+enum ValidKeyStage {
+  KS3
+  KS4
+  KS5
+}
+
+enum ValidYear {
+  Year7
+  Year8
+  Year9
+  Year10
+  Year11
+  Year12
+  Year13
+}
+
+type YearGroupEntity {
+  createdAt: DateTime!
+  id: ID!
+  keyStage: KeyStageEntity
+  subjects: [SubjectEntity!]
+  updatedAt: DateTime!
+  year: ValidYear!
+}
+schema{
+	query: Query,
+	mutation: Mutation
+}

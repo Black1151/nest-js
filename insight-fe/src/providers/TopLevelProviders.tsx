@@ -6,7 +6,9 @@ import { ReactNode } from "react";
 import { AuthProvider } from "@/context/AuthContext";
 import { GlobalErrorListener } from "@/components/error/GlobalErrorListener";
 import { UserPayload } from "@/app/layout";
-import { UserProvider } from "./UserProvider";
+
+import { ApolloProvider } from "@apollo/client";
+import client from "@/apollo/apollo-client";
 
 interface Props {
   children: ReactNode;
@@ -17,7 +19,9 @@ const TopLevelProviders: React.FC<Props> = ({ children, user }) => {
   return (
     <AuthProvider user={user}>
       <GlobalErrorListener>
-        <ChakraProvider theme={theme}>{children}</ChakraProvider>
+        <ApolloProvider client={client}>
+          <ChakraProvider theme={theme}>{children}</ChakraProvider>
+        </ApolloProvider>
       </GlobalErrorListener>
     </AuthProvider>
   );
