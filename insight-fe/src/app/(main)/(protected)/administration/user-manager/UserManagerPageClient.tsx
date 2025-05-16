@@ -23,14 +23,14 @@ export function UserManagerPageClient() {
       <ContentGrid gridTemplateColumns="1fr 1fr">
         <UserListTable setSelectedUserPublicId={setSelectedUserPublicId} />
 
-        <RequirePermission permissions={["user.getUserByPublicId"]}>
+        {/* <RequirePermission permissions={["user.getUserByPublicId"]}>
           <UserDetailSection
             publicId={selectedUserPublicId}
             setSelectedUserPublicId={setSelectedUserPublicId}
           />
-        </RequirePermission>
+        </RequirePermission> */}
 
-        <RequirePermission
+        {/* <RequirePermission
           permissions={[
             "user.getRolesForUser",
             "user.updateUserRolesFromArray",
@@ -38,7 +38,7 @@ export function UserManagerPageClient() {
           ]}
         >
           <UserRolesSection publicId={selectedUserPublicId} />
-        </RequirePermission>
+        </RequirePermission> */}
       </ContentGrid>
     </>
   );

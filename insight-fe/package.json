@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "zeus": "zeus schema.graphql ./ --typedDocumentNode",
-    "dev": "npm run zeus && next dev",
-    "build": "npm run zeus && next build",
+    "zeus": "zeus http://localhost:3000/graphql ./src --typedDocumentNode",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "generate": "npm run zeus && npm run codegen",
+    "dev": "npm run generate && next dev",
+    "build": "npm run generate && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -34,7 +36,9 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.6",
     "@graphql-codegen/typed-document-node": "^5.1.1",
+    "@graphql-codegen/typescript": "^4.1.6",
     "@inquirer/prompts": "^7.4.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20",

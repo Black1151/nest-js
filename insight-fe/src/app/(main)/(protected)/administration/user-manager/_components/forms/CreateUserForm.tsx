@@ -10,7 +10,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { CreateUserWithProfileInput } from "@/gqty";
+import { CreateUserWithProfileInput } from "@/__generated__/schema-types";
 
 interface UserFormProps {
   onSubmit: (data: CreateUserWithProfileInput) => Promise<void>;

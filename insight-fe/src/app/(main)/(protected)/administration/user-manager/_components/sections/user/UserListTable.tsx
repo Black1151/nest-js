@@ -1,13 +1,30 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { useState } from "react";
+import { Text } from "@chakra-ui/react";
+import { useQuery } from "@apollo/client";
+
 import { ContentCard } from "@/components/layout/Card";
 import { DataTableSimple } from "@/components/tables/DataTableSimple";
-import { useQuery, User } from "@/gqty";
 import { LoadingSpinnerCard } from "@/components/loading/LoadingSpinnerCard";
 import { Button, Flex, HStack } from "@chakra-ui/react";
 import { CreateUserModal } from "../../modals/CreateUserModal";
 import { RequirePermission } from "@/rbac/RequirePermission";
+import { typedGql } from "@/zeus/typedDocumentNode";
+
+export const LoadUsers = typedGql("query")({
+  getAllUsers: [
+    { data: { limit: 10, offset: 0 } },
+    {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      publicId: true,
+      userType: true,
+    },
+  ],
+} as const);
 
 interface UserListTableProps {
   setSelectedUserPublicId: (publicId: string) => void;
@@ -16,11 +33,17 @@ interface UserListTableProps {
 function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
   const [userType, setUserType] = useState<"student" | "educator">("student");
-  const query = useQuery();
-  const { isLoading } = query.$state;
-  const users = query.getAllUsers({ data: { limit: 10, offset: 0 } });
+  const { data, loading, error } = useQuery(LoadUsers);
 
-  const formattedData = users.map((u: User) => ({
+  if (loading) {
+    return <LoadingSpinnerCard text="Loading Users..." />;
+  }
+
+  if (error || !data) {
+    return <ContentCard>Error loading users: {error?.message}</ContentCard>;
+  }
+
+  const formattedData = data.getAllUsers.map((u) => ({
     id: u.id,
     firstName: u.firstName,
     lastName: u.lastName,
@@ -41,50 +64,40 @@ function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
     setSelectedUserPublicId(rowData.publicId);
   };
 
-  if (isLoading) {
-    return <LoadingSpinnerCard text="Loading Users..." />;
-  }
-
   return (
     <>
       <ContentCard>
-        {formattedData[0].id && (
-          <Flex
-            justifyContent="space-between"
-            flexDirection="column"
-            height="100%"
-            width="100%"
-          >
-            <DataTableSimple
-              data={formattedData}
-              columns={columns}
-              onRowClick={handleRowClick}
-            />
-            <RequirePermission permissions={["user.createUser"]}>
-              <HStack>
-                <Button
-                  colorScheme="green"
-                  onClick={() => {
-                    setUserType("student");
-                    setIsCreateUserModalOpen(true);
-                  }}
-                >
-                  Add Student
-                </Button>
-                <Button
-                  colorScheme="blue"
-                  onClick={() => {
-                    setUserType("educator");
-                    setIsCreateUserModalOpen(true);
-                  }}
-                >
-                  Add Staff
-                </Button>
-              </HStack>
-            </RequirePermission>
-          </Flex>
-        )}
+        <Flex direction="column" justify="space-between" h="100%" w="100%">
+          <DataTableSimple
+            data={formattedData}
+            columns={columns}
+            onRowClick={handleRowClick}
+          />
+          <RequirePermission permissions={["user.createUser"]}>
+            <HStack mt={4}>
+              <Button
+                colorScheme="green"
+                onClick={() => {
+                  setUserType("student");
+                  setIsCreateUserModalOpen(true);
+                }}
+              >
+                Add Student
+              </Button>
+              <Button
+                colorScheme="blue"
+                onClick={() => {
+                  setUserType("educator");
+                  setIsCreateUserModalOpen(true);
+                }}
+              >
+                Add Staff
+              </Button>
+            </HStack>
+          </RequirePermission>
+        </Flex>
       </ContentCard>
+
       <RequirePermission permissions={["user.createUser"]}>
         <CreateUserModal
           isOpen={isCreateUserModalOpen}
@@ -97,9 +110,5 @@ function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
 }
 
 export default function UserListTableWrapper(props: UserListTableProps) {
-  return (
-    <Suspense fallback={<LoadingSpinnerCard text="Loading Users..." />}>
-      <UserListTable {...props} />
-    </Suspense>
-  );
+  return <UserListTable {...props} />;
 }
