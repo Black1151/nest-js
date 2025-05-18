@@ -10,6 +10,7 @@ import { CreateUserRequestDto, UpdateUserRequestDto } from './dto/req/req.dto';
 import { CreateUserWithProfileInput } from './input/create-user-with-profile.input';
 import { StudentProfileEntity } from '../timbuktu/user-profiles/student-profile/student-profile.entity';
 import { EducatorProfileEntity } from '../timbuktu/user-profiles/educator-profile/educator-profile.entity';
+import { UpdateUserWithProfileInput } from './input/update-user-with-profile-input';
 
 @Injectable()
 export class UsersService {
@@ -52,8 +53,6 @@ export class UsersService {
   async createUserWithProfile(
     createDto: CreateUserWithProfileInput,
   ): Promise<User> {
-    console.log(createDto);
-
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -85,6 +84,45 @@ export class UsersService {
         relations: ['studentProfile', 'educatorProfile'],
       });
       return savedUser!;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async updateUserWithProfile(
+    publicId: string,
+    updateDto: UpdateUserWithProfileInput,
+  ): Promise<User> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = await this.findOneByPublicId(publicId);
+      Object.assign(user, updateDto);
+      await queryRunner.manager.save(user);
+
+      if (updateDto.studentProfile) {
+        const studentProfile = this.studentProfileRepository.create(
+          updateDto.studentProfile,
+        );
+        studentProfile.user = user;
+        await queryRunner.manager.save(studentProfile);
+      }
+
+      if (updateDto.educatorProfile) {
+        const educatorProfile = this.educatorProfileRepository.create(
+          updateDto.educatorProfile,
+        );
+        educatorProfile.user = user;
+        await queryRunner.manager.save(educatorProfile);
+      }
+
+      await queryRunner.commitTransaction();
+      return user;
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw err;

@@ -1,13 +1,10 @@
 import { Button, Center, HStack, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { UserDetailsDisplay } from "./UserDetailsDisplay";
-import { UpdateUserModal } from "../../../modals/UpdateUserModal";
 import { ContentCard } from "@/components/layout/Card";
-import { DeleteUserModal } from "../../../modals/DeleteUserModal";
-import { useQuery } from "@/gqty";
-
-import type { User } from "@/gqty";
 import { RequirePermission } from "@/rbac/RequirePermission";
+import { UpdateUserModal } from "../../../modals/UpdateUserModal";
+import { DeleteUserModal } from "../../../modals/DeleteUserModal";
 
 interface UserDetailSectionProps {
   publicId: string | null;

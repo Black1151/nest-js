@@ -195,7 +195,7 @@ export const AllTypesProps: Record<string,any> = {
 			data:"UpdateSubjectInput"
 		},
 		updateUserByPublicId:{
-			data:"UpdateUserRequestDto"
+			data:"UpdateUserWithProfileInput"
 		},
 		updateUserRolesFromArray:{
 			data:"UpdateUserRolesFromArrayRequestDto"
@@ -377,11 +377,13 @@ export const AllTypesProps: Record<string,any> = {
 	UpdateSubjectInput:{
 		relationIds:"RelationIdsInput"
 	},
-	UpdateUserRequestDto:{
-		dateOfBirth:"DateTime"
-	},
 	UpdateUserRolesFromArrayRequestDto:{
 
+	},
+	UpdateUserWithProfileInput:{
+		dateOfBirth:"DateTime",
+		educatorProfile:"CreateEducatorProfileInput",
+		studentProfile:"CreateStudentProfileInput"
 	},
 	UpdateYearGroupInput:{
 		year:"ValidYear"

@@ -2,7 +2,7 @@ import { BaseModal } from "@/components/modals/BaseModal";
 import { UpdateUserForm } from "../forms/UpdateUserForm";
 
 interface UpdateUserModalProps {
-  publicId: string | null;
+  publicId: string;
   isOpen: boolean;
   onClose: () => void;
 }

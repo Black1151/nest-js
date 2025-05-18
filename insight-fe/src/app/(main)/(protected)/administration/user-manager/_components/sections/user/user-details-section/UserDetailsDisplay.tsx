@@ -1,5 +1,10 @@
+import { User } from "@/__generated__/schema-types";
 import { ContentCard } from "@/components/layout/Card";
-import { useQuery, User } from "@/gqty";
+import { LoadingSpinnerCard } from "@/components/loading/LoadingSpinnerCard";
+import { $ } from "@/zeus";
+import { typedGql } from "@/zeus/typedDocumentNode";
+import { useQuery } from "@apollo/client";
+
 import {
   VStack,
   Heading,
@@ -13,63 +18,62 @@ import {
   TabPanel,
 } from "@chakra-ui/react";
 
-export const prepareUser = (user: User) => {
-  // Basic user fields
-  user.firstName;
-  user.lastName;
-  user.email;
-  user.phoneNumber;
-  user.dateOfBirth;
-  user.addressLine1;
-  user.addressLine2;
-  user.city;
-  user.county;
-  user.country;
-  user.postalCode;
-  user.id;
-  user.publicId;
-  user.createdAt;
-  user.updatedAt;
-  user.userType;
-
-  /* profile fragments */
-  if (user.studentProfile) {
-    user.studentProfile.studentId;
-    user.studentProfile.schoolYear;
-  }
-  if (user.educatorProfile) {
-    user.educatorProfile.staffId;
-  }
-
-  // // Student profile (if any)
-  // // Access any fields you might need
-  // user.studentProfile?.id;
-  // user.studentProfile?.studentId;
-  // user.studentProfile?.schoolYear;
-
-  // // Educator profile (if any)
-  // user.educatorProfile?.id;
-  // user.educatorProfile?.staffId;
-};
+export const USER_DETAILS_GET_USER_BY_PUBLIC_ID = typedGql("query")({
+  getUserByPublicId: [
+    { data: $(`data`, "PublicIdRequestDto!") },
+    {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      phoneNumber: true,
+      addressLine1: true,
+      addressLine2: true,
+      city: true,
+      county: true,
+      country: true,
+      postalCode: true,
+      createdAt: true,
+      updatedAt: true,
+      userType: true,
+      publicId: true,
+      dateOfBirth: true,
+      studentProfile: {
+        studentId: true,
+        schoolYear: true,
+      },
+      educatorProfile: {
+        staffId: true,
+      },
+    },
+  ],
+});
 
 interface Props {
   publicId: string;
 }
 
 export const UserDetailsDisplay = ({ publicId }: Props) => {
-  const query = useQuery({
-    prepare({ query: { getUserByPublicId } }) {
-      if (publicId) prepareUser(getUserByPublicId({ data: { publicId } }));
-    },
-  });
+  const { data, loading, error } = useQuery(
+    USER_DETAILS_GET_USER_BY_PUBLIC_ID,
+    {
+      variables: { data: { publicId } },
+    }
+  );
 
-  const user = publicId
-    ? query.getUserByPublicId({ data: { publicId } })
-    : null;
+  if (loading) return <LoadingSpinnerCard text="Loading..." />;
+  if (error) return <ContentCard>Error: {error.message}</ContentCard>;
+
+  const user = data?.getUserByPublicId;
+
   if (!user) return null;
 
-  const created = new Date(user.createdAt).toLocaleString();
-  const updated = new Date(user.updatedAt).toLocaleString();
+  const created = new Date(
+    String(data?.getUserByPublicId?.createdAt)
+  ).toLocaleString();
+  const updated = new Date(
+    String(data?.getUserByPublicId?.updatedAt)
+  ).toLocaleString();
 
   /* panels --------------------------------------------------------------- */
   const accountPanel = (
@@ -106,10 +110,10 @@ export const UserDetailsDisplay = ({ publicId }: Props) => {
       </Text>
       <Divider />
       <Text>
-        <strong>ID:</strong> {user.id}
+        <strong>ID:</strong> {String(user.id)}
       </Text>
       <Text>
-        <strong>Public ID:</strong> {user.publicId}
+        <strong>Public ID:</strong> {String(user.publicId)}
       </Text>
       <Text>
         <strong>Created:</strong> {created}

@@ -25,6 +25,7 @@ import {
   UpdateUserRolesFromArrayRequestDto,
 } from './dto/req/req.dto';
 import { CreateUserWithProfileInput } from './input/create-user-with-profile.input';
+import { UpdateUserWithProfileInput } from './input/update-user-with-profile-input';
 
 @ObjectType()
 export class RemoveUserResponse {
@@ -71,6 +72,12 @@ export class UserResolver {
   @Mutation(() => User)
   @RbacPermissionKey('user.createUser')
   @ImmutableLogging()
+  @UiErrorMessageOverride([
+    {
+      codeName: 'unique_violation',
+      message: 'A user with this email address already exists.',
+    },
+  ])
   async createUserWithProfile(
     @Args('data') data: CreateUserWithProfileInput,
   ): Promise<User> {
@@ -88,9 +95,9 @@ export class UserResolver {
   ])
   async updateUserByPublicId(
     @Args('publicId', { type: () => String }) publicId: string,
-    @Args('data') data: UpdateUserRequestDto,
+    @Args('data') data: UpdateUserWithProfileInput,
   ): Promise<User> {
-    return this.userService.updateByPublicId(publicId, data);
+    return this.userService.updateUserWithProfile(publicId, data);
   }
 
   @Mutation(() => User)

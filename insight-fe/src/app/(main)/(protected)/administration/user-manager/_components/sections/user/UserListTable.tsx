@@ -12,7 +12,7 @@ import { CreateUserModal } from "../../modals/CreateUserModal";
 import { RequirePermission } from "@/rbac/RequirePermission";
 import { typedGql } from "@/zeus/typedDocumentNode";
 
-export const LoadUsers = typedGql("query")({
+export const USER_LIST_TABLE_LOAD_USERS = typedGql("query")({
   getAllUsers: [
     { data: { limit: 10, offset: 0 } },
     {
@@ -33,7 +33,7 @@ interface UserListTableProps {
 function UserListTable({ setSelectedUserPublicId }: UserListTableProps) {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
   const [userType, setUserType] = useState<"student" | "educator">("student");
-  const { data, loading, error } = useQuery(LoadUsers);
+  const { data, loading, error } = useQuery(USER_LIST_TABLE_LOAD_USERS);
 
   if (loading) {
     return <LoadingSpinnerCard text="Loading Users..." />;

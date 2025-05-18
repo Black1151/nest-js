@@ -549,7 +549,7 @@ export type MutationUpdateSubjectArgs = {
 
 
 export type MutationUpdateUserByPublicIdArgs = {
-  data: UpdateUserRequestDto;
+  data: UpdateUserWithProfileInput;
   publicId: Scalars['String']['input'];
 };
 
@@ -1028,25 +1028,27 @@ export type UpdateSubjectInput = {
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
-export type UpdateUserRequestDto = {
+export type UpdateUserRolesFromArrayRequestDto = {
+  publicId: Scalars['String']['input'];
+  roleIds: Array<Scalars['Int']['input']>;
+};
+
+export type UpdateUserWithProfileInput = {
   addressLine1?: InputMaybe<Scalars['String']['input']>;
   addressLine2?: InputMaybe<Scalars['String']['input']>;
   city?: InputMaybe<Scalars['String']['input']>;
   country?: InputMaybe<Scalars['String']['input']>;
   county?: InputMaybe<Scalars['String']['input']>;
   dateOfBirth?: InputMaybe<Scalars['DateTime']['input']>;
+  educatorProfile?: InputMaybe<CreateEducatorProfileInput>;
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
   postalCode?: InputMaybe<Scalars['String']['input']>;
   publicId: Scalars['String']['input'];
+  studentProfile?: InputMaybe<CreateStudentProfileInput>;
   userType: Scalars['String']['input'];
-};
-
-export type UpdateUserRolesFromArrayRequestDto = {
-  publicId: Scalars['String']['input'];
-  roleIds: Array<Scalars['Int']['input']>;
 };
 
 export type UpdateYearGroupInput = {

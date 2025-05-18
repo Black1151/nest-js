@@ -7,7 +7,7 @@ import { useMutation } from "@apollo/client";
 import { CreateUserWithProfileInput } from "@/__generated__/schema-types";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
-import { LoadUsers } from "../sections/user/UserListTable";
+import { USER_LIST_TABLE_LOAD_USERS } from "../sections/user/UserListTable";
 
 const CREATE_USER_WITH_PROFILE = typedGql("mutation")({
   createUserWithProfile: [
@@ -32,7 +32,7 @@ export function CreateUserModal({
     {
       refetchQueries: [
         {
-          query: LoadUsers,
+          query: USER_LIST_TABLE_LOAD_USERS,
           variables: { data: { limit: 10, offset: 0 } },
         },
       ],

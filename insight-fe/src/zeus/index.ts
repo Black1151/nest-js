@@ -1151,7 +1151,7 @@ updatePermissionGroupsForRole?: [{	data: ValueTypes["SubmitIdArrayByIdRequestDto
 updateRole?: [{	data: ValueTypes["UpdateRoleInput"] | Variable<any, string>},ValueTypes["Role"]],
 updateStudentProfile?: [{	data: ValueTypes["UpdateStudentProfileInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
 updateSubject?: [{	data: ValueTypes["UpdateSubjectInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
-updateUserByPublicId?: [{	data: ValueTypes["UpdateUserRequestDto"] | Variable<any, string>,	publicId: string | Variable<any, string>},ValueTypes["User"]],
+updateUserByPublicId?: [{	data: ValueTypes["UpdateUserWithProfileInput"] | Variable<any, string>,	publicId: string | Variable<any, string>},ValueTypes["User"]],
 updateUserRolesFromArray?: [{	data: ValueTypes["UpdateUserRolesFromArrayRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 updateYearGroup?: [{	data: ValueTypes["UpdateYearGroupInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
 		__typename?: boolean | `@${string}`
@@ -1351,24 +1351,26 @@ getYearGroupBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
 };
-	["UpdateUserRequestDto"]: {
+	["UpdateUserRolesFromArrayRequestDto"]: {
+	publicId: string | Variable<any, string>,
+	roleIds: Array<number> | Variable<any, string>
+};
+	["UpdateUserWithProfileInput"]: {
 	addressLine1?: string | undefined | null | Variable<any, string>,
 	addressLine2?: string | undefined | null | Variable<any, string>,
 	city?: string | undefined | null | Variable<any, string>,
 	country?: string | undefined | null | Variable<any, string>,
 	county?: string | undefined | null | Variable<any, string>,
 	dateOfBirth?: ValueTypes["DateTime"] | undefined | null | Variable<any, string>,
+	educatorProfile?: ValueTypes["CreateEducatorProfileInput"] | undefined | null | Variable<any, string>,
 	email: string | Variable<any, string>,
 	firstName: string | Variable<any, string>,
 	lastName: string | Variable<any, string>,
 	phoneNumber?: string | undefined | null | Variable<any, string>,
 	postalCode?: string | undefined | null | Variable<any, string>,
 	publicId: string | Variable<any, string>,
+	studentProfile?: ValueTypes["CreateStudentProfileInput"] | undefined | null | Variable<any, string>,
 	userType: string | Variable<any, string>
-};
-	["UpdateUserRolesFromArrayRequestDto"]: {
-	publicId: string | Variable<any, string>,
-	roleIds: Array<number> | Variable<any, string>
 };
 	["UpdateYearGroupInput"]: {
 	id: ValueTypes["ID"] | Variable<any, string>,
@@ -1670,7 +1672,7 @@ updatePermissionGroupsForRole?: [{	data: ResolverInputTypes["SubmitIdArrayByIdRe
 updateRole?: [{	data: ResolverInputTypes["UpdateRoleInput"]},ResolverInputTypes["Role"]],
 updateStudentProfile?: [{	data: ResolverInputTypes["UpdateStudentProfileInput"]},ResolverInputTypes["StudentProfileDto"]],
 updateSubject?: [{	data: ResolverInputTypes["UpdateSubjectInput"]},ResolverInputTypes["SubjectEntity"]],
-updateUserByPublicId?: [{	data: ResolverInputTypes["UpdateUserRequestDto"],	publicId: string},ResolverInputTypes["User"]],
+updateUserByPublicId?: [{	data: ResolverInputTypes["UpdateUserWithProfileInput"],	publicId: string},ResolverInputTypes["User"]],
 updateUserRolesFromArray?: [{	data: ResolverInputTypes["UpdateUserRolesFromArrayRequestDto"]},ResolverInputTypes["User"]],
 updateYearGroup?: [{	data: ResolverInputTypes["UpdateYearGroupInput"]},ResolverInputTypes["YearGroupEntity"]],
 		__typename?: boolean | `@${string}`
@@ -1870,24 +1872,26 @@ getYearGroupBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTyp
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
 };
-	["UpdateUserRequestDto"]: {
+	["UpdateUserRolesFromArrayRequestDto"]: {
+	publicId: string,
+	roleIds: Array<number>
+};
+	["UpdateUserWithProfileInput"]: {
 	addressLine1?: string | undefined | null,
 	addressLine2?: string | undefined | null,
 	city?: string | undefined | null,
 	country?: string | undefined | null,
 	county?: string | undefined | null,
 	dateOfBirth?: ResolverInputTypes["DateTime"] | undefined | null,
+	educatorProfile?: ResolverInputTypes["CreateEducatorProfileInput"] | undefined | null,
 	email: string,
 	firstName: string,
 	lastName: string,
 	phoneNumber?: string | undefined | null,
 	postalCode?: string | undefined | null,
 	publicId: string,
+	studentProfile?: ResolverInputTypes["CreateStudentProfileInput"] | undefined | null,
 	userType: string
-};
-	["UpdateUserRolesFromArrayRequestDto"]: {
-	publicId: string,
-	roleIds: Array<number>
 };
 	["UpdateYearGroupInput"]: {
 	id: ResolverInputTypes["ID"],
@@ -2448,24 +2452,26 @@ export type ModelTypes = {
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
 };
-	["UpdateUserRequestDto"]: {
+	["UpdateUserRolesFromArrayRequestDto"]: {
+	publicId: string,
+	roleIds: Array<number>
+};
+	["UpdateUserWithProfileInput"]: {
 	addressLine1?: string | undefined | null,
 	addressLine2?: string | undefined | null,
 	city?: string | undefined | null,
 	country?: string | undefined | null,
 	county?: string | undefined | null,
 	dateOfBirth?: ModelTypes["DateTime"] | undefined | null,
+	educatorProfile?: ModelTypes["CreateEducatorProfileInput"] | undefined | null,
 	email: string,
 	firstName: string,
 	lastName: string,
 	phoneNumber?: string | undefined | null,
 	postalCode?: string | undefined | null,
 	publicId: string,
+	studentProfile?: ModelTypes["CreateStudentProfileInput"] | undefined | null,
 	userType: string
-};
-	["UpdateUserRolesFromArrayRequestDto"]: {
-	publicId: string,
-	roleIds: Array<number>
 };
 	["UpdateYearGroupInput"]: {
 	id: ModelTypes["ID"],
@@ -3039,24 +3045,26 @@ export type GraphQLTypes = {
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
 };
-	["UpdateUserRequestDto"]: {
+	["UpdateUserRolesFromArrayRequestDto"]: {
+		publicId: string,
+	roleIds: Array<number>
+};
+	["UpdateUserWithProfileInput"]: {
 		addressLine1?: string | undefined | null,
 	addressLine2?: string | undefined | null,
 	city?: string | undefined | null,
 	country?: string | undefined | null,
 	county?: string | undefined | null,
 	dateOfBirth?: GraphQLTypes["DateTime"] | undefined | null,
+	educatorProfile?: GraphQLTypes["CreateEducatorProfileInput"] | undefined | null,
 	email: string,
 	firstName: string,
 	lastName: string,
 	phoneNumber?: string | undefined | null,
 	postalCode?: string | undefined | null,
 	publicId: string,
+	studentProfile?: GraphQLTypes["CreateStudentProfileInput"] | undefined | null,
 	userType: string
-};
-	["UpdateUserRolesFromArrayRequestDto"]: {
-		publicId: string,
-	roleIds: Array<number>
 };
 	["UpdateYearGroupInput"]: {
 		id: GraphQLTypes["ID"],
@@ -3160,8 +3168,8 @@ type ZEUS_VARIABLES = {
 	["UpdateRoleInput"]: ValueTypes["UpdateRoleInput"];
 	["UpdateStudentProfileInput"]: ValueTypes["UpdateStudentProfileInput"];
 	["UpdateSubjectInput"]: ValueTypes["UpdateSubjectInput"];
-	["UpdateUserRequestDto"]: ValueTypes["UpdateUserRequestDto"];
 	["UpdateUserRolesFromArrayRequestDto"]: ValueTypes["UpdateUserRolesFromArrayRequestDto"];
+	["UpdateUserWithProfileInput"]: ValueTypes["UpdateUserWithProfileInput"];
 	["UpdateYearGroupInput"]: ValueTypes["UpdateYearGroupInput"];
 	["UserPermissionsInput"]: ValueTypes["UserPermissionsInput"];
 	["ValidKeyStage"]: ValueTypes["ValidKeyStage"];

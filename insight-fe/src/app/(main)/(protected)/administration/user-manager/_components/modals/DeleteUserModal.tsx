@@ -1,6 +1,21 @@
-import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
-import { PublicIdRequestDto, useMutation, useQuery } from "@/gqty";
+"use client";
 
+import React from "react";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
+import { useMutation } from "@apollo/client";
+import { typedGql } from "@/zeus/typedDocumentNode";
+import { $ } from "@/zeus";
+import { USER_LIST_TABLE_LOAD_USERS } from "../sections/user/UserListTable";
+
+/* ----------  GraphQL document  ---------- */
+const REMOVE_USER_BY_PUBLIC_ID = typedGql("mutation")({
+  removeUserByPublicId: [
+    { data: $("data", "PublicIdRequestDto!") },
+    { publicId: true }, // return field(s) you need
+  ],
+} as const);
+
+/* ----------  Component  ---------- */
 interface DeleteUserModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -8,34 +23,42 @@ interface DeleteUserModalProps {
   setSelectedUserPublicId: (publicId: null) => void;
 }
 
-export const DeleteUserModal = ({
+export function DeleteUserModal({
   isOpen,
   onClose,
   publicId,
   setSelectedUserPublicId,
-}: DeleteUserModalProps) => {
-  const query = useQuery();
-
-  const [removeUserByPublicId, meta] = useMutation(
-    (mutation, { publicId }: PublicIdRequestDto) => {
-      const result = mutation.removeUserByPublicId({ data: { publicId } });
-      result.publicId;
-      return result;
-    },
+}: DeleteUserModalProps) {
+  const [removeUserByPublicId, { loading, error }] = useMutation(
+    REMOVE_USER_BY_PUBLIC_ID,
     {
-      onError() {
-        query.$refetch?.(true);
+      variables: { data: { publicId } },
+      // keep the user list current
+      refetchQueries: [
+        {
+          query: USER_LIST_TABLE_LOAD_USERS,
+          variables: { data: { limit: 10, offset: 0 } },
+        },
+      ],
+      awaitRefetchQueries: true,
+      // tidy up when finished
+      onCompleted: () => {
+        setSelectedUserPublicId(null);
+        onClose();
+      },
+      // quick UX win – optimistic removal from the cache
+      optimisticResponse: {
+        removeUserByPublicId: { publicId },
       },
     }
   );
 
-  const deleteUser = async (publicId: string) => {
-    setSelectedUserPublicId(null);
-    const users = query.getAllUsers({ data: { limit: 10, offset: 0 } });
-    // optimistic update
-    const idx = users.findIndex((u) => u?.publicId === publicId);
-    if (idx !== -1) users.splice(idx, 1);
-    await removeUserByPublicId({ args: { publicId } });
+  const handleConfirm = async () => {
+    try {
+      await removeUserByPublicId();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -44,10 +67,8 @@ export const DeleteUserModal = ({
       onClose={onClose}
       action="delete user"
       bodyText="Are you sure you want to delete this user?"
-      onConfirm={async () => {
-        await deleteUser(publicId);
-        onClose();
-      }}
+      onConfirm={handleConfirm}
+      isLoading={loading}
     />
   );
-};
+}

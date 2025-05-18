@@ -6,8 +6,8 @@
     "zeus": "zeus http://localhost:3000/graphql ./src --typedDocumentNode",
     "codegen": "graphql-codegen --config codegen.ts",
     "generate": "npm run zeus && npm run codegen",
-    "dev": "npm run generate && next dev",
-    "build": "npm run generate && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
