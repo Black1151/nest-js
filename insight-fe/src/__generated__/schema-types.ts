@@ -270,6 +270,7 @@ export type Mutation = {
   createStudentProfile: StudentProfileDto;
   /** Create one Subject */
   createSubject: SubjectEntity;
+  createTest: SubjectEntity;
   createUser: User;
   createUserWithProfile: User;
   /** Create one YearGroup */
@@ -384,6 +385,11 @@ export type MutationCreateStudentProfileArgs = {
 
 
 export type MutationCreateSubjectArgs = {
+  data: CreateSubjectInput;
+};
+
+
+export type MutationCreateTestArgs = {
   data: CreateSubjectInput;
 };
 
@@ -895,9 +901,7 @@ export type QueryGetYearGroupByArgs = {
 };
 
 export type RelationIdsInput = {
-  /** IDs to link */
-  ids: Array<Scalars['Int']['input']>;
-  /** Relation name, exactly as on the entity (e.g. "yearGroups") */
+  ids: Array<Scalars['ID']['input']>;
   relation: Scalars['String']['input'];
 };
 

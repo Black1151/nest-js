@@ -1,4 +1,4 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { InputType, Field, Int, ID } from '@nestjs/graphql';
 
 import {
   ArrayNotEmpty,
@@ -6,6 +6,7 @@ import {
   IsInt,
   IsString,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
 /* ------------------------------------------------------------------ */
@@ -95,18 +96,19 @@ export class FindOneByInput {
 /** One relation + its IDs */
 @InputType()
 export class RelationIdsInput {
-  @Field({
-    description: 'Relation name, exactly as on the entity (e.g. "yearGroups")',
-  })
+  @Field()
   @IsString()
   @MinLength(1)
   relation!: string;
 
-  @Field(() => [Int], { description: 'IDs to link' })
+  @Field(() => [ID])
   @ArrayNotEmpty()
   @ArrayUnique()
+  @ValidateIf((o, v) => typeof v === 'number')
   @IsInt({ each: true })
-  ids!: number[];
+  @ValidateIf((o, v) => typeof v === 'string')
+  @IsString({ each: true })
+  ids!: (number | string)[];
 }
 
 /**

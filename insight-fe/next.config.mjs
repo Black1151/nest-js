@@ -1,7 +1,10 @@
 // next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  experimental: {
+    typedRoutes: false,
+  },
+  reactStrictMode: true,
   webpackDevMiddleware: (config) => {
     config.watchOptions = {
       poll: 1000,

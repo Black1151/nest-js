@@ -69,26 +69,27 @@ export class BaseService<
     this.expandGenericRelationArray(raw);
 
     const meta = this.repo.metadata;
-    const dto = { ...raw }; // shallow copy
+    const dto = { ...raw };
     const result: any = { ...dto };
 
     for (const rel of meta.relations) {
-      const prop = rel.propertyName; // e.g. “yearGroups”
-      const singleKey = `${prop}Id`;
-      const manyKey = `${prop}Ids`;
+      const prop = rel.propertyName;
+      const single = `${prop}Id`;
+      const many = `${prop}Ids`;
 
       let ids: number | number[] | undefined =
-        dto[manyKey] ?? dto[singleKey] ?? dto[prop];
+        dto[many] ?? dto[single] ?? dto[prop];
 
       if (ids === undefined) continue; // caller didn’t send this rel
 
       const idsArr = Array.isArray(ids) ? ids.map(Number) : [Number(ids)];
 
-      // strip raw fields so they don’t pollute the entity
-      delete result[manyKey];
-      delete result[singleKey];
+      // 1.  Clean the DTO so these fields don’t pollute the entity
+      delete result[many];
+      delete result[single];
       delete result[prop];
 
+      // 2.  Validate the IDs exist
       const relRepo = this.repo.manager.getRepository(rel.type as any);
       const found = await relRepo.find({ where: { id: In(idsArr) } as any });
 
@@ -99,7 +100,9 @@ export class BaseService<
         );
       }
 
-      result[prop] = Array.isArray(ids) ? found : found[0];
+      result[prop] = Array.isArray(ids)
+        ? idsArr.map((id) => ({ id }) as any) // many-to-many
+        : ({ id: idsArr[0] } as any); // many-to-one / one-to-one
     }
 
     return result as DeepPartial<T>;

@@ -98,6 +98,9 @@ export const AllTypesProps: Record<string,any> = {
 		createSubject:{
 			data:"CreateSubjectInput"
 		},
+		createTest:{
+			data:"CreateSubjectInput"
+		},
 		createUser:{
 			data:"CreateUserRequestDto"
 		},
@@ -476,6 +479,7 @@ export const ReturnTypes: Record<string,any> = {
 		createRole:"Role",
 		createStudentProfile:"StudentProfileDto",
 		createSubject:"SubjectEntity",
+		createTest:"SubjectEntity",
 		createUser:"User",
 		createUserWithProfile:"User",
 		createYearGroup:"YearGroupEntity",

@@ -1119,6 +1119,7 @@ createPermissionGroup?: [{	data: ValueTypes["CreatePermissionGroupInput"] | Vari
 createRole?: [{	data: ValueTypes["CreateRoleInput"] | Variable<any, string>},ValueTypes["Role"]],
 createStudentProfile?: [{	data: ValueTypes["CreateStudentProfileInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
 createSubject?: [{	data: ValueTypes["CreateSubjectInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+createTest?: [{	data: ValueTypes["CreateSubjectInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
 createUser?: [{	data: ValueTypes["CreateUserRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 createUserWithProfile?: [{	data: ValueTypes["CreateUserWithProfileInput"] | Variable<any, string>},ValueTypes["User"]],
 createYearGroup?: [{	data: ValueTypes["CreateYearGroupInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
@@ -1236,9 +1237,7 @@ getYearGroupBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},
 		__typename?: boolean | `@${string}`
 }>;
 	["RelationIdsInput"]: {
-	/** IDs to link */
-	ids: Array<number> | Variable<any, string>,
-	/** Relation name, exactly as on the entity (e.g. "yearGroups") */
+	ids: Array<ValueTypes["ID"]> | Variable<any, string>,
 	relation: string | Variable<any, string>
 };
 	["Role"]: AliasType<{
@@ -1640,6 +1639,7 @@ createPermissionGroup?: [{	data: ResolverInputTypes["CreatePermissionGroupInput"
 createRole?: [{	data: ResolverInputTypes["CreateRoleInput"]},ResolverInputTypes["Role"]],
 createStudentProfile?: [{	data: ResolverInputTypes["CreateStudentProfileInput"]},ResolverInputTypes["StudentProfileDto"]],
 createSubject?: [{	data: ResolverInputTypes["CreateSubjectInput"]},ResolverInputTypes["SubjectEntity"]],
+createTest?: [{	data: ResolverInputTypes["CreateSubjectInput"]},ResolverInputTypes["SubjectEntity"]],
 createUser?: [{	data: ResolverInputTypes["CreateUserRequestDto"]},ResolverInputTypes["User"]],
 createUserWithProfile?: [{	data: ResolverInputTypes["CreateUserWithProfileInput"]},ResolverInputTypes["User"]],
 createYearGroup?: [{	data: ResolverInputTypes["CreateYearGroupInput"]},ResolverInputTypes["YearGroupEntity"]],
@@ -1757,9 +1757,7 @@ getYearGroupBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTyp
 		__typename?: boolean | `@${string}`
 }>;
 	["RelationIdsInput"]: {
-	/** IDs to link */
-	ids: Array<number>,
-	/** Relation name, exactly as on the entity (e.g. "yearGroups") */
+	ids: Array<ResolverInputTypes["ID"]>,
 	relation: string
 };
 	["Role"]: AliasType<{
@@ -2169,6 +2167,7 @@ export type ModelTypes = {
 	createStudentProfile: ModelTypes["StudentProfileDto"],
 	/** Create one Subject */
 	createSubject: ModelTypes["SubjectEntity"],
+	createTest: ModelTypes["SubjectEntity"],
 	createUser: ModelTypes["User"],
 	createUserWithProfile: ModelTypes["User"],
 	/** Create one YearGroup */
@@ -2342,9 +2341,7 @@ export type ModelTypes = {
 	getYearGroupBy: ModelTypes["YearGroupEntity"]
 };
 	["RelationIdsInput"]: {
-	/** IDs to link */
-	ids: Array<number>,
-	/** Relation name, exactly as on the entity (e.g. "yearGroups") */
+	ids: Array<ModelTypes["ID"]>,
 	relation: string
 };
 	["Role"]: {
@@ -2753,6 +2750,7 @@ export type GraphQLTypes = {
 	createStudentProfile: GraphQLTypes["StudentProfileDto"],
 	/** Create one Subject */
 	createSubject: GraphQLTypes["SubjectEntity"],
+	createTest: GraphQLTypes["SubjectEntity"],
 	createUser: GraphQLTypes["User"],
 	createUserWithProfile: GraphQLTypes["User"],
 	/** Create one YearGroup */
@@ -2930,9 +2928,7 @@ export type GraphQLTypes = {
 	getYearGroupBy: GraphQLTypes["YearGroupEntity"]
 };
 	["RelationIdsInput"]: {
-		/** IDs to link */
-	ids: Array<number>,
-	/** Relation name, exactly as on the entity (e.g. "yearGroups") */
+		ids: Array<GraphQLTypes["ID"]>,
 	relation: string
 };
 	["Role"]: {

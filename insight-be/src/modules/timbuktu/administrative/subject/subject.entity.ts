@@ -1,5 +1,7 @@
+// ────────────────────────────────────────────────────────────────────────────
 // src/modules/education/subject.entity.ts
-import { Entity, Column, ManyToMany, OneToMany } from 'typeorm';
+// ────────────────────────────────────────────────────────────────────────────
+import { Entity, Column, ManyToMany, OneToMany, JoinTable } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
 import { AbstractBaseEntity } from 'src/common/base.entity';
@@ -18,8 +20,20 @@ export class SubjectEntity extends AbstractBaseEntity {
   @OneToMany(() => LessonEntity, (lesson) => lesson.subject)
   lessons?: LessonEntity[];
 
-  /** NEW: which year groups offer this subject */
   @Field(() => [YearGroupEntity], { nullable: true })
-  @ManyToMany(() => YearGroupEntity, (yg) => yg.subjects, { nullable: true })
+  @ManyToMany(() => YearGroupEntity, (yg) => yg.subjects, {
+    cascade: true,
+  })
+  @JoinTable({
+    name: 'year_group_subjects',
+    joinColumn: {
+      name: 'subject_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'year_group_id',
+      referencedColumnName: 'id',
+    },
+  })
   yearGroups?: YearGroupEntity[];
 }
