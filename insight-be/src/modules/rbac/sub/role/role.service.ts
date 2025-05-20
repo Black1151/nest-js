@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 
 import { CreateRoleInput } from './inputs/create-role.input';
 import { UpdateRoleInput } from './inputs/update-role.input';
@@ -23,8 +23,10 @@ export class RoleService extends BaseService<
 
     @InjectRepository(PermissionGroup)
     private readonly permissionGroupRepository: Repository<PermissionGroup>,
+
+    @InjectDataSource() dataSource: DataSource,
   ) {
-    super(roleRepository);
+    super(roleRepository, dataSource);
   }
 
   /**

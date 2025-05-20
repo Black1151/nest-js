@@ -73,7 +73,6 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
         LessonEntity,
         AssignmentSubmissionEntity,
         AssignmentEntity,
-
         ClassLessonEntity,
       ],
       synchronize: true,

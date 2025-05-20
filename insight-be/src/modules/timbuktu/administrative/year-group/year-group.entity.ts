@@ -30,7 +30,7 @@ export class YearGroupEntity extends AbstractBaseEntity {
   /* ---------- relationships ---------- */
 
   @Field(() => KeyStageEntity, { nullable: true })
-  @ManyToOne(() => KeyStageEntity, (ks) => ks.yearGroups, { nullable: true })
+  @ManyToOne(() => KeyStageEntity, (ks) => ks.yearGroups, { nullable: false })
   keyStage?: KeyStageEntity;
 
   @OneToMany(() => ClassEntity, (cls) => cls.yearGroup)

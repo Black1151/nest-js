@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { BaseService } from 'src/common/base.service';
 import { UpdateStudentProfileInput } from './inputs/update-student-profile.input';
 import { CreateStudentProfileInput } from './inputs/create-student-profile.dto';
@@ -16,7 +16,8 @@ export class StudentProfileService extends BaseService<
   constructor(
     @InjectRepository(StudentProfileEntity)
     private readonly studentProfileRepository: Repository<StudentProfileEntity>,
+    @InjectDataSource() dataSource: DataSource,
   ) {
-    super(studentProfileRepository);
+    super(studentProfileRepository, dataSource);
   }
 }

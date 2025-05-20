@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { BaseService } from 'src/common/base.service';
 import { LessonEntity } from './lesson.entity';
 import { CreateLessonInput, UpdateLessonInput } from './lesson.inputs';
@@ -14,7 +14,8 @@ export class LessonService extends BaseService<
   constructor(
     @InjectRepository(LessonEntity)
     lessonRepository: Repository<LessonEntity>,
+    @InjectDataSource() dataSource: DataSource,
   ) {
-    super(lessonRepository);
+    super(lessonRepository, dataSource);
   }
 }

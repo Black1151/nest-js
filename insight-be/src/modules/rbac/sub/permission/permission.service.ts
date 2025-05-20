@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { CreatePermissionInput } from './inputs/create-permission.input';
 import { UpdatePermissionInput } from './inputs/update-permission.input';
@@ -16,7 +16,8 @@ export class PermissionService extends BaseService<
   constructor(
     @InjectRepository(Permission)
     permissionRepository: Repository<Permission>,
+    @InjectDataSource() dataSource: DataSource,
   ) {
-    super(permissionRepository);
+    super(permissionRepository, dataSource);
   }
 }

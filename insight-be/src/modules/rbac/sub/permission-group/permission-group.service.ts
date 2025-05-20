@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { BaseService } from 'src/common/base.service';
 import { PermissionGroup } from './permission-group.entity';
 import { Permission } from '../permission/permission.entity';
@@ -19,8 +19,9 @@ export class PermissionGroupService extends BaseService<
 
     @InjectRepository(Permission)
     private readonly permissionRepository: Repository<Permission>,
+    @InjectDataSource() dataSource: DataSource,
   ) {
-    super(permissionGroupRepository);
+    super(permissionGroupRepository, dataSource);
   }
 
   // /**

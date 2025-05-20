@@ -6,6 +6,8 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  Unique,
+  Index,
 } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
@@ -21,19 +23,25 @@ import { StudentProfileDto } from '../../user-profiles/student-profile/dto/stude
 import { ClassLessonEntity } from '../pivot-tables/class-lesson/class-lesson.entity';
 
 @ObjectType()
+@Index('idx_class_year_subject', ['yearGroup', 'subject'])
+@Unique('uq_class_year_subject_name', ['yearGroup', 'subject', 'name'])
 @Entity('classes')
 export class ClassEntity extends AbstractBaseEntity {
+  /* ---------- columns ---------- */
+
   @Field()
   @Column()
   name: string; // e.g. "7A Maths"
 
-  @Field(() => YearGroupEntity, { nullable: true })
-  @ManyToOne(() => YearGroupEntity, (yg) => yg.classes)
-  yearGroup?: YearGroupEntity;
+  /* ---------- relationships ---------- */
 
-  @Field(() => SubjectEntity, { nullable: true })
-  @ManyToOne(() => SubjectEntity)
-  subject?: SubjectEntity;
+  @Field(() => YearGroupEntity)
+  @ManyToOne(() => YearGroupEntity, (yg) => yg.classes, { nullable: false })
+  yearGroup: YearGroupEntity;
+
+  @Field(() => SubjectEntity)
+  @ManyToOne(() => SubjectEntity, { nullable: false })
+  subject: SubjectEntity;
 
   @Field(() => [EducatorProfileDto], { nullable: true })
   @ManyToMany(() => EducatorProfileEntity, { nullable: true })
@@ -56,9 +64,7 @@ export class ClassEntity extends AbstractBaseEntity {
   @OneToMany(() => AssignmentEntity, (assignment) => assignment.class)
   assignments?: AssignmentEntity[];
 
-  /** NEW: ordered lessons (pivot) */
-  @OneToMany(() => ClassLessonEntity, (cl) => cl.class, {
-    cascade: true,
-  })
+  /** Ordered lessons (pivot) */
+  @OneToMany(() => ClassLessonEntity, (cl) => cl.class, { cascade: true })
   classLessons?: ClassLessonEntity[];
 }

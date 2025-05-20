@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { BaseService } from 'src/common/base.service';
 import {
   CreateAssignmentInput,
@@ -17,7 +17,8 @@ export class AssignmentService extends BaseService<
   constructor(
     @InjectRepository(AssignmentEntity)
     assignmentRepository: Repository<AssignmentEntity>,
+    @InjectDataSource() dataSource: DataSource,
   ) {
-    super(assignmentRepository);
+    super(assignmentRepository, dataSource);
   }
 }

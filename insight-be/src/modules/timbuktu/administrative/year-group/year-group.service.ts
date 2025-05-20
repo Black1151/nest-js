@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import {
   CreateYearGroupInput,
   UpdateYearGroupInput,
@@ -17,7 +17,8 @@ export class YearGroupService extends BaseService<
   constructor(
     @InjectRepository(YearGroupEntity)
     yearGroupRepository: Repository<YearGroupEntity>,
+    @InjectDataSource() dataSource: DataSource,
   ) {
-    super(yearGroupRepository);
+    super(yearGroupRepository, dataSource);
   }
 }

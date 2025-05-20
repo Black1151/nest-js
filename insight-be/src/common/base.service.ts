@@ -1,27 +1,25 @@
 /* -------------------------------------------------------------------------- */
-/* BaseService ‒ generic CRUD + relation-hydration                            */
+/* BaseService – generic CRUD with simple relation handling                   */
 /* -------------------------------------------------------------------------- */
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
+  DataSource,
   DeepPartial,
+  EntityManager,
+  EntityTarget,
   FindManyOptions,
   FindOptionsWhere,
   In,
   Repository,
 } from 'typeorm';
-import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { RelationIdsInput } from './base.inputs';
 
-/* -------------------------------------------------------------------------- */
-/* Helper types                                                               */
-/* -------------------------------------------------------------------------- */
-type AugmentedDto<T> = DeepPartial<T> & {
-  /** Generic typed-array field we added to create / update DTOs */
-  relationIds?: RelationIdsInput[];
-
-  /** Dynamic “fooIds” / “fooId” props created at runtime */
-  [key: string]: any;
-};
+/* --------------------------------------------------------- helper types --- */
+// interface RelationIdsInput {
+//   relation: string;
+//   ids: number[];
+// }
 
 interface FindAllOpts {
   limit?: number;
@@ -31,88 +29,59 @@ interface FindAllOpts {
   filters?: { column: string; value: any }[];
 }
 
-/* -------------------------------------------------------------------------- */
-/* Service                                                                    */
-/* -------------------------------------------------------------------------- */
+/* ------------------------------------------------------------- service ---- */
 @Injectable()
 export class BaseService<
   T extends { id: number },
-  CreateDto extends DeepPartial<T>,
-  UpdateDto extends DeepPartial<T> & { id: number },
+  CreateDto extends DeepPartial<T> & { relationIds?: RelationIdsInput[] },
+  UpdateDto extends DeepPartial<T> & {
+    id: number;
+    relationIds?: RelationIdsInput[];
+  },
 > {
-  constructor(protected readonly repo: Repository<T>) {}
+  constructor(
+    protected readonly repo: Repository<T>,
+    protected readonly dataSource: DataSource,
+  ) {}
 
-  /* ───────────────────────── private helpers ──────────────────────────── */
+  /* ----------------------- helpers ----------------------- */
 
-  /** 0️⃣  Expand the generic relationIds[] array into fooIds properties */
-  private expandGenericRelationArray(raw: AugmentedDto<T>): void {
-    if (!Array.isArray(raw.relationIds)) return;
+  /** validate IDs → load entities → attach to the root  */
+  private async attachRelations(
+    entity: T,
+    relationIds: RelationIdsInput[],
+    manager: EntityManager,
+  ): Promise<void> {
+    if (!relationIds?.length) return;
 
-    const obj = raw as Record<string, any>; // ← cast once
+    for (const { relation, ids } of relationIds) {
+      if (!ids?.length) continue;
 
-    for (const { relation, ids } of raw.relationIds) {
-      obj[`${relation}Ids`] = ids; // ← write via the casted ref
-    }
-    delete obj.relationIds;
-  }
+      const relMeta = this.repo.metadata.relations.find(
+        (r) => r.propertyName === relation,
+      );
+      if (!relMeta) {
+        throw new BadRequestException(`Unknown relation “${relation}”.`);
+      }
 
-  /**
-   * 1️⃣  Convert any “fooId(s)” fields to actual entities, validate they exist,
-   *     and return a DeepPartial<T> ready for repo.create / repo.merge.
-   */
-  private async hydrateRelations<K extends AugmentedDto<T>>(
-    raw: K,
-  ): Promise<DeepPartial<T>> {
-    if (!raw) return raw;
+      const relRepo = manager.getRepository(relMeta.type as any);
+      const related = await relRepo.find({ where: { id: In(ids) } as any });
 
-    /* STEP 0 – fan-out generic array once */
-    this.expandGenericRelationArray(raw);
-
-    const meta = this.repo.metadata;
-    const dto = { ...raw };
-    const result: any = { ...dto };
-
-    for (const rel of meta.relations) {
-      const prop = rel.propertyName;
-      const single = `${prop}Id`;
-      const many = `${prop}Ids`;
-
-      let ids: number | number[] | undefined =
-        dto[many] ?? dto[single] ?? dto[prop];
-
-      if (ids === undefined) continue; // caller didn’t send this rel
-
-      const idsArr = Array.isArray(ids) ? ids.map(Number) : [Number(ids)];
-
-      // 1.  Clean the DTO so these fields don’t pollute the entity
-      delete result[many];
-      delete result[single];
-      delete result[prop];
-
-      // 2.  Validate the IDs exist
-      const relRepo = this.repo.manager.getRepository(rel.type as any);
-      const found = await relRepo.find({ where: { id: In(idsArr) } as any });
-
-      if (found.length !== idsArr.length) {
-        const missing = idsArr.filter((id) => !found.some((f) => f.id === id));
+      if (related.length !== ids.length) {
+        const missing = ids.filter((id) => !related.some((r) => r.id === id));
         throw new BadRequestException(
-          `Invalid ${prop} ID${missing.length > 1 ? 's' : ''}: ${missing.join(', ')}`,
+          `Invalid ${relation} id${missing.length > 1 ? 's' : ''}: ${missing.join(', ')}`,
         );
       }
 
-      result[prop] = Array.isArray(ids)
-        ? idsArr.map((id) => ({ id }) as any) // many-to-many
-        : ({ id: idsArr[0] } as any); // many-to-one / one-to-one
+      (entity as any)[relation] = relMeta.isManyToMany ? related : related[0];
     }
-
-    return result as DeepPartial<T>;
   }
 
-  /* ───────────────────────── public CRUD API ──────────────────────────── */
+  /* ----------------------- public CRUD API ----------------------- */
 
   async findAll(opts: FindAllOpts): Promise<T[]> {
-    const { limit, offset, all, relations, filters } = opts;
-
+    const { limit, offset, all, relations, filters } = opts ?? {};
     const options: FindManyOptions<T> = { relations };
 
     if (!all) {
@@ -142,22 +111,47 @@ export class BaseService<
     return this.repo.findOneOrFail({ where, relations });
   }
 
-  /** CREATE – relation-aware & validated */
+  /* CREATE --------------------------------------------------------------- */
   async create(dto: CreateDto): Promise<T> {
-    const data = await this.hydrateRelations(dto as AugmentedDto<T>);
-    const entity = this.repo.create(data);
-    return this.repo.save(entity); // only reached if validation passes
+    const { relationIds = [], ...scalar } = dto as any;
+
+    return this.dataSource.transaction(async (manager) => {
+      let entity = manager.create(this.repo.target, scalar) as T;
+      entity = await manager.save(entity);
+
+      await this.attachRelations(entity, relationIds, manager);
+      await manager.save(entity);
+
+      return manager.getRepository(this.repo.target).findOneOrFail({
+        where: { id: entity.id } as any,
+        relations: relationIds.map((r) => r.relation),
+      });
+    });
   }
 
-  /** UPDATE – relation-aware & validated */
   async update(dto: UpdateDto): Promise<T> {
-    const { id, ...rest } = dto as any;
-    let entity = await this.repo.findOneOrFail({ where: { id } as any });
+    const { id, relationIds = [], ...scalar } = dto as any;
 
-    const data = await this.hydrateRelations(rest as AugmentedDto<T>);
-    entity = this.repo.merge(entity, data);
+    return this.dataSource.transaction(async (manager) => {
+      let entity = (await manager.findOneOrFail(
+        this.repo.target as EntityTarget<T>,
+        { where: { id } as any },
+      )) as T;
 
-    return this.repo.save(entity);
+      entity = manager.merge(
+        this.repo.target as EntityTarget<T>,
+        entity,
+        scalar,
+      ) as T;
+
+      await this.attachRelations(entity, relationIds, manager);
+      await manager.save(entity);
+
+      return manager.getRepository(this.repo.target).findOneOrFail({
+        where: { id } as any,
+        relations: relationIds.map((r) => r.relation),
+      });
+    });
   }
 
   async remove(id: number): Promise<number> {

@@ -34,7 +34,7 @@ const GET_ALL_YEAR_GROUPS = typedGql("query")({
 } as const);
 
 const CREATE_SUBJECT = typedGql("mutation")({
-  createTest: [{ data: $("data", "CreateSubjectInput!") }, { id: true }],
+  createSubject: [{ data: $("data", "CreateSubjectInput!") }, { id: true }],
 } as const);
 
 /* -------------------------------------------------------------------------- */
@@ -84,7 +84,7 @@ export default function CreateSubjectForm({
       variables: {
         data: {
           name: values.name.trim(),
-          relationIds: [{ relation: "yearGroup", ids: values.yearGroupIds }],
+          relationIds: [{ relation: "yearGroups", ids: values.yearGroupIds }],
         },
       },
     });

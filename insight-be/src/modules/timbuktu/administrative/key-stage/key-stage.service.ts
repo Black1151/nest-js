@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { BaseService } from 'src/common/base.service';
 import { KeyStageEntity } from './key-stage.entity';
@@ -15,7 +15,8 @@ export class KeyStageService extends BaseService<
   constructor(
     @InjectRepository(KeyStageEntity)
     keyStageRepository: Repository<KeyStageEntity>,
+    @InjectDataSource() dataSource: DataSource,
   ) {
-    super(keyStageRepository);
+    super(keyStageRepository, dataSource);
   }
 }

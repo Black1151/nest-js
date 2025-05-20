@@ -1,7 +1,12 @@
 import { Resolver, Args } from '@nestjs/graphql';
 import { ClassType } from 'type-graphql';
 import { DeepPartial, FindOptionsWhere } from 'typeorm';
-import { FindAllInput, FindOneByInput, IdInput } from './base.inputs';
+import {
+  FindAllInput,
+  FindOneByInput,
+  IdInput,
+  RelationIdsInput,
+} from './base.inputs';
 import { AbstractBaseEntity } from './base.entity';
 import { BaseService } from './base.service';
 import { QueryIf } from 'src/common/decorators/query-if.decorator';
@@ -27,8 +32,11 @@ interface BaseResolverOptions<T extends AbstractBaseEntity> {
 
 export function createBaseResolver<
   T extends AbstractBaseEntity,
-  CreateDto extends DeepPartial<T>,
-  UpdateDto extends DeepPartial<T> & { id: number },
+  CreateDto extends DeepPartial<T> & { relationIds?: RelationIdsInput[] }, // ⬅ CHANGED
+  UpdateDto extends DeepPartial<T> & {
+    id: number;
+    relationIds?: RelationIdsInput[];
+  }, // ⬅ CHANGED
 >(
   entityClass: ClassType<T>,
   createDtoClass: ClassType<CreateDto>,
@@ -130,6 +138,8 @@ export function createBaseResolver<
     async create(
       @Args('data', { type: () => createDtoClass }) data: CreateDto,
     ): Promise<T> {
+      console.log('service ', data);
+
       return this.service.create(data);
     }
 

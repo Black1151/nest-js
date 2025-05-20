@@ -22,7 +22,7 @@ export class SubjectEntity extends AbstractBaseEntity {
 
   @Field(() => [YearGroupEntity], { nullable: true })
   @ManyToMany(() => YearGroupEntity, (yg) => yg.subjects, {
-    cascade: true,
+    cascade: false,
   })
   @JoinTable({
     name: 'year_group_subjects',
