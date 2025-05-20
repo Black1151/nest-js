@@ -34,6 +34,10 @@ export class UsersService {
     return this.userRepository.find({
       skip: offset,
       take: limit,
+      relations: {
+        studentProfile: true,
+        educatorProfile: true,
+      },
     });
   }
 
