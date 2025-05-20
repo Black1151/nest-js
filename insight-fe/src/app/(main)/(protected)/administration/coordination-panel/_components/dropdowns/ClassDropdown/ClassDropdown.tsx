@@ -1,7 +1,9 @@
 "use client";
 
-import React, { ChangeEvent, useMemo } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import CrudDropdown from "../CrudDropdown";
+import { BaseModal } from "@/components/modals/BaseModal";
+import CreateClassForm from "./forms/CreateClassForm";
 
 import { useQuery } from "@apollo/client";
 import { typedGql } from "@/zeus/typedDocumentNode";
@@ -33,6 +35,7 @@ export function ClassDropdown({
   value,
   onChange,
 }: ClassDropdownProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const variables = useMemo(
     () =>
       yearGroupId && subjectId
@@ -62,20 +65,35 @@ export function ClassDropdown({
   );
 
   return (
-    <CrudDropdown
-      options={options}
-      value={value ?? ""}
-      isLoading={loading}
-      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-        onChange(e.target.value || null)
-      }
-      onCreate={() => {}}
-      onUpdate={() => {}}
-      onDelete={() => {}}
-      isCreateDisabled
-      isUpdateDisabled
-      isDeleteDisabled
-      isDisabled={!(yearGroupId && subjectId)}
-    />
+    <>
+      <CrudDropdown
+        options={options}
+        value={value ?? ""}
+        isLoading={loading}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          onChange(e.target.value || null)
+        }
+        onCreate={() => setIsModalOpen(true)}
+        onUpdate={() => {}}
+        onDelete={() => {}}
+        isUpdateDisabled
+        isDeleteDisabled
+        isDisabled={!(yearGroupId && subjectId)}
+      />
+
+      <BaseModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Create Class"
+      >
+        {yearGroupId && subjectId && (
+          <CreateClassForm
+            yearGroupId={yearGroupId}
+            subjectId={subjectId}
+            onSuccess={() => setIsModalOpen(false)}
+          />
+        )}
+      </BaseModal>
+    </>
   );
 }
