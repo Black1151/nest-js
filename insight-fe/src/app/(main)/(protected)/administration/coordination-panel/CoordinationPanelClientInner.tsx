@@ -6,11 +6,13 @@ import { YearDropdown } from "./_components/dropdowns/YearGroup/YearDropdown";
 import { ContentCard } from "@/components/layout/Card";
 import { useState } from "react";
 import { SubjectDropdown } from "./_components/dropdowns/SubjectsDropdown/SubjectDropdown";
+import { ClassDropdown } from "./_components/dropdowns/ClassDropdown/ClassDropdown";
 
 export default function CoordinationPanelClientInner() {
   const [keyStageId, setKeyStageId] = useState<string | null>(null);
   const [yearGroupId, setYearGroupId] = useState<string | null>(null);
   const [subjectId, setSubjectId] = useState<string | null>(null);
+  const [classId, setClassId] = useState<string | null>(null);
 
   console.log("PARENT RENDERING");
 
@@ -26,6 +28,7 @@ export default function CoordinationPanelClientInner() {
               setKeyStageId(id);
               setYearGroupId(null);
               setSubjectId(null);
+              setClassId(null);
             }}
           />
         </Flex>
@@ -39,6 +42,7 @@ export default function CoordinationPanelClientInner() {
             onChange={(id: string | null) => {
               setYearGroupId(id);
               setSubjectId(null);
+              setClassId(null);
             }}
           />
         </Flex>
@@ -51,7 +55,19 @@ export default function CoordinationPanelClientInner() {
             value={subjectId}
             onChange={(id: string | null) => {
               setSubjectId(id);
+              setClassId(null);
             }}
+          />
+        </Flex>
+
+        {/* ------------------- 4. class ------------------ */}
+        <Flex flexDir="column" gap={2}>
+          <Text>Class</Text>
+          <ClassDropdown
+            yearGroupId={yearGroupId}
+            subjectId={subjectId}
+            value={classId}
+            onChange={(id: string | null) => setClassId(id)}
           />
         </Flex>
       </Flex>
