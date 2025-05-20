@@ -1,86 +1,116 @@
 "use client";
 
-import React, { ChangeEvent, useEffect, useMemo } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import CrudDropdown from "../CrudDropdown";
-
-import { useQuery } from "@apollo/client";
+import { BaseModal } from "@/components/modals/BaseModal";
+import { useQuery, useMutation } from "@apollo/client";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
-import { YearGroupEntity } from "@/__generated__/schema-types";
+import { CreateClassForm } from "./forms/CreateClassForm";
 
 /* -------------------------------------------------------------------------- */
-/* GraphQL document                                                           */
+/* GraphQL documents                                                          */
 /* -------------------------------------------------------------------------- */
-const GET_YEAR_GROUPS_BY_KEY_STAGE = typedGql("query")({
-  getAllYearGroup: [
-    { data: $("data", "FindAllInput!") }, // { all, filters }
-    { id: true, year: true, keyStageId: true },
+const GET_CLASSES_FOR_CONTEXT = typedGql("query")({
+  getAllClass: [
+    { data: $("data", "FindAllInput!") },
+    { id: true, name: true, yearGroupId: true, subjectId: true },
   ],
+} as const);
+
+const CREATE_CLASS = typedGql("mutation")({
+  createClass: [{ data: $("data", "CreateClassInput!") }, { id: true }],
 } as const);
 
 /* -------------------------------------------------------------------------- */
 /* Component                                                                  */
 /* -------------------------------------------------------------------------- */
-interface YearDropdownProps {
-  keyStageId: number | null; // selected KS id from parent
-  value: number | null; // current YearGroup id
-  onChange: (id: number | null) => void;
+interface ClassDropdownProps {
+  yearGroupId: string | null;
+  subjectId: string | null;
+  value: string | null;
+  onChange: (id: string | null) => void;
 }
 
-export function YearDropdown({
-  keyStageId,
+export function ClassDropdown({
+  yearGroupId,
+  subjectId,
   value,
   onChange,
-}: YearDropdownProps) {
-  /* -------- fetch -------- */
-  const { data, loading } = useQuery(GET_YEAR_GROUPS_BY_KEY_STAGE, {
-    skip: keyStageId === null,
-    variables:
-      keyStageId !== null
-        ? {
-            data: {
-              all: true,
-              filters: [{ column: "keyStageId", value: String(keyStageId) }],
-            },
-          }
-        : undefined,
+}: ClassDropdownProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  /* -------- variables for class list -------- */
+  const variables = useMemo(() => {
+    if (!yearGroupId || !subjectId) return undefined;
+    return {
+      data: {
+        all: true,
+        filters: [
+          { column: "yearGroupId", value: String(yearGroupId) },
+          { column: "subjectId", value: String(subjectId) },
+        ],
+      },
+    };
+  }, [yearGroupId, subjectId]);
+
+  const { data, loading, refetch } = useQuery(GET_CLASSES_FOR_CONTEXT, {
+    variables,
+    skip: !yearGroupId || !subjectId,
   });
 
-  const yearGroups = keyStageId !== null ? data?.getAllYearGroup ?? [] : [];
-
-  /* -------- options -------- */
+  const classes = data?.getAllClass ?? [];
   const options = useMemo(
-    () =>
-      yearGroups.map((yg) => ({
-        label: yg.year,
-        value: String(yg.id),
-      })),
-    [yearGroups]
+    () => classes.map((c) => ({ label: c.name, value: String(c.id) })),
+    [classes]
   );
 
-  /* -------- clear invalid selection if KS changes -------- */
-  useEffect(() => {
-    if (value !== null && !options.some((o) => o.value === String(value))) {
-      onChange(null);
-    }
-  }, [options, value, onChange]);
+  /* -------- create class mutation -------- */
+  const [createClass, { loading: creating }] = useMutation(CREATE_CLASS, {
+    onCompleted: async () => {
+      setIsModalOpen(false);
+      if (variables) await refetch(variables);
+    },
+  });
+
+  const handleCreate = async ({ name }: { name: string }) => {
+    await createClass({
+      variables: {
+        data: {
+          name: name.trim(),
+          yearGroupId: Number(yearGroupId),
+          subjectId: Number(subjectId),
+        },
+      },
+    });
+  };
 
   /* -------- render -------- */
   return (
-    <CrudDropdown
-      options={options}
-      value={value ?? ""}
-      isLoading={loading}
-      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-        onChange(e.target.value ? Number(e.target.value) : null)
-      }
-      onCreate={() => {}}
-      onUpdate={() => {}}
-      onDelete={() => {}}
-      isCreateDisabled
-      isUpdateDisabled
-      isDeleteDisabled
-      isDisabled={keyStageId === null}
-    />
+    <>
+      <CrudDropdown
+        options={options}
+        value={value ?? ""}
+        isLoading={loading}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          onChange(e.target.value || null)
+        }
+        onCreate={() => setIsModalOpen(true)}
+        onUpdate={() => {}}
+        onDelete={() => {}}
+        isUpdateDisabled
+        isDeleteDisabled
+        isDisabled={!yearGroupId || !subjectId}
+      />
+
+      <BaseModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Create Class"
+      >
+        <CreateClassForm onSubmit={handleCreate} />
+        {creating && <p className="text-sm mt-2">Creating class…</p>}
+      </BaseModal>
+    </>
   );
 }
