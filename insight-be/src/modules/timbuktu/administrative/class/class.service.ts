@@ -18,4 +18,19 @@ export class ClassService extends BaseService<
   ) {
     super(classRepository, dataSource);
   }
+
+  async create(data: CreateClassInput): Promise<ClassEntity> {
+    const { yearGroupId, subjectId, ...rest } = data;
+    const relationIds = [] as { relation: string; ids: number[] }[];
+
+    if (yearGroupId) {
+      relationIds.push({ relation: 'yearGroup', ids: [yearGroupId] });
+    }
+
+    if (subjectId) {
+      relationIds.push({ relation: 'subject', ids: [subjectId] });
+    }
+
+    return super.create({ ...(rest as any), relationIds } as any);
+  }
 }
