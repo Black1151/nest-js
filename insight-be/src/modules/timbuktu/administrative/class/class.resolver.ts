@@ -1,4 +1,4 @@
-import { Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { createBaseResolver } from 'src/common/base.resolver';
 import { ClassService } from './class.service';
@@ -27,5 +27,10 @@ const BaseClassResolver = createBaseResolver<
 export class ClassResolver extends BaseClassResolver {
   constructor(private readonly classService: ClassService) {
     super(classService);
+  }
+
+  @Mutation(() => ClassEntity, { name: 'createClass' })
+  async create(@Args('data') data: CreateClassInput): Promise<ClassEntity> {
+    return this.classService.createWithRelations(data);
   }
 }
