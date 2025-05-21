@@ -1,11 +1,13 @@
 "use client";
 
-import React, { ChangeEvent, useMemo } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import CrudDropdown from "../CrudDropdown";
-
-import { useQuery } from "@apollo/client";
+import { BaseModal } from "@/components/modals/BaseModal";
+import CreateClassForm from "./forms/CreateClassForm";
+import { useMutation, useQuery } from "@apollo/client";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
+import { CreateClassInput } from "@/__generated__/schema-types";
 
 /* -------------------------------------------------------------------------- */
 /* GraphQL document                                                           */
@@ -15,6 +17,10 @@ const GET_CLASSES = typedGql("query")({
     { data: $("data", "FindAllInput!") },
     { id: true, name: true, subjectId: true, yearGroupId: true },
   ],
+} as const);
+
+const CREATE_CLASS = typedGql("mutation")({
+  createClass: [{ data: $("data", "CreateClassInput!") }, { id: true, name: true }],
 } as const);
 
 /* -------------------------------------------------------------------------- */
@@ -49,7 +55,7 @@ export function ClassDropdown({
     [yearGroupId, subjectId]
   );
 
-  const { data, loading } = useQuery(GET_CLASSES, {
+  const { data, loading, refetch } = useQuery(GET_CLASSES, {
     variables,
     skip: !(yearGroupId && subjectId),
   });
@@ -61,21 +67,41 @@ export function ClassDropdown({
     [classes]
   );
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [createClass, { loading: creating }] = useMutation(CREATE_CLASS);
+
+  const handleCreate = async (input: CreateClassInput) => {
+    await createClass({ variables: { data: input } });
+    if (variables) {
+      await refetch(variables);
+    }
+    setIsModalOpen(false);
+  };
+
   return (
-    <CrudDropdown
-      options={options}
-      value={value ?? ""}
-      isLoading={loading}
-      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-        onChange(e.target.value || null)
-      }
-      onCreate={() => {}}
-      onUpdate={() => {}}
-      onDelete={() => {}}
-      isCreateDisabled
-      isUpdateDisabled
-      isDeleteDisabled
-      isDisabled={!(yearGroupId && subjectId)}
-    />
+    <>
+      <CrudDropdown
+        options={options}
+        value={value ?? ""}
+        isLoading={loading}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          onChange(e.target.value || null)
+        }
+        onCreate={() => setIsModalOpen(true)}
+        onUpdate={() => {}}
+        onDelete={() => {}}
+        isUpdateDisabled
+        isDeleteDisabled
+        isDisabled={!(yearGroupId && subjectId)}
+      />
+
+      <BaseModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Create Class"
+      >
+        <CreateClassForm onSubmit={handleCreate} isLoading={creating} />
+      </BaseModal>
+    </>
   );
 }
