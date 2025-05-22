@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Grid, Text } from "@chakra-ui/react";
 import { KeyStageDropdown } from "./_components/dropdowns/KeyStageDropdown/KeyStageDropdown";
 import { YearDropdown } from "./_components/dropdowns/YearGroup/YearDropdown";
 import { ContentCard } from "@/components/layout/Card";
@@ -19,65 +19,63 @@ export default function CoordinationPanelClientInner() {
   console.log("PARENT RENDERING");
 
   return (
-    <ContentGrid>
+    <Grid templateColumns="1fr 1fr">
       <ContentCard>
         <Flex gap={8} flexDir="column">
-        {/* ------------------- 1. key stage ------------------- */}
-        <Flex flexDir="column" gap={2}>
-          <Text>Key Stage</Text>
-          <KeyStageDropdown
-            value={keyStageId}
-            onChange={(id: string | null) => {
-              setKeyStageId(id);
-              setYearGroupId(null);
-              setSubjectId(null);
-              setClassId(null);
-            }}
-          />
-        </Flex>
+          {/* ------------------- 1. key stage ------------------- */}
+          <Flex flexDir="column" gap={2}>
+            <Text>Key Stage</Text>
+            <KeyStageDropdown
+              value={keyStageId}
+              onChange={(id: string | null) => {
+                setKeyStageId(id);
+                setYearGroupId(null);
+                setSubjectId(null);
+                setClassId(null);
+              }}
+            />
+          </Flex>
 
-        {/* ------------------- 2. year group ------------------ */}
-        <Flex flexDir="column" gap={2}>
-          <Text>Year Group</Text>
-          <YearDropdown
-            keyStageId={keyStageId}
-            value={yearGroupId}
-            onChange={(id: string | null) => {
-              setYearGroupId(id);
-              setSubjectId(null);
-              setClassId(null);
-            }}
-          />
-        </Flex>
+          {/* ------------------- 2. year group ------------------ */}
+          <Flex flexDir="column" gap={2}>
+            <Text>Year Group</Text>
+            <YearDropdown
+              keyStageId={keyStageId}
+              value={yearGroupId}
+              onChange={(id: string | null) => {
+                setYearGroupId(id);
+                setSubjectId(null);
+                setClassId(null);
+              }}
+            />
+          </Flex>
 
-        {/* ------------------- 3. subjects ------------------ */}
-        <Flex flexDir="column" gap={2}>
-          <Text>Subject</Text>
-          <SubjectDropdown
-            yearGroupId={yearGroupId}
-            value={subjectId}
-            onChange={(id: string | null) => {
-              setSubjectId(id);
-              setClassId(null);
-            }}
-          />
-        </Flex>
+          {/* ------------------- 3. subjects ------------------ */}
+          <Flex flexDir="column" gap={2}>
+            <Text>Subject</Text>
+            <SubjectDropdown
+              yearGroupId={yearGroupId}
+              value={subjectId}
+              onChange={(id: string | null) => {
+                setSubjectId(id);
+                setClassId(null);
+              }}
+            />
+          </Flex>
 
-        {/* ------------------- 4. class ------------------ */}
-        <Flex flexDir="column" gap={2}>
-          <Text>Class</Text>
-          <ClassDropdown
-            yearGroupId={yearGroupId}
-            subjectId={subjectId}
-            value={classId}
-            onChange={(id: string | null) => setClassId(id)}
-          />
-        </Flex>
-
+          {/* ------------------- 4. class ------------------ */}
+          <Flex flexDir="column" gap={2}>
+            <Text>Class</Text>
+            <ClassDropdown
+              yearGroupId={yearGroupId}
+              subjectId={subjectId}
+              value={classId}
+              onChange={(id: string | null) => setClassId(id)}
+            />
+          </Flex>
         </Flex>
       </ContentCard>
-
       <ClassMembersPane classId={classId} />
-    </ContentGrid>
+    </Grid>
   );
 }
