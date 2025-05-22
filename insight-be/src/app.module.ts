@@ -17,7 +17,7 @@ import { GqlJwtAuthGuard } from './guards/auth.guard';
 import { ApiPermissionsGuard } from './modules/rbac/guards/api-permissions.guard';
 import { ApiPermissionMapping } from './modules/rbac/sub/api-permissions-mapping/api-permission-mapping.entity';
 import { PermissionGroup } from './modules/rbac/sub/permission-group/permission-group.entity';
-import { UiErrorMessagesFilter } from './filters/ui-error-messages-filter';
+// import { UiErrorMessagesFilter } from './filters/ui-error-messages-filter';
 import { Role } from './modules/rbac/sub/role/role.entity';
 import { StudentProfileModule } from './modules/timbuktu/user-profiles/student-profile/student-profile.module';
 import { EducatorProfileModule } from './modules/timbuktu/user-profiles/educator-profile/educator-profile.module';
@@ -107,10 +107,10 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
       provide: APP_GUARD,
       useClass: ApiPermissionsGuard,
     },
-    {
-      provide: APP_FILTER,
-      useClass: UiErrorMessagesFilter,
-    },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: UiErrorMessagesFilter,
+    // },
   ],
 })
 export class AppModule {}
