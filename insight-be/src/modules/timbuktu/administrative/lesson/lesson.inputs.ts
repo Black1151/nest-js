@@ -1,4 +1,5 @@
 import { PartialType, InputType, Field, ID } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 @InputType()
 export class CreateLessonInput {
@@ -6,7 +7,10 @@ export class CreateLessonInput {
   title: string;
 
   @Field({ nullable: true })
-  content?: string;
+  description?: string;
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  content?: Record<string, any>;
 
   /**
    * Topic that this lesson belongs to

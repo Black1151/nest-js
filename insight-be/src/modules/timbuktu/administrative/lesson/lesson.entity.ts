@@ -8,6 +8,7 @@ import {
   RelationId,
 } from 'typeorm';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 import { AbstractBaseEntity } from 'src/common/base.entity';
 import { EducatorProfileEntity } from '../../user-profiles/educator-profile/educator-profile.entity';
@@ -24,7 +25,11 @@ export class LessonEntity extends AbstractBaseEntity {
 
   @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
-  content?: string;
+  description?: string;
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  content?: Record<string, any>;
 
   /* ---------- relationships ---------- */
 
