@@ -8,7 +8,8 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import invariant from "tiny-invariant";
-import { Box, Flex, Heading, HStack, Spinner, Stack } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Spinner, Stack, IconButton } from "@chakra-ui/react";
+import { X } from "lucide-react";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import {
   attachClosestEdge,
@@ -91,6 +92,7 @@ interface ColumnProps<TCard extends BaseCardDnD> {
   /** Toggle whether the user can drag / reorder whole columns */
   enableColumnReorder?: boolean;
   isLoading?: boolean;
+  onRemoveColumn?: (columnId: string) => void;
 }
 
 function ColumnBase<TCard extends BaseCardDnD>({
@@ -98,6 +100,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
   CardComponent,
   enableColumnReorder = true,
   isLoading = false,
+  onRemoveColumn,
 }: ColumnProps<TCard>) {
   const columnId = column.columnId;
   const columnRef = useRef<HTMLDivElement | null>(null);
@@ -308,6 +311,15 @@ function ColumnBase<TCard extends BaseCardDnD>({
               <Heading as="span" size="xs">
                 {column.title}
               </Heading>
+              {onRemoveColumn && (
+                <IconButton
+                  aria-label="Remove column"
+                  icon={<X size={12} />}
+                  size="xs"
+                  variant="ghost"
+                  onClick={() => onRemoveColumn(columnId)}
+                />
+              )}
             </HStack>
 
             <Box ref={scrollableRef} sx={scrollContainerStyles}>

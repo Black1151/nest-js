@@ -2,7 +2,7 @@
 
 import { Flex, Box, Text, Stack } from "@chakra-ui/react";
 import { useState, useCallback } from "react";
-import SlideSequencer, { Slide } from "./SlideSequencer";
+import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsBoard from "./SlideElementsBoard";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -17,7 +17,7 @@ const AVAILABLE_ELEMENTS = [
 
 export default function LessonEditor() {
   const [lesson, setLesson] = useState<LessonState>({
-    slides: [{ id: "1", title: "Slide 1", elements: [] }],
+    slides: [{ id: "1", title: "Slide 1", board: createInitialBoard() }],
   });
   const [selectedSlideId, setSelectedSlideId] = useState<string | null>("1");
 
@@ -42,7 +42,19 @@ export default function LessonEditor() {
       const slides = prev.slides.map((s) => {
         if (s.id !== selectedSlideId) return s;
         const newEl: SlideElementDnDItemProps = { id: Date.now().toString(), type };
-        return { ...s, elements: [...(s.elements as SlideElementDnDItemProps[]), newEl] };
+        const firstColumnId = s.board.orderedColumnIds[0];
+        const column = s.board.columnMap[firstColumnId];
+        const updatedColumn = {
+          ...column,
+          items: [...column.items, newEl],
+        };
+        return {
+          ...s,
+          board: {
+            ...s.board,
+            columnMap: { ...s.board.columnMap, [firstColumnId]: updatedColumn },
+          },
+        };
       });
       return { ...prev, slides };
     });
@@ -68,12 +80,14 @@ export default function LessonEditor() {
           >
             <Text mb={2}>Slide Elements</Text>
             <SlideElementsBoard
-              elements={(lesson.slides.find((s) => s.id === selectedSlideId)?.elements || []) as SlideElementDnDItemProps[]}
-              onChange={(els) =>
+              board={
+                lesson.slides.find((s) => s.id === selectedSlideId)?.board!
+              }
+              onChange={(board) =>
                 setLesson((prev) => ({
                   ...prev,
                   slides: prev.slides.map((s) =>
-                    s.id === selectedSlideId ? { ...s, elements: els } : s
+                    s.id === selectedSlideId ? { ...s, board } : s
                   ),
                 }))
               }

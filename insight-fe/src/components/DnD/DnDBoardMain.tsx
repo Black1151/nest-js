@@ -76,6 +76,7 @@ interface DnDBoardMainProps<TCard extends BaseCardDnD> {
    */
   onSubmit?: (boardData: any) => void;
   isLoading?: boolean;
+  onRemoveColumn?: (columnId: string) => void;
 }
 
 // access thej passed in interface
@@ -87,6 +88,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   onChange,
   onSubmit,
   isLoading = false,
+  onRemoveColumn,
 }: DnDBoardMainProps<TCard>) => {
   /**
    * Main piece of local state, storing:
@@ -607,6 +609,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
                 CardComponent={CardComponent}
                 enableColumnReorder={enableColumnReorder}
                 isLoading={isLoading}
+                onRemoveColumn={onRemoveColumn}
               />
             );
           })}

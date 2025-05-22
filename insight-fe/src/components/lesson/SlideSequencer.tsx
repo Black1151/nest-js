@@ -2,6 +2,10 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Button, Stack } from '@chakra-ui/react';
+import {
+  SlideElementDnDItemProps,
+} from '@/components/DnD/cards/SlideElementDnDCard';
+import { BoardState } from '@/components/DnD/DnDBoardMain';
 import { DropIndicator } from '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box';
 import {
   draggable,
@@ -20,8 +24,24 @@ import { getReorderDestinationIndex } from '@atlaskit/pragmatic-drag-and-drop-hi
 export interface Slide {
   id: string;
   title: string;
-  elements: any[];
+  board: BoardState<SlideElementDnDItemProps>;
 }
+
+export const createInitialBoard = (): BoardState<SlideElementDnDItemProps> => ({
+  columnMap: {
+    column1: {
+      title: 'Column 1',
+      columnId: 'column1',
+      styles: {
+        container: { border: '2px dashed red', width: '100%' },
+        header: { bg: 'red.300', color: 'white' },
+      },
+      items: [],
+    },
+  },
+  orderedColumnIds: ['column1'],
+  lastOperation: null,
+});
 
 interface SlideItemProps {
   slide: Slide;
@@ -98,7 +118,10 @@ export default function SlideSequencer({
   const addSlide = useCallback(() => {
     const id = String(Date.now()) + counter.current;
     counter.current += 1;
-    setSlides((s) => [...s, { id, title: `Slide ${s.length + 1}`, elements: [] }]);
+    setSlides((s) => [
+      ...s,
+      { id, title: `Slide ${s.length + 1}`, board: createInitialBoard() },
+    ]);
   }, [setSlides]);
 
   useEffect(() => {
