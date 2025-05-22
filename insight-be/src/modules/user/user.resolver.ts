@@ -51,8 +51,8 @@ export class UserResolver {
   @Query(() => [User])
   @RbacPermissionKey('user.searchUsers')
   async searchUsers(@Args('data') data: SearchInput): Promise<User[]> {
-    const { search, columns, limit } = data;
-    return this.userService.search(search, columns as (keyof User)[], limit);
+    const { search, columns, limit, filters } = data;
+    return this.userService.search(search, columns as (keyof User)[], limit, filters);
   }
 
   @Query(() => User)

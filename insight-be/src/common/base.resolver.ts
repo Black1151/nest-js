@@ -134,10 +134,11 @@ export function createBaseResolver<
     async search(
       @Args('data', { type: () => SearchInput }) data: SearchInput,
     ): Promise<T[]> {
-      const { search, columns, limit, relations } = data;
+      const { search, columns, limit, relations, filters } = data;
       return this.service.searchByColumns(search, columns as (keyof T)[], {
         limit,
         relations,
+        filters,
       });
     }
 

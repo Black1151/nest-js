@@ -1,7 +1,7 @@
 // user.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, DataSource, ILike } from 'typeorm';
+import { Repository, In, DataSource, Raw } from 'typeorm';
 import { User } from './user.model';
 
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
@@ -41,8 +41,19 @@ export class UsersService {
     search: string,
     columns: (keyof User)[],
     limit = 10,
+    filters?: { column: string; value: any }[],
   ): Promise<User[]> {
-    const where = columns.map((c) => ({ [c]: ILike(`%${search}%`) })) as any[];
+    const baseWhere = (filters ?? []).reduce(
+      (acc, f) => ({ ...acc, [f.column as keyof User]: f.value }),
+      {} as any,
+    );
+
+    const where = columns.map((c) => ({
+      ...baseWhere,
+      [c]: Raw((alias) => `CAST(${alias} AS TEXT) ILIKE :search`, {
+        search: `%${search}%`,
+      }),
+    })) as any[];
     return this.userRepository.find({ where, take: limit });
   }
 

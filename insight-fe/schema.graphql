@@ -364,6 +364,7 @@ input SearchInput {
   columns: [String!]!
   limit: Int
   relations: [String!]
+  filters: [FilterInput!]
 }
 
 type Permission {
