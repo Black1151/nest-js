@@ -28,6 +28,7 @@ import { KeyStageModule } from './modules/timbuktu/administrative/key-stage/key-
 import { LessonModule } from './modules/timbuktu/administrative/lesson/lesson.module';
 import { SubjectModule } from './modules/timbuktu/administrative/subject/subject.module';
 import { YearGroupModule } from './modules/timbuktu/administrative/year-group/year-group.module';
+import { TopicModule } from './modules/timbuktu/administrative/topic/topic.module';
 import { AssignmentSubmissionModule } from './modules/timbuktu/administrative/assignment-submission/assignment-submission.model';
 import { AssignmentModule } from './modules/timbuktu/administrative/assignment/assignment.module';
 import { AssignmentSubmissionEntity } from './modules/timbuktu/administrative/assignment-submission/assignment-submission.entity';
@@ -37,6 +38,7 @@ import { KeyStageEntity } from './modules/timbuktu/administrative/key-stage/key-
 import { LessonEntity } from './modules/timbuktu/administrative/lesson/lesson.entity';
 import { SubjectEntity } from './modules/timbuktu/administrative/subject/subject.entity';
 import { YearGroupEntity } from './modules/timbuktu/administrative/year-group/year-group.entity';
+import { TopicEntity } from './modules/timbuktu/administrative/topic/topic.entity';
 import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-tables/class-lesson/class-lesson.entity';
 
 @Module({
@@ -71,6 +73,7 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
         YearGroupEntity,
         SubjectEntity,
         LessonEntity,
+        TopicEntity,
         AssignmentSubmissionEntity,
         AssignmentEntity,
         ClassLessonEntity,
@@ -92,6 +95,7 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
     KeyStageModule,
     YearGroupModule,
     SubjectModule,
+    TopicModule,
     ClassModule,
     LessonModule,
     AssignmentModule,

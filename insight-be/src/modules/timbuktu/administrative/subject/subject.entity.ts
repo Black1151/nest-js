@@ -5,8 +5,8 @@ import { Entity, Column, ManyToMany, OneToMany, JoinTable } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
 import { AbstractBaseEntity } from 'src/common/base.entity';
-import { LessonEntity } from '../lesson/lesson.entity';
 import { YearGroupEntity } from '../year-group/year-group.entity';
+import { TopicEntity } from '../topic/topic.entity';
 
 @ObjectType()
 @Entity('subjects')
@@ -17,8 +17,9 @@ export class SubjectEntity extends AbstractBaseEntity {
 
   /* ---------- relationships ---------- */
 
-  @OneToMany(() => LessonEntity, (lesson) => lesson.subject)
-  lessons?: LessonEntity[];
+  @Field(() => [TopicEntity], { nullable: true })
+  @OneToMany(() => TopicEntity, (topic) => topic.subject)
+  topics?: TopicEntity[];
 
   @Field(() => [YearGroupEntity], { nullable: true })
   @ManyToMany(() => YearGroupEntity, (yg) => yg.subjects, {

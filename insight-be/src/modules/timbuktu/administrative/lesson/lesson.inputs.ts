@@ -9,10 +9,10 @@ export class CreateLessonInput {
   content?: string;
 
   /**
-   * Optional "subjectId" if you want to link the lesson to a subject
+   * Topic that this lesson belongs to
    */
-  @Field(() => ID, { nullable: true })
-  subjectId?: number;
+  @Field(() => ID)
+  topicId!: number;
 
   /**
    * If you allow a lesson to be recommended for multiple YearGroups:
