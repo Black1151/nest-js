@@ -1,6 +1,9 @@
 /* eslint-disable */
 
 export const AllTypesProps: Record<string,any> = {
+	ClassByYearSubjectInput:{
+		pagination:"PaginationInput"
+	},
 	CreateAssignmentInput:{
 		dueDate:"DateTime"
 	},
@@ -8,7 +11,7 @@ export const AllTypesProps: Record<string,any> = {
 		submittedAt:"DateTime"
 	},
 	CreateClassInput:{
-
+		relationIds:"RelationIdsInput"
 	},
 	CreateEducatorProfileInput:{
 
@@ -96,9 +99,6 @@ export const AllTypesProps: Record<string,any> = {
 			data:"CreateStudentProfileInput"
 		},
 		createSubject:{
-			data:"CreateSubjectInput"
-		},
-		createTest:{
 			data:"CreateSubjectInput"
 		},
 		createUser:{
@@ -210,10 +210,16 @@ export const AllTypesProps: Record<string,any> = {
 	PaginatedGetAllRequestDto:{
 
 	},
+	PaginationInput:{
+
+	},
 	PublicIdRequestDto:{
 
 	},
 	Query:{
+		classesByYearAndSubject:{
+			input:"ClassByYearSubjectInput"
+		},
 		getAllAssignment:{
 			data:"FindAllInput"
 		},
@@ -354,7 +360,7 @@ export const AllTypesProps: Record<string,any> = {
 		submittedAt:"DateTime"
 	},
 	UpdateClassInput:{
-
+		relationIds:"RelationIdsInput"
 	},
 	UpdateEducatorProfileInput:{
 
@@ -479,7 +485,6 @@ export const ReturnTypes: Record<string,any> = {
 		createRole:"Role",
 		createStudentProfile:"StudentProfileDto",
 		createSubject:"SubjectEntity",
-		createTest:"SubjectEntity",
 		createUser:"User",
 		createUserWithProfile:"User",
 		createYearGroup:"YearGroupEntity",
@@ -516,6 +521,14 @@ export const ReturnTypes: Record<string,any> = {
 		updateUserRolesFromArray:"User",
 		updateYearGroup:"YearGroupEntity"
 	},
+	PageInfo:{
+		hasNextPage:"Boolean",
+		hasPreviousPage:"Boolean",
+		itemCount:"Int",
+		page:"Int",
+		pageCount:"Int",
+		take:"Int"
+	},
 	Permission:{
 		createdAt:"DateTime",
 		description:"String",
@@ -541,6 +554,7 @@ export const ReturnTypes: Record<string,any> = {
 		updatedAt:"DateTime"
 	},
 	Query:{
+		classesByYearAndSubject:"ClassEntity",
 		getAllAssignment:"AssignmentEntity",
 		getAllAssignmentSubmission:"AssignmentSubmissionEntity",
 		getAllClass:"ClassEntity",

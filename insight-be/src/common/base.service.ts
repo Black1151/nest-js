@@ -112,12 +112,33 @@ export class BaseService<
   }
 
   /* CREATE --------------------------------------------------------------- */
+  // async create(dto: CreateDto): Promise<T> {
+  //   const { relationIds = [], ...scalar } = dto as any;
+
+  //   console.log('BBB', dto);
+
+  //   return this.dataSource.transaction(async (manager) => {
+  //     let entity = manager.create(this.repo.target, scalar) as T;
+  //     entity = await manager.save(entity);
+
+  //     await this.attachRelations(entity, relationIds, manager);
+  //     await manager.save(entity);
+
+  //     return manager.getRepository(this.repo.target).findOneOrFail({
+  //       where: { id: entity.id } as any,
+  //       relations: relationIds.map((r) => r.relation),
+  //     });
+  //   });
+  // }
+
+  /* --------------------------------------------------------------------------
+   BaseService – fixed create()
+   -------------------------------------------------------------------------- */
   async create(dto: CreateDto): Promise<T> {
     const { relationIds = [], ...scalar } = dto as any;
 
     return this.dataSource.transaction(async (manager) => {
-      let entity = manager.create(this.repo.target, scalar) as T;
-      entity = await manager.save(entity);
+      const entity = manager.create(this.repo.target, scalar) as T;
 
       await this.attachRelations(entity, relationIds, manager);
       await manager.save(entity);

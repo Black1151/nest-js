@@ -138,8 +138,6 @@ export function createBaseResolver<
     async create(
       @Args('data', { type: () => createDtoClass }) data: CreateDto,
     ): Promise<T> {
-      console.log('service ', data);
-
       return this.service.create(data);
     }
 

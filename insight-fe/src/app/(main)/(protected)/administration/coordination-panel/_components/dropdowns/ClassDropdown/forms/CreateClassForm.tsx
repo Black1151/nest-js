@@ -1,53 +1,106 @@
+// CreateSubjectForm.tsx
 "use client";
 
 import React from "react";
 import {
+  Box,
+  Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
-  FormErrorMessage,
-  Button,
+  Spinner,
+  Stack,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { CreateClassInput } from "@/__generated__/schema-types";
+import { useMutation } from "@apollo/client";
+import { typedGql } from "@/zeus/typedDocumentNode";
+import { $ } from "@/zeus";
 
-interface CreateClassFormProps {
-  onSubmit: (data: CreateClassInput) => Promise<void>;
-  isLoading?: boolean;
+/* -------------------------------------------------------------------------- */
+/* GraphQL documents                                                          */
+/* -------------------------------------------------------------------------- */
+
+const CREATE_CLASS = typedGql("mutation")({
+  createClass: [{ data: $("data", "CreateClassInput!") }, { id: true }],
+} as const);
+
+/* -------------------------------------------------------------------------- */
+/* Types                                                                      */
+/* -------------------------------------------------------------------------- */
+type FormValues = { name: string };
+interface CreateSubjectFormProps {
+  yearGroupId: string;
+  subjectId: string;
+  onSuccess: () => void;
 }
 
-export default function CreateClassForm({
-  onSubmit,
-  isLoading = false,
-}: CreateClassFormProps) {
+/* -------------------------------------------------------------------------- */
+/* Component                                                                  */
+/* -------------------------------------------------------------------------- */
+export default function CreateSubjectForm({
+  yearGroupId,
+  subjectId,
+  onSuccess,
+}: CreateSubjectFormProps) {
+  /* ── RHF setup ─────────────────────────────────────────────────────── */
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<CreateClassInput>();
+    control,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: { name: "" },
+    mode: "onChange",
+  });
 
-  const submitHandler: SubmitHandler<CreateClassInput> = async (formData) => {
-    await onSubmit({ name: formData.name.trim() });
-    reset();
+  /* ── Mutation: createSubject ──────────────────────────────────────── */
+  const [createClass, { loading: creating }] = useMutation(CREATE_CLASS, {
+    onCompleted: onSuccess,
+  });
+
+  /* ── Submit handler ──────────────────────────────────────────────── */
+  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    await createClass({
+      variables: {
+        data: {
+          name: values.name.trim(),
+          relationIds: [
+            { relation: "yearGroup", ids: [yearGroupId] },
+            { relation: "subject", ids: [subjectId] },
+          ],
+        },
+      },
+    });
   };
 
+  /* ── UI ──────────────────────────────────────────────────────────── */
   return (
-    <form id="create-class-form" onSubmit={handleSubmit(submitHandler)}>
-      <FormControl isRequired mb={4} isInvalid={!!errors.name}>
-        <FormLabel>Class name</FormLabel>
-        <Input
-          type="text"
-          placeholder="e.g. 7A Maths"
-          {...register("name", { required: "Name is required" })}
-        />
-        <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
-      </FormControl>
+    <Box as="form" onSubmit={handleSubmit(onSubmit)} p={4}>
+      <Stack spacing={6}>
+        {/* Subject name ------------------------------------------------ */}
+        <FormControl isInvalid={!!errors.name}>
+          <FormLabel>Class name</FormLabel>
+          <Input
+            placeholder="Class name"
+            {...register("name", { required: "Name is required" })}
+          />
+          <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
+        </FormControl>
 
-      <Button type="submit" colorScheme="blue" isLoading={isSubmitting || isLoading}>
-        Create Class
-      </Button>
-    </form>
+        {/* Submit ------------------------------------------------------- */}
+        <Button
+          type="submit"
+          colorScheme="blue"
+          isDisabled={!isValid || isSubmitting || creating}
+          leftIcon={
+            isSubmitting || creating ? <Spinner size="sm" /> : undefined
+          }
+        >
+          Create Class
+        </Button>
+      </Stack>
+    </Box>
   );
 }

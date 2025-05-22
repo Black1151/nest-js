@@ -1,26 +1,22 @@
 "use client";
 
-import React, { ChangeEvent, useMemo, useState } from "react";
-import CrudDropdown from "../CrudDropdown";
-import { BaseModal } from "@/components/modals/BaseModal";
-import CreateClassForm from "./forms/CreateClassForm";
-import { useMutation, useQuery } from "@apollo/client";
+import { ChangeEvent, useMemo, useState } from "react";
+import { useQuery } from "@apollo/client";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
-import { CreateClassInput } from "@/__generated__/schema-types";
+
+import { BaseModal } from "@/components/modals/BaseModal";
+import CrudDropdown from "../CrudDropdown";
+import CreateClassForm from "./forms/CreateClassForm";
 
 /* -------------------------------------------------------------------------- */
 /* GraphQL document                                                           */
 /* -------------------------------------------------------------------------- */
-const GET_CLASSES = typedGql("query")({
-  getAllClass: [
-    { data: $("data", "FindAllInput!") },
-    { id: true, name: true, subjectId: true, yearGroupId: true },
+const GET_CLASSES_BY_YEAR_SUBJECT = typedGql("query")({
+  classesByYearAndSubject: [
+    { input: $("input", "ClassByYearSubjectInput!") },
+    { id: true, name: true },
   ],
-} as const);
-
-const CREATE_CLASS = typedGql("mutation")({
-  createClass: [{ data: $("data", "CreateClassInput!") }, { id: true, name: true }],
 } as const);
 
 /* -------------------------------------------------------------------------- */
@@ -39,45 +35,39 @@ export function ClassDropdown({
   value,
   onChange,
 }: ClassDropdownProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  /* ------------------------------ variables ------------------------------ */
   const variables = useMemo(
     () =>
       yearGroupId && subjectId
         ? {
-            data: {
-              all: true,
-              filters: [
-                { column: "yearGroupId", value: String(yearGroupId) },
-                { column: "subjectId", value: String(subjectId) },
-              ],
+            input: {
+              yearGroupId,
+              subjectId,
+              withEducators: false,
+              withStudents: false,
             },
           }
         : undefined,
     [yearGroupId, subjectId]
   );
 
-  const { data, loading, refetch } = useQuery(GET_CLASSES, {
+  /* ------------------------------- query --------------------------------- */
+  const { data, loading, refetch } = useQuery(GET_CLASSES_BY_YEAR_SUBJECT, {
     variables,
     skip: !(yearGroupId && subjectId),
   });
 
-  const classes = yearGroupId && subjectId ? data?.getAllClass ?? [] : [];
+  const classes =
+    yearGroupId && subjectId ? data?.classesByYearAndSubject ?? [] : [];
 
   const options = useMemo(
     () => classes.map((c) => ({ label: c.name, value: String(c.id) })),
     [classes]
   );
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [createClass, { loading: creating }] = useMutation(CREATE_CLASS);
-
-  const handleCreate = async (input: CreateClassInput) => {
-    await createClass({ variables: { data: input } });
-    if (variables) {
-      await refetch(variables);
-    }
-    setIsModalOpen(false);
-  };
-
+  /* ----------------------------- render ---------------------------------- */
   return (
     <>
       <CrudDropdown
@@ -100,7 +90,14 @@ export function ClassDropdown({
         onClose={() => setIsModalOpen(false)}
         title="Create Class"
       >
-        <CreateClassForm onSubmit={handleCreate} isLoading={creating} />
+        <CreateClassForm
+          yearGroupId={yearGroupId ?? ""}
+          subjectId={subjectId ?? ""}
+          onSuccess={() => {
+            setIsModalOpen(false);
+            refetch();
+          }}
+        />
       </BaseModal>
     </>
   );

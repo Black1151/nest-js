@@ -36,6 +36,7 @@
     "class-validator": "^0.14.1",
     "express-session": "^1.18.1",
     "graphql": "^16.10.0",
+    "graphql-type-json": "^0.3.2",
     "immudb-node": "^1.1.1",
     "libphonenumber-js": "^1.12.5",
     "passport": "^0.7.0",

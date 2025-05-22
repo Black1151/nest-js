@@ -46,6 +46,14 @@ export type AuthTokens = {
   refreshToken: Scalars['String']['output'];
 };
 
+export type ClassByYearSubjectInput = {
+  pagination?: InputMaybe<PaginationInput>;
+  subjectId: Scalars['ID']['input'];
+  withEducators?: Scalars['Boolean']['input'];
+  withStudents?: Scalars['Boolean']['input'];
+  yearGroupId: Scalars['ID']['input'];
+};
+
 export type ClassEntity = {
   __typename?: 'ClassEntity';
   createdAt: Scalars['DateTime']['output'];
@@ -53,9 +61,9 @@ export type ClassEntity = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   students?: Maybe<Array<StudentProfileDto>>;
-  subject?: Maybe<SubjectEntity>;
+  subject: SubjectEntity;
   updatedAt: Scalars['DateTime']['output'];
-  yearGroup?: Maybe<YearGroupEntity>;
+  yearGroup: YearGroupEntity;
 };
 
 export type CreateAssignmentInput = {
@@ -76,11 +84,9 @@ export type CreateAssignmentSubmissionInput = {
 };
 
 export type CreateClassInput = {
-  educatorIds?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
   name: Scalars['String']['input'];
-  studentIds?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
-  subjectId?: InputMaybe<Scalars['ID']['input']>;
-  yearGroupId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
 export type CreateEducatorProfileInput = {
@@ -270,7 +276,6 @@ export type Mutation = {
   createStudentProfile: StudentProfileDto;
   /** Create one Subject */
   createSubject: SubjectEntity;
-  createTest: SubjectEntity;
   createUser: User;
   createUserWithProfile: User;
   /** Create one YearGroup */
@@ -385,11 +390,6 @@ export type MutationCreateStudentProfileArgs = {
 
 
 export type MutationCreateSubjectArgs = {
-  data: CreateSubjectInput;
-};
-
-
-export type MutationCreateTestArgs = {
   data: CreateSubjectInput;
 };
 
@@ -569,9 +569,24 @@ export type MutationUpdateYearGroupArgs = {
   data: UpdateYearGroupInput;
 };
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPreviousPage: Scalars['Boolean']['output'];
+  itemCount: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  pageCount: Scalars['Int']['output'];
+  take: Scalars['Int']['output'];
+};
+
 export type PaginatedGetAllRequestDto = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type PaginationInput = {
+  page?: Scalars['Int']['input'];
+  take?: Scalars['Int']['input'];
 };
 
 export type Permission = {
@@ -610,6 +625,7 @@ export type PublicIdRequestDto = {
 
 export type Query = {
   __typename?: 'Query';
+  classesByYearAndSubject: Array<ClassEntity>;
   /** Returns all Assignment (optionally filtered) */
   getAllAssignment: Array<AssignmentEntity>;
   /** Returns all AssignmentSubmission (optionally filtered) */
@@ -688,6 +704,11 @@ export type Query = {
   getYearGroup: YearGroupEntity;
   /** Returns one YearGroup by given conditions */
   getYearGroupBy: YearGroupEntity;
+};
+
+
+export type QueryClassesByYearAndSubjectArgs = {
+  input: ClassByYearSubjectInput;
 };
 
 
@@ -973,12 +994,10 @@ export type UpdateAssignmentSubmissionInput = {
 };
 
 export type UpdateClassInput = {
-  educatorIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
-  studentIds?: InputMaybe<Array<Scalars['ID']['input']>>;
-  subjectId?: InputMaybe<Scalars['ID']['input']>;
-  yearGroupId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
 export type UpdateEducatorProfileInput = {

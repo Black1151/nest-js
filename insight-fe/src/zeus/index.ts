@@ -930,6 +930,13 @@ export type ValueTypes = {
 	refreshToken?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
+	["ClassByYearSubjectInput"]: {
+	pagination?: ValueTypes["PaginationInput"] | undefined | null | Variable<any, string>,
+	subjectId: ValueTypes["ID"] | Variable<any, string>,
+	withEducators: boolean | Variable<any, string>,
+	withStudents: boolean | Variable<any, string>,
+	yearGroupId: ValueTypes["ID"] | Variable<any, string>
+};
 	["ClassEntity"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
 	educators?:ValueTypes["EducatorProfileDto"],
@@ -957,11 +964,9 @@ export type ValueTypes = {
 	submittedAt?: ValueTypes["DateTime"] | undefined | null | Variable<any, string>
 };
 	["CreateClassInput"]: {
-	educatorIds?: Array<ValueTypes["ID"] | undefined | null> | undefined | null | Variable<any, string>,
 	name: string | Variable<any, string>,
-	studentIds?: Array<ValueTypes["ID"] | undefined | null> | undefined | null | Variable<any, string>,
-	subjectId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
-	yearGroupId?: ValueTypes["ID"] | undefined | null | Variable<any, string>
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
 };
 	["CreateEducatorProfileInput"]: {
 	staffId: number | Variable<any, string>
@@ -1119,7 +1124,6 @@ createPermissionGroup?: [{	data: ValueTypes["CreatePermissionGroupInput"] | Vari
 createRole?: [{	data: ValueTypes["CreateRoleInput"] | Variable<any, string>},ValueTypes["Role"]],
 createStudentProfile?: [{	data: ValueTypes["CreateStudentProfileInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
 createSubject?: [{	data: ValueTypes["CreateSubjectInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
-createTest?: [{	data: ValueTypes["CreateSubjectInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
 createUser?: [{	data: ValueTypes["CreateUserRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 createUserWithProfile?: [{	data: ValueTypes["CreateUserWithProfileInput"] | Variable<any, string>},ValueTypes["User"]],
 createYearGroup?: [{	data: ValueTypes["CreateYearGroupInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
@@ -1157,9 +1161,22 @@ updateUserRolesFromArray?: [{	data: ValueTypes["UpdateUserRolesFromArrayRequestD
 updateYearGroup?: [{	data: ValueTypes["UpdateYearGroupInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
 		__typename?: boolean | `@${string}`
 }>;
+	["PageInfo"]: AliasType<{
+	hasNextPage?:boolean | `@${string}`,
+	hasPreviousPage?:boolean | `@${string}`,
+	itemCount?:boolean | `@${string}`,
+	page?:boolean | `@${string}`,
+	pageCount?:boolean | `@${string}`,
+	take?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["PaginatedGetAllRequestDto"]: {
 	limit?: number | undefined | null | Variable<any, string>,
 	offset?: number | undefined | null | Variable<any, string>
+};
+	["PaginationInput"]: {
+	page: number | Variable<any, string>,
+	take: number | Variable<any, string>
 };
 	["Permission"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
@@ -1192,6 +1209,7 @@ updateYearGroup?: [{	data: ValueTypes["UpdateYearGroupInput"] | Variable<any, st
 	publicId: string | Variable<any, string>
 };
 	["Query"]: AliasType<{
+classesByYearAndSubject?: [{	input: ValueTypes["ClassByYearSubjectInput"] | Variable<any, string>},ValueTypes["ClassEntity"]],
 getAllAssignment?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["AssignmentEntity"]],
 getAllAssignmentSubmission?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["AssignmentSubmissionEntity"]],
 getAllClass?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["ClassEntity"]],
@@ -1300,12 +1318,10 @@ getYearGroupBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},
 	submittedAt?: ValueTypes["DateTime"] | undefined | null | Variable<any, string>
 };
 	["UpdateClassInput"]: {
-	educatorIds?: Array<ValueTypes["ID"]> | undefined | null | Variable<any, string>,
 	id: ValueTypes["ID"] | Variable<any, string>,
 	name?: string | undefined | null | Variable<any, string>,
-	studentIds?: Array<ValueTypes["ID"]> | undefined | null | Variable<any, string>,
-	subjectId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
-	yearGroupId?: ValueTypes["ID"] | undefined | null | Variable<any, string>
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
 };
 	["UpdateEducatorProfileInput"]: {
 	id: number | Variable<any, string>,
@@ -1450,6 +1466,13 @@ export type ResolverInputTypes = {
 	refreshToken?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
+	["ClassByYearSubjectInput"]: {
+	pagination?: ResolverInputTypes["PaginationInput"] | undefined | null,
+	subjectId: ResolverInputTypes["ID"],
+	withEducators: boolean,
+	withStudents: boolean,
+	yearGroupId: ResolverInputTypes["ID"]
+};
 	["ClassEntity"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
 	educators?:ResolverInputTypes["EducatorProfileDto"],
@@ -1477,11 +1500,9 @@ export type ResolverInputTypes = {
 	submittedAt?: ResolverInputTypes["DateTime"] | undefined | null
 };
 	["CreateClassInput"]: {
-	educatorIds?: Array<ResolverInputTypes["ID"] | undefined | null> | undefined | null,
 	name: string,
-	studentIds?: Array<ResolverInputTypes["ID"] | undefined | null> | undefined | null,
-	subjectId?: ResolverInputTypes["ID"] | undefined | null,
-	yearGroupId?: ResolverInputTypes["ID"] | undefined | null
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
 };
 	["CreateEducatorProfileInput"]: {
 	staffId: number
@@ -1639,7 +1660,6 @@ createPermissionGroup?: [{	data: ResolverInputTypes["CreatePermissionGroupInput"
 createRole?: [{	data: ResolverInputTypes["CreateRoleInput"]},ResolverInputTypes["Role"]],
 createStudentProfile?: [{	data: ResolverInputTypes["CreateStudentProfileInput"]},ResolverInputTypes["StudentProfileDto"]],
 createSubject?: [{	data: ResolverInputTypes["CreateSubjectInput"]},ResolverInputTypes["SubjectEntity"]],
-createTest?: [{	data: ResolverInputTypes["CreateSubjectInput"]},ResolverInputTypes["SubjectEntity"]],
 createUser?: [{	data: ResolverInputTypes["CreateUserRequestDto"]},ResolverInputTypes["User"]],
 createUserWithProfile?: [{	data: ResolverInputTypes["CreateUserWithProfileInput"]},ResolverInputTypes["User"]],
 createYearGroup?: [{	data: ResolverInputTypes["CreateYearGroupInput"]},ResolverInputTypes["YearGroupEntity"]],
@@ -1677,9 +1697,22 @@ updateUserRolesFromArray?: [{	data: ResolverInputTypes["UpdateUserRolesFromArray
 updateYearGroup?: [{	data: ResolverInputTypes["UpdateYearGroupInput"]},ResolverInputTypes["YearGroupEntity"]],
 		__typename?: boolean | `@${string}`
 }>;
+	["PageInfo"]: AliasType<{
+	hasNextPage?:boolean | `@${string}`,
+	hasPreviousPage?:boolean | `@${string}`,
+	itemCount?:boolean | `@${string}`,
+	page?:boolean | `@${string}`,
+	pageCount?:boolean | `@${string}`,
+	take?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["PaginatedGetAllRequestDto"]: {
 	limit?: number | undefined | null,
 	offset?: number | undefined | null
+};
+	["PaginationInput"]: {
+	page: number,
+	take: number
 };
 	["Permission"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
@@ -1712,6 +1745,7 @@ updateYearGroup?: [{	data: ResolverInputTypes["UpdateYearGroupInput"]},ResolverI
 	publicId: string
 };
 	["Query"]: AliasType<{
+classesByYearAndSubject?: [{	input: ResolverInputTypes["ClassByYearSubjectInput"]},ResolverInputTypes["ClassEntity"]],
 getAllAssignment?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["AssignmentEntity"]],
 getAllAssignmentSubmission?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["AssignmentSubmissionEntity"]],
 getAllClass?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["ClassEntity"]],
@@ -1820,12 +1854,10 @@ getYearGroupBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTyp
 	submittedAt?: ResolverInputTypes["DateTime"] | undefined | null
 };
 	["UpdateClassInput"]: {
-	educatorIds?: Array<ResolverInputTypes["ID"]> | undefined | null,
 	id: ResolverInputTypes["ID"],
 	name?: string | undefined | null,
-	studentIds?: Array<ResolverInputTypes["ID"]> | undefined | null,
-	subjectId?: ResolverInputTypes["ID"] | undefined | null,
-	yearGroupId?: ResolverInputTypes["ID"] | undefined | null
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
 };
 	["UpdateEducatorProfileInput"]: {
 	id: number,
@@ -1972,15 +2004,22 @@ export type ModelTypes = {
 		accessToken: string,
 	refreshToken: string
 };
+	["ClassByYearSubjectInput"]: {
+	pagination?: ModelTypes["PaginationInput"] | undefined | null,
+	subjectId: ModelTypes["ID"],
+	withEducators: boolean,
+	withStudents: boolean,
+	yearGroupId: ModelTypes["ID"]
+};
 	["ClassEntity"]: {
 		createdAt: ModelTypes["DateTime"],
 	educators?: Array<ModelTypes["EducatorProfileDto"]> | undefined | null,
 	id: ModelTypes["ID"],
 	name: string,
 	students?: Array<ModelTypes["StudentProfileDto"]> | undefined | null,
-	subject?: ModelTypes["SubjectEntity"] | undefined | null,
+	subject: ModelTypes["SubjectEntity"],
 	updatedAt: ModelTypes["DateTime"],
-	yearGroup?: ModelTypes["YearGroupEntity"] | undefined | null
+	yearGroup: ModelTypes["YearGroupEntity"]
 };
 	["CreateAssignmentInput"]: {
 	classId: ModelTypes["ID"],
@@ -1998,11 +2037,9 @@ export type ModelTypes = {
 	submittedAt?: ModelTypes["DateTime"] | undefined | null
 };
 	["CreateClassInput"]: {
-	educatorIds?: Array<ModelTypes["ID"] | undefined | null> | undefined | null,
 	name: string,
-	studentIds?: Array<ModelTypes["ID"] | undefined | null> | undefined | null,
-	subjectId?: ModelTypes["ID"] | undefined | null,
-	yearGroupId?: ModelTypes["ID"] | undefined | null
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
 };
 	["CreateEducatorProfileInput"]: {
 	staffId: number
@@ -2167,7 +2204,6 @@ export type ModelTypes = {
 	createStudentProfile: ModelTypes["StudentProfileDto"],
 	/** Create one Subject */
 	createSubject: ModelTypes["SubjectEntity"],
-	createTest: ModelTypes["SubjectEntity"],
 	createUser: ModelTypes["User"],
 	createUserWithProfile: ModelTypes["User"],
 	/** Create one YearGroup */
@@ -2229,9 +2265,21 @@ export type ModelTypes = {
 	/** Updates one YearGroup */
 	updateYearGroup: ModelTypes["YearGroupEntity"]
 };
+	["PageInfo"]: {
+		hasNextPage: boolean,
+	hasPreviousPage: boolean,
+	itemCount: number,
+	page: number,
+	pageCount: number,
+	take: number
+};
 	["PaginatedGetAllRequestDto"]: {
 	limit?: number | undefined | null,
 	offset?: number | undefined | null
+};
+	["PaginationInput"]: {
+	page: number,
+	take: number
 };
 	["Permission"]: {
 		createdAt: ModelTypes["DateTime"],
@@ -2261,7 +2309,8 @@ export type ModelTypes = {
 	publicId: string
 };
 	["Query"]: {
-		/** Returns all Assignment (optionally filtered) */
+		classesByYearAndSubject: Array<ModelTypes["ClassEntity"]>,
+	/** Returns all Assignment (optionally filtered) */
 	getAllAssignment: Array<ModelTypes["AssignmentEntity"]>,
 	/** Returns all AssignmentSubmission (optionally filtered) */
 	getAllAssignmentSubmission: Array<ModelTypes["AssignmentSubmissionEntity"]>,
@@ -2399,12 +2448,10 @@ export type ModelTypes = {
 	submittedAt?: ModelTypes["DateTime"] | undefined | null
 };
 	["UpdateClassInput"]: {
-	educatorIds?: Array<ModelTypes["ID"]> | undefined | null,
 	id: ModelTypes["ID"],
 	name?: string | undefined | null,
-	studentIds?: Array<ModelTypes["ID"]> | undefined | null,
-	subjectId?: ModelTypes["ID"] | undefined | null,
-	yearGroupId?: ModelTypes["ID"] | undefined | null
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
 };
 	["UpdateEducatorProfileInput"]: {
 	id: number,
@@ -2549,6 +2596,13 @@ export type GraphQLTypes = {
 	accessToken: string,
 	refreshToken: string
 };
+	["ClassByYearSubjectInput"]: {
+		pagination?: GraphQLTypes["PaginationInput"] | undefined | null,
+	subjectId: GraphQLTypes["ID"],
+	withEducators: boolean,
+	withStudents: boolean,
+	yearGroupId: GraphQLTypes["ID"]
+};
 	["ClassEntity"]: {
 	__typename: "ClassEntity",
 	createdAt: GraphQLTypes["DateTime"],
@@ -2556,9 +2610,9 @@ export type GraphQLTypes = {
 	id: GraphQLTypes["ID"],
 	name: string,
 	students?: Array<GraphQLTypes["StudentProfileDto"]> | undefined | null,
-	subject?: GraphQLTypes["SubjectEntity"] | undefined | null,
+	subject: GraphQLTypes["SubjectEntity"],
 	updatedAt: GraphQLTypes["DateTime"],
-	yearGroup?: GraphQLTypes["YearGroupEntity"] | undefined | null
+	yearGroup: GraphQLTypes["YearGroupEntity"]
 };
 	["CreateAssignmentInput"]: {
 		classId: GraphQLTypes["ID"],
@@ -2576,11 +2630,9 @@ export type GraphQLTypes = {
 	submittedAt?: GraphQLTypes["DateTime"] | undefined | null
 };
 	["CreateClassInput"]: {
-		educatorIds?: Array<GraphQLTypes["ID"] | undefined | null> | undefined | null,
-	name: string,
-	studentIds?: Array<GraphQLTypes["ID"] | undefined | null> | undefined | null,
-	subjectId?: GraphQLTypes["ID"] | undefined | null,
-	yearGroupId?: GraphQLTypes["ID"] | undefined | null
+		name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
 };
 	["CreateEducatorProfileInput"]: {
 		staffId: number
@@ -2750,7 +2802,6 @@ export type GraphQLTypes = {
 	createStudentProfile: GraphQLTypes["StudentProfileDto"],
 	/** Create one Subject */
 	createSubject: GraphQLTypes["SubjectEntity"],
-	createTest: GraphQLTypes["SubjectEntity"],
 	createUser: GraphQLTypes["User"],
 	createUserWithProfile: GraphQLTypes["User"],
 	/** Create one YearGroup */
@@ -2812,9 +2863,22 @@ export type GraphQLTypes = {
 	/** Updates one YearGroup */
 	updateYearGroup: GraphQLTypes["YearGroupEntity"]
 };
+	["PageInfo"]: {
+	__typename: "PageInfo",
+	hasNextPage: boolean,
+	hasPreviousPage: boolean,
+	itemCount: number,
+	page: number,
+	pageCount: number,
+	take: number
+};
 	["PaginatedGetAllRequestDto"]: {
 		limit?: number | undefined | null,
 	offset?: number | undefined | null
+};
+	["PaginationInput"]: {
+		page: number,
+	take: number
 };
 	["Permission"]: {
 	__typename: "Permission",
@@ -2848,6 +2912,7 @@ export type GraphQLTypes = {
 };
 	["Query"]: {
 	__typename: "Query",
+	classesByYearAndSubject: Array<GraphQLTypes["ClassEntity"]>,
 	/** Returns all Assignment (optionally filtered) */
 	getAllAssignment: Array<GraphQLTypes["AssignmentEntity"]>,
 	/** Returns all AssignmentSubmission (optionally filtered) */
@@ -2991,12 +3056,10 @@ export type GraphQLTypes = {
 	submittedAt?: GraphQLTypes["DateTime"] | undefined | null
 };
 	["UpdateClassInput"]: {
-		educatorIds?: Array<GraphQLTypes["ID"]> | undefined | null,
-	id: GraphQLTypes["ID"],
+		id: GraphQLTypes["ID"],
 	name?: string | undefined | null,
-	studentIds?: Array<GraphQLTypes["ID"]> | undefined | null,
-	subjectId?: GraphQLTypes["ID"] | undefined | null,
-	yearGroupId?: GraphQLTypes["ID"] | undefined | null
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
 };
 	["UpdateEducatorProfileInput"]: {
 		id: number,
@@ -3128,6 +3191,7 @@ export enum ValidYear {
 }
 
 type ZEUS_VARIABLES = {
+	["ClassByYearSubjectInput"]: ValueTypes["ClassByYearSubjectInput"];
 	["CreateAssignmentInput"]: ValueTypes["CreateAssignmentInput"];
 	["CreateAssignmentSubmissionInput"]: ValueTypes["CreateAssignmentSubmissionInput"];
 	["CreateClassInput"]: ValueTypes["CreateClassInput"];
@@ -3150,6 +3214,7 @@ type ZEUS_VARIABLES = {
 	["IdRequestDto"]: ValueTypes["IdRequestDto"];
 	["LoginRequest"]: ValueTypes["LoginRequest"];
 	["PaginatedGetAllRequestDto"]: ValueTypes["PaginatedGetAllRequestDto"];
+	["PaginationInput"]: ValueTypes["PaginationInput"];
 	["PublicIdRequestDto"]: ValueTypes["PublicIdRequestDto"];
 	["RelationIdsInput"]: ValueTypes["RelationIdsInput"];
 	["SubmitIdArrayByIdRequestDto"]: ValueTypes["SubmitIdArrayByIdRequestDto"];
