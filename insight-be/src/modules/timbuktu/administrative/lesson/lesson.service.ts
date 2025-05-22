@@ -18,4 +18,11 @@ export class LessonService extends BaseService<
   ) {
     super(lessonRepository, dataSource);
   }
+
+  async findByTopic(topicId: number): Promise<LessonEntity[]> {
+    return this.repo.find({
+      where: { topic: { id: topicId } },
+      order: { title: 'ASC' },
+    });
+  }
 }

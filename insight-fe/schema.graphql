@@ -416,6 +416,8 @@ type Query {
 
   """Returns all Lesson (optionally filtered)"""
   getAllLesson(data: FindAllInput!): [LessonEntity!]!
+  """Lessons belonging to a specific Topic"""
+  lessonsByTopic(topicId: ID!): [LessonEntity!]!
 
   """Returns all Permission (optionally filtered)"""
   getAllPermission(data: FindAllInput!): [Permission!]!

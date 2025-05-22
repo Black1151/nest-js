@@ -1,4 +1,4 @@
-import { Resolver } from '@nestjs/graphql';
+import { Resolver, Query, Args, ID } from '@nestjs/graphql';
 import { createBaseResolver } from 'src/common/base.resolver';
 import { CreateLessonInput, UpdateLessonInput } from './lesson.inputs';
 import { LessonEntity } from './lesson.entity';
@@ -26,5 +26,12 @@ const BaseLessonResolver = createBaseResolver<
 export class LessonResolver extends BaseLessonResolver {
   constructor(private readonly lessonService: LessonService) {
     super(lessonService);
+  }
+
+  @Query(() => [LessonEntity])
+  async lessonsByTopic(
+    @Args('topicId', { type: () => ID }) topicId: string,
+  ): Promise<LessonEntity[]> {
+    return this.lessonService.findByTopic(Number(topicId));
   }
 }
