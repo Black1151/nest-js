@@ -24,7 +24,7 @@ export function UserManagerPageClient() {
 
   return (
     <>
-      <UserSearchInput onSelect={setSelectedUserPublicId} />
+      {/* needs some work but will want  <UserSearchInput onSelect={setSelectedUserPublicId} /> */}
       <ContentGrid gridTemplateColumns="1fr 1fr">
         <UserListTable setSelectedUserPublicId={setSelectedUserPublicId} />
 
