@@ -1,5 +1,6 @@
 import { PartialType, InputType, Field, ID } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import { PaginationInput } from 'src/common/utils/pagination.util';
 
 @InputType()
 export class CreateLessonInput {
@@ -36,4 +37,13 @@ export class CreateLessonInput {
 export class UpdateLessonInput extends PartialType(CreateLessonInput) {
   @Field(() => ID)
   id: number;
+}
+
+@InputType()
+export class LessonByTopicInput {
+  @Field(() => ID)
+  topicId!: string;
+
+  @Field(() => PaginationInput, { nullable: true })
+  pagination?: PaginationInput;
 }
