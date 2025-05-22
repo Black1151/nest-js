@@ -11,7 +11,7 @@ import {
   FindOptionsWhere,
   In,
   Repository,
-  ILike,
+  Raw,
 } from 'typeorm';
 
 import { RelationIdsInput } from './base.inputs';
@@ -189,7 +189,12 @@ export class BaseService<
     opts?: { limit?: number; relations?: string[] },
   ): Promise<T[]> {
     const { limit = 10, relations } = opts ?? {};
-    const where = columns.map((c) => ({ [c as string]: ILike(`%${search}%`) })) as any[];
+    const where = columns.map((c) => ({
+      [c as string]: Raw(
+        (alias) => `CAST(${alias} AS TEXT) ILIKE :search`,
+        { search: `%${search}%` },
+      ),
+    })) as any[];
     return this.repo.find({ where, take: limit, relations });
   }
 }
