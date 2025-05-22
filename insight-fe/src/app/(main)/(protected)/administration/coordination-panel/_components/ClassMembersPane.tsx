@@ -13,11 +13,14 @@ import {
   Button,
   List,
   ListItem,
+  Flex,
+  Text,
 } from "@chakra-ui/react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useMemo, useState } from "react";
 import EducatorSearchInput from "./EducatorSearchInput";
 import StudentSearchInput from "./StudentSearchInput";
+import { ClassDropdown } from "./dropdowns/ClassDropdown/ClassDropdown";
 
 const GET_CLASS_WITH_MEMBERS = typedGql("query")({
   getClass: [
@@ -37,9 +40,17 @@ const UPDATE_CLASS = typedGql("mutation")({
 
 interface Props {
   classId: string | null;
+  yearGroupId: string | null;
+  subjectId: string | null;
+  setClassId: (id: string | null) => void;
 }
 
-export default function ClassMembersPane({ classId }: Props) {
+export default function ClassMembersPane({
+  classId,
+  yearGroupId,
+  subjectId,
+  setClassId,
+}: Props) {
   const [search, setSearch] = useState("");
   const [modalType, setModalType] = useState<"student" | "educator">("student");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,6 +113,15 @@ export default function ClassMembersPane({ classId }: Props) {
 
   return (
     <ContentCard gap={4} overflow="hidden">
+      <Flex flexDir="column" gap={2}>
+        <Text>Class</Text>
+        <ClassDropdown
+          yearGroupId={yearGroupId}
+          subjectId={subjectId}
+          value={classId}
+          onChange={(id: string | null) => setClassId(id)}
+        />
+      </Flex>
       <VStack align="stretch" spacing={4} overflow="auto">
         {/* ---------- Educators section ---------- */}
         <Heading size="md">Educators</Heading>

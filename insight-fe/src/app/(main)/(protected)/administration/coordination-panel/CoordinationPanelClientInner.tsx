@@ -64,18 +64,14 @@ export default function CoordinationPanelClientInner() {
           </Flex>
 
           {/* ------------------- 4. class ------------------ */}
-          <Flex flexDir="column" gap={2}>
-            <Text>Class</Text>
-            <ClassDropdown
-              yearGroupId={yearGroupId}
-              subjectId={subjectId}
-              value={classId}
-              onChange={(id: string | null) => setClassId(id)}
-            />
-          </Flex>
         </Flex>
       </ContentCard>
-      <ClassMembersPane classId={classId} />
+      <ClassMembersPane
+        yearGroupId={yearGroupId}
+        subjectId={subjectId}
+        classId={classId}
+        setClassId={setClassId}
+      />
     </Grid>
   );
 }
