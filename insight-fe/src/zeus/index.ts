@@ -897,6 +897,7 @@ export const $ = <Type extends GraphQLVariableType, Name extends string>(name: N
 type ZEUS_INTERFACES = never
 export type ScalarCoders = {
 	DateTime?: ScalarResolver;
+	JSONObject?: ScalarResolver;
 	ID?: ScalarResolver;
 }
 type ZEUS_UNIONS = never
@@ -976,10 +977,12 @@ export type ValueTypes = {
 	name: string | Variable<any, string>
 };
 	["CreateLessonInput"]: {
-	content?: string | undefined | null | Variable<any, string>,
+	content?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
 	createdByEducatorId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	description?: string | undefined | null | Variable<any, string>,
 	recommendedYearGroupIds?: Array<ValueTypes["ID"] | undefined | null> | undefined | null | Variable<any, string>,
-	subjectId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
 	title: string | Variable<any, string>
 };
 	["CreatePermissionGroupInput"]: {
@@ -999,6 +1002,11 @@ export type ValueTypes = {
 	studentId: number | Variable<any, string>
 };
 	["CreateSubjectInput"]: {
+	name: string | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
+	["CreateTopicInput"]: {
 	name: string | Variable<any, string>,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
@@ -1080,6 +1088,8 @@ export type ValueTypes = {
 	["IdRequestDto"]: {
 	id: number | Variable<any, string>
 };
+	/** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+["JSONObject"]:unknown;
 	["KeyStageEntity"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
 	description?:boolean | `@${string}`,
@@ -1095,10 +1105,11 @@ export type ValueTypes = {
 	createdAt?:boolean | `@${string}`,
 	createdBy?:ValueTypes["EducatorProfileDto"],
 	createdById?:boolean | `@${string}`,
+	description?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
 	recommendedYearGroups?:ValueTypes["YearGroupEntity"],
-	subject?:ValueTypes["SubjectEntity"],
 	title?:boolean | `@${string}`,
+	topic?:ValueTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
@@ -1124,6 +1135,7 @@ createPermissionGroup?: [{	data: ValueTypes["CreatePermissionGroupInput"] | Vari
 createRole?: [{	data: ValueTypes["CreateRoleInput"] | Variable<any, string>},ValueTypes["Role"]],
 createStudentProfile?: [{	data: ValueTypes["CreateStudentProfileInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
 createSubject?: [{	data: ValueTypes["CreateSubjectInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+createTopic?: [{	data: ValueTypes["CreateTopicInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 createUser?: [{	data: ValueTypes["CreateUserRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 createUserWithProfile?: [{	data: ValueTypes["CreateUserWithProfileInput"] | Variable<any, string>},ValueTypes["User"]],
 createYearGroup?: [{	data: ValueTypes["CreateYearGroupInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
@@ -1138,6 +1150,7 @@ deletePermissionGroup?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},
 deleteRole?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteStudentProfile?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteSubject?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteTopic?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteYearGroup?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 logUserInWithEmailAndPassword?: [{	data: ValueTypes["LoginRequest"] | Variable<any, string>},ValueTypes["AuthTokens"]],
 refreshUsersTokens?: [{	refreshToken: string | Variable<any, string>},ValueTypes["LoginResponse"]],
@@ -1156,6 +1169,7 @@ updatePermissionGroupsForRole?: [{	data: ValueTypes["SubmitIdArrayByIdRequestDto
 updateRole?: [{	data: ValueTypes["UpdateRoleInput"] | Variable<any, string>},ValueTypes["Role"]],
 updateStudentProfile?: [{	data: ValueTypes["UpdateStudentProfileInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
 updateSubject?: [{	data: ValueTypes["UpdateSubjectInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+updateTopic?: [{	data: ValueTypes["UpdateTopicInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 updateUserByPublicId?: [{	data: ValueTypes["UpdateUserWithProfileInput"] | Variable<any, string>,	publicId: string | Variable<any, string>},ValueTypes["User"]],
 updateUserRolesFromArray?: [{	data: ValueTypes["UpdateUserRolesFromArrayRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 updateYearGroup?: [{	data: ValueTypes["UpdateYearGroupInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
@@ -1221,6 +1235,7 @@ getAllPermissionGroup?: [{	data: ValueTypes["FindAllInput"] | Variable<any, stri
 getAllRole?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["Role"]],
 getAllStudentProfile?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
 getAllSubject?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+getAllTopic?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 getAllUsers?: [{	data: ValueTypes["PaginatedGetAllRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 getAllYearGroup?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
 getAssignment?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["AssignmentEntity"]],
@@ -1248,6 +1263,8 @@ getStudentProfile?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},Valu
 getStudentProfileBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
 getSubject?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
 getSubjectBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+getTopic?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
+getTopicBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 getUserByPublicId?: [{	data: ValueTypes["PublicIdRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 getUsersRolesAndPermissions?: [{	data: ValueTypes["UserPermissionsInput"] | Variable<any, string>},ValueTypes["RolesPermissionsResponse"]],
 getYearGroup?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
@@ -1263,8 +1280,10 @@ searchPermissionGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, strin
 searchRole?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["Role"]],
 searchStudentProfile?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
 searchSubject?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+searchTopic?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 searchUsers?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["User"]],
 searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
+topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 		__typename?: boolean | `@${string}`
 }>;
 	["RelationIdsInput"]: {
@@ -1295,10 +1314,10 @@ searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},Va
 }>;
 	["SearchInput"]: {
 	columns: Array<string> | Variable<any, string>,
+	filters?: Array<ValueTypes["FilterInput"]> | undefined | null | Variable<any, string>,
 	limit?: number | undefined | null | Variable<any, string>,
-        relations?: Array<string> | undefined | null | Variable<any, string>,
-        filters?: Array<ValueTypes["FilterInput"]> | undefined | null | Variable<any, string>,
-        search: string | Variable<any, string>
+	relations?: Array<string> | undefined | null | Variable<any, string>,
+	search: string | Variable<any, string>
 };
 	["StudentProfileDto"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
@@ -1312,6 +1331,7 @@ searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},Va
 	createdAt?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
 	name?:boolean | `@${string}`,
+	topics?:ValueTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
 	yearGroups?:ValueTypes["YearGroupEntity"],
 		__typename?: boolean | `@${string}`
@@ -1320,6 +1340,22 @@ searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},Va
 	idArray: Array<number> | Variable<any, string>,
 	recordId: number | Variable<any, string>
 };
+	["TopicByYearSubjectInput"]: {
+	pagination?: ValueTypes["PaginationInput"] | undefined | null | Variable<any, string>,
+	subjectId: ValueTypes["ID"] | Variable<any, string>,
+	withLessons: boolean | Variable<any, string>,
+	yearGroupId: ValueTypes["ID"] | Variable<any, string>
+};
+	["TopicEntity"]: AliasType<{
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	lessons?:ValueTypes["LessonEntity"],
+	name?:boolean | `@${string}`,
+	subject?:ValueTypes["SubjectEntity"],
+	updatedAt?:boolean | `@${string}`,
+	yearGroup?:ValueTypes["YearGroupEntity"],
+		__typename?: boolean | `@${string}`
+}>;
 	["UpdateAssignmentInput"]: {
 	classId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
 	description?: string | undefined | null | Variable<any, string>,
@@ -1353,11 +1389,13 @@ searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},Va
 	name?: string | undefined | null | Variable<any, string>
 };
 	["UpdateLessonInput"]: {
-	content?: string | undefined | null | Variable<any, string>,
+	content?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
 	createdByEducatorId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	description?: string | undefined | null | Variable<any, string>,
 	id: ValueTypes["ID"] | Variable<any, string>,
 	recommendedYearGroupIds?: Array<ValueTypes["ID"]> | undefined | null | Variable<any, string>,
-	subjectId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
 	title?: string | undefined | null | Variable<any, string>
 };
 	["UpdatePermissionGroupInput"]: {
@@ -1381,6 +1419,12 @@ searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},Va
 	studentId?: number | undefined | null | Variable<any, string>
 };
 	["UpdateSubjectInput"]: {
+	id: ValueTypes["ID"] | Variable<any, string>,
+	name?: string | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
+	["UpdateTopicInput"]: {
 	id: ValueTypes["ID"] | Variable<any, string>,
 	name?: string | undefined | null | Variable<any, string>,
 	/** Generic hook for attaching any relations by IDs */
@@ -1450,6 +1494,7 @@ searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},Va
 	id?:boolean | `@${string}`,
 	keyStage?:ValueTypes["KeyStageEntity"],
 	subjects?:ValueTypes["SubjectEntity"],
+	topics?:ValueTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
 	year?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
@@ -1532,10 +1577,12 @@ export type ResolverInputTypes = {
 	name: string
 };
 	["CreateLessonInput"]: {
-	content?: string | undefined | null,
+	content?: ResolverInputTypes["JSONObject"] | undefined | null,
 	createdByEducatorId?: ResolverInputTypes["ID"] | undefined | null,
+	description?: string | undefined | null,
 	recommendedYearGroupIds?: Array<ResolverInputTypes["ID"] | undefined | null> | undefined | null,
-	subjectId?: ResolverInputTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
 	title: string
 };
 	["CreatePermissionGroupInput"]: {
@@ -1555,6 +1602,11 @@ export type ResolverInputTypes = {
 	studentId: number
 };
 	["CreateSubjectInput"]: {
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateTopicInput"]: {
 	name: string,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
@@ -1636,6 +1688,8 @@ export type ResolverInputTypes = {
 	["IdRequestDto"]: {
 	id: number
 };
+	/** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+["JSONObject"]:unknown;
 	["KeyStageEntity"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
 	description?:boolean | `@${string}`,
@@ -1651,10 +1705,11 @@ export type ResolverInputTypes = {
 	createdAt?:boolean | `@${string}`,
 	createdBy?:ResolverInputTypes["EducatorProfileDto"],
 	createdById?:boolean | `@${string}`,
+	description?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
 	recommendedYearGroups?:ResolverInputTypes["YearGroupEntity"],
-	subject?:ResolverInputTypes["SubjectEntity"],
 	title?:boolean | `@${string}`,
+	topic?:ResolverInputTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
@@ -1680,6 +1735,7 @@ createPermissionGroup?: [{	data: ResolverInputTypes["CreatePermissionGroupInput"
 createRole?: [{	data: ResolverInputTypes["CreateRoleInput"]},ResolverInputTypes["Role"]],
 createStudentProfile?: [{	data: ResolverInputTypes["CreateStudentProfileInput"]},ResolverInputTypes["StudentProfileDto"]],
 createSubject?: [{	data: ResolverInputTypes["CreateSubjectInput"]},ResolverInputTypes["SubjectEntity"]],
+createTopic?: [{	data: ResolverInputTypes["CreateTopicInput"]},ResolverInputTypes["TopicEntity"]],
 createUser?: [{	data: ResolverInputTypes["CreateUserRequestDto"]},ResolverInputTypes["User"]],
 createUserWithProfile?: [{	data: ResolverInputTypes["CreateUserWithProfileInput"]},ResolverInputTypes["User"]],
 createYearGroup?: [{	data: ResolverInputTypes["CreateYearGroupInput"]},ResolverInputTypes["YearGroupEntity"]],
@@ -1694,6 +1750,7 @@ deletePermissionGroup?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${st
 deleteRole?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteStudentProfile?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteSubject?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
+deleteTopic?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteYearGroup?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 logUserInWithEmailAndPassword?: [{	data: ResolverInputTypes["LoginRequest"]},ResolverInputTypes["AuthTokens"]],
 refreshUsersTokens?: [{	refreshToken: string},ResolverInputTypes["LoginResponse"]],
@@ -1712,6 +1769,7 @@ updatePermissionGroupsForRole?: [{	data: ResolverInputTypes["SubmitIdArrayByIdRe
 updateRole?: [{	data: ResolverInputTypes["UpdateRoleInput"]},ResolverInputTypes["Role"]],
 updateStudentProfile?: [{	data: ResolverInputTypes["UpdateStudentProfileInput"]},ResolverInputTypes["StudentProfileDto"]],
 updateSubject?: [{	data: ResolverInputTypes["UpdateSubjectInput"]},ResolverInputTypes["SubjectEntity"]],
+updateTopic?: [{	data: ResolverInputTypes["UpdateTopicInput"]},ResolverInputTypes["TopicEntity"]],
 updateUserByPublicId?: [{	data: ResolverInputTypes["UpdateUserWithProfileInput"],	publicId: string},ResolverInputTypes["User"]],
 updateUserRolesFromArray?: [{	data: ResolverInputTypes["UpdateUserRolesFromArrayRequestDto"]},ResolverInputTypes["User"]],
 updateYearGroup?: [{	data: ResolverInputTypes["UpdateYearGroupInput"]},ResolverInputTypes["YearGroupEntity"]],
@@ -1777,6 +1835,7 @@ getAllPermissionGroup?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInp
 getAllRole?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["Role"]],
 getAllStudentProfile?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["StudentProfileDto"]],
 getAllSubject?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["SubjectEntity"]],
+getAllTopic?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["TopicEntity"]],
 getAllUsers?: [{	data: ResolverInputTypes["PaginatedGetAllRequestDto"]},ResolverInputTypes["User"]],
 getAllYearGroup?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["YearGroupEntity"]],
 getAssignment?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["AssignmentEntity"]],
@@ -1804,6 +1863,8 @@ getStudentProfile?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["
 getStudentProfileBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["StudentProfileDto"]],
 getSubject?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["SubjectEntity"]],
 getSubjectBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["SubjectEntity"]],
+getTopic?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["TopicEntity"]],
+getTopicBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["TopicEntity"]],
 getUserByPublicId?: [{	data: ResolverInputTypes["PublicIdRequestDto"]},ResolverInputTypes["User"]],
 getUsersRolesAndPermissions?: [{	data: ResolverInputTypes["UserPermissionsInput"]},ResolverInputTypes["RolesPermissionsResponse"]],
 getYearGroup?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["YearGroupEntity"]],
@@ -1819,8 +1880,10 @@ searchPermissionGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInpu
 searchRole?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["Role"]],
 searchStudentProfile?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["StudentProfileDto"]],
 searchSubject?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["SubjectEntity"]],
+searchTopic?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["TopicEntity"]],
 searchUsers?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["User"]],
 searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["YearGroupEntity"]],
+topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]},ResolverInputTypes["TopicEntity"]],
 		__typename?: boolean | `@${string}`
 }>;
 	["RelationIdsInput"]: {
@@ -1851,10 +1914,10 @@ searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes
 }>;
 	["SearchInput"]: {
 	columns: Array<string>,
-        limit?: number | undefined | null,
-        relations?: Array<string> | undefined | null,
-        filters?: Array<ResolverInputTypes["FilterInput"]> | undefined | null,
-        search: string
+	filters?: Array<ResolverInputTypes["FilterInput"]> | undefined | null,
+	limit?: number | undefined | null,
+	relations?: Array<string> | undefined | null,
+	search: string
 };
 	["StudentProfileDto"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
@@ -1868,6 +1931,7 @@ searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes
 	createdAt?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
 	name?:boolean | `@${string}`,
+	topics?:ResolverInputTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
 	yearGroups?:ResolverInputTypes["YearGroupEntity"],
 		__typename?: boolean | `@${string}`
@@ -1876,6 +1940,22 @@ searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes
 	idArray: Array<number>,
 	recordId: number
 };
+	["TopicByYearSubjectInput"]: {
+	pagination?: ResolverInputTypes["PaginationInput"] | undefined | null,
+	subjectId: ResolverInputTypes["ID"],
+	withLessons: boolean,
+	yearGroupId: ResolverInputTypes["ID"]
+};
+	["TopicEntity"]: AliasType<{
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	lessons?:ResolverInputTypes["LessonEntity"],
+	name?:boolean | `@${string}`,
+	subject?:ResolverInputTypes["SubjectEntity"],
+	updatedAt?:boolean | `@${string}`,
+	yearGroup?:ResolverInputTypes["YearGroupEntity"],
+		__typename?: boolean | `@${string}`
+}>;
 	["UpdateAssignmentInput"]: {
 	classId?: ResolverInputTypes["ID"] | undefined | null,
 	description?: string | undefined | null,
@@ -1909,11 +1989,13 @@ searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes
 	name?: string | undefined | null
 };
 	["UpdateLessonInput"]: {
-	content?: string | undefined | null,
+	content?: ResolverInputTypes["JSONObject"] | undefined | null,
 	createdByEducatorId?: ResolverInputTypes["ID"] | undefined | null,
+	description?: string | undefined | null,
 	id: ResolverInputTypes["ID"],
 	recommendedYearGroupIds?: Array<ResolverInputTypes["ID"]> | undefined | null,
-	subjectId?: ResolverInputTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
 	title?: string | undefined | null
 };
 	["UpdatePermissionGroupInput"]: {
@@ -1937,6 +2019,12 @@ searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes
 	studentId?: number | undefined | null
 };
 	["UpdateSubjectInput"]: {
+	id: ResolverInputTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateTopicInput"]: {
 	id: ResolverInputTypes["ID"],
 	name?: string | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
@@ -2006,6 +2094,7 @@ searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes
 	id?:boolean | `@${string}`,
 	keyStage?:ResolverInputTypes["KeyStageEntity"],
 	subjects?:ResolverInputTypes["SubjectEntity"],
+	topics?:ResolverInputTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
 	year?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
@@ -2089,10 +2178,12 @@ export type ModelTypes = {
 	name: string
 };
 	["CreateLessonInput"]: {
-	content?: string | undefined | null,
+	content?: ModelTypes["JSONObject"] | undefined | null,
 	createdByEducatorId?: ModelTypes["ID"] | undefined | null,
+	description?: string | undefined | null,
 	recommendedYearGroupIds?: Array<ModelTypes["ID"] | undefined | null> | undefined | null,
-	subjectId?: ModelTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
 	title: string
 };
 	["CreatePermissionGroupInput"]: {
@@ -2112,6 +2203,11 @@ export type ModelTypes = {
 	studentId: number
 };
 	["CreateSubjectInput"]: {
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateTopicInput"]: {
 	name: string,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
@@ -2192,6 +2288,8 @@ export type ModelTypes = {
 	["IdRequestDto"]: {
 	id: number
 };
+	/** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+["JSONObject"]:any;
 	["KeyStageEntity"]: {
 		createdAt: ModelTypes["DateTime"],
 	description?: string | undefined | null,
@@ -2202,14 +2300,15 @@ export type ModelTypes = {
 	yearGroups: Array<ModelTypes["YearGroupEntity"]>
 };
 	["LessonEntity"]: {
-		content?: string | undefined | null,
+		content?: ModelTypes["JSONObject"] | undefined | null,
 	createdAt: ModelTypes["DateTime"],
 	createdBy?: ModelTypes["EducatorProfileDto"] | undefined | null,
 	createdById?: ModelTypes["ID"] | undefined | null,
+	description?: string | undefined | null,
 	id: ModelTypes["ID"],
 	recommendedYearGroups?: Array<ModelTypes["YearGroupEntity"]> | undefined | null,
-	subject?: ModelTypes["SubjectEntity"] | undefined | null,
 	title: string,
+	topic: ModelTypes["TopicEntity"],
 	updatedAt: ModelTypes["DateTime"]
 };
 	["LoginRequest"]: {
@@ -2244,6 +2343,8 @@ export type ModelTypes = {
 	createStudentProfile: ModelTypes["StudentProfileDto"],
 	/** Create one Subject */
 	createSubject: ModelTypes["SubjectEntity"],
+	/** Create one Topic */
+	createTopic: ModelTypes["TopicEntity"],
 	createUser: ModelTypes["User"],
 	createUserWithProfile: ModelTypes["User"],
 	/** Create one YearGroup */
@@ -2270,6 +2371,8 @@ export type ModelTypes = {
 	deleteStudentProfile: boolean,
 	/** Delete one Subject */
 	deleteSubject: boolean,
+	/** Delete one Topic */
+	deleteTopic: boolean,
 	/** Delete one YearGroup */
 	deleteYearGroup: boolean,
 	logUserInWithEmailAndPassword: ModelTypes["AuthTokens"],
@@ -2300,6 +2403,8 @@ export type ModelTypes = {
 	updateStudentProfile: ModelTypes["StudentProfileDto"],
 	/** Updates one Subject */
 	updateSubject: ModelTypes["SubjectEntity"],
+	/** Updates one Topic */
+	updateTopic: ModelTypes["TopicEntity"],
 	updateUserByPublicId: ModelTypes["User"],
 	updateUserRolesFromArray: ModelTypes["User"],
 	/** Updates one YearGroup */
@@ -2372,6 +2477,8 @@ export type ModelTypes = {
 	getAllStudentProfile: Array<ModelTypes["StudentProfileDto"]>,
 	/** Returns all Subject (optionally filtered) */
 	getAllSubject: Array<ModelTypes["SubjectEntity"]>,
+	/** Returns all Topic (optionally filtered) */
+	getAllTopic: Array<ModelTypes["TopicEntity"]>,
 	getAllUsers: Array<ModelTypes["User"]>,
 	/** Returns all YearGroup (optionally filtered) */
 	getAllYearGroup: Array<ModelTypes["YearGroupEntity"]>,
@@ -2422,6 +2529,10 @@ export type ModelTypes = {
 	getSubject: ModelTypes["SubjectEntity"],
 	/** Returns one Subject by given conditions */
 	getSubjectBy: ModelTypes["SubjectEntity"],
+	/** Returns one Topic */
+	getTopic: ModelTypes["TopicEntity"],
+	/** Returns one Topic by given conditions */
+	getTopicBy: ModelTypes["TopicEntity"],
 	getUserByPublicId: ModelTypes["User"],
 	getUsersRolesAndPermissions: ModelTypes["RolesPermissionsResponse"],
 	/** Returns one YearGroup */
@@ -2450,9 +2561,12 @@ export type ModelTypes = {
 	searchStudentProfile: Array<ModelTypes["StudentProfileDto"]>,
 	/** Search Subject records by given columns */
 	searchSubject: Array<ModelTypes["SubjectEntity"]>,
+	/** Search Topic records by given columns */
+	searchTopic: Array<ModelTypes["TopicEntity"]>,
 	searchUsers: Array<ModelTypes["User"]>,
 	/** Search YearGroup records by given columns */
-	searchYearGroup: Array<ModelTypes["YearGroupEntity"]>
+	searchYearGroup: Array<ModelTypes["YearGroupEntity"]>,
+	topicsByYearAndSubject: Array<ModelTypes["TopicEntity"]>
 };
 	["RelationIdsInput"]: {
 	ids: Array<ModelTypes["ID"]>,
@@ -2478,11 +2592,11 @@ export type ModelTypes = {
 	roles: Array<ModelTypes["RoleDTO"]>
 };
 	["SearchInput"]: {
-        columns: Array<string>,
-        limit?: number | undefined | null,
-        relations?: Array<string> | undefined | null,
-        filters?: Array<ModelTypes["FilterInput"]> | undefined | null,
-        search: string
+	columns: Array<string>,
+	filters?: Array<ModelTypes["FilterInput"]> | undefined | null,
+	limit?: number | undefined | null,
+	relations?: Array<string> | undefined | null,
+	search: string
 };
 	["StudentProfileDto"]: {
 		createdAt: ModelTypes["DateTime"],
@@ -2495,12 +2609,28 @@ export type ModelTypes = {
 		createdAt: ModelTypes["DateTime"],
 	id: ModelTypes["ID"],
 	name: string,
+	topics?: Array<ModelTypes["TopicEntity"]> | undefined | null,
 	updatedAt: ModelTypes["DateTime"],
 	yearGroups?: Array<ModelTypes["YearGroupEntity"]> | undefined | null
 };
 	["SubmitIdArrayByIdRequestDto"]: {
 	idArray: Array<number>,
 	recordId: number
+};
+	["TopicByYearSubjectInput"]: {
+	pagination?: ModelTypes["PaginationInput"] | undefined | null,
+	subjectId: ModelTypes["ID"],
+	withLessons: boolean,
+	yearGroupId: ModelTypes["ID"]
+};
+	["TopicEntity"]: {
+		createdAt: ModelTypes["DateTime"],
+	id: ModelTypes["ID"],
+	lessons?: Array<ModelTypes["LessonEntity"]> | undefined | null,
+	name: string,
+	subject: ModelTypes["SubjectEntity"],
+	updatedAt: ModelTypes["DateTime"],
+	yearGroup: ModelTypes["YearGroupEntity"]
 };
 	["UpdateAssignmentInput"]: {
 	classId?: ModelTypes["ID"] | undefined | null,
@@ -2535,11 +2665,13 @@ export type ModelTypes = {
 	name?: string | undefined | null
 };
 	["UpdateLessonInput"]: {
-	content?: string | undefined | null,
+	content?: ModelTypes["JSONObject"] | undefined | null,
 	createdByEducatorId?: ModelTypes["ID"] | undefined | null,
+	description?: string | undefined | null,
 	id: ModelTypes["ID"],
 	recommendedYearGroupIds?: Array<ModelTypes["ID"]> | undefined | null,
-	subjectId?: ModelTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
 	title?: string | undefined | null
 };
 	["UpdatePermissionGroupInput"]: {
@@ -2563,6 +2695,12 @@ export type ModelTypes = {
 	studentId?: number | undefined | null
 };
 	["UpdateSubjectInput"]: {
+	id: ModelTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateTopicInput"]: {
 	id: ModelTypes["ID"],
 	name?: string | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
@@ -2629,6 +2767,7 @@ export type ModelTypes = {
 	id: ModelTypes["ID"],
 	keyStage?: ModelTypes["KeyStageEntity"] | undefined | null,
 	subjects?: Array<ModelTypes["SubjectEntity"]> | undefined | null,
+	topics?: Array<ModelTypes["TopicEntity"]> | undefined | null,
 	updatedAt: ModelTypes["DateTime"],
 	year: ModelTypes["ValidYear"]
 };
@@ -2714,10 +2853,12 @@ export type GraphQLTypes = {
 	name: string
 };
 	["CreateLessonInput"]: {
-		content?: string | undefined | null,
+		content?: GraphQLTypes["JSONObject"] | undefined | null,
 	createdByEducatorId?: GraphQLTypes["ID"] | undefined | null,
+	description?: string | undefined | null,
 	recommendedYearGroupIds?: Array<GraphQLTypes["ID"] | undefined | null> | undefined | null,
-	subjectId?: GraphQLTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
 	title: string
 };
 	["CreatePermissionGroupInput"]: {
@@ -2737,6 +2878,11 @@ export type GraphQLTypes = {
 	studentId: number
 };
 	["CreateSubjectInput"]: {
+		name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateTopicInput"]: {
 		name: string,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
@@ -2818,6 +2964,8 @@ export type GraphQLTypes = {
 	["IdRequestDto"]: {
 		id: number
 };
+	/** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+["JSONObject"]: "scalar" & { name: "JSONObject" };
 	["KeyStageEntity"]: {
 	__typename: "KeyStageEntity",
 	createdAt: GraphQLTypes["DateTime"],
@@ -2830,14 +2978,15 @@ export type GraphQLTypes = {
 };
 	["LessonEntity"]: {
 	__typename: "LessonEntity",
-	content?: string | undefined | null,
+	content?: GraphQLTypes["JSONObject"] | undefined | null,
 	createdAt: GraphQLTypes["DateTime"],
 	createdBy?: GraphQLTypes["EducatorProfileDto"] | undefined | null,
 	createdById?: GraphQLTypes["ID"] | undefined | null,
+	description?: string | undefined | null,
 	id: GraphQLTypes["ID"],
 	recommendedYearGroups?: Array<GraphQLTypes["YearGroupEntity"]> | undefined | null,
-	subject?: GraphQLTypes["SubjectEntity"] | undefined | null,
 	title: string,
+	topic: GraphQLTypes["TopicEntity"],
 	updatedAt: GraphQLTypes["DateTime"]
 };
 	["LoginRequest"]: {
@@ -2874,6 +3023,8 @@ export type GraphQLTypes = {
 	createStudentProfile: GraphQLTypes["StudentProfileDto"],
 	/** Create one Subject */
 	createSubject: GraphQLTypes["SubjectEntity"],
+	/** Create one Topic */
+	createTopic: GraphQLTypes["TopicEntity"],
 	createUser: GraphQLTypes["User"],
 	createUserWithProfile: GraphQLTypes["User"],
 	/** Create one YearGroup */
@@ -2900,6 +3051,8 @@ export type GraphQLTypes = {
 	deleteStudentProfile: boolean,
 	/** Delete one Subject */
 	deleteSubject: boolean,
+	/** Delete one Topic */
+	deleteTopic: boolean,
 	/** Delete one YearGroup */
 	deleteYearGroup: boolean,
 	logUserInWithEmailAndPassword: GraphQLTypes["AuthTokens"],
@@ -2930,6 +3083,8 @@ export type GraphQLTypes = {
 	updateStudentProfile: GraphQLTypes["StudentProfileDto"],
 	/** Updates one Subject */
 	updateSubject: GraphQLTypes["SubjectEntity"],
+	/** Updates one Topic */
+	updateTopic: GraphQLTypes["TopicEntity"],
 	updateUserByPublicId: GraphQLTypes["User"],
 	updateUserRolesFromArray: GraphQLTypes["User"],
 	/** Updates one YearGroup */
@@ -3007,6 +3162,8 @@ export type GraphQLTypes = {
 	getAllStudentProfile: Array<GraphQLTypes["StudentProfileDto"]>,
 	/** Returns all Subject (optionally filtered) */
 	getAllSubject: Array<GraphQLTypes["SubjectEntity"]>,
+	/** Returns all Topic (optionally filtered) */
+	getAllTopic: Array<GraphQLTypes["TopicEntity"]>,
 	getAllUsers: Array<GraphQLTypes["User"]>,
 	/** Returns all YearGroup (optionally filtered) */
 	getAllYearGroup: Array<GraphQLTypes["YearGroupEntity"]>,
@@ -3057,6 +3214,10 @@ export type GraphQLTypes = {
 	getSubject: GraphQLTypes["SubjectEntity"],
 	/** Returns one Subject by given conditions */
 	getSubjectBy: GraphQLTypes["SubjectEntity"],
+	/** Returns one Topic */
+	getTopic: GraphQLTypes["TopicEntity"],
+	/** Returns one Topic by given conditions */
+	getTopicBy: GraphQLTypes["TopicEntity"],
 	getUserByPublicId: GraphQLTypes["User"],
 	getUsersRolesAndPermissions: GraphQLTypes["RolesPermissionsResponse"],
 	/** Returns one YearGroup */
@@ -3085,9 +3246,12 @@ export type GraphQLTypes = {
 	searchStudentProfile: Array<GraphQLTypes["StudentProfileDto"]>,
 	/** Search Subject records by given columns */
 	searchSubject: Array<GraphQLTypes["SubjectEntity"]>,
+	/** Search Topic records by given columns */
+	searchTopic: Array<GraphQLTypes["TopicEntity"]>,
 	searchUsers: Array<GraphQLTypes["User"]>,
 	/** Search YearGroup records by given columns */
-	searchYearGroup: Array<GraphQLTypes["YearGroupEntity"]>
+	searchYearGroup: Array<GraphQLTypes["YearGroupEntity"]>,
+	topicsByYearAndSubject: Array<GraphQLTypes["TopicEntity"]>
 };
 	["RelationIdsInput"]: {
 		ids: Array<GraphQLTypes["ID"]>,
@@ -3117,10 +3281,10 @@ export type GraphQLTypes = {
 };
 	["SearchInput"]: {
 		columns: Array<string>,
-        limit?: number | undefined | null,
-        relations?: Array<string> | undefined | null,
-        filters?: Array<GraphQLTypes["FilterInput"]> | undefined | null,
-        search: string
+	filters?: Array<GraphQLTypes["FilterInput"]> | undefined | null,
+	limit?: number | undefined | null,
+	relations?: Array<string> | undefined | null,
+	search: string
 };
 	["StudentProfileDto"]: {
 	__typename: "StudentProfileDto",
@@ -3135,12 +3299,29 @@ export type GraphQLTypes = {
 	createdAt: GraphQLTypes["DateTime"],
 	id: GraphQLTypes["ID"],
 	name: string,
+	topics?: Array<GraphQLTypes["TopicEntity"]> | undefined | null,
 	updatedAt: GraphQLTypes["DateTime"],
 	yearGroups?: Array<GraphQLTypes["YearGroupEntity"]> | undefined | null
 };
 	["SubmitIdArrayByIdRequestDto"]: {
 		idArray: Array<number>,
 	recordId: number
+};
+	["TopicByYearSubjectInput"]: {
+		pagination?: GraphQLTypes["PaginationInput"] | undefined | null,
+	subjectId: GraphQLTypes["ID"],
+	withLessons: boolean,
+	yearGroupId: GraphQLTypes["ID"]
+};
+	["TopicEntity"]: {
+	__typename: "TopicEntity",
+	createdAt: GraphQLTypes["DateTime"],
+	id: GraphQLTypes["ID"],
+	lessons?: Array<GraphQLTypes["LessonEntity"]> | undefined | null,
+	name: string,
+	subject: GraphQLTypes["SubjectEntity"],
+	updatedAt: GraphQLTypes["DateTime"],
+	yearGroup: GraphQLTypes["YearGroupEntity"]
 };
 	["UpdateAssignmentInput"]: {
 		classId?: GraphQLTypes["ID"] | undefined | null,
@@ -3175,11 +3356,13 @@ export type GraphQLTypes = {
 	name?: string | undefined | null
 };
 	["UpdateLessonInput"]: {
-		content?: string | undefined | null,
+		content?: GraphQLTypes["JSONObject"] | undefined | null,
 	createdByEducatorId?: GraphQLTypes["ID"] | undefined | null,
+	description?: string | undefined | null,
 	id: GraphQLTypes["ID"],
 	recommendedYearGroupIds?: Array<GraphQLTypes["ID"]> | undefined | null,
-	subjectId?: GraphQLTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
 	title?: string | undefined | null
 };
 	["UpdatePermissionGroupInput"]: {
@@ -3203,6 +3386,12 @@ export type GraphQLTypes = {
 	studentId?: number | undefined | null
 };
 	["UpdateSubjectInput"]: {
+		id: GraphQLTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateTopicInput"]: {
 		id: GraphQLTypes["ID"],
 	name?: string | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
@@ -3273,6 +3462,7 @@ export type GraphQLTypes = {
 	id: GraphQLTypes["ID"],
 	keyStage?: GraphQLTypes["KeyStageEntity"] | undefined | null,
 	subjects?: Array<GraphQLTypes["SubjectEntity"]> | undefined | null,
+	topics?: Array<GraphQLTypes["TopicEntity"]> | undefined | null,
 	updatedAt: GraphQLTypes["DateTime"],
 	year: GraphQLTypes["ValidYear"]
 };
@@ -3307,6 +3497,7 @@ type ZEUS_VARIABLES = {
 	["CreateRoleInput"]: ValueTypes["CreateRoleInput"];
 	["CreateStudentProfileInput"]: ValueTypes["CreateStudentProfileInput"];
 	["CreateSubjectInput"]: ValueTypes["CreateSubjectInput"];
+	["CreateTopicInput"]: ValueTypes["CreateTopicInput"];
 	["CreateUserRequestDto"]: ValueTypes["CreateUserRequestDto"];
 	["CreateUserWithProfileInput"]: ValueTypes["CreateUserWithProfileInput"];
 	["CreateYearGroupInput"]: ValueTypes["CreateYearGroupInput"];
@@ -3316,6 +3507,7 @@ type ZEUS_VARIABLES = {
 	["FindOneByInput"]: ValueTypes["FindOneByInput"];
 	["IdInput"]: ValueTypes["IdInput"];
 	["IdRequestDto"]: ValueTypes["IdRequestDto"];
+	["JSONObject"]: ValueTypes["JSONObject"];
 	["LoginRequest"]: ValueTypes["LoginRequest"];
 	["PaginatedGetAllRequestDto"]: ValueTypes["PaginatedGetAllRequestDto"];
 	["PaginationInput"]: ValueTypes["PaginationInput"];
@@ -3323,6 +3515,7 @@ type ZEUS_VARIABLES = {
 	["RelationIdsInput"]: ValueTypes["RelationIdsInput"];
 	["SearchInput"]: ValueTypes["SearchInput"];
 	["SubmitIdArrayByIdRequestDto"]: ValueTypes["SubmitIdArrayByIdRequestDto"];
+	["TopicByYearSubjectInput"]: ValueTypes["TopicByYearSubjectInput"];
 	["UpdateAssignmentInput"]: ValueTypes["UpdateAssignmentInput"];
 	["UpdateAssignmentSubmissionInput"]: ValueTypes["UpdateAssignmentSubmissionInput"];
 	["UpdateClassInput"]: ValueTypes["UpdateClassInput"];
@@ -3334,6 +3527,7 @@ type ZEUS_VARIABLES = {
 	["UpdateRoleInput"]: ValueTypes["UpdateRoleInput"];
 	["UpdateStudentProfileInput"]: ValueTypes["UpdateStudentProfileInput"];
 	["UpdateSubjectInput"]: ValueTypes["UpdateSubjectInput"];
+	["UpdateTopicInput"]: ValueTypes["UpdateTopicInput"];
 	["UpdateUserRolesFromArrayRequestDto"]: ValueTypes["UpdateUserRolesFromArrayRequestDto"];
 	["UpdateUserWithProfileInput"]: ValueTypes["UpdateUserWithProfileInput"];
 	["UpdateYearGroupInput"]: ValueTypes["UpdateYearGroupInput"];

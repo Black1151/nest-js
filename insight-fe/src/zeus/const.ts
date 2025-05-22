@@ -20,7 +20,8 @@ export const AllTypesProps: Record<string,any> = {
 
 	},
 	CreateLessonInput:{
-
+		content:"JSONObject",
+		relationIds:"RelationIdsInput"
 	},
 	CreatePermissionGroupInput:{
 
@@ -35,6 +36,9 @@ export const AllTypesProps: Record<string,any> = {
 
 	},
 	CreateSubjectInput:{
+		relationIds:"RelationIdsInput"
+	},
+	CreateTopicInput:{
 		relationIds:"RelationIdsInput"
 	},
 	CreateUserRequestDto:{
@@ -64,6 +68,7 @@ export const AllTypesProps: Record<string,any> = {
 	IdRequestDto:{
 
 	},
+	JSONObject: `scalar.JSONObject` as const,
 	LoginRequest:{
 
 	},
@@ -100,6 +105,9 @@ export const AllTypesProps: Record<string,any> = {
 		},
 		createSubject:{
 			data:"CreateSubjectInput"
+		},
+		createTopic:{
+			data:"CreateTopicInput"
 		},
 		createUser:{
 			data:"CreateUserRequestDto"
@@ -141,6 +149,9 @@ export const AllTypesProps: Record<string,any> = {
 			data:"IdInput"
 		},
 		deleteSubject:{
+			data:"IdInput"
+		},
+		deleteTopic:{
 			data:"IdInput"
 		},
 		deleteYearGroup:{
@@ -197,6 +208,9 @@ export const AllTypesProps: Record<string,any> = {
 		updateSubject:{
 			data:"UpdateSubjectInput"
 		},
+		updateTopic:{
+			data:"UpdateTopicInput"
+		},
 		updateUserByPublicId:{
 			data:"UpdateUserWithProfileInput"
 		},
@@ -251,6 +265,9 @@ export const AllTypesProps: Record<string,any> = {
 			data:"FindAllInput"
 		},
 		getAllSubject:{
+			data:"FindAllInput"
+		},
+		getAllTopic:{
 			data:"FindAllInput"
 		},
 		getAllUsers:{
@@ -334,6 +351,12 @@ export const AllTypesProps: Record<string,any> = {
 		getSubjectBy:{
 			data:"FindOneByInput"
 		},
+		getTopic:{
+			data:"IdInput"
+		},
+		getTopicBy:{
+			data:"FindOneByInput"
+		},
 		getUserByPublicId:{
 			data:"PublicIdRequestDto"
 		},
@@ -379,21 +402,30 @@ export const AllTypesProps: Record<string,any> = {
 		searchSubject:{
 			data:"SearchInput"
 		},
+		searchTopic:{
+			data:"SearchInput"
+		},
 		searchUsers:{
 			data:"SearchInput"
 		},
 		searchYearGroup:{
 			data:"SearchInput"
+		},
+		topicsByYearAndSubject:{
+			input:"TopicByYearSubjectInput"
 		}
 	},
 	RelationIdsInput:{
 
 	},
 	SearchInput:{
-
+		filters:"FilterInput"
 	},
 	SubmitIdArrayByIdRequestDto:{
 
+	},
+	TopicByYearSubjectInput:{
+		pagination:"PaginationInput"
 	},
 	UpdateAssignmentInput:{
 		dueDate:"DateTime"
@@ -411,7 +443,8 @@ export const AllTypesProps: Record<string,any> = {
 
 	},
 	UpdateLessonInput:{
-
+		content:"JSONObject",
+		relationIds:"RelationIdsInput"
 	},
 	UpdatePermissionGroupInput:{
 
@@ -426,6 +459,9 @@ export const AllTypesProps: Record<string,any> = {
 
 	},
 	UpdateSubjectInput:{
+		relationIds:"RelationIdsInput"
+	},
+	UpdateTopicInput:{
 		relationIds:"RelationIdsInput"
 	},
 	UpdateUserRolesFromArrayRequestDto:{
@@ -490,6 +526,7 @@ export const ReturnTypes: Record<string,any> = {
 		staffId:"Float",
 		updatedAt:"DateTime"
 	},
+	JSONObject: `scalar.JSONObject` as const,
 	KeyStageEntity:{
 		createdAt:"DateTime",
 		description:"String",
@@ -500,14 +537,15 @@ export const ReturnTypes: Record<string,any> = {
 		yearGroups:"YearGroupEntity"
 	},
 	LessonEntity:{
-		content:"String",
+		content:"JSONObject",
 		createdAt:"DateTime",
 		createdBy:"EducatorProfileDto",
 		createdById:"ID",
+		description:"String",
 		id:"ID",
 		recommendedYearGroups:"YearGroupEntity",
-		subject:"SubjectEntity",
 		title:"String",
+		topic:"TopicEntity",
 		updatedAt:"DateTime"
 	},
 	LoginResponse:{
@@ -527,6 +565,7 @@ export const ReturnTypes: Record<string,any> = {
 		createRole:"Role",
 		createStudentProfile:"StudentProfileDto",
 		createSubject:"SubjectEntity",
+		createTopic:"TopicEntity",
 		createUser:"User",
 		createUserWithProfile:"User",
 		createYearGroup:"YearGroupEntity",
@@ -541,6 +580,7 @@ export const ReturnTypes: Record<string,any> = {
 		deleteRole:"Boolean",
 		deleteStudentProfile:"Boolean",
 		deleteSubject:"Boolean",
+		deleteTopic:"Boolean",
 		deleteYearGroup:"Boolean",
 		logUserInWithEmailAndPassword:"AuthTokens",
 		refreshUsersTokens:"LoginResponse",
@@ -559,6 +599,7 @@ export const ReturnTypes: Record<string,any> = {
 		updateRole:"Role",
 		updateStudentProfile:"StudentProfileDto",
 		updateSubject:"SubjectEntity",
+		updateTopic:"TopicEntity",
 		updateUserByPublicId:"User",
 		updateUserRolesFromArray:"User",
 		updateYearGroup:"YearGroupEntity"
@@ -608,6 +649,7 @@ export const ReturnTypes: Record<string,any> = {
 		getAllRole:"Role",
 		getAllStudentProfile:"StudentProfileDto",
 		getAllSubject:"SubjectEntity",
+		getAllTopic:"TopicEntity",
 		getAllUsers:"User",
 		getAllYearGroup:"YearGroupEntity",
 		getAssignment:"AssignmentEntity",
@@ -635,6 +677,8 @@ export const ReturnTypes: Record<string,any> = {
 		getStudentProfileBy:"StudentProfileDto",
 		getSubject:"SubjectEntity",
 		getSubjectBy:"SubjectEntity",
+		getTopic:"TopicEntity",
+		getTopicBy:"TopicEntity",
 		getUserByPublicId:"User",
 		getUsersRolesAndPermissions:"RolesPermissionsResponse",
 		getYearGroup:"YearGroupEntity",
@@ -650,8 +694,10 @@ export const ReturnTypes: Record<string,any> = {
 		searchRole:"Role",
 		searchStudentProfile:"StudentProfileDto",
 		searchSubject:"SubjectEntity",
+		searchTopic:"TopicEntity",
 		searchUsers:"User",
-		searchYearGroup:"YearGroupEntity"
+		searchYearGroup:"YearGroupEntity",
+		topicsByYearAndSubject:"TopicEntity"
 	},
 	Role:{
 		createdAt:"DateTime",
@@ -683,8 +729,18 @@ export const ReturnTypes: Record<string,any> = {
 		createdAt:"DateTime",
 		id:"ID",
 		name:"String",
+		topics:"TopicEntity",
 		updatedAt:"DateTime",
 		yearGroups:"YearGroupEntity"
+	},
+	TopicEntity:{
+		createdAt:"DateTime",
+		id:"ID",
+		lessons:"LessonEntity",
+		name:"String",
+		subject:"SubjectEntity",
+		updatedAt:"DateTime",
+		yearGroup:"YearGroupEntity"
 	},
 	User:{
 		addressLine1:"String",
@@ -716,6 +772,7 @@ export const ReturnTypes: Record<string,any> = {
 		id:"ID",
 		keyStage:"KeyStageEntity",
 		subjects:"SubjectEntity",
+		topics:"TopicEntity",
 		updatedAt:"DateTime",
 		year:"ValidYear"
 	},

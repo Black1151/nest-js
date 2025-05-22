@@ -1,3 +1,4 @@
+// CreateLessonForm.tsx
 "use client";
 
 import React from "react";
@@ -13,16 +14,20 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
+import { typedGql } from "@/zeus/typedDocumentNode";
+import { $ } from "@/zeus";
 
-const CREATE_LESSON = gql`
-  mutation CreateLesson($data: CreateLessonInput!) {
-    createLesson(data: $data) {
-      id
-    }
-  }
-`;
+/* -------------------------------------------------------------------------- */
+/* GraphQL document                                                            */
+/* -------------------------------------------------------------------------- */
+const CREATE_LESSON = typedGql("mutation")({
+  createLesson: [{ data: $("data", "CreateLessonInput!") }, { id: true }],
+} as const);
 
+/* -------------------------------------------------------------------------- */
+/* Types                                                                      */
+/* -------------------------------------------------------------------------- */
 type FormValues = { title: string; description: string };
 
 interface CreateLessonFormProps {
@@ -30,7 +35,14 @@ interface CreateLessonFormProps {
   onSuccess: () => void;
 }
 
-export default function CreateLessonForm({ topicId, onSuccess }: CreateLessonFormProps) {
+/* -------------------------------------------------------------------------- */
+/* Component                                                                  */
+/* -------------------------------------------------------------------------- */
+export default function CreateLessonForm({
+  topicId,
+  onSuccess,
+}: CreateLessonFormProps) {
+  /* ── RHF setup ─────────────────────────────────────────────────────── */
   const {
     register,
     handleSubmit,
@@ -40,10 +52,12 @@ export default function CreateLessonForm({ topicId, onSuccess }: CreateLessonFor
     mode: "onChange",
   });
 
+  /* ── Mutation: createLesson ────────────────────────────────────────── */
   const [createLesson, { loading }] = useMutation(CREATE_LESSON, {
     onCompleted: onSuccess,
   });
 
+  /* ── Submit handler ───────────────────────────────────────────────── */
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     await createLesson({
       variables: {
@@ -53,15 +67,18 @@ export default function CreateLessonForm({ topicId, onSuccess }: CreateLessonFor
             values.description.trim().length > 0
               ? values.description.trim()
               : null,
-          topicId: Number(topicId),
+
+          relationIds: [{ relation: "topic", ids: [Number(topicId)] }],
         },
       },
     });
   };
 
+  /* ── UI ──────────────────────────────────────────────────────────── */
   return (
     <Box as="form" onSubmit={handleSubmit(onSubmit)} p={4}>
       <Stack spacing={6}>
+        {/* Title -------------------------------------------------------- */}
         <FormControl isInvalid={!!errors.title}>
           <FormLabel>Lesson name</FormLabel>
           <Input
@@ -71,11 +88,13 @@ export default function CreateLessonForm({ topicId, onSuccess }: CreateLessonFor
           <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
         </FormControl>
 
+        {/* Description -------------------------------------------------- */}
         <FormControl>
           <FormLabel>Description</FormLabel>
           <Textarea placeholder="Description" {...register("description")} />
         </FormControl>
 
+        {/* Submit ------------------------------------------------------- */}
         <Button
           type="submit"
           colorScheme="blue"

@@ -13,6 +13,7 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   DateTime: { input: any; output: any; }
+  JSONObject: { input: any; output: any; }
 };
 
 export type AssignmentEntity = {
@@ -99,10 +100,12 @@ export type CreateKeyStageInput = {
 };
 
 export type CreateLessonInput = {
-  content?: InputMaybe<Scalars['String']['input']>;
+  content?: InputMaybe<Scalars['JSONObject']['input']>;
   createdByEducatorId?: InputMaybe<Scalars['ID']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   recommendedYearGroupIds?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
-  subjectId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
   title: Scalars['String']['input'];
 };
 
@@ -127,6 +130,12 @@ export type CreateStudentProfileInput = {
 };
 
 export type CreateSubjectInput = {
+  name: Scalars['String']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
+export type CreateTopicInput = {
   name: Scalars['String']['input'];
   /** Generic hook for attaching any relations by IDs */
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
@@ -229,14 +238,15 @@ export type KeyStageEntity = {
 
 export type LessonEntity = {
   __typename?: 'LessonEntity';
-  content?: Maybe<Scalars['String']['output']>;
+  content?: Maybe<Scalars['JSONObject']['output']>;
   createdAt: Scalars['DateTime']['output'];
   createdBy?: Maybe<EducatorProfileDto>;
   createdById?: Maybe<Scalars['ID']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   recommendedYearGroups?: Maybe<Array<YearGroupEntity>>;
-  subject?: Maybe<SubjectEntity>;
   title: Scalars['String']['output'];
+  topic: TopicEntity;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -276,6 +286,8 @@ export type Mutation = {
   createStudentProfile: StudentProfileDto;
   /** Create one Subject */
   createSubject: SubjectEntity;
+  /** Create one Topic */
+  createTopic: TopicEntity;
   createUser: User;
   createUserWithProfile: User;
   /** Create one YearGroup */
@@ -302,6 +314,8 @@ export type Mutation = {
   deleteStudentProfile: Scalars['Boolean']['output'];
   /** Delete one Subject */
   deleteSubject: Scalars['Boolean']['output'];
+  /** Delete one Topic */
+  deleteTopic: Scalars['Boolean']['output'];
   /** Delete one YearGroup */
   deleteYearGroup: Scalars['Boolean']['output'];
   logUserInWithEmailAndPassword: AuthTokens;
@@ -332,6 +346,8 @@ export type Mutation = {
   updateStudentProfile: StudentProfileDto;
   /** Updates one Subject */
   updateSubject: SubjectEntity;
+  /** Updates one Topic */
+  updateTopic: TopicEntity;
   updateUserByPublicId: User;
   updateUserRolesFromArray: User;
   /** Updates one YearGroup */
@@ -391,6 +407,11 @@ export type MutationCreateStudentProfileArgs = {
 
 export type MutationCreateSubjectArgs = {
   data: CreateSubjectInput;
+};
+
+
+export type MutationCreateTopicArgs = {
+  data: CreateTopicInput;
 };
 
 
@@ -460,6 +481,11 @@ export type MutationDeleteStudentProfileArgs = {
 
 
 export type MutationDeleteSubjectArgs = {
+  data: IdInput;
+};
+
+
+export type MutationDeleteTopicArgs = {
   data: IdInput;
 };
 
@@ -551,6 +577,11 @@ export type MutationUpdateStudentProfileArgs = {
 
 export type MutationUpdateSubjectArgs = {
   data: UpdateSubjectInput;
+};
+
+
+export type MutationUpdateTopicArgs = {
+  data: UpdateTopicInput;
 };
 
 
@@ -648,6 +679,8 @@ export type Query = {
   getAllStudentProfile: Array<StudentProfileDto>;
   /** Returns all Subject (optionally filtered) */
   getAllSubject: Array<SubjectEntity>;
+  /** Returns all Topic (optionally filtered) */
+  getAllTopic: Array<TopicEntity>;
   getAllUsers: Array<User>;
   /** Returns all YearGroup (optionally filtered) */
   getAllYearGroup: Array<YearGroupEntity>;
@@ -698,6 +731,10 @@ export type Query = {
   getSubject: SubjectEntity;
   /** Returns one Subject by given conditions */
   getSubjectBy: SubjectEntity;
+  /** Returns one Topic */
+  getTopic: TopicEntity;
+  /** Returns one Topic by given conditions */
+  getTopicBy: TopicEntity;
   getUserByPublicId: User;
   getUsersRolesAndPermissions: RolesPermissionsResponse;
   /** Returns one YearGroup */
@@ -726,9 +763,12 @@ export type Query = {
   searchStudentProfile: Array<StudentProfileDto>;
   /** Search Subject records by given columns */
   searchSubject: Array<SubjectEntity>;
+  /** Search Topic records by given columns */
+  searchTopic: Array<TopicEntity>;
   searchUsers: Array<User>;
   /** Search YearGroup records by given columns */
   searchYearGroup: Array<YearGroupEntity>;
+  topicsByYearAndSubject: Array<TopicEntity>;
 };
 
 
@@ -788,6 +828,11 @@ export type QueryGetAllStudentProfileArgs = {
 
 
 export type QueryGetAllSubjectArgs = {
+  data: FindAllInput;
+};
+
+
+export type QueryGetAllTopicArgs = {
   data: FindAllInput;
 };
 
@@ -927,6 +972,16 @@ export type QueryGetSubjectByArgs = {
 };
 
 
+export type QueryGetTopicArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetTopicByArgs = {
+  data: FindOneByInput;
+};
+
+
 export type QueryGetUserByPublicIdArgs = {
   data: PublicIdRequestDto;
 };
@@ -1002,6 +1057,11 @@ export type QuerySearchSubjectArgs = {
 };
 
 
+export type QuerySearchTopicArgs = {
+  data: SearchInput;
+};
+
+
 export type QuerySearchUsersArgs = {
   data: SearchInput;
 };
@@ -1009,6 +1069,11 @@ export type QuerySearchUsersArgs = {
 
 export type QuerySearchYearGroupArgs = {
   data: SearchInput;
+};
+
+
+export type QueryTopicsByYearAndSubjectArgs = {
+  input: TopicByYearSubjectInput;
 };
 
 export type RelationIdsInput = {
@@ -1043,9 +1108,9 @@ export type RolesPermissionsResponse = {
 
 export type SearchInput = {
   columns: Array<Scalars['String']['input']>;
+  filters?: InputMaybe<Array<FilterInput>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   relations?: InputMaybe<Array<Scalars['String']['input']>>;
-  filters?: InputMaybe<Array<FilterInput>>;
   search: Scalars['String']['input'];
 };
 
@@ -1063,6 +1128,7 @@ export type SubjectEntity = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  topics?: Maybe<Array<TopicEntity>>;
   updatedAt: Scalars['DateTime']['output'];
   yearGroups?: Maybe<Array<YearGroupEntity>>;
 };
@@ -1070,6 +1136,24 @@ export type SubjectEntity = {
 export type SubmitIdArrayByIdRequestDto = {
   idArray: Array<Scalars['Int']['input']>;
   recordId: Scalars['Int']['input'];
+};
+
+export type TopicByYearSubjectInput = {
+  pagination?: InputMaybe<PaginationInput>;
+  subjectId: Scalars['ID']['input'];
+  withLessons?: Scalars['Boolean']['input'];
+  yearGroupId: Scalars['ID']['input'];
+};
+
+export type TopicEntity = {
+  __typename?: 'TopicEntity';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  lessons?: Maybe<Array<LessonEntity>>;
+  name: Scalars['String']['output'];
+  subject: SubjectEntity;
+  updatedAt: Scalars['DateTime']['output'];
+  yearGroup: YearGroupEntity;
 };
 
 export type UpdateAssignmentInput = {
@@ -1110,11 +1194,13 @@ export type UpdateKeyStageInput = {
 };
 
 export type UpdateLessonInput = {
-  content?: InputMaybe<Scalars['String']['input']>;
+  content?: InputMaybe<Scalars['JSONObject']['input']>;
   createdByEducatorId?: InputMaybe<Scalars['ID']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   recommendedYearGroupIds?: InputMaybe<Array<Scalars['ID']['input']>>;
-  subjectId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
   title?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1143,6 +1229,13 @@ export type UpdateStudentProfileInput = {
 };
 
 export type UpdateSubjectInput = {
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
+export type UpdateTopicInput = {
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   /** Generic hook for attaching any relations by IDs */
@@ -1234,6 +1327,7 @@ export type YearGroupEntity = {
   id: Scalars['ID']['output'];
   keyStage?: Maybe<KeyStageEntity>;
   subjects?: Maybe<Array<SubjectEntity>>;
+  topics?: Maybe<Array<TopicEntity>>;
   updatedAt: Scalars['DateTime']['output'];
   year: ValidYear;
 };
