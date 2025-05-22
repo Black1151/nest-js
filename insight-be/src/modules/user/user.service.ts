@@ -1,7 +1,7 @@
 // user.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, DataSource } from 'typeorm';
+import { Repository, In, DataSource, ILike } from 'typeorm';
 import { User } from './user.model';
 
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
@@ -33,6 +33,16 @@ export class UsersService {
   async findAll(limit?: number, offset?: number): Promise<User[]> {
     return this.userRepository.find({
       skip: offset,
+      take: limit,
+    });
+  }
+
+  async searchByName(search: string, limit = 10): Promise<User[]> {
+    return this.userRepository.find({
+      where: [
+        { firstName: ILike(`%${search}%`) },
+        { lastName: ILike(`%${search}%`) },
+      ],
       take: limit,
     });
   }
