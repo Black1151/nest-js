@@ -67,6 +67,13 @@ interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   orderedColumnIds: string[];
   CardComponent: React.ComponentType<{ item: TCard }>;
   enableColumnReorder?: boolean;
+  /**
+   * Optional callback fired whenever the board state changes
+   */
+  onChange?: (boardData: BoardState<TCard>) => void;
+  /**
+   * Optional callback rendered as a submit button
+   */
   onSubmit?: (boardData: any) => void;
   isLoading?: boolean;
 }
@@ -77,6 +84,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   orderedColumnIds,
   CardComponent,
   enableColumnReorder = true,
+  onChange,
   onSubmit,
   isLoading = false,
 }: DnDBoardMainProps<TCard>) => {
@@ -262,7 +270,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
           finishIndex,
         };
 
-        return {
+        const newData = {
           ...data,
           // Use Atlaskit's reorder utility to reorder the array
           orderedColumnIds: reorder({
@@ -274,7 +282,9 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
             outcome,
             trigger,
           },
-        };
+        } as BoardState<TCard>;
+        onChange?.(newData);
+        return newData;
       });
     },
     []
@@ -323,14 +333,16 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
           finishIndex,
         };
 
-        return {
+        const newData = {
           ...data,
           columnMap: updatedMap,
           lastOperation: {
             trigger,
             outcome,
           },
-        };
+        } as BoardState<TCard>;
+        onChange?.(newData);
+        return newData;
       });
     },
     []
@@ -389,14 +401,16 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
           itemIndexInFinishColumn: newIndexInDestination,
         };
 
-        return {
+        const newData = {
           ...data,
           columnMap: updatedMap,
           lastOperation: {
             outcome,
             trigger,
           },
-        };
+        } as BoardState<TCard>;
+        onChange?.(newData);
+        return newData;
       });
     },
     []
