@@ -6,22 +6,20 @@ import { BaseModal } from "@/components/modals/BaseModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import CreateTopicForm from "./forms/CreateTopicForm";
 import UpdateTopicForm from "./forms/UpdateTopicForm";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
+import { typedGql } from "@/zeus/typedDocumentNode";
+import { $ } from "@/zeus";
 
-const GET_TOPICS_BY_YEAR_SUBJECT = gql`
-  query TopicsByYearAndSubject($input: TopicByYearSubjectInput!) {
-    topicsByYearAndSubject(input: $input) {
-      id
-      name
-    }
-  }
-`;
+const GET_TOPICS_BY_YEAR_SUBJECT = typedGql("query")({
+  topicsByYearAndSubject: [
+    { input: $("input", "TopicByYearSubjectInput!") },
+    { id: true, name: true },
+  ],
+} as const);
 
-const DELETE_TOPIC = gql`
-  mutation DeleteTopic($data: IdInput!) {
-    deleteTopic(data: $data)
-  }
-`;
+const DELETE_TOPIC = typedGql("mutation")({
+  deleteTopic: [{ data: $("data", "IdInput!") }, true],
+} as const);
 
 interface TopicDropdownProps {
   yearGroupId: string | null;
