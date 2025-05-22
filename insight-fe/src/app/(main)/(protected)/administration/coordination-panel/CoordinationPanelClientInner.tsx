@@ -9,6 +9,7 @@ import { SubjectDropdown } from "./_components/dropdowns/SubjectsDropdown/Subjec
 import { ClassDropdown } from "./_components/dropdowns/ClassDropdown/ClassDropdown";
 import { ContentGrid } from "@/components/ContentGrid";
 import ClassMembersPane from "./_components/ClassMembersPane";
+import TopicPane from "./_components/TopicPane";
 
 export default function CoordinationPanelClientInner() {
   const [keyStageId, setKeyStageId] = useState<string | null>(null);
@@ -19,7 +20,7 @@ export default function CoordinationPanelClientInner() {
   console.log("PARENT RENDERING");
 
   return (
-    <Grid templateColumns="1fr 1fr">
+    <Grid templateColumns="1fr 1fr" gap={4}>
       <ContentCard>
         <Flex gap={8} flexDir="column">
           {/* ------------------- 1. key stage ------------------- */}
@@ -72,6 +73,7 @@ export default function CoordinationPanelClientInner() {
         classId={classId}
         setClassId={setClassId}
       />
+      <TopicPane yearGroupId={yearGroupId} subjectId={subjectId} />
     </Grid>
   );
 }
