@@ -11,6 +11,8 @@ import { ColumnType } from "@/components/DnD/types";
 interface SlideElementsBoardProps {
   board: BoardState<SlideElementDnDItemProps>;
   onChange: (board: BoardState<SlideElementDnDItemProps>) => void;
+  selectedElementId?: string | null;
+  onSelectElement?: (id: string) => void;
 }
 
 const COLUMN_COLORS = [
@@ -22,11 +24,16 @@ const COLUMN_COLORS = [
   "teal.300",
 ];
 
-export default function SlideElementsBoard({ board, onChange }: SlideElementsBoardProps) {
+export default function SlideElementsBoard({
+  board,
+  onChange,
+  selectedElementId,
+  onSelectElement,
+}: SlideElementsBoardProps) {
   const addColumn = () => {
     const idx = board.orderedColumnIds.length;
     const color = COLUMN_COLORS[idx % COLUMN_COLORS.length];
-    const id = `col-${Date.now()}`;
+    const id = `col-${crypto.randomUUID()}`;
     const newColumn: ColumnType<SlideElementDnDItemProps> = {
       title: `Column ${idx + 1}`,
       columnId: id,
@@ -54,6 +61,14 @@ export default function SlideElementsBoard({ board, onChange }: SlideElementsBoa
     });
   };
 
+  const CardWrapper = ({ item }: { item: SlideElementDnDItemProps }) => (
+    <SlideElementDnDItem
+      item={item}
+      onSelect={() => onSelectElement?.(item.id)}
+      isSelected={selectedElementId === item.id}
+    />
+  );
+
   return (
     <>
       <HStack mb={2} justify="flex-end">
@@ -64,7 +79,7 @@ export default function SlideElementsBoard({ board, onChange }: SlideElementsBoa
       <DnDBoardMain<SlideElementDnDItemProps>
         columnMap={board.columnMap}
         orderedColumnIds={board.orderedColumnIds}
-        CardComponent={SlideElementDnDItem}
+        CardComponent={CardWrapper}
         enableColumnReorder={false}
         onChange={onChange}
         onRemoveColumn={removeColumn}
