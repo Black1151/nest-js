@@ -1,12 +1,14 @@
 "use client";
 
-import { Flex, Text, VStack } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { KeyStageDropdown } from "./_components/dropdowns/KeyStageDropdown/KeyStageDropdown";
 import { YearDropdown } from "./_components/dropdowns/YearGroup/YearDropdown";
 import { ContentCard } from "@/components/layout/Card";
 import { useState } from "react";
 import { SubjectDropdown } from "./_components/dropdowns/SubjectsDropdown/SubjectDropdown";
 import { ClassDropdown } from "./_components/dropdowns/ClassDropdown/ClassDropdown";
+import { ContentGrid } from "@/components/ContentGrid";
+import ClassMembersPane from "./_components/ClassMembersPane";
 
 export default function CoordinationPanelClientInner() {
   const [keyStageId, setKeyStageId] = useState<string | null>(null);
@@ -17,8 +19,9 @@ export default function CoordinationPanelClientInner() {
   console.log("PARENT RENDERING");
 
   return (
-    <ContentCard>
-      <Flex gap={8} flexDir="column">
+    <ContentGrid>
+      <ContentCard>
+        <Flex gap={8} flexDir="column">
         {/* ------------------- 1. key stage ------------------- */}
         <Flex flexDir="column" gap={2}>
           <Text>Key Stage</Text>
@@ -70,7 +73,11 @@ export default function CoordinationPanelClientInner() {
             onChange={(id: string | null) => setClassId(id)}
           />
         </Flex>
-      </Flex>
-    </ContentCard>
+
+        </Flex>
+      </ContentCard>
+
+      <ClassMembersPane classId={classId} />
+    </ContentGrid>
   );
 }
