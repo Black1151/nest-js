@@ -1,25 +1,23 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Box, Button, Stack } from '@chakra-ui/react';
-import {
-  SlideElementDnDItemProps,
-} from '@/components/DnD/cards/SlideElementDnDCard';
-import { BoardState } from '@/components/DnD/DnDBoardMain';
-import { DropIndicator } from '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Box, Button, Stack } from "@chakra-ui/react";
+import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+import { BoardState } from "@/components/DnD/DnDBoardMain";
+import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import {
   draggable,
   dropTargetForElements,
   monitorForElements,
-} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
-import { reorder } from '@atlaskit/pragmatic-drag-and-drop/reorder';
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
 import {
   attachClosestEdge,
   extractClosestEdge,
   type Edge,
-} from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
-import { getReorderDestinationIndex } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index';
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
 
 export interface Slide {
   id: string;
@@ -27,21 +25,24 @@ export interface Slide {
   board: BoardState<SlideElementDnDItemProps>;
 }
 
-export const createInitialBoard = (): BoardState<SlideElementDnDItemProps> => ({
-  columnMap: {
-    column1: {
-      title: 'Column 1',
-      columnId: 'column1',
-      styles: {
-        container: { border: '2px dashed red', width: '100%' },
-        header: { bg: 'red.300', color: 'white' },
+export const createInitialBoard = (): BoardState<SlideElementDnDItemProps> => {
+  const columnId = `col-${crypto.randomUUID()}`;
+  return {
+    columnMap: {
+      [columnId]: {
+        title: "Column 1",
+        columnId,
+        styles: {
+          container: { border: "2px dashed red", width: "100%" },
+          header: { bg: "red.300", color: "white" },
+        },
+        items: [],
       },
-      items: [],
     },
-  },
-  orderedColumnIds: ['column1'],
-  lastOperation: null,
-});
+    orderedColumnIds: [columnId],
+    lastOperation: null,
+  };
+};
 
 interface SlideItemProps {
   slide: Slide;
@@ -50,7 +51,12 @@ interface SlideItemProps {
   isSelected: boolean;
 }
 
-function SlideItem({ slide, instanceId, onSelect, isSelected }: SlideItemProps) {
+function SlideItem({
+  slide,
+  instanceId,
+  onSelect,
+  isSelected,
+}: SlideItemProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
@@ -60,24 +66,32 @@ function SlideItem({ slide, instanceId, onSelect, isSelected }: SlideItemProps) 
     return combine(
       draggable({
         element: el,
-        getInitialData: () => ({ type: 'slide', slideId: slide.id, instanceId }),
+        getInitialData: () => ({
+          type: "slide",
+          slideId: slide.id,
+          instanceId,
+        }),
       }),
       dropTargetForElements({
         element: el,
         canDrop: ({ source }) =>
-          source.data.instanceId === instanceId && source.data.type === 'slide',
+          source.data.instanceId === instanceId && source.data.type === "slide",
         getIsSticky: () => true,
         getData: ({ input, element }) =>
-          attachClosestEdge({ type: 'slide', slideId: slide.id }, {
-            input,
-            element,
-            allowedEdges: ['top', 'bottom'],
-          }),
-        onDragEnter: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
+          attachClosestEdge(
+            { type: "slide", slideId: slide.id },
+            {
+              input,
+              element,
+              allowedEdges: ["top", "bottom"],
+            },
+          ),
+        onDragEnter: (args) =>
+          setClosestEdge(extractClosestEdge(args.self.data)),
         onDrag: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
         onDragLeave: () => setClosestEdge(null),
         onDrop: () => setClosestEdge(null),
-      })
+      }),
     );
   }, [instanceId, slide.id]);
 
@@ -113,10 +127,10 @@ export default function SlideSequencer({
 }: SlideSequencerProps) {
   const counter = useRef(slides.length + 1);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const instanceId = useRef(Symbol('slide-sequencer'));
+  const instanceId = useRef(Symbol("slide-sequencer"));
 
   const addSlide = useCallback(() => {
-    const id = String(Date.now()) + counter.current;
+    const id = crypto.randomUUID();
     counter.current += 1;
     setSlides((s) => [
       ...s,
@@ -130,8 +144,8 @@ export default function SlideSequencer({
       element: containerRef.current,
       canDrop: ({ source }) =>
         source.data.instanceId === instanceId.current &&
-        source.data.type === 'slide',
-      getData: () => ({ columnId: 'slides' }),
+        source.data.type === "slide",
+      getData: () => ({ columnId: "slides" }),
       getIsSticky: () => true,
     });
   }, []);
@@ -140,14 +154,16 @@ export default function SlideSequencer({
     return monitorForElements({
       canMonitor: ({ source }) => source.data.instanceId === instanceId.current,
       onDrop: ({ source, location }) => {
-        if (source.data.type !== 'slide') {
+        if (source.data.type !== "slide") {
           return;
         }
         if (!location.current.dropTargets.length) {
           return;
         }
 
-        const startIndex = slides.findIndex((s) => s.id === source.data.slideId);
+        const startIndex = slides.findIndex(
+          (s) => s.id === source.data.slideId,
+        );
         if (startIndex === -1) return;
 
         if (location.current.dropTargets.length === 1) {
@@ -155,10 +171,10 @@ export default function SlideSequencer({
             startIndex,
             indexOfTarget: slides.length - 1,
             closestEdgeOfTarget: null,
-            axis: 'vertical',
+            axis: "vertical",
           });
           setSlides((prev) =>
-            reorder({ list: prev, startIndex, finishIndex: destinationIndex })
+            reorder({ list: prev, startIndex, finishIndex: destinationIndex }),
           );
           return;
         }
@@ -166,17 +182,19 @@ export default function SlideSequencer({
         if (location.current.dropTargets.length === 2) {
           const [destinationRecord] = location.current.dropTargets;
           const indexOfTarget = slides.findIndex(
-            (s) => s.id === destinationRecord.data.slideId
+            (s) => s.id === destinationRecord.data.slideId,
           );
-          const closestEdgeOfTarget = extractClosestEdge(destinationRecord.data);
+          const closestEdgeOfTarget = extractClosestEdge(
+            destinationRecord.data,
+          );
           const destinationIndex = getReorderDestinationIndex({
             startIndex,
             indexOfTarget,
             closestEdgeOfTarget,
-            axis: 'vertical',
+            axis: "vertical",
           });
           setSlides((prev) =>
-            reorder({ list: prev, startIndex, finishIndex: destinationIndex })
+            reorder({ list: prev, startIndex, finishIndex: destinationIndex }),
           );
         }
       },
@@ -202,4 +220,3 @@ export default function SlideSequencer({
     </Stack>
   );
 }
-

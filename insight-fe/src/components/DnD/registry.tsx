@@ -40,7 +40,7 @@ export function createRegistry() {
   }): CleanupFn {
     columns.set(columnId, entry);
     return function cleanup() {
-      cards.delete(columnId);
+      columns.delete(columnId);
     };
   }
 

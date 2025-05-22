@@ -160,7 +160,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
       liveRegion.announce(
         `You've moved ${sourceColumn.title} from position ${
           startIndex + 1
-        } to position ${finishIndex + 1} of ${orderedColumnIds.length}.`
+        } to position ${finishIndex + 1} of ${orderedColumnIds.length}.`,
       );
 
       return;
@@ -188,7 +188,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
       liveRegion.announce(
         `You've moved ${item.id} from position ${startIndex + 1} to position ${
           finishIndex + 1
-        } of ${column.items.length} in the ${column.title} column.`
+        } of ${column.items.length} in the ${column.title} column.`,
       );
 
       return;
@@ -227,7 +227,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
           itemIndexInStartColumn + 1
         } to position ${finishPosition} in the ${
           destinationColumn.title
-        } column.`
+        } column.`,
       );
 
       return;
@@ -289,7 +289,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         return newData;
       });
     },
-    []
+    [],
   );
 
   /**
@@ -347,7 +347,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         return newData;
       });
     },
-    []
+    [],
   );
 
   /**
@@ -415,7 +415,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         return newData;
       });
     },
-    []
+    [],
   );
 
   // Unique ID to ensure only our instance's draggables/droppables monitor each other.
@@ -436,9 +436,6 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         onDrop(args) {
           const { location, source } = args;
 
-          console.log("location", location);
-          console.log("source", source);
-
           // If no drop targets, do nothing
           if (!location.current.dropTargets.length) {
             return;
@@ -447,15 +444,15 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
           // Determine whether a column or card was dropped
           if (source.data.type === "column") {
             const startIndex = data.orderedColumnIds.findIndex(
-              (columnId) => columnId === source.data.columnId
+              (columnId) => columnId === source.data.columnId,
             );
 
             const target = location.current.dropTargets[0];
             const indexOfTarget = data.orderedColumnIds.findIndex(
-              (id) => id === target.data.columnId
+              (id) => id === target.data.columnId,
             );
             const closestEdgeOfTarget: Edge | null = extractClosestEdge(
-              target.data
+              target.data,
             );
 
             const finishIndex = getReorderDestinationIndex({
@@ -479,7 +476,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
             invariant(typeof sourceId === "string");
             const sourceColumn = data.columnMap[sourceId];
             const itemIndex = sourceColumn.items.findIndex(
-              (item) => item.id === itemId
+              (item) => item.id === itemId,
             );
 
             // If there is only one drop target, it's a column drop
@@ -528,10 +525,10 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
 
               // Find the index of the card that was hovered
               const indexOfTarget = destinationColumn.items.findIndex(
-                (item) => item.id === destinationCardRecord.data.itemId
+                (item) => item.id === destinationCardRecord.data.itemId,
               );
               const closestEdgeOfTarget: Edge | null = extractClosestEdge(
-                destinationCardRecord.data
+                destinationCardRecord.data,
               );
 
               // Reorder in the same column
@@ -567,7 +564,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
             }
           }
         },
-      })
+      }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, instanceId, moveCard, reorderCard, reorderColumn]);
