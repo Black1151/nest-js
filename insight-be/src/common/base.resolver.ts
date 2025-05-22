@@ -6,6 +6,7 @@ import {
   FindOneByInput,
   IdInput,
   RelationIdsInput,
+  SearchInput,
 } from './base.inputs';
 import { AbstractBaseEntity } from './base.entity';
 import { BaseService } from './base.service';
@@ -21,7 +22,8 @@ type OperationName =
   | 'findOneBy'
   | 'create'
   | 'update'
-  | 'remove';
+  | 'remove'
+  | 'search';
 
 interface BaseResolverOptions<T extends AbstractBaseEntity> {
   queryName: string;
@@ -115,6 +117,28 @@ export function createBaseResolver<
         { [data.column]: data.value } as FindOptionsWhere<T>,
         data.relations,
       );
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* search (by columns, partial match)                                 */
+    /* ------------------------------------------------------------------ */
+    @QueryIf(isEnabled('search'), () => [entityClass], {
+      name: `search${queryName}`,
+      description: `Search ${queryName} records by given columns`,
+    })
+    @RbacPermissionKeyIf(
+      isEnabled('search'),
+      `${stableKeyPrefix}.search${queryName}`,
+    )
+    @ImmutableLoggingIf(isImmutable('search'))
+    async search(
+      @Args('data', { type: () => SearchInput }) data: SearchInput,
+    ): Promise<T[]> {
+      const { search, columns, limit, relations } = data;
+      return this.service.searchByColumns(search, columns as (keyof T)[], {
+        limit,
+        relations,
+      });
     }
 
     /* ------------------------------------------------------------------ */

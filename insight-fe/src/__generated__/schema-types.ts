@@ -704,6 +704,31 @@ export type Query = {
   getYearGroup: YearGroupEntity;
   /** Returns one YearGroup by given conditions */
   getYearGroupBy: YearGroupEntity;
+  /** Search Assignment records by given columns */
+  searchAssignment: Array<AssignmentEntity>;
+  /** Search AssignmentSubmission records by given columns */
+  searchAssignmentSubmission: Array<AssignmentSubmissionEntity>;
+  /** Search Class records by given columns */
+  searchClass: Array<ClassEntity>;
+  /** Search EducatorProfile records by given columns */
+  searchEducatorProfile: Array<EducatorProfileDto>;
+  /** Search KeyStage records by given columns */
+  searchKeyStage: Array<KeyStageEntity>;
+  /** Search Lesson records by given columns */
+  searchLesson: Array<LessonEntity>;
+  /** Search Permission records by given columns */
+  searchPermission: Array<Permission>;
+  /** Search PermissionGroup records by given columns */
+  searchPermissionGroup: Array<PermissionGroup>;
+  /** Search Role records by given columns */
+  searchRole: Array<Role>;
+  /** Search StudentProfile records by given columns */
+  searchStudentProfile: Array<StudentProfileDto>;
+  /** Search Subject records by given columns */
+  searchSubject: Array<SubjectEntity>;
+  searchUsers: Array<User>;
+  /** Search YearGroup records by given columns */
+  searchYearGroup: Array<YearGroupEntity>;
 };
 
 
@@ -921,6 +946,71 @@ export type QueryGetYearGroupByArgs = {
   data: FindOneByInput;
 };
 
+
+export type QuerySearchAssignmentArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchAssignmentSubmissionArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchClassArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchEducatorProfileArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchKeyStageArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchLessonArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchPermissionArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchPermissionGroupArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchRoleArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchStudentProfileArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchSubjectArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchUsersArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchYearGroupArgs = {
+  data: SearchInput;
+};
+
 export type RelationIdsInput = {
   ids: Array<Scalars['ID']['input']>;
   relation: Scalars['String']['input'];
@@ -949,6 +1039,13 @@ export type RolesPermissionsResponse = {
   __typename?: 'RolesPermissionsResponse';
   permissions: Array<PermissionDto>;
   roles: Array<RoleDto>;
+};
+
+export type SearchInput = {
+  columns: Array<Scalars['String']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  relations?: InputMaybe<Array<Scalars['String']['input']>>;
+  search: Scalars['String']['input'];
 };
 
 export type StudentProfileDto = {

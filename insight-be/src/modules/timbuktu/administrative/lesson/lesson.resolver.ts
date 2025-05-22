@@ -18,6 +18,7 @@ const BaseLessonResolver = createBaseResolver<
     'create',
     'update',
     'remove',
+    'search',
   ],
 });
 

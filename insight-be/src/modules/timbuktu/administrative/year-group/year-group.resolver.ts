@@ -19,9 +19,11 @@ const BaseYearGroupResolver = createBaseResolver<
     'findAll',
     'findOne',
     'findOneBy',
+    'search',
     'create',
     'update',
     'remove',
+    'search',
   ],
 });
 

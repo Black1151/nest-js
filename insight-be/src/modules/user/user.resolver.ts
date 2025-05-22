@@ -26,6 +26,7 @@ import {
 } from './dto/req/req.dto';
 import { CreateUserWithProfileInput } from './input/create-user-with-profile.input';
 import { UpdateUserWithProfileInput } from './input/update-user-with-profile-input';
+import { SearchInput } from 'src/common/base.inputs';
 
 @ObjectType()
 export class RemoveUserResponse {
@@ -45,6 +46,13 @@ export class UserResolver {
   ): Promise<User[]> {
     const { limit, offset } = data;
     return this.userService.findAll(limit, offset);
+  }
+
+  @Query(() => [User])
+  @RbacPermissionKey('user.searchUsers')
+  async searchUsers(@Args('data') data: SearchInput): Promise<User[]> {
+    const { search, columns, limit } = data;
+    return this.userService.search(search, columns as (keyof User)[], limit);
   }
 
   @Query(() => User)

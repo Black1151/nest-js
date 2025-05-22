@@ -116,3 +116,4 @@ export class UpdateUserRequestDto extends OmitType(CreateUserRequestDto, [
   @Field()
   publicId: string;
 }
+

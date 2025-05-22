@@ -23,6 +23,7 @@ const BaseAssignmentSubmissionResolver = createBaseResolver<
       'create',
       'update',
       'remove',
+      'search',
     ],
   },
 );

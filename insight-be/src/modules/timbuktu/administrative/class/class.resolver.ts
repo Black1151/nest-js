@@ -22,6 +22,7 @@ const BaseClassResolver = createBaseResolver<
     'create',
     'update',
     'remove',
+    'search',
   ],
 });
 

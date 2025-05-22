@@ -1252,6 +1252,19 @@ getUserByPublicId?: [{	data: ValueTypes["PublicIdRequestDto"] | Variable<any, st
 getUsersRolesAndPermissions?: [{	data: ValueTypes["UserPermissionsInput"] | Variable<any, string>},ValueTypes["RolesPermissionsResponse"]],
 getYearGroup?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
 getYearGroupBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
+searchAssignment?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["AssignmentEntity"]],
+searchAssignmentSubmission?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["AssignmentSubmissionEntity"]],
+searchClass?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["ClassEntity"]],
+searchEducatorProfile?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["EducatorProfileDto"]],
+searchKeyStage?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["KeyStageEntity"]],
+searchLesson?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["LessonEntity"]],
+searchPermission?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["Permission"]],
+searchPermissionGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["PermissionGroup"]],
+searchRole?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["Role"]],
+searchStudentProfile?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
+searchSubject?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+searchUsers?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["User"]],
+searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
 		__typename?: boolean | `@${string}`
 }>;
 	["RelationIdsInput"]: {
@@ -1280,6 +1293,12 @@ getYearGroupBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},
 	roles?:ValueTypes["RoleDTO"],
 		__typename?: boolean | `@${string}`
 }>;
+	["SearchInput"]: {
+	columns: Array<string> | Variable<any, string>,
+	limit?: number | undefined | null | Variable<any, string>,
+	relations?: Array<string> | undefined | null | Variable<any, string>,
+	search: string | Variable<any, string>
+};
 	["StudentProfileDto"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
@@ -1788,6 +1807,19 @@ getUserByPublicId?: [{	data: ResolverInputTypes["PublicIdRequestDto"]},ResolverI
 getUsersRolesAndPermissions?: [{	data: ResolverInputTypes["UserPermissionsInput"]},ResolverInputTypes["RolesPermissionsResponse"]],
 getYearGroup?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["YearGroupEntity"]],
 getYearGroupBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["YearGroupEntity"]],
+searchAssignment?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["AssignmentEntity"]],
+searchAssignmentSubmission?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["AssignmentSubmissionEntity"]],
+searchClass?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["ClassEntity"]],
+searchEducatorProfile?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["EducatorProfileDto"]],
+searchKeyStage?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["KeyStageEntity"]],
+searchLesson?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["LessonEntity"]],
+searchPermission?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["Permission"]],
+searchPermissionGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["PermissionGroup"]],
+searchRole?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["Role"]],
+searchStudentProfile?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["StudentProfileDto"]],
+searchSubject?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["SubjectEntity"]],
+searchUsers?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["User"]],
+searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["YearGroupEntity"]],
 		__typename?: boolean | `@${string}`
 }>;
 	["RelationIdsInput"]: {
@@ -1816,6 +1848,12 @@ getYearGroupBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTyp
 	roles?:ResolverInputTypes["RoleDTO"],
 		__typename?: boolean | `@${string}`
 }>;
+	["SearchInput"]: {
+	columns: Array<string>,
+	limit?: number | undefined | null,
+	relations?: Array<string> | undefined | null,
+	search: string
+};
 	["StudentProfileDto"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
@@ -2387,7 +2425,32 @@ export type ModelTypes = {
 	/** Returns one YearGroup */
 	getYearGroup: ModelTypes["YearGroupEntity"],
 	/** Returns one YearGroup by given conditions */
-	getYearGroupBy: ModelTypes["YearGroupEntity"]
+	getYearGroupBy: ModelTypes["YearGroupEntity"],
+	/** Search Assignment records by given columns */
+	searchAssignment: Array<ModelTypes["AssignmentEntity"]>,
+	/** Search AssignmentSubmission records by given columns */
+	searchAssignmentSubmission: Array<ModelTypes["AssignmentSubmissionEntity"]>,
+	/** Search Class records by given columns */
+	searchClass: Array<ModelTypes["ClassEntity"]>,
+	/** Search EducatorProfile records by given columns */
+	searchEducatorProfile: Array<ModelTypes["EducatorProfileDto"]>,
+	/** Search KeyStage records by given columns */
+	searchKeyStage: Array<ModelTypes["KeyStageEntity"]>,
+	/** Search Lesson records by given columns */
+	searchLesson: Array<ModelTypes["LessonEntity"]>,
+	/** Search Permission records by given columns */
+	searchPermission: Array<ModelTypes["Permission"]>,
+	/** Search PermissionGroup records by given columns */
+	searchPermissionGroup: Array<ModelTypes["PermissionGroup"]>,
+	/** Search Role records by given columns */
+	searchRole: Array<ModelTypes["Role"]>,
+	/** Search StudentProfile records by given columns */
+	searchStudentProfile: Array<ModelTypes["StudentProfileDto"]>,
+	/** Search Subject records by given columns */
+	searchSubject: Array<ModelTypes["SubjectEntity"]>,
+	searchUsers: Array<ModelTypes["User"]>,
+	/** Search YearGroup records by given columns */
+	searchYearGroup: Array<ModelTypes["YearGroupEntity"]>
 };
 	["RelationIdsInput"]: {
 	ids: Array<ModelTypes["ID"]>,
@@ -2411,6 +2474,12 @@ export type ModelTypes = {
 	["RolesPermissionsResponse"]: {
 		permissions: Array<ModelTypes["PermissionDTO"]>,
 	roles: Array<ModelTypes["RoleDTO"]>
+};
+	["SearchInput"]: {
+	columns: Array<string>,
+	limit?: number | undefined | null,
+	relations?: Array<string> | undefined | null,
+	search: string
 };
 	["StudentProfileDto"]: {
 		createdAt: ModelTypes["DateTime"],
@@ -2990,7 +3059,32 @@ export type GraphQLTypes = {
 	/** Returns one YearGroup */
 	getYearGroup: GraphQLTypes["YearGroupEntity"],
 	/** Returns one YearGroup by given conditions */
-	getYearGroupBy: GraphQLTypes["YearGroupEntity"]
+	getYearGroupBy: GraphQLTypes["YearGroupEntity"],
+	/** Search Assignment records by given columns */
+	searchAssignment: Array<GraphQLTypes["AssignmentEntity"]>,
+	/** Search AssignmentSubmission records by given columns */
+	searchAssignmentSubmission: Array<GraphQLTypes["AssignmentSubmissionEntity"]>,
+	/** Search Class records by given columns */
+	searchClass: Array<GraphQLTypes["ClassEntity"]>,
+	/** Search EducatorProfile records by given columns */
+	searchEducatorProfile: Array<GraphQLTypes["EducatorProfileDto"]>,
+	/** Search KeyStage records by given columns */
+	searchKeyStage: Array<GraphQLTypes["KeyStageEntity"]>,
+	/** Search Lesson records by given columns */
+	searchLesson: Array<GraphQLTypes["LessonEntity"]>,
+	/** Search Permission records by given columns */
+	searchPermission: Array<GraphQLTypes["Permission"]>,
+	/** Search PermissionGroup records by given columns */
+	searchPermissionGroup: Array<GraphQLTypes["PermissionGroup"]>,
+	/** Search Role records by given columns */
+	searchRole: Array<GraphQLTypes["Role"]>,
+	/** Search StudentProfile records by given columns */
+	searchStudentProfile: Array<GraphQLTypes["StudentProfileDto"]>,
+	/** Search Subject records by given columns */
+	searchSubject: Array<GraphQLTypes["SubjectEntity"]>,
+	searchUsers: Array<GraphQLTypes["User"]>,
+	/** Search YearGroup records by given columns */
+	searchYearGroup: Array<GraphQLTypes["YearGroupEntity"]>
 };
 	["RelationIdsInput"]: {
 		ids: Array<GraphQLTypes["ID"]>,
@@ -3017,6 +3111,12 @@ export type GraphQLTypes = {
 	__typename: "RolesPermissionsResponse",
 	permissions: Array<GraphQLTypes["PermissionDTO"]>,
 	roles: Array<GraphQLTypes["RoleDTO"]>
+};
+	["SearchInput"]: {
+		columns: Array<string>,
+	limit?: number | undefined | null,
+	relations?: Array<string> | undefined | null,
+	search: string
 };
 	["StudentProfileDto"]: {
 	__typename: "StudentProfileDto",
@@ -3217,6 +3317,7 @@ type ZEUS_VARIABLES = {
 	["PaginationInput"]: ValueTypes["PaginationInput"];
 	["PublicIdRequestDto"]: ValueTypes["PublicIdRequestDto"];
 	["RelationIdsInput"]: ValueTypes["RelationIdsInput"];
+	["SearchInput"]: ValueTypes["SearchInput"];
 	["SubmitIdArrayByIdRequestDto"]: ValueTypes["SubmitIdArrayByIdRequestDto"];
 	["UpdateAssignmentInput"]: ValueTypes["UpdateAssignmentInput"];
 	["UpdateAssignmentSubmissionInput"]: ValueTypes["UpdateAssignmentSubmissionInput"];

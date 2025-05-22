@@ -345,9 +345,51 @@ export const AllTypesProps: Record<string,any> = {
 		},
 		getYearGroupBy:{
 			data:"FindOneByInput"
+		},
+		searchAssignment:{
+			data:"SearchInput"
+		},
+		searchAssignmentSubmission:{
+			data:"SearchInput"
+		},
+		searchClass:{
+			data:"SearchInput"
+		},
+		searchEducatorProfile:{
+			data:"SearchInput"
+		},
+		searchKeyStage:{
+			data:"SearchInput"
+		},
+		searchLesson:{
+			data:"SearchInput"
+		},
+		searchPermission:{
+			data:"SearchInput"
+		},
+		searchPermissionGroup:{
+			data:"SearchInput"
+		},
+		searchRole:{
+			data:"SearchInput"
+		},
+		searchStudentProfile:{
+			data:"SearchInput"
+		},
+		searchSubject:{
+			data:"SearchInput"
+		},
+		searchUsers:{
+			data:"SearchInput"
+		},
+		searchYearGroup:{
+			data:"SearchInput"
 		}
 	},
 	RelationIdsInput:{
+
+	},
+	SearchInput:{
 
 	},
 	SubmitIdArrayByIdRequestDto:{
@@ -596,7 +638,20 @@ export const ReturnTypes: Record<string,any> = {
 		getUserByPublicId:"User",
 		getUsersRolesAndPermissions:"RolesPermissionsResponse",
 		getYearGroup:"YearGroupEntity",
-		getYearGroupBy:"YearGroupEntity"
+		getYearGroupBy:"YearGroupEntity",
+		searchAssignment:"AssignmentEntity",
+		searchAssignmentSubmission:"AssignmentSubmissionEntity",
+		searchClass:"ClassEntity",
+		searchEducatorProfile:"EducatorProfileDto",
+		searchKeyStage:"KeyStageEntity",
+		searchLesson:"LessonEntity",
+		searchPermission:"Permission",
+		searchPermissionGroup:"PermissionGroup",
+		searchRole:"Role",
+		searchStudentProfile:"StudentProfileDto",
+		searchSubject:"SubjectEntity",
+		searchUsers:"User",
+		searchYearGroup:"YearGroupEntity"
 	},
 	Role:{
 		createdAt:"DateTime",
