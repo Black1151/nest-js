@@ -5,13 +5,7 @@ import { DataTableSimple } from "@/components/tables/DataTableSimple";
 import { CreateUserModal } from "../../user-manager/_components/modals/CreateUserModal";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
-import {
-  Input,
-  VStack,
-  Heading,
-  HStack,
-  Button,
-} from "@chakra-ui/react";
+import { Input, VStack, Heading, HStack, Button } from "@chakra-ui/react";
 import { useQuery } from "@apollo/client";
 import { useMemo, useState } from "react";
 
@@ -38,7 +32,11 @@ export default function ClassMembersPane({ classId }: Props) {
 
   const variables = useMemo(
     () =>
-      classId ? { data: { id: Number(classId), relations: ["students", "educators"] } } : undefined,
+      classId
+        ? {
+            data: { id: Number(classId), relations: ["students", "educators"] },
+          }
+        : undefined,
     [classId]
   );
 
@@ -62,66 +60,7 @@ export default function ClassMembersPane({ classId }: Props) {
 
   return (
     <ContentCard gap={4} overflow="hidden">
-      {!classId ? (
-        <Heading size="md">Select a class to view members</Heading>
-      ) : (
-        <VStack align="stretch" gap={4} overflow="hidden">
-          <VStack align="stretch" gap={2}>
-            <Heading size="md">Educators</Heading>
-            {educators.length ? (
-              educators.map((e) => (
-                <span key={e.id}>Staff ID: {e.staffId}</span>
-              ))
-            ) : (
-              <span>No educators</span>
-            )}
-          </VStack>
-
-          <VStack align="stretch" gap={2}>
-            <HStack>
-              <Heading size="md" flex={1}>
-                Students
-              </Heading>
-              <Button
-                size="sm"
-                colorScheme="green"
-                onClick={() => {
-                  setModalType("student");
-                  setIsModalOpen(true);
-                }}
-              >
-                Add Student
-              </Button>
-              <Button
-                size="sm"
-                colorScheme="blue"
-                onClick={() => {
-                  setModalType("educator");
-                  setIsModalOpen(true);
-                }}
-              >
-                Add Staff
-              </Button>
-            </HStack>
-            <Input
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              size="sm"
-            />
-            <DataTableSimple data={filteredStudents} columns={columns} />
-          </VStack>
-        </VStack>
-      )}
-
-      <CreateUserModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          refetch();
-        }}
-        userType={modalType}
-      />
+      class details here
     </ContentCard>
   );
 }
