@@ -3,6 +3,8 @@
 import { Flex, Box, Text, Stack } from "@chakra-ui/react";
 import { useState, useCallback } from "react";
 import SlideSequencer, { Slide } from "./SlideSequencer";
+import SlideElementsBoard from "./SlideElementsBoard";
+import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface LessonState {
   slides: Slide[];
@@ -39,8 +41,8 @@ export default function LessonEditor() {
     setLesson((prev) => {
       const slides = prev.slides.map((s) => {
         if (s.id !== selectedSlideId) return s;
-        const newEl = { id: Date.now().toString(), type };
-        return { ...s, elements: [...s.elements, newEl] };
+        const newEl: SlideElementDnDItemProps = { id: Date.now().toString(), type };
+        return { ...s, elements: [...(s.elements as SlideElementDnDItemProps[]), newEl] };
       });
       return { ...prev, slides };
     });
@@ -65,13 +67,17 @@ export default function LessonEditor() {
             onDrop={handleDropElement}
           >
             <Text mb={2}>Slide Elements</Text>
-            {lesson.slides
-              .find((s) => s.id === selectedSlideId)
-              ?.elements.map((el) => (
-                <Box key={el.id} p={2} mb={2} borderWidth="1px" borderRadius="md">
-                  {el.type}
-                </Box>
-              ))}
+            <SlideElementsBoard
+              elements={(lesson.slides.find((s) => s.id === selectedSlideId)?.elements || []) as SlideElementDnDItemProps[]}
+              onChange={(els) =>
+                setLesson((prev) => ({
+                  ...prev,
+                  slides: prev.slides.map((s) =>
+                    s.id === selectedSlideId ? { ...s, elements: els } : s
+                  ),
+                }))
+              }
+            />
           </Box>
           <Box p={4} borderWidth="1px" borderRadius="md">
             <Text mb={2}>Palette</Text>
