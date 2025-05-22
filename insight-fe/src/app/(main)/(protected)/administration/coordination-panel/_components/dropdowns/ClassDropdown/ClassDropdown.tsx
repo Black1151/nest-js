@@ -8,6 +8,7 @@ import { $ } from "@/zeus";
 import { BaseModal } from "@/components/modals/BaseModal";
 import CrudDropdown from "../CrudDropdown";
 import CreateClassForm from "./forms/CreateClassForm";
+import UpdateClassForm from "./forms/UpdateClassForm";
 
 /* -------------------------------------------------------------------------- */
 /* GraphQL document                                                           */
@@ -36,6 +37,7 @@ export function ClassDropdown({
   onChange,
 }: ClassDropdownProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
   /* ------------------------------ variables ------------------------------ */
   const variables = useMemo(
@@ -62,6 +64,8 @@ export function ClassDropdown({
   const classes =
     yearGroupId && subjectId ? data?.classesByYearAndSubject ?? [] : [];
 
+  const selectedClass = classes.find((c) => String(c.id) === value);
+
   const options = useMemo(
     () => classes.map((c) => ({ label: c.name, value: String(c.id) })),
     [classes]
@@ -78,9 +82,9 @@ export function ClassDropdown({
           onChange(e.target.value || null)
         }
         onCreate={() => setIsModalOpen(true)}
-        onUpdate={() => {}}
+        onUpdate={() => setIsUpdateOpen(true)}
         onDelete={() => {}}
-        isUpdateDisabled
+        isUpdateDisabled={!value}
         isDeleteDisabled
         isDisabled={!(yearGroupId && subjectId)}
       />
@@ -95,6 +99,21 @@ export function ClassDropdown({
           subjectId={subjectId ?? ""}
           onSuccess={() => {
             setIsModalOpen(false);
+            refetch();
+          }}
+        />
+      </BaseModal>
+
+      <BaseModal
+        isOpen={isUpdateOpen}
+        onClose={() => setIsUpdateOpen(false)}
+        title="Update Class"
+      >
+        <UpdateClassForm
+          classId={value ?? ""}
+          initialName={selectedClass?.name ?? ""}
+          onSuccess={() => {
+            setIsUpdateOpen(false);
             refetch();
           }}
         />
