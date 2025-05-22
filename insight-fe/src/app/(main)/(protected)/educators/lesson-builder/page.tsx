@@ -1,3 +1,5 @@
+import { LessonBuilderPageClient } from "./LessonBuilderPageClient";
+
 export default function LessonBuilderPage() {
-  return <div>Lesson Builder</div>;
+  return <LessonBuilderPageClient />;
 }
