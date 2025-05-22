@@ -8,6 +8,7 @@ import { AbstractBaseEntity } from 'src/common/base.entity';
 import { ClassEntity } from '../class/class.entity';
 import { KeyStageEntity } from '../key-stage/key-stage.entity';
 import { SubjectEntity } from '../subject/subject.entity';
+import { TopicEntity } from '../topic/topic.entity';
 
 export enum ValidYear {
   Year7 = 'Year 7',
@@ -35,6 +36,10 @@ export class YearGroupEntity extends AbstractBaseEntity {
 
   @OneToMany(() => ClassEntity, (cls) => cls.yearGroup)
   classes?: ClassEntity[];
+
+  @Field(() => [TopicEntity], { nullable: true })
+  @OneToMany(() => TopicEntity, (topic) => topic.yearGroup)
+  topics?: TopicEntity[];
 
   @Field(() => [SubjectEntity], { nullable: true })
   @ManyToMany(() => SubjectEntity, (s) => s.yearGroups, { nullable: true })
