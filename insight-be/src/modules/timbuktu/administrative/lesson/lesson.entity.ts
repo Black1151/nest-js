@@ -33,8 +33,8 @@ export class LessonEntity extends AbstractBaseEntity {
 
   /* ---------- relationships ---------- */
 
-  @Field(() => TopicEntity, { nullable: true })
-  @ManyToOne(() => TopicEntity, (topic) => topic.lessons, { nullable: true })
+  @Field(() => TopicEntity, { nullable: false })
+  @ManyToOne(() => TopicEntity, (topic) => topic.lessons, { nullable: false })
   topic?: TopicEntity;
 
   @Field(() => [YearGroupEntity], { nullable: true })
