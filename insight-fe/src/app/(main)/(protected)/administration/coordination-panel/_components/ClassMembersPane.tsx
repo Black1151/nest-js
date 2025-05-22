@@ -108,12 +108,14 @@ export default function ClassMembersPane({ classId }: Props) {
         <EducatorSearchInput onSelect={handleAddEducator} />
         <List spacing={1}>
           {educators.map((e) => (
-            <ListItem key={e.id}>{`Staff ID ${e.staffId}`}</ListItem>
+            <ListItem key={String(e.id)}>{`Staff ID ${e.staffId}`}</ListItem>
           ))}
         </List>
 
         {/* ---------- Students section ---------- */}
-        <Heading size="md" pt={2}>Students</Heading>
+        <Heading size="md" pt={2}>
+          Students
+        </Heading>
         <StudentSearchInput onSelect={handleAddStudent} />
         <Input
           placeholder="Filter students..."
