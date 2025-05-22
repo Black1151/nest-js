@@ -436,9 +436,6 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         onDrop(args) {
           const { location, source } = args;
 
-          console.log("location", location);
-          console.log("source", source);
-
           // If no drop targets, do nothing
           if (!location.current.dropTargets.length) {
             return;

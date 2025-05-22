@@ -27,21 +27,24 @@ export interface Slide {
   board: BoardState<SlideElementDnDItemProps>;
 }
 
-export const createInitialBoard = (): BoardState<SlideElementDnDItemProps> => ({
-  columnMap: {
-    column1: {
-      title: 'Column 1',
-      columnId: 'column1',
-      styles: {
-        container: { border: '2px dashed red', width: '100%' },
-        header: { bg: 'red.300', color: 'white' },
+export const createInitialBoard = (): BoardState<SlideElementDnDItemProps> => {
+  const columnId = `col-${crypto.randomUUID()}`;
+  return {
+    columnMap: {
+      [columnId]: {
+        title: 'Column 1',
+        columnId,
+        styles: {
+          container: { border: '2px dashed red', width: '100%' },
+          header: { bg: 'red.300', color: 'white' },
+        },
+        items: [],
       },
-      items: [],
     },
-  },
-  orderedColumnIds: ['column1'],
-  lastOperation: null,
-});
+    orderedColumnIds: [columnId],
+    lastOperation: null,
+  };
+};
 
 interface SlideItemProps {
   slide: Slide;
@@ -116,7 +119,7 @@ export default function SlideSequencer({
   const instanceId = useRef(Symbol('slide-sequencer'));
 
   const addSlide = useCallback(() => {
-    const id = String(Date.now()) + counter.current;
+    const id = crypto.randomUUID();
     counter.current += 1;
     setSlides((s) => [
       ...s,
