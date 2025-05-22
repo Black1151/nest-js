@@ -1296,8 +1296,9 @@ searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},Va
 	["SearchInput"]: {
 	columns: Array<string> | Variable<any, string>,
 	limit?: number | undefined | null | Variable<any, string>,
-	relations?: Array<string> | undefined | null | Variable<any, string>,
-	search: string | Variable<any, string>
+        relations?: Array<string> | undefined | null | Variable<any, string>,
+        filters?: Array<ValueTypes["FilterInput"]> | undefined | null | Variable<any, string>,
+        search: string | Variable<any, string>
 };
 	["StudentProfileDto"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
@@ -1850,9 +1851,10 @@ searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes
 }>;
 	["SearchInput"]: {
 	columns: Array<string>,
-	limit?: number | undefined | null,
-	relations?: Array<string> | undefined | null,
-	search: string
+        limit?: number | undefined | null,
+        relations?: Array<string> | undefined | null,
+        filters?: Array<ResolverInputTypes["FilterInput"]> | undefined | null,
+        search: string
 };
 	["StudentProfileDto"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
@@ -2476,10 +2478,11 @@ export type ModelTypes = {
 	roles: Array<ModelTypes["RoleDTO"]>
 };
 	["SearchInput"]: {
-	columns: Array<string>,
-	limit?: number | undefined | null,
-	relations?: Array<string> | undefined | null,
-	search: string
+        columns: Array<string>,
+        limit?: number | undefined | null,
+        relations?: Array<string> | undefined | null,
+        filters?: Array<ModelTypes["FilterInput"]> | undefined | null,
+        search: string
 };
 	["StudentProfileDto"]: {
 		createdAt: ModelTypes["DateTime"],
@@ -3114,9 +3117,10 @@ export type GraphQLTypes = {
 };
 	["SearchInput"]: {
 		columns: Array<string>,
-	limit?: number | undefined | null,
-	relations?: Array<string> | undefined | null,
-	search: string
+        limit?: number | undefined | null,
+        relations?: Array<string> | undefined | null,
+        filters?: Array<GraphQLTypes["FilterInput"]> | undefined | null,
+        search: string
 };
 	["StudentProfileDto"]: {
 	__typename: "StudentProfileDto",

@@ -141,4 +141,7 @@ export class SearchInput {
 
   @Field(() => [String], { nullable: true })
   relations?: string[];
+
+  @Field(() => [FilterInput], { nullable: true })
+  filters?: FilterInput[];
 }

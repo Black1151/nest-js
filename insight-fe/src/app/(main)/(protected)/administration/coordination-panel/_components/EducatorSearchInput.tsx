@@ -7,9 +7,9 @@ import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
 
 const SEARCH_EDUCATORS = typedGql("query")({
-  searchEducatorProfile: [
+  searchUsers: [
     { data: $("data", "SearchInput!") },
-    { id: true, staffId: true },
+    { id: true, firstName: true, lastName: true },
   ],
 } as const);
 
@@ -26,7 +26,12 @@ export default function EducatorSearchInput({ onSelect }: EducatorSearchInputPro
       if (term.length > 1) {
         executeSearch({
           variables: {
-            data: { search: term, columns: ["staffId"], limit: 5 },
+            data: {
+              search: term,
+              columns: ["firstName", "lastName"],
+              limit: 5,
+              filters: [{ column: "userType", value: "educator" }],
+            },
           },
         });
       }
@@ -34,7 +39,7 @@ export default function EducatorSearchInput({ onSelect }: EducatorSearchInputPro
     return () => clearTimeout(handle);
   }, [term, executeSearch]);
 
-  const results = data?.searchEducatorProfile ?? [];
+  const results = data?.searchUsers ?? [];
 
   return (
     <Box position="relative" mb={4}>
@@ -55,7 +60,7 @@ export default function EducatorSearchInput({ onSelect }: EducatorSearchInputPro
                   onSelect(String(e.id));
                   setTerm("");
                 }}
-              >{`Staff ID ${e.staffId}`}</ListItem>
+              >{`${e.firstName} ${e.lastName}`}</ListItem>
             ))}
           </List>
         </Box>

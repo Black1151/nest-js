@@ -7,9 +7,9 @@ import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
 
 const SEARCH_STUDENTS = typedGql("query")({
-  searchStudentProfile: [
+  searchUsers: [
     { data: $("data", "SearchInput!") },
-    { id: true, studentId: true, schoolYear: true },
+    { id: true, firstName: true, lastName: true },
   ],
 } as const);
 
@@ -26,7 +26,12 @@ export default function StudentSearchInput({ onSelect }: StudentSearchInputProps
       if (term.length > 1) {
         executeSearch({
           variables: {
-            data: { search: term, columns: ["studentId"], limit: 5 },
+            data: {
+              search: term,
+              columns: ["firstName", "lastName"],
+              limit: 5,
+              filters: [{ column: "userType", value: "student" }],
+            },
           },
         });
       }
@@ -34,7 +39,7 @@ export default function StudentSearchInput({ onSelect }: StudentSearchInputProps
     return () => clearTimeout(handle);
   }, [term, executeSearch]);
 
-  const results = data?.searchStudentProfile ?? [];
+  const results = data?.searchUsers ?? [];
 
   return (
     <Box position="relative" mb={4}>
@@ -55,7 +60,7 @@ export default function StudentSearchInput({ onSelect }: StudentSearchInputProps
                   onSelect(String(s.id));
                   setTerm("");
                 }}
-              >{`ID ${s.studentId} (Y${s.schoolYear})`}</ListItem>
+              >{`${s.firstName} ${s.lastName}`}</ListItem>
             ))}
           </List>
         </Box>
