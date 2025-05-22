@@ -359,6 +359,11 @@ input PaginatedGetAllRequestDto {
   offset: Int
 }
 
+input SearchUsersRequestDto {
+  search: String!
+  limit: Int
+}
+
 type Permission {
   createdAt: DateTime!
   description: String
@@ -424,6 +429,7 @@ type Query {
   """Returns all Subject (optionally filtered)"""
   getAllSubject(data: FindAllInput!): [SubjectEntity!]!
   getAllUsers(data: PaginatedGetAllRequestDto!): [User!]!
+  searchUsers(data: SearchUsersRequestDto!): [User!]!
 
   """Returns all YearGroup (optionally filtered)"""
   getAllYearGroup(data: FindAllInput!): [YearGroupEntity!]!

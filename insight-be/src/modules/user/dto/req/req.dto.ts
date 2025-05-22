@@ -116,3 +116,15 @@ export class UpdateUserRequestDto extends OmitType(CreateUserRequestDto, [
   @Field()
   publicId: string;
 }
+
+@InputType()
+export class SearchUsersRequestDto {
+  @Field()
+  @IsString()
+  search!: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  limit?: number;
+}

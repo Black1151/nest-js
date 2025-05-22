@@ -23,6 +23,7 @@ import {
   CreateUserRequestDto,
   UpdateUserRequestDto,
   UpdateUserRolesFromArrayRequestDto,
+  SearchUsersRequestDto,
 } from './dto/req/req.dto';
 import { CreateUserWithProfileInput } from './input/create-user-with-profile.input';
 import { UpdateUserWithProfileInput } from './input/update-user-with-profile-input';
@@ -45,6 +46,15 @@ export class UserResolver {
   ): Promise<User[]> {
     const { limit, offset } = data;
     return this.userService.findAll(limit, offset);
+  }
+
+  @Query(() => [User])
+  @RbacPermissionKey('user.searchUsers')
+  async searchUsers(
+    @Args('data') data: SearchUsersRequestDto,
+  ): Promise<User[]> {
+    const { search, limit } = data;
+    return this.userService.searchByName(search, limit);
   }
 
   @Query(() => User)
