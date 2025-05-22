@@ -5,9 +5,19 @@ import { DataTableSimple } from "@/components/tables/DataTableSimple";
 import { CreateUserModal } from "../../user-manager/_components/modals/CreateUserModal";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
-import { Input, VStack, Heading, HStack, Button } from "@chakra-ui/react";
-import { useQuery } from "@apollo/client";
+import {
+  Input,
+  VStack,
+  Heading,
+  HStack,
+  Button,
+  List,
+  ListItem,
+} from "@chakra-ui/react";
+import { useQuery, useMutation } from "@apollo/client";
 import { useMemo, useState } from "react";
+import EducatorSearchInput from "./EducatorSearchInput";
+import StudentSearchInput from "./StudentSearchInput";
 
 const GET_CLASS_WITH_MEMBERS = typedGql("query")({
   getClass: [
@@ -19,6 +29,10 @@ const GET_CLASS_WITH_MEMBERS = typedGql("query")({
       educators: { id: true, staffId: true },
     },
   ],
+} as const);
+
+const UPDATE_CLASS = typedGql("mutation")({
+  updateClass: [{ data: $("data", "UpdateClassInput!") }, { id: true }],
 } as const);
 
 interface Props {
@@ -45,12 +59,40 @@ export default function ClassMembersPane({ classId }: Props) {
     skip: !classId,
   });
 
+  const [updateClass] = useMutation(UPDATE_CLASS);
+
   const students = data?.getClass?.students ?? [];
   const educators = data?.getClass?.educators ?? [];
 
   const filteredStudents = students.filter((s) =>
     String(s.studentId).toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleAddStudent = async (studentId: string) => {
+    if (!classId) return;
+    await updateClass({
+      variables: {
+        data: {
+          id: Number(classId),
+          relationIds: [{ relation: "students", ids: [Number(studentId)] }],
+        },
+      },
+    });
+    refetch();
+  };
+
+  const handleAddEducator = async (educatorId: string) => {
+    if (!classId) return;
+    await updateClass({
+      variables: {
+        data: {
+          id: Number(classId),
+          relationIds: [{ relation: "educators", ids: [Number(educatorId)] }],
+        },
+      },
+    });
+    refetch();
+  };
 
   const columns = [
     { key: "id", label: "ID" },
@@ -60,7 +102,55 @@ export default function ClassMembersPane({ classId }: Props) {
 
   return (
     <ContentCard gap={4} overflow="hidden">
-      class details here
+      <VStack align="stretch" spacing={4} overflow="auto">
+        {/* ---------- Educators section ---------- */}
+        <Heading size="md">Educators</Heading>
+        <EducatorSearchInput onSelect={handleAddEducator} />
+        <List spacing={1}>
+          {educators.map((e) => (
+            <ListItem key={String(e.id)}>{`Staff ID ${e.staffId}`}</ListItem>
+          ))}
+        </List>
+
+        {/* ---------- Students section ---------- */}
+        <Heading size="md" pt={2}>
+          Students
+        </Heading>
+        <StudentSearchInput onSelect={handleAddStudent} />
+        <Input
+          placeholder="Filter students..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <DataTableSimple data={filteredStudents} columns={columns} />
+
+        <HStack>
+          <Button
+            colorScheme="green"
+            onClick={() => {
+              setModalType("student");
+              setIsModalOpen(true);
+            }}
+          >
+            Create Student
+          </Button>
+          <Button
+            colorScheme="blue"
+            onClick={() => {
+              setModalType("educator");
+              setIsModalOpen(true);
+            }}
+          >
+            Create Educator
+          </Button>
+        </HStack>
+      </VStack>
+
+      <CreateUserModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        userType={modalType}
+      />
     </ContentCard>
   );
 }
