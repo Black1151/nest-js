@@ -27,4 +27,5 @@ export class LessonResolver extends BaseLessonResolver {
   constructor(private readonly lessonService: LessonService) {
     super(lessonService);
   }
+
 }
