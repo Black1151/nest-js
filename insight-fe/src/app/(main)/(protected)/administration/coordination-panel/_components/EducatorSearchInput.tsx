@@ -17,7 +17,9 @@ interface EducatorSearchInputProps {
   onSelect: (id: string) => void;
 }
 
-export default function EducatorSearchInput({ onSelect }: EducatorSearchInputProps) {
+export default function EducatorSearchInput({
+  onSelect,
+}: EducatorSearchInputProps) {
   const [term, setTerm] = useState("");
   const [executeSearch, { data }] = useLazyQuery(SEARCH_EDUCATORS);
 
@@ -49,11 +51,19 @@ export default function EducatorSearchInput({ onSelect }: EducatorSearchInputPro
         onChange={(e) => setTerm(e.target.value)}
       />
       {results.length > 0 && (
-        <Box position="absolute" top="100%" left={0} right={0} borderWidth="1px" bg="white" zIndex={2}>
+        <Box
+          position="absolute"
+          top="100%"
+          left={0}
+          right={0}
+          borderWidth="1px"
+          bg="white"
+          zIndex={2}
+        >
           <List spacing={0} m={0}>
             {results.map((e) => (
               <ListItem
-                key={e.id}
+                key={String(e.id)}
                 p={2}
                 _hover={{ backgroundColor: "gray.100", cursor: "pointer" }}
                 onClick={() => {
@@ -68,4 +78,3 @@ export default function EducatorSearchInput({ onSelect }: EducatorSearchInputPro
     </Box>
   );
 }
-

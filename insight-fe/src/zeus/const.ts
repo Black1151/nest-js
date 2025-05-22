@@ -390,7 +390,7 @@ export const AllTypesProps: Record<string,any> = {
 
 	},
 	SearchInput:{
-
+		filters:"FilterInput"
 	},
 	SubmitIdArrayByIdRequestDto:{
 

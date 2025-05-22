@@ -1043,9 +1043,9 @@ export type RolesPermissionsResponse = {
 
 export type SearchInput = {
   columns: Array<Scalars['String']['input']>;
+  filters?: InputMaybe<Array<FilterInput>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   relations?: InputMaybe<Array<Scalars['String']['input']>>;
-  filters?: InputMaybe<Array<FilterInput>>;
   search: Scalars['String']['input'];
 };
 
