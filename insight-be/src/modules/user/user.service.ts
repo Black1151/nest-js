@@ -1,7 +1,7 @@
 // user.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, DataSource } from 'typeorm';
+import { Repository, In, DataSource, ILike } from 'typeorm';
 import { User } from './user.model';
 
 import { Role } from 'src/modules/rbac/sub/role/role.entity';
@@ -35,6 +35,15 @@ export class UsersService {
       skip: offset,
       take: limit,
     });
+  }
+
+  async search(
+    search: string,
+    columns: (keyof User)[],
+    limit = 10,
+  ): Promise<User[]> {
+    const where = columns.map((c) => ({ [c]: ILike(`%${search}%`) })) as any[];
+    return this.userRepository.find({ where, take: limit });
   }
 
   async hashPassword(plainPass: string): Promise<string> {

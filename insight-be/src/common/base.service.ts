@@ -11,6 +11,7 @@ import {
   FindOptionsWhere,
   In,
   Repository,
+  ILike,
 } from 'typeorm';
 
 import { RelationIdsInput } from './base.inputs';
@@ -178,5 +179,17 @@ export class BaseService<
   async remove(id: number): Promise<number> {
     await this.repo.delete(id);
     return id;
+  }
+
+  /* ----------------------- search by columns ----------------------- */
+
+  async searchByColumns(
+    search: string,
+    columns: (keyof T)[],
+    opts?: { limit?: number; relations?: string[] },
+  ): Promise<T[]> {
+    const { limit = 10, relations } = opts ?? {};
+    const where = columns.map((c) => ({ [c as string]: ILike(`%${search}%`) })) as any[];
+    return this.repo.find({ where, take: limit, relations });
   }
 }

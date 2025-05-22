@@ -123,3 +123,22 @@ export class HasRelationsInput {
   })
   relationIds?: RelationIdsInput[];
 }
+
+/* ------------------------------------------------------------------ */
+/* Generic search input                                               */
+/* ------------------------------------------------------------------ */
+
+@InputType()
+export class SearchInput {
+  @Field()
+  search!: string;
+
+  @Field(() => [String])
+  columns!: string[];
+
+  @Field(() => Int, { nullable: true })
+  limit?: number;
+
+  @Field(() => [String], { nullable: true })
+  relations?: string[];
+}

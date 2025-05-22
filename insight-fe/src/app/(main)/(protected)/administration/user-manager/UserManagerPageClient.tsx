@@ -10,6 +10,7 @@ import { usePermissionRedirect } from "@/hooks/PermissionRedirect";
 import { ContentCard } from "@/components/layout/Card";
 import { Center } from "@chakra-ui/react";
 import { NoUserSelectedCard } from "./_components/cards/NoUserSelectedCard";
+import { UserSearchInput } from "./_components/sections/user/UserSearchInput";
 
 export function UserManagerPageClient() {
   const [selectedUserPublicId, setSelectedUserPublicId] = useState<
@@ -23,6 +24,7 @@ export function UserManagerPageClient() {
 
   return (
     <>
+      <UserSearchInput onSelect={setSelectedUserPublicId} />
       <ContentGrid gridTemplateColumns="1fr 1fr">
         <UserListTable setSelectedUserPublicId={setSelectedUserPublicId} />
 
