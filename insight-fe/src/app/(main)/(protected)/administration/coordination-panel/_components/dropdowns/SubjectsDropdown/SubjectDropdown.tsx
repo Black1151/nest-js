@@ -7,9 +7,11 @@ import { Text } from "@chakra-ui/react";
 import CrudDropdown from "../CrudDropdown";
 import { BaseModal } from "@/components/modals/BaseModal";
 import CreateSubjectForm from "./forms/CreateSubjectForm";
-// import UpdateSubjectForm from "./forms/UpdateSubjectForm";
+import UpdateSubjectForm from "./forms/UpdateSubjectForm";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation, gql } from "@apollo/client";
+
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
 
@@ -25,6 +27,12 @@ const GET_SUBJECTS_FOR_YEAR_GROUP = typedGql("query")({
     },
   ],
 } as const);
+
+const DELETE_SUBJECT = gql`
+  mutation DeleteSubject($data: IdInput!) {
+    deleteSubject(data: $data)
+  }
+`;
 
 /* -------------------------------------------------------------------------- */
 /* Component                                                                  */
@@ -42,6 +50,7 @@ export function SubjectDropdown({
 }: SubjectDropdownProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"create" | "update">("create");
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   /* ── variable memo ─────────────────────────────────────────────────────── */
   const variables = useMemo(
@@ -64,6 +73,17 @@ export function SubjectDropdown({
     () => subjects.map((s) => ({ label: s.name, value: String(s.id) })),
     [subjects]
   );
+
+
+  const [deleteSubject, { loading: deleting }] = useMutation(DELETE_SUBJECT, {
+    onCompleted: () => {
+      setIsDeleteOpen(false);
+      onChange(null);
+      if (variables) {
+        refetch(variables);
+      }
+    },
+  });
 
   /* ── handlers triggered by forms ───────────────────────────────────────── */
   const handleSubjectCreated = async () => {
@@ -98,9 +118,9 @@ export function SubjectDropdown({
           setModalType("update");
           setIsModalOpen(true);
         }}
-        onDelete={() => {}}
+        onDelete={() => setIsDeleteOpen(true)}
         isUpdateDisabled={value === null}
-        isDeleteDisabled
+        isDeleteDisabled={!value}
       />
 
       <BaseModal
@@ -111,13 +131,25 @@ export function SubjectDropdown({
         {modalType === "create" ? (
           <CreateSubjectForm onSuccess={handleSubjectCreated} />
         ) : (
-          <Text>Update Subject</Text>
-          // <UpdateSubjectForm
-          //   subjectId={String(value!)}
-          //   onSuccess={handleSubjectUpdated}
-          // />
+          <UpdateSubjectForm
+            subjectId={value ?? ""}
+            onSuccess={handleSubjectUpdated}
+          />
         )}
       </BaseModal>
+
+      <ConfirmationModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        action="delete subject"
+        bodyText="Are you sure you want to delete this subject?"
+        onConfirm={() => {
+          if (value) {
+            deleteSubject({ variables: { data: { id: Number(value) } } });
+          }
+        }}
+        isLoading={deleting}
+      />
     </>
   );
 }
