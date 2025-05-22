@@ -21,6 +21,7 @@ const BaseEducatorResolver = createBaseResolver<
     'create',
     'update',
     'remove',
+    'search',
   ],
   immutableOperations: ['create', 'update', 'remove'],
 });

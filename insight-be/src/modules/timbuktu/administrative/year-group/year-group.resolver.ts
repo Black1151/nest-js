@@ -23,6 +23,7 @@ const BaseYearGroupResolver = createBaseResolver<
     'create',
     'update',
     'remove',
+    'search',
   ],
 });
 

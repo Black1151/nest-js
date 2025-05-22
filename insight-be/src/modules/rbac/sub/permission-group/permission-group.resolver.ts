@@ -28,6 +28,7 @@ const BasePermissionGroupResolver = createBaseResolver<
     'create',
     'update',
     'remove',
+    'search',
   ],
   immutableOperations: ['create', 'update', 'remove'],
 });

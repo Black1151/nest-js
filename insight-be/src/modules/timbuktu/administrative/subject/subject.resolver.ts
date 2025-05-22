@@ -19,6 +19,7 @@ const BaseSubjectResolver = createBaseResolver<
     'create',
     'update',
     'remove',
+    'search',
   ],
 });
 

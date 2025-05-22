@@ -21,6 +21,7 @@ const BaseAssignmentResolver = createBaseResolver<
     'create',
     'update',
     'remove',
+    'search',
   ],
 });
 
