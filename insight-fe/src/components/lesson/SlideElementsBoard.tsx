@@ -7,6 +7,7 @@ import {
   SlideElementDnDItem,
 } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
+import { ContentCard } from "../layout/Card";
 
 interface SlideElementsBoardProps {
   board: BoardState<SlideElementDnDItemProps>;
@@ -76,14 +77,16 @@ export default function SlideElementsBoard({
           Add Column
         </Button>
       </HStack>
-      <DnDBoardMain<SlideElementDnDItemProps>
-        columnMap={board.columnMap}
-        orderedColumnIds={board.orderedColumnIds}
-        CardComponent={CardWrapper}
-        enableColumnReorder={false}
-        onChange={onChange}
-        onRemoveColumn={removeColumn}
-      />
+      <ContentCard height={700}>
+        <DnDBoardMain<SlideElementDnDItemProps>
+          columnMap={board.columnMap}
+          orderedColumnIds={board.orderedColumnIds}
+          CardComponent={CardWrapper}
+          enableColumnReorder={false}
+          onChange={onChange}
+          onRemoveColumn={removeColumn}
+        />
+      </ContentCard>
     </>
   );
 }
