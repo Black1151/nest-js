@@ -17,17 +17,20 @@ import {
 } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
 import { getReorderDestinationIndex } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index';
 
-interface Slide {
+export interface Slide {
   id: string;
   title: string;
+  elements: any[];
 }
 
 interface SlideItemProps {
   slide: Slide;
   instanceId: symbol;
+  onSelect: (id: string) => void;
+  isSelected: boolean;
 }
 
-function SlideItem({ slide, instanceId }: SlideItemProps) {
+function SlideItem({ slide, instanceId, onSelect, isSelected }: SlideItemProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
@@ -64,9 +67,10 @@ function SlideItem({ slide, instanceId }: SlideItemProps) {
       p={3}
       borderWidth="1px"
       borderRadius="md"
-      bg="white"
+      bg={isSelected ? "teal.100" : "white"}
       position="relative"
       cursor="grab"
+      onClick={() => onSelect(slide.id)}
     >
       {slide.title}
       {closestEdge && <DropIndicator edge={closestEdge} gap="4px" />}
@@ -74,19 +78,28 @@ function SlideItem({ slide, instanceId }: SlideItemProps) {
   );
 }
 
-export default function SlideSequencer() {
-  const [slides, setSlides] = useState<Slide[]>([
-    { id: '1', title: 'Slide 1' },
-  ]);
-  const counter = useRef(2);
+export interface SlideSequencerProps {
+  slides: Slide[];
+  setSlides: React.Dispatch<React.SetStateAction<Slide[]>>;
+  selectedSlideId: string | null;
+  onSelect: (id: string) => void;
+}
+
+export default function SlideSequencer({
+  slides,
+  setSlides,
+  selectedSlideId,
+  onSelect,
+}: SlideSequencerProps) {
+  const counter = useRef(slides.length + 1);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const instanceId = useRef(Symbol('slide-sequencer'));
 
   const addSlide = useCallback(() => {
     const id = String(Date.now()) + counter.current;
     counter.current += 1;
-    setSlides((s) => [...s, { id, title: `Slide ${s.length + 1}` }]);
-  }, []);
+    setSlides((s) => [...s, { id, title: `Slide ${s.length + 1}`, elements: [] }]);
+  }, [setSlides]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -145,7 +158,7 @@ export default function SlideSequencer() {
         }
       },
     });
-  }, [slides]);
+  }, [slides, setSlides]);
 
   return (
     <Stack spacing={4}>
@@ -158,6 +171,8 @@ export default function SlideSequencer() {
             key={slide.id}
             slide={slide}
             instanceId={instanceId.current}
+            onSelect={onSelect}
+            isSelected={selectedSlideId === slide.id}
           />
         ))}
       </Stack>
