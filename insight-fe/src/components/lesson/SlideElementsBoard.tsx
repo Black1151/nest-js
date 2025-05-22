@@ -7,6 +7,7 @@ import {
   SlideElementDnDItem,
 } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
+import { ContentCard } from "../layout/Card";
 
 interface SlideElementsBoardProps {
   board: BoardState<SlideElementDnDItemProps>;
@@ -22,7 +23,10 @@ const COLUMN_COLORS = [
   "teal.300",
 ];
 
-export default function SlideElementsBoard({ board, onChange }: SlideElementsBoardProps) {
+export default function SlideElementsBoard({
+  board,
+  onChange,
+}: SlideElementsBoardProps) {
   const addColumn = () => {
     const idx = board.orderedColumnIds.length;
     const color = COLUMN_COLORS[idx % COLUMN_COLORS.length];
@@ -61,14 +65,16 @@ export default function SlideElementsBoard({ board, onChange }: SlideElementsBoa
           Add Column
         </Button>
       </HStack>
-      <DnDBoardMain<SlideElementDnDItemProps>
-        columnMap={board.columnMap}
-        orderedColumnIds={board.orderedColumnIds}
-        CardComponent={SlideElementDnDItem}
-        enableColumnReorder={false}
-        onChange={onChange}
-        onRemoveColumn={removeColumn}
-      />
+      <ContentCard height={700}>
+        <DnDBoardMain<SlideElementDnDItemProps>
+          columnMap={board.columnMap}
+          orderedColumnIds={board.orderedColumnIds}
+          CardComponent={SlideElementDnDItem}
+          enableColumnReorder={false}
+          onChange={onChange}
+          onRemoveColumn={removeColumn}
+        />
+      </ContentCard>
     </>
   );
 }

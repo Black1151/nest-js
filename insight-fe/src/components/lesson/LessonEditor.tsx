@@ -21,18 +21,15 @@ export default function LessonEditor() {
   });
   const [selectedSlideId, setSelectedSlideId] = useState<string | null>("1");
 
-  const setSlides = useCallback(
-    (updater: React.SetStateAction<Slide[]>) => {
-      setLesson((prev) => ({
-        ...prev,
-        slides:
-          typeof updater === "function"
-            ? (updater as (prev: Slide[]) => Slide[])(prev.slides)
-            : updater,
-      }));
-    },
-    []
-  );
+  const setSlides = useCallback((updater: React.SetStateAction<Slide[]>) => {
+    setLesson((prev) => ({
+      ...prev,
+      slides:
+        typeof updater === "function"
+          ? (updater as (prev: Slide[]) => Slide[])(prev.slides)
+          : updater,
+    }));
+  }, []);
 
   const handleDropElement = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -41,7 +38,10 @@ export default function LessonEditor() {
     setLesson((prev) => {
       const slides = prev.slides.map((s) => {
         if (s.id !== selectedSlideId) return s;
-        const newEl: SlideElementDnDItemProps = { id: Date.now().toString(), type };
+        const newEl: SlideElementDnDItemProps = {
+          id: Date.now().toString(),
+          type,
+        };
         const firstColumnId = s.board.orderedColumnIds[0];
         const column = s.board.columnMap[firstColumnId];
         const updatedColumn = {
@@ -103,7 +103,9 @@ export default function LessonEditor() {
                   borderWidth="1px"
                   borderRadius="md"
                   draggable
-                  onDragStart={(e) => e.dataTransfer.setData("text/plain", el.type)}
+                  onDragStart={(e) =>
+                    e.dataTransfer.setData("text/plain", el.type)
+                  }
                 >
                   {el.label}
                 </Box>
