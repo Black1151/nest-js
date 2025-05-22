@@ -116,7 +116,7 @@ export default function SlideSequencer({
   const instanceId = useRef(Symbol('slide-sequencer'));
 
   const addSlide = useCallback(() => {
-    const id = String(Date.now()) + counter.current;
+    const id = crypto.randomUUID();
     counter.current += 1;
     setSlides((s) => [
       ...s,
