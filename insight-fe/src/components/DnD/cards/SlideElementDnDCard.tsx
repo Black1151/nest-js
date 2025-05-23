@@ -2,6 +2,7 @@ import ElementWrapper, {
   ElementWrapperStyles,
 } from "@/components/lesson/ElementWrapper";
 import {
+  Box,
   Text,
   Table,
   Thead,
@@ -18,6 +19,10 @@ export interface SlideElementDnDItemProps {
    * Text content for text elements
    */
   text?: string;
+  /**
+   * Video URL for video elements
+   */
+  url?: string;
   styles?: {
     color?: string;
     fontSize?: string;
@@ -76,6 +81,14 @@ export const SlideElementDnDItem = ({
             </Tr>
           </Tbody>
         </Table>
+      </ElementWrapper>
+    );
+  }
+
+  if (item.type === "video") {
+    return (
+      <ElementWrapper styles={wrapperStyles} {...baseProps}>
+        <Box as="video" src={item.url} controls width="100%" />
       </ElementWrapper>
     );
   }

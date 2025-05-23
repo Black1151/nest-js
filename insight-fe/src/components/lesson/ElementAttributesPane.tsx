@@ -31,6 +31,7 @@ export default function ElementAttributesPane({
   const [color, setColor] = useState(element.styles?.color || "#000000");
   const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
   const [text, setText] = useState(element.text || "");
+  const [url, setUrl] = useState(element.url || "");
   const [bgColor, setBgColor] = useState(
     element.wrapperStyles?.bgColor || "#ffffff"
   );
@@ -62,6 +63,7 @@ export default function ElementAttributesPane({
     setColor(element.styles?.color || "#000000");
     setFontSize(element.styles?.fontSize || "16px");
     setText(element.text || "");
+    setUrl(element.url || "");
     setBgColor(element.wrapperStyles?.bgColor || "#ffffff");
     setShadow(element.wrapperStyles?.dropShadow || "none");
     setPaddingX(element.wrapperStyles?.paddingX ?? 0);
@@ -92,11 +94,15 @@ export default function ElementAttributesPane({
       updated.text = text;
       updated.styles = { ...element.styles, color, fontSize };
     }
+    if (element.type === "video") {
+      updated.url = url;
+    }
     onChange(updated);
   }, [
     color,
     fontSize,
     text,
+    url,
     bgColor,
     shadow,
     paddingX,
@@ -324,6 +330,38 @@ export default function ElementAttributesPane({
                   w="60px"
                   value={parseInt(fontSize)}
                   onChange={(e) => setFontSize(e.target.value + "px")}
+                />
+              </FormControl>
+            </Stack>
+          </AccordionPanel>
+        </AccordionItem>
+      )}
+
+      {element.type === "video" && (
+        <AccordionItem
+          borderWidth="1px"
+          borderColor="purple.300"
+          borderRadius="md"
+          mb={2}
+        >
+          <h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                Video
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h2>
+          <AccordionPanel pb={2}>
+            <Stack spacing={2}>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">
+                  URL
+                </FormLabel>
+                <Input
+                  size="sm"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
                 />
               </FormControl>
             </Stack>
