@@ -15,6 +15,7 @@ interface SlideElementsBoardProps {
   onChange: (board: BoardState<SlideElementDnDItemProps>) => void;
   selectedElementId?: string | null;
   onSelectElement?: (id: string) => void;
+  dropIndicator?: { columnId: string; index: number } | null;
 }
 
 const COLUMN_COLORS = [
@@ -31,6 +32,7 @@ export default function SlideElementsBoard({
   onChange,
   selectedElementId,
   onSelectElement,
+  dropIndicator,
 }: SlideElementsBoardProps) {
   /* ------------------------------------------------------------------ */
   /*  Column helpers                                                     */
@@ -110,6 +112,7 @@ export default function SlideElementsBoard({
           enableColumnReorder={false}
           onChange={onChange}
           onRemoveColumn={removeColumn}
+          externalDropIndicator={dropIndicator}
         />
       </ContentCard>
     </>
