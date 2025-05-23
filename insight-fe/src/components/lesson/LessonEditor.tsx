@@ -111,7 +111,12 @@ export default function LessonEditor() {
         const newEl: SlideElementDnDItemProps = {
           id: crypto.randomUUID(),
           type,
-          styles: type === "text" ? { color: "#000000", fontSize: "16px" } : {},
+          ...(type === "text"
+            ? {
+                text: "Sample Text",
+                styles: { color: "#000000", fontSize: "16px" },
+              }
+            : {}),
         };
 
         const firstColumn = s.boards[0].orderedColumnIds[0];

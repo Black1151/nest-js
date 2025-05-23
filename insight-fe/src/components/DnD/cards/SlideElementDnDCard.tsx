@@ -12,6 +12,10 @@ import {
 export interface SlideElementDnDItemProps {
   id: string;
   type: string;
+  /**
+   * Text content for text elements
+   */
+  text?: string;
   styles?: {
     color?: string;
     fontSize?: string;
@@ -41,7 +45,7 @@ export const SlideElementDnDItem = ({
     return (
       <ContentCard {...baseProps}>
         <Text color={item.styles?.color} fontSize={item.styles?.fontSize}>
-          Sample Text
+          {item.text || "Sample Text"}
         </Text>
       </ContentCard>
     );
