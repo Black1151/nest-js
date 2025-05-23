@@ -17,6 +17,7 @@ import { YearGroupEntity } from '../year-group/year-group.entity';
 import { TopicEntity } from '../topic/topic.entity';
 import { EducatorProfileDto } from '../../user-profiles/educator-profile/dto/educator-profile.dto';
 import { MultipleChoiceQuestionEntity } from '../multiple-choice-question/multiple-choice-question.entity';
+import { QuizEntity } from '../quiz/quiz.entity';
 
 @ObjectType()
 @Entity('lessons')
@@ -61,4 +62,8 @@ export class LessonEntity extends AbstractBaseEntity {
   @Field(() => [MultipleChoiceQuestionEntity], { nullable: true })
   @OneToMany(() => MultipleChoiceQuestionEntity, (q) => q.lesson)
   multipleChoiceQuestions?: MultipleChoiceQuestionEntity[];
+
+  @Field(() => [QuizEntity], { nullable: true })
+  @OneToMany(() => QuizEntity, (quiz) => quiz.lesson)
+  quizzes?: QuizEntity[];
 }

@@ -27,6 +27,7 @@ import { ClassModule } from './modules/timbuktu/administrative/class/class.modul
 import { KeyStageModule } from './modules/timbuktu/administrative/key-stage/key-stage.module';
 import { LessonModule } from './modules/timbuktu/administrative/lesson/lesson.module';
 import { MultipleChoiceQuestionModule } from './modules/timbuktu/administrative/multiple-choice-question/multiple-choice-question.module';
+import { QuizModule } from './modules/timbuktu/administrative/quiz/quiz.module';
 import { SubjectModule } from './modules/timbuktu/administrative/subject/subject.module';
 import { YearGroupModule } from './modules/timbuktu/administrative/year-group/year-group.module';
 import { TopicModule } from './modules/timbuktu/administrative/topic/topic.module';
@@ -38,6 +39,7 @@ import { ClassEntity } from './modules/timbuktu/administrative/class/class.entit
 import { KeyStageEntity } from './modules/timbuktu/administrative/key-stage/key-stage.entity';
 import { LessonEntity } from './modules/timbuktu/administrative/lesson/lesson.entity';
 import { MultipleChoiceQuestionEntity } from './modules/timbuktu/administrative/multiple-choice-question/multiple-choice-question.entity';
+import { QuizEntity } from './modules/timbuktu/administrative/quiz/quiz.entity';
 import { SubjectEntity } from './modules/timbuktu/administrative/subject/subject.entity';
 import { YearGroupEntity } from './modules/timbuktu/administrative/year-group/year-group.entity';
 import { TopicEntity } from './modules/timbuktu/administrative/topic/topic.entity';
@@ -75,6 +77,7 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
         YearGroupEntity,
         SubjectEntity,
         LessonEntity,
+        QuizEntity,
         MultipleChoiceQuestionEntity,
         TopicEntity,
         AssignmentSubmissionEntity,
@@ -101,6 +104,7 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
     TopicModule,
     ClassModule,
     LessonModule,
+    QuizModule,
     MultipleChoiceQuestionModule,
     AssignmentModule,
     AssignmentSubmissionModule,
