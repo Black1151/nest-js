@@ -30,6 +30,7 @@ function InnerCardPrimitive<TCard extends BaseCardDnD>(
     <Grid
       ref={ref}
       data-testid={`item-${item.id}`}
+      data-card-id={item.id}
       templateColumns="1fr"
       position="relative"
       sx={mergedSx}
