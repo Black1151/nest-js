@@ -7,6 +7,9 @@ import {
   Tr,
   Th,
   Td,
+  Image,
+  Box,
+  Code,
 } from "@chakra-ui/react";
 
 export interface SlideElementDnDItemProps {
@@ -15,6 +18,11 @@ export interface SlideElementDnDItemProps {
   styles?: {
     color?: string;
     fontSize?: string;
+  };
+  attributes?: {
+    src?: string;
+    code?: string;
+    question?: string;
   };
 }
 
@@ -64,6 +72,55 @@ export const SlideElementDnDItem = ({
             </Tr>
           </Tbody>
         </Table>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "image") {
+    return (
+      <ContentCard {...baseProps}>
+        <Image
+          src={item.attributes?.src || "https://via.placeholder.com/150"}
+          alt="Image"
+        />
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "video") {
+    return (
+      <ContentCard {...baseProps}>
+        <Box as="video" controls width="100%">
+          <source src={item.attributes?.src || ""} />
+        </Box>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "audio") {
+    return (
+      <ContentCard {...baseProps}>
+        <Box as="audio" controls width="100%">
+          <source src={item.attributes?.src || ""} />
+        </Box>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "code") {
+    return (
+      <ContentCard {...baseProps}>
+        <Code width="100%" whiteSpace="pre">
+          {item.attributes?.code || "console.log(\"Hello world\");"}
+        </Code>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "quiz") {
+    return (
+      <ContentCard {...baseProps}>
+        <Text>{item.attributes?.question || "Quiz question"}</Text>
       </ContentCard>
     );
   }
