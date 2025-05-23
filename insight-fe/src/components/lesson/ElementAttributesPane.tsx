@@ -53,7 +53,7 @@ export default function ElementAttributesPane({
     element.wrapperStyles?.borderWidth ?? 0
   );
   const [borderRadius, setBorderRadius] = useState(
-    element.wrapperStyles?.borderRadius || "md"
+    element.wrapperStyles?.borderRadius || "none"
   );
 
   // Reset local state only when a new element is selected
@@ -72,7 +72,7 @@ export default function ElementAttributesPane({
     setMarginY(element.wrapperStyles?.marginY ?? 0);
     setBorderColor(element.wrapperStyles?.borderColor || "#000000");
     setBorderWidth(element.wrapperStyles?.borderWidth ?? 0);
-    setBorderRadius(element.wrapperStyles?.borderRadius || "md");
+    setBorderRadius(element.wrapperStyles?.borderRadius || "none");
   }, [element.id, element.type]);
 
   useEffect(() => {

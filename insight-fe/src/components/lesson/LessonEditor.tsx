@@ -157,14 +157,14 @@ export default function LessonEditor() {
               : {}),
             wrapperStyles: {
               bgColor: "#ffffff",
-              dropShadow: "md",
-              paddingX: 4,
-              paddingY: 4,
+              dropShadow: "none",
+              paddingX: 0,
+              paddingY: 0,
               marginX: 0,
               marginY: 0,
               borderColor: "#000000",
               borderWidth: 0,
-              borderRadius: "md",
+              borderRadius: "none",
             },
           };
 
