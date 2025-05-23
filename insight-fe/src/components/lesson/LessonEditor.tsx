@@ -127,6 +127,37 @@ export default function LessonEditor() {
     [state.selectedSlideId, dispatch]
   );
 
+  const cloneElement = useCallback(() => {
+    if (!state.selectedSlideId || !state.selectedElementId) return;
+    dispatch({
+      type: "updateSlide",
+      slideId: state.selectedSlideId,
+      updater: (slide) => {
+        const newMap = { ...slide.columnMap } as typeof slide.columnMap;
+        for (const board of slide.boards) {
+          for (const colId of board.orderedColumnIds) {
+            const col = newMap[colId];
+            const idx = col.items.findIndex((i) => i.id === state.selectedElementId);
+            if (idx !== -1) {
+              const orig = col.items[idx];
+              const copy = { ...orig, id: crypto.randomUUID() };
+              newMap[colId] = {
+                ...col,
+                items: [
+                  ...col.items.slice(0, idx + 1),
+                  copy,
+                  ...col.items.slice(idx + 1),
+                ],
+              };
+              return { ...slide, columnMap: newMap };
+            }
+          }
+        }
+        return slide;
+      },
+    });
+  }, [state.selectedSlideId, state.selectedElementId, dispatch]);
+
   const handleDropElement = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
@@ -334,6 +365,7 @@ export default function LessonEditor() {
                 <ElementAttributesPane
                   element={selectedElement}
                   onChange={updateElement}
+                  onClone={cloneElement}
                 />
               )}
             </Box>

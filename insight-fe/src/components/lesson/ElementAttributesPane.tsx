@@ -4,6 +4,7 @@ import {
   Box,
   Stack,
   Text,
+  Button,
   FormControl,
   FormLabel,
   Input,
@@ -22,11 +23,13 @@ import { useEffect, useState } from "react";
 interface ElementAttributesPaneProps {
   element: SlideElementDnDItemProps;
   onChange: (updated: SlideElementDnDItemProps) => void;
+  onClone?: () => void;
 }
 
 export default function ElementAttributesPane({
   element,
   onChange,
+  onClone,
 }: ElementAttributesPaneProps) {
   const [color, setColor] = useState(element.styles?.color || "#000000");
   const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
@@ -407,5 +410,12 @@ export default function ElementAttributesPane({
         </AccordionItem>
       )}
     </Accordion>
+    {onClone && (
+      <VStack mt={4} spacing={2} align="stretch">
+        <Button size="sm" colorScheme="teal" onClick={onClone} width="100%">
+          Clone
+        </Button>
+      </VStack>
+    )}
   );
 }
