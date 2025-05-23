@@ -1,9 +1,10 @@
 import { PartialType, InputType, Field, ID } from '@nestjs/graphql';
+import { HasRelationsInput } from 'src/common/base.inputs';
 
 @InputType()
-export class CreateAssignmentInput {
+export class CreateAssignmentInput extends HasRelationsInput {
   @Field()
-  title: string;
+  name: string;
 
   @Field({ nullable: true })
   description?: string;
@@ -14,11 +15,14 @@ export class CreateAssignmentInput {
   @Field(() => ID)
   classId: number;
 
-  /**
-   * The lesson upon which this assignment is based
-   */
-  @Field(() => ID)
-  lessonId: number;
+  @Field(() => [ID], { nullable: 'itemsAndList' })
+  lessonIds?: number[];
+
+  @Field(() => [ID], { nullable: 'itemsAndList' })
+  educatorIds?: number[];
+
+  @Field(() => [ID], { nullable: 'itemsAndList' })
+  studentIds?: number[];
 
   /**
    * The due date
