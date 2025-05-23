@@ -19,7 +19,10 @@ type Action =
   | { type: "setSlides"; updater: React.SetStateAction<Slide[]> }
   | { type: "selectSlide"; id: string | null }
   | { type: "selectElement"; id: string | null }
-  | { type: "setDropIndicator"; indicator: { columnId: string; index: number } | null }
+  | {
+      type: "setDropIndicator";
+      indicator: { columnId: string; index: number } | null;
+    }
   | { type: "updateSlide"; slideId: string; updater: (slide: Slide) => Slide };
 
 function reducer(state: LessonState, action: Action): LessonState {
@@ -131,7 +134,9 @@ export default function LessonEditor() {
       if (!type) return;
 
       const target = document.elementFromPoint(e.clientX, e.clientY);
-      const columnEl = target?.closest("[data-column-id]") as HTMLElement | null;
+      const columnEl = target?.closest(
+        "[data-column-id]"
+      ) as HTMLElement | null;
       const dropColumnId = columnEl?.dataset.columnId;
 
       dispatch({
@@ -208,17 +213,19 @@ export default function LessonEditor() {
       if (!state.selectedSlideId || !type) return;
 
       const target = document.elementFromPoint(e.clientX, e.clientY);
-      const columnEl = target?.closest("[data-column-id]") as HTMLElement | null;
+      const columnEl = target?.closest(
+        "[data-column-id]"
+      ) as HTMLElement | null;
       const dropColumnId = columnEl?.dataset.columnId;
-    if (!dropColumnId) {
-      dispatch({ type: "setDropIndicator", indicator: null });
-      return;
-    }
+      if (!dropColumnId) {
+        dispatch({ type: "setDropIndicator", indicator: null });
+        return;
+      }
 
       const slide = state.slides.find((s) => s.id === state.selectedSlideId);
       if (!slide) return;
       const column = slide.columnMap[dropColumnId];
-    if (!column) return;
+      if (!column) return;
 
       let insertIndex = column.items.length;
       if (columnEl) {
@@ -270,7 +277,7 @@ export default function LessonEditor() {
           onSelect={(id) => dispatch({ type: "selectSlide", id })}
         />
         {state.selectedSlideId && (
-          <Grid gap={4} flex={1} templateColumns="1fr 1fr 200px">
+          <Grid gap={4} flex={1} templateColumns="1fr 1fr 300px">
             <Box
               flex="1"
               p={4}
@@ -307,7 +314,10 @@ export default function LessonEditor() {
               minW="300px"
               bgColor="white"
             >
-              <SlidePreview columnMap={selectedSlide!.columnMap} boards={selectedSlide!.boards} />
+              <SlidePreview
+                columnMap={selectedSlide!.columnMap}
+                boards={selectedSlide!.boards}
+              />
             </Box>
 
             <Box p={4} borderWidth="1px" borderRadius="md" minW="200px">
