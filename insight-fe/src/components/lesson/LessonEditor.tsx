@@ -253,8 +253,13 @@ export default function LessonEditor() {
                 dropIndicator={dropIndicator}
               />
             </Box>
-            <Box p={4} borderWidth="1px" borderRadius="md" minW="300px">
-              <Text mb={2}>Preview</Text>
+            <Box
+              p={4}
+              borderWidth="1px"
+              borderRadius="md"
+              minW="300px"
+              bgColor="white"
+            >
               <SlidePreview
                 columnMap={
                   lesson.slides.find((s) => s.id === selectedSlideId)!.columnMap
