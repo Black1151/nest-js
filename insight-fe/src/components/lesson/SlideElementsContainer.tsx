@@ -6,6 +6,7 @@ import SlideElementsBoard from "./SlideElementsBoard";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
+import { ContentCard } from "../layout/Card";
 
 export interface BoardRow {
   id: string;
@@ -17,7 +18,7 @@ interface SlideElementsContainerProps {
   boards: BoardRow[];
   onChange: (
     columnMap: ColumnMap<SlideElementDnDItemProps>,
-    boards: BoardRow[],
+    boards: BoardRow[]
   ) => void;
   selectedElementId?: string | null;
   onSelectElement?: (id: string) => void;
@@ -60,42 +61,49 @@ export default function SlideElementsContainer({
       items: [],
     };
 
-    onChange(
-      { ...columnMap, [columnId]: newColumn },
-      [...boards, { id: boardId, orderedColumnIds: [columnId] }],
-    );
+    onChange({ ...columnMap, [columnId]: newColumn }, [
+      ...boards,
+      { id: boardId, orderedColumnIds: [columnId] },
+    ]);
   };
 
   const updateBoard = (
     boardId: string,
     map: ColumnMap<SlideElementDnDItemProps>,
-    ids: string[],
+    ids: string[]
   ) => {
     onChange(
       map,
       boards.map((b) =>
-        b.id === boardId ? { ...b, orderedColumnIds: ids } : b,
-      ),
+        b.id === boardId ? { ...b, orderedColumnIds: ids } : b
+      )
     );
   };
 
   return (
     <Stack gap={4}>
-      <Button size="sm" colorScheme="teal" onClick={addBoard} alignSelf="flex-start">
+      <Button
+        size="sm"
+        colorScheme="teal"
+        onClick={addBoard}
+        alignSelf="flex-start"
+      >
         Add Container
       </Button>
       {boards.map((b) => (
-        <SlideElementsBoard
-          key={b.id}
-          columnMap={columnMap}
-          orderedColumnIds={b.orderedColumnIds}
-          onChange={(map, ids) => updateBoard(b.id, map, ids)}
-          registry={registry.current}
-          instanceId={instanceId.current}
-          selectedElementId={selectedElementId}
-          onSelectElement={onSelectElement}
-          dropIndicator={dropIndicator}
-        />
+        <ContentCard minHeight={400} key={b.id}>
+          <SlideElementsBoard
+            // key={b.id}
+            columnMap={columnMap}
+            orderedColumnIds={b.orderedColumnIds}
+            onChange={(map, ids) => updateBoard(b.id, map, ids)}
+            registry={registry.current}
+            instanceId={instanceId.current}
+            selectedElementId={selectedElementId}
+            onSelectElement={onSelectElement}
+            dropIndicator={dropIndicator}
+          />
+        </ContentCard>
       ))}
     </Stack>
   );
