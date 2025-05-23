@@ -23,7 +23,7 @@ export const PermissionGroupManagerPageClient = () => {
             setSelectedPermissionGroupId(Number(id))
           }
         />
-        {/* <PermissionGroupPermissionDnd groupId={selectedPermissionGroupId} />s */}
+        <PermissionGroupPermissionDnd groupId={selectedPermissionGroupId} />
       </ContentGrid>
     </>
   );

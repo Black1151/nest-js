@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, HStack } from "@chakra-ui/react";
+import { Box, Button, HStack, Text } from "@chakra-ui/react";
 import { DnDBoardMain, BoardState } from "@/components/DnD/DnDBoardMain";
 import {
   SlideElementDnDItemProps,
@@ -8,6 +8,7 @@ import {
 } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import { ContentCard } from "../layout/Card";
+import { useCallback } from "react";
 
 interface SlideElementsBoardProps {
   board: BoardState<SlideElementDnDItemProps>;
@@ -31,10 +32,14 @@ export default function SlideElementsBoard({
   selectedElementId,
   onSelectElement,
 }: SlideElementsBoardProps) {
+  /* ------------------------------------------------------------------ */
+  /*  Column helpers                                                     */
+  /* ------------------------------------------------------------------ */
   const addColumn = () => {
     const idx = board.orderedColumnIds.length;
     const color = COLUMN_COLORS[idx % COLUMN_COLORS.length];
-    const id = `col-${crypto.randomUUID()}`;
+    const id = `col-${crypto.randomUUID()}` as const;
+
     const newColumn: ColumnType<SlideElementDnDItemProps> = {
       title: `Column ${idx + 1}`,
       columnId: id,
@@ -44,6 +49,7 @@ export default function SlideElementsBoard({
       },
       items: [],
     };
+
     onChange({
       ...board,
       columnMap: { ...board.columnMap, [id]: newColumn },
@@ -62,14 +68,31 @@ export default function SlideElementsBoard({
     });
   };
 
-  const CardWrapper = ({ item }: { item: SlideElementDnDItemProps }) => (
-    <SlideElementDnDItem
-      item={item}
-      onSelect={() => onSelectElement?.(item.id)}
-      isSelected={selectedElementId === item.id}
-    />
+  /* ------------------------------------------------------------------ */
+  /*  Card wrapper                                                       */
+  /* ------------------------------------------------------------------ */
+  // const CardWrapper = ({ item }: { item: SlideElementDnDItemProps }) => (
+  //   <SlideElementDnDItem
+  //     item={item}
+  //     onSelect={() => onSelectElement?.(item.id)}
+  //     isSelected={selectedElementId === item.id}
+  //   />
+  // );
+
+  const CardWrapper = useCallback(
+    ({ item }: { item: SlideElementDnDItemProps }) => (
+      <SlideElementDnDItem
+        item={item}
+        onSelect={() => onSelectElement?.(item.id)}
+        isSelected={selectedElementId === item.id}
+      />
+    ),
+    [selectedElementId, onSelectElement]
   );
 
+  /* ------------------------------------------------------------------ */
+  /*  Render                                                            */
+  /* ------------------------------------------------------------------ */
   return (
     <>
       <HStack mb={2} justify="flex-end">
@@ -77,8 +100,10 @@ export default function SlideElementsBoard({
           Add Column
         </Button>
       </HStack>
+
       <ContentCard height={700}>
         <DnDBoardMain<SlideElementDnDItemProps>
+          controlled
           columnMap={board.columnMap}
           orderedColumnIds={board.orderedColumnIds}
           CardComponent={CardWrapper}

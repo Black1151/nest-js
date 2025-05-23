@@ -1,7 +1,7 @@
 "use client";
 
 import { Flex, Box, Text, Stack } from "@chakra-ui/react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsBoard from "./SlideElementsBoard";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -27,10 +27,10 @@ export default function LessonEditor() {
     ],
   });
   const [selectedSlideId, setSelectedSlideId] = useState<string | null>(
-    lesson.slides[0].id,
+    lesson.slides[0].id
   );
   const [selectedElementId, setSelectedElementId] = useState<string | null>(
-    null,
+    null
   );
 
   const setSlides = useCallback((updater: React.SetStateAction<Slide[]>) => {
@@ -89,8 +89,10 @@ export default function LessonEditor() {
 
   const handleDropElement = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+
     const type = e.dataTransfer.getData("text/plain");
     if (!selectedSlideId) return;
+    if (!type) return;
     setLesson((prev) => {
       const slides = prev.slides.map((s) => {
         if (s.id !== selectedSlideId) return s;
@@ -144,7 +146,7 @@ export default function LessonEditor() {
                 setLesson((prev) => ({
                   ...prev,
                   slides: prev.slides.map((s) =>
-                    s.id === selectedSlideId ? { ...s, board } : s,
+                    s.id === selectedSlideId ? { ...s, board } : s
                   ),
                 }))
               }
