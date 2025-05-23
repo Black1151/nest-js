@@ -10,6 +10,7 @@ import {
   Th,
   Td,
 } from "@chakra-ui/react";
+import ElementWrapper from "./ElementWrapper";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface SlideElementRendererProps {
@@ -19,36 +20,38 @@ interface SlideElementRendererProps {
 export default function SlideElementRenderer({ item }: SlideElementRendererProps) {
   if (item.type === "text") {
     return (
-      <Text color={item.styles?.color} fontSize={item.styles?.fontSize} data-testid="text-element">
-        {item.text || "Sample Text"}
-      </Text>
+      <ElementWrapper styles={item.wrapperStyles} data-testid="text-element">
+        <Text color={item.styles?.color} fontSize={item.styles?.fontSize}>
+          {item.text || "Sample Text"}
+        </Text>
+      </ElementWrapper>
     );
   }
 
   if (item.type === "table") {
     return (
-      <Table size="sm" data-testid="table-element">
-        <Thead>
-          <Tr>
-            <Th>Header 1</Th>
-            <Th>Header 2</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          <Tr>
-            <Td>Cell</Td>
-            <Td>Cell</Td>
-          </Tr>
-        </Tbody>
-      </Table>
+      <ElementWrapper styles={item.wrapperStyles} data-testid="table-element">
+        <Table size="sm">
+          <Thead>
+            <Tr>
+              <Th>Header 1</Th>
+              <Th>Header 2</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            <Tr>
+              <Td>Cell</Td>
+              <Td>Cell</Td>
+            </Tr>
+          </Tbody>
+        </Table>
+      </ElementWrapper>
     );
   }
 
   return (
-    <Box data-testid="unknown-element">
-      <Text fontSize={14} fontWeight="bold">
-        {item.type}
-      </Text>
-    </Box>
+    <ElementWrapper styles={item.wrapperStyles} data-testid="unknown-element">
+      <Text fontSize={14} fontWeight="bold">{item.type}</Text>
+    </ElementWrapper>
   );
 }
