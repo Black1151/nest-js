@@ -1,4 +1,6 @@
-import { ContentCard } from "@/components/layout/Card";
+import ElementWrapper, {
+  ElementWrapperStyles,
+} from "@/components/lesson/ElementWrapper";
 import {
   Text,
   Table,
@@ -20,6 +22,7 @@ export interface SlideElementDnDItemProps {
     color?: string;
     fontSize?: string;
   };
+  wrapperStyles?: ElementWrapperStyles;
 }
 
 interface SlideElementDnDItemComponentProps {
@@ -36,24 +39,29 @@ export const SlideElementDnDItem = ({
   const baseProps = {
     id: item.id,
     cursor: "grab" as const,
-    borderWidth: isSelected ? "2px" : undefined,
-    borderColor: isSelected ? "blue.400" : undefined,
     onClick: onSelect,
+  };
+
+  const wrapperStyles: ElementWrapperStyles = {
+    ...item.wrapperStyles,
+    borderColor: isSelected ? "blue.400" : item.wrapperStyles?.borderColor,
+    borderWidth: isSelected ? 2 : item.wrapperStyles?.borderWidth,
+    borderRadius: item.wrapperStyles?.borderRadius,
   };
 
   if (item.type === "text") {
     return (
-      <ContentCard {...baseProps}>
+      <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Text color={item.styles?.color} fontSize={item.styles?.fontSize}>
           {item.text || "Sample Text"}
         </Text>
-      </ContentCard>
+      </ElementWrapper>
     );
   }
 
   if (item.type === "table") {
     return (
-      <ContentCard {...baseProps}>
+      <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Table size="sm">
           <Thead>
             <Tr>
@@ -68,15 +76,15 @@ export const SlideElementDnDItem = ({
             </Tr>
           </Tbody>
         </Table>
-      </ContentCard>
+      </ElementWrapper>
     );
   }
 
   return (
-    <ContentCard {...baseProps}>
+    <ElementWrapper styles={wrapperStyles} {...baseProps}>
       <Text fontSize={14} fontWeight="bold">
         {item.type}
       </Text>
-    </ContentCard>
+    </ElementWrapper>
   );
 };

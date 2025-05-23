@@ -147,6 +147,17 @@ export default function LessonEditor() {
                   styles: { color: "#000000", fontSize: "16px" },
                 }
               : {}),
+            wrapperStyles: {
+              bgColor: "#ffffff",
+              dropShadow: "md",
+              paddingX: 4,
+              paddingY: 4,
+              marginX: 0,
+              marginY: 0,
+              borderColor: "#000000",
+              borderWidth: 0,
+              borderRadius: "md",
+            },
           };
 
           const firstColumn = s.boards[0].orderedColumnIds[0];
