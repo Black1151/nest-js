@@ -1,11 +1,9 @@
 "use client";
 
-import { Box, Flex, Stack } from "@chakra-ui/react";
+import { Box, Stack } from "@chakra-ui/react";
 import { ColumnMap } from "@/components/DnD/types";
-import {
-  SlideElementDnDItemProps,
-  SlideElementDnDItem,
-} from "@/components/DnD/cards/SlideElementDnDCard";
+import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+import SlideElementRenderer from "./SlideElementRenderer";
 import { BoardRow } from "./SlideElementsContainer";
 
 interface SlidePreviewProps {
@@ -17,28 +15,26 @@ export default function SlidePreview({ columnMap, boards }: SlidePreviewProps) {
   return (
     <Stack gap={4}>
       {boards.map((board) => (
-        <Flex key={board.id} gap={4} alignItems="flex-start">
+        <Box
+          key={board.id}
+          display="grid"
+          gridTemplateColumns={`repeat(${board.orderedColumnIds.length}, 1fr)`}
+          gap={4}
+        >
           {board.orderedColumnIds.map((colId) => {
             const column = columnMap[colId];
             if (!column) return null;
             return (
-              <Stack
-                key={colId}
-                flex="1"
-                borderWidth="1px"
-                borderStyle="dashed"
-                borderColor="gray.300"
-                p={2}
-              >
+              <Stack key={colId} gap={2} data-column-id={colId}>
                 {column.items.map((item) => (
-                  <Box key={item.id} mb={2}>
-                    <SlideElementDnDItem item={item} />
+                  <Box key={item.id} mb={2} data-card-id={item.id}>
+                    <SlideElementRenderer item={item} />
                   </Box>
                 ))}
               </Stack>
             );
           })}
-        </Flex>
+        </Box>
       ))}
     </Stack>
   );
