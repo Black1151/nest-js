@@ -5,6 +5,7 @@ import { LessonEntity } from './lesson.entity';
 import { LessonService } from './lesson.service';
 import { OpenAiService } from '../../../openai/openai.service';
 import { GeneratedLesson } from '../../../openai/openai.types';
+import { RbacPermissionKey } from 'src/modules/rbac/decorators/resolver-permission-key.decorator';
 
 const BaseLessonResolver = createBaseResolver<
   LessonEntity,
@@ -33,6 +34,7 @@ export class LessonResolver extends BaseLessonResolver {
     super(lessonService);
   }
 
+  @RbacPermissionKey('lesson.generateLessonFromPrompt')
   @Mutation(() => GeneratedLesson)
   async generateLessonFromPrompt(
     @Args('prompt') prompt: string,

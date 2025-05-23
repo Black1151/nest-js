@@ -15,12 +15,10 @@ export default function EducatorsLayout({ children }: EducatorsLayoutProps) {
       <Topbar>
         <Text>Topbar</Text>
       </Topbar>
-      {/* <ContentGrid flex="1" width="100%" templateColumns="200px 1fr"> */}
-      {/* <Sidebar /> */}
-      <Flex flex="1" width="100%">
+      <ContentGrid flex="1" width="100%" templateColumns="1fr">
+        {/* <Sidebar /> */}
         <ContentContainer>{children}</ContentContainer>
-      </Flex>
-      {/* </ContentGrid> */}
+      </ContentGrid>
     </PageContainer>
   );
 }
