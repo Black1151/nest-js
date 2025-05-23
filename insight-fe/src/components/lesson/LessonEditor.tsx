@@ -14,6 +14,11 @@ interface LessonState {
 const AVAILABLE_ELEMENTS = [
   { type: "text", label: "Text" },
   { type: "table", label: "Table" },
+  { type: "image", label: "Image" },
+  { type: "video", label: "Video" },
+  { type: "audio", label: "Audio" },
+  { type: "code", label: "Code Snippet" },
+  { type: "quiz", label: "Quiz" },
 ];
 
 export default function LessonEditor() {
