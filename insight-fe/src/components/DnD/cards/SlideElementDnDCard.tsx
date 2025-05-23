@@ -1,16 +1,7 @@
 import ElementWrapper, {
   ElementWrapperStyles,
 } from "@/components/lesson/ElementWrapper";
-import {
-  Box,
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-} from "@chakra-ui/react";
+import { Box, Text, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 
 export interface SlideElementDnDItemProps {
   id: string;
@@ -23,6 +14,10 @@ export interface SlideElementDnDItemProps {
    * Video URL for video elements
    */
   url?: string;
+  /**
+   * Image source for image elements
+   */
+  src?: string;
   styles?: {
     color?: string;
     fontSize?: string;
@@ -89,6 +84,19 @@ export const SlideElementDnDItem = ({
     return (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Box as="video" src={item.url} controls width="100%" />
+      </ElementWrapper>
+    );
+  }
+
+  if (item.type === "image") {
+    return (
+      <ElementWrapper styles={wrapperStyles} {...baseProps}>
+        <img
+          src={item.src}
+          alt="lesson image"
+          style={{ maxWidth: "100%" }}
+          draggable={false}
+        />
       </ElementWrapper>
     );
   }

@@ -55,6 +55,7 @@ function reducer(state: LessonState, action: Action): LessonState {
 const AVAILABLE_ELEMENTS = [
   { type: "text", label: "Text" },
   { type: "table", label: "Table" },
+  { type: "image", label: "Image" },
   { type: "video", label: "Video" },
 ];
 
@@ -151,6 +152,10 @@ export default function LessonEditor() {
               ? {
                   text: "Sample Text",
                   styles: { color: "#000000", fontSize: "16px" },
+                }
+              : type === "image"
+              ? {
+                  src: "https://via.placeholder.com/150",
                 }
               : type === "video"
               ? { url: "" }
