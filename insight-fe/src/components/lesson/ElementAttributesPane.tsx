@@ -14,11 +14,14 @@ export default function ElementAttributesPane({ element, onChange }: ElementAttr
   const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
   const [text, setText] = useState(element.text || "");
 
+  // Reset local state only when a new element is selected
+  // using id/type avoids resets when the parent simply updates
+  // the same element instance with new references
   useEffect(() => {
     setColor(element.styles?.color || "#000000");
     setFontSize(element.styles?.fontSize || "16px");
     setText(element.text || "");
-  }, [element]);
+  }, [element.id, element.type]);
 
   useEffect(() => {
     if (element.type === "text") {
