@@ -1,7 +1,7 @@
 "use client";
 
-import { Flex, Box, Text, Stack, Grid, HStack } from "@chakra-ui/react";
-import { useState, useCallback, useEffect } from "react";
+import { Flex, Box, Text, Grid, HStack } from "@chakra-ui/react";
+import { useState, useCallback } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -111,7 +111,12 @@ export default function LessonEditor() {
         const newEl: SlideElementDnDItemProps = {
           id: crypto.randomUUID(),
           type,
-          styles: type === "text" ? { color: "#000000", fontSize: "16px" } : {},
+          ...(type === "text"
+            ? {
+                text: "Sample Text",
+                styles: { color: "#000000", fontSize: "16px" },
+              }
+            : {}),
         };
 
         const firstColumn = s.boards[0].orderedColumnIds[0];
