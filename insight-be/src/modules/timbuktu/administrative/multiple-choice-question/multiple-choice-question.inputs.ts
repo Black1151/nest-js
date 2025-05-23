@@ -14,6 +14,9 @@ export class CreateMultipleChoiceQuestionInput extends HasRelationsInput {
 
   @Field(() => ID)
   lessonId: number;
+
+  @Field(() => ID, { nullable: true })
+  quizId?: number;
 }
 
 @InputType()
