@@ -93,6 +93,11 @@ export default function LessonEditor() {
     const type = e.dataTransfer.getData("text/plain");
     if (!selectedSlideId) return;
     if (!type) return;
+
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    const columnEl = target?.closest('[data-column-id]') as HTMLElement | null;
+    const dropColumnId = columnEl?.dataset.columnId;
+
     setLesson((prev) => {
       const slides = prev.slides.map((s) => {
         if (s.id !== selectedSlideId) return s;
@@ -101,17 +106,41 @@ export default function LessonEditor() {
           type,
           styles: type === "text" ? { color: "#000000", fontSize: "16px" } : {},
         };
-        const firstColumnId = s.board.orderedColumnIds[0];
-        const column = s.board.columnMap[firstColumnId];
+
+        const columnId =
+          dropColumnId && s.board.columnMap[dropColumnId]
+            ? dropColumnId
+            : s.board.orderedColumnIds[0];
+        const column = s.board.columnMap[columnId];
+
+        let insertIndex = column.items.length;
+        if (columnEl) {
+          const cards = Array.from(
+            columnEl.querySelectorAll('[data-card-id]')
+          ) as HTMLElement[];
+          for (let i = 0; i < cards.length; i++) {
+            const rect = cards[i].getBoundingClientRect();
+            if (e.clientY < rect.top + rect.height / 2) {
+              insertIndex = i;
+              break;
+            }
+          }
+        }
+
         const updatedColumn = {
           ...column,
-          items: [...column.items, newEl],
+          items: [
+            ...column.items.slice(0, insertIndex),
+            newEl,
+            ...column.items.slice(insertIndex),
+          ],
         };
+
         return {
           ...s,
           board: {
             ...s.board,
-            columnMap: { ...s.board.columnMap, [firstColumnId]: updatedColumn },
+            columnMap: { ...s.board.columnMap, [columnId]: updatedColumn },
           },
         };
       });

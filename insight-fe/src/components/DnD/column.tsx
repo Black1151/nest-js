@@ -292,6 +292,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
         direction="column"
         sx={combinedStyles}
         data-testid={`column-${columnId}`}
+        data-column-id={columnId}
       >
         <Stack ref={columnInnerRef} flexGrow={1} minH={0}>
           <Stack
