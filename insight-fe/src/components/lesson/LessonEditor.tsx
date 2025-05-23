@@ -1,10 +1,11 @@
 "use client";
 
-import { Flex, Box, Text, Stack } from "@chakra-ui/react";
+import { Flex, Box, Text, Stack, Grid, HStack } from "@chakra-ui/react";
 import { useState, useCallback, useEffect } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
+import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface LessonState {
@@ -32,9 +33,10 @@ export default function LessonEditor() {
   const [selectedElementId, setSelectedElementId] = useState<string | null>(
     null
   );
-  const [dropIndicator, setDropIndicator] = useState<
-    { columnId: string; index: number } | null
-  >(null);
+  const [dropIndicator, setDropIndicator] = useState<{
+    columnId: string;
+    index: number;
+  } | null>(null);
 
   const setSlides = useCallback((updater: React.SetStateAction<Slide[]>) => {
     setLesson((prev) => ({
@@ -100,7 +102,7 @@ export default function LessonEditor() {
     if (!type) return;
 
     const target = document.elementFromPoint(e.clientX, e.clientY);
-    const columnEl = target?.closest('[data-column-id]') as HTMLElement | null;
+    const columnEl = target?.closest("[data-column-id]") as HTMLElement | null;
     const dropColumnId = columnEl?.dataset.columnId;
 
     setLesson((prev) => {
@@ -114,13 +116,15 @@ export default function LessonEditor() {
 
         const firstColumn = s.boards[0].orderedColumnIds[0];
         const columnId =
-          dropColumnId && s.columnMap[dropColumnId] ? dropColumnId : firstColumn;
+          dropColumnId && s.columnMap[dropColumnId]
+            ? dropColumnId
+            : firstColumn;
         const column = s.columnMap[columnId];
 
         let insertIndex = column.items.length;
         if (columnEl) {
           const cards = Array.from(
-            columnEl.querySelectorAll('[data-card-id]')
+            columnEl.querySelectorAll("[data-card-id]")
           ) as HTMLElement[];
           for (let i = 0; i < cards.length; i++) {
             const rect = cards[i].getBoundingClientRect();
@@ -156,7 +160,7 @@ export default function LessonEditor() {
     if (!selectedSlideId || !type) return;
 
     const target = document.elementFromPoint(e.clientX, e.clientY);
-    const columnEl = target?.closest('[data-column-id]') as HTMLElement | null;
+    const columnEl = target?.closest("[data-column-id]") as HTMLElement | null;
     const dropColumnId = columnEl?.dataset.columnId;
     if (!dropColumnId) {
       setDropIndicator(null);
@@ -171,7 +175,7 @@ export default function LessonEditor() {
     let insertIndex = column.items.length;
     if (columnEl) {
       const cards = Array.from(
-        columnEl.querySelectorAll('[data-card-id]')
+        columnEl.querySelectorAll("[data-card-id]")
       ) as HTMLElement[];
       for (let i = 0; i < cards.length; i++) {
         const rect = cards[i].getBoundingClientRect();
@@ -186,77 +190,88 @@ export default function LessonEditor() {
   };
 
   return (
-    <Flex gap={6} alignItems="flex-start">
-      <SlideSequencer
-        slides={lesson.slides}
-        setSlides={setSlides as any}
-        selectedSlideId={selectedSlideId}
-        onSelect={setSelectedSlideId}
-      />
-      {selectedSlideId && (
-        <Flex gap={4} flex={1}>
-          <Box
-            flex="1"
-            p={4}
-            borderWidth="1px"
-            borderRadius="md"
-            onDragOver={handleDragOver}
-            onDragLeave={() => setDropIndicator(null)}
-            onDrop={handleDropElement}
-          >
-            <Text mb={2}>Slide Elements</Text>
-            <SlideElementsContainer
-              columnMap={
-                lesson.slides.find((s) => s.id === selectedSlideId)!.columnMap
-              }
-              boards={
-                lesson.slides.find((s) => s.id === selectedSlideId)!.boards
-              }
-              onChange={(columnMap, boards) =>
-                setLesson((prev) => ({
-                  ...prev,
-                  slides: prev.slides.map((s) =>
-                    s.id === selectedSlideId
-                      ? { ...s, columnMap, boards }
-                      : s
-                  ),
-                }))
-              }
-              selectedElementId={selectedElementId}
-              onSelectElement={setSelectedElementId}
-              dropIndicator={dropIndicator}
-            />
-          </Box>
-          <Box p={4} borderWidth="1px" borderRadius="md">
-            <Text mb={2}>Palette</Text>
-            <Stack>
-              {AVAILABLE_ELEMENTS.map((el) => (
-                <Box
-                  key={el.type}
-                  p={2}
-                  borderWidth="1px"
-                  borderRadius="md"
-                  draggable
-                  onDragStart={(e) =>
-                    e.dataTransfer.setData("text/plain", el.type)
-                  }
-                >
-                  {el.label}
-                </Box>
-              ))}
-            </Stack>
-          </Box>
-          <Box p={4} borderWidth="1px" borderRadius="md" minW="200px">
-            <Text mb={2}>Attributes</Text>
-            {getSelectedElement() && (
-              <ElementAttributesPane
-                element={getSelectedElement()!}
-                onChange={updateElement}
+    <Box>
+      <Box p={4} borderWidth="1px" borderRadius="md">
+        <HStack>
+          {AVAILABLE_ELEMENTS.map((el) => (
+            <Box
+              key={el.type}
+              p={2}
+              borderWidth="1px"
+              borderRadius="md"
+              draggable
+              onDragStart={(e) => e.dataTransfer.setData("text/plain", el.type)}
+              bgColor="white"
+            >
+              {el.label}
+            </Box>
+          ))}
+        </HStack>
+      </Box>
+
+      <Flex gap={6} alignItems="flex-start">
+        <SlideSequencer
+          slides={lesson.slides}
+          setSlides={setSlides as any}
+          selectedSlideId={selectedSlideId}
+          onSelect={setSelectedSlideId}
+        />
+        {selectedSlideId && (
+          <Grid gap={4} flex={1} templateColumns="1fr 1fr 200px">
+            <Box
+              flex="1"
+              p={4}
+              borderWidth="1px"
+              borderRadius="md"
+              onDragOver={handleDragOver}
+              onDragLeave={() => setDropIndicator(null)}
+              onDrop={handleDropElement}
+            >
+              <Text mb={2}>Slide Elements</Text>
+              <SlideElementsContainer
+                columnMap={
+                  lesson.slides.find((s) => s.id === selectedSlideId)!.columnMap
+                }
+                boards={
+                  lesson.slides.find((s) => s.id === selectedSlideId)!.boards
+                }
+                onChange={(columnMap, boards) =>
+                  setLesson((prev) => ({
+                    ...prev,
+                    slides: prev.slides.map((s) =>
+                      s.id === selectedSlideId ? { ...s, columnMap, boards } : s
+                    ),
+                  }))
+                }
+                selectedElementId={selectedElementId}
+                onSelectElement={setSelectedElementId}
+                dropIndicator={dropIndicator}
               />
-            )}
-          </Box>
-        </Flex>
-      )}
-    </Flex>
+            </Box>
+            <Box p={4} borderWidth="1px" borderRadius="md" minW="300px">
+              <Text mb={2}>Preview</Text>
+              <SlidePreview
+                columnMap={
+                  lesson.slides.find((s) => s.id === selectedSlideId)!.columnMap
+                }
+                boards={
+                  lesson.slides.find((s) => s.id === selectedSlideId)!.boards
+                }
+              />
+            </Box>
+
+            <Box p={4} borderWidth="1px" borderRadius="md" minW="200px">
+              <Text mb={2}>Attributes</Text>
+              {getSelectedElement() && (
+                <ElementAttributesPane
+                  element={getSelectedElement()!}
+                  onChange={updateElement}
+                />
+              )}
+            </Box>
+          </Grid>
+        )}
+      </Flex>
+    </Box>
   );
 }

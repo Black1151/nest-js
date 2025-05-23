@@ -3,7 +3,7 @@ import { ContentContainer } from "@/components/layout/ContentContainer";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Sidebar } from "@/components/layout/Sidebar/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
-import { Grid, Text } from "@chakra-ui/react";
+import { Flex, Grid, Text } from "@chakra-ui/react";
 
 interface EducatorsLayoutProps {
   children: React.ReactNode;
@@ -15,10 +15,12 @@ export default function EducatorsLayout({ children }: EducatorsLayoutProps) {
       <Topbar>
         <Text>Topbar</Text>
       </Topbar>
-      <ContentGrid flex="1" width="100%" templateColumns="200px 1fr">
-        <Sidebar />
+      {/* <ContentGrid flex="1" width="100%" templateColumns="200px 1fr"> */}
+      {/* <Sidebar /> */}
+      <Flex flex="1" width="100%">
         <ContentContainer>{children}</ContentContainer>
-      </ContentGrid>
+      </Flex>
+      {/* </ContentGrid> */}
     </PageContainer>
   );
 }
