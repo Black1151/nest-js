@@ -30,6 +30,7 @@ export default function ElementWrapper({ styles, children, ...props }: ElementWr
       borderColor={styles?.borderColor}
       borderWidth={styles?.borderWidth}
       borderRadius={styles?.borderRadius}
+      overflow="hidden"
       borderStyle="solid"
       {...props}
     >
