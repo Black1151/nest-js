@@ -26,6 +26,7 @@ import { EducatorProfileEntity } from './modules/timbuktu/user-profiles/educator
 import { ClassModule } from './modules/timbuktu/administrative/class/class.module';
 import { KeyStageModule } from './modules/timbuktu/administrative/key-stage/key-stage.module';
 import { LessonModule } from './modules/timbuktu/administrative/lesson/lesson.module';
+import { MultipleChoiceQuestionModule } from './modules/timbuktu/administrative/multiple-choice-question/multiple-choice-question.module';
 import { SubjectModule } from './modules/timbuktu/administrative/subject/subject.module';
 import { YearGroupModule } from './modules/timbuktu/administrative/year-group/year-group.module';
 import { TopicModule } from './modules/timbuktu/administrative/topic/topic.module';
@@ -36,6 +37,7 @@ import { AssignmentEntity } from './modules/timbuktu/administrative/assignment/a
 import { ClassEntity } from './modules/timbuktu/administrative/class/class.entity';
 import { KeyStageEntity } from './modules/timbuktu/administrative/key-stage/key-stage.entity';
 import { LessonEntity } from './modules/timbuktu/administrative/lesson/lesson.entity';
+import { MultipleChoiceQuestionEntity } from './modules/timbuktu/administrative/multiple-choice-question/multiple-choice-question.entity';
 import { SubjectEntity } from './modules/timbuktu/administrative/subject/subject.entity';
 import { YearGroupEntity } from './modules/timbuktu/administrative/year-group/year-group.entity';
 import { TopicEntity } from './modules/timbuktu/administrative/topic/topic.entity';
@@ -73,6 +75,7 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
         YearGroupEntity,
         SubjectEntity,
         LessonEntity,
+        MultipleChoiceQuestionEntity,
         TopicEntity,
         AssignmentSubmissionEntity,
         AssignmentEntity,
@@ -98,6 +101,7 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
     TopicModule,
     ClassModule,
     LessonModule,
+    MultipleChoiceQuestionModule,
     AssignmentModule,
     AssignmentSubmissionModule,
     // AuditModule,
