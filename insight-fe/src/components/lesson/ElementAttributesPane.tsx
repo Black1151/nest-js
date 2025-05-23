@@ -32,6 +32,7 @@ export default function ElementAttributesPane({
   const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
   const [text, setText] = useState(element.text || "");
   const [src, setSrc] = useState(element.src || "");
+  const [url, setUrl] = useState(element.url || "");
   const [bgColor, setBgColor] = useState(
     element.wrapperStyles?.bgColor || "#ffffff"
   );
@@ -53,7 +54,7 @@ export default function ElementAttributesPane({
     element.wrapperStyles?.borderWidth ?? 0
   );
   const [borderRadius, setBorderRadius] = useState(
-    element.wrapperStyles?.borderRadius || "md"
+    element.wrapperStyles?.borderRadius || "none"
   );
 
   // Reset local state only when a new element is selected
@@ -64,6 +65,7 @@ export default function ElementAttributesPane({
     setFontSize(element.styles?.fontSize || "16px");
     setText(element.text || "");
     setSrc(element.src || "");
+    setUrl(element.url || "");
     setBgColor(element.wrapperStyles?.bgColor || "#ffffff");
     setShadow(element.wrapperStyles?.dropShadow || "none");
     setPaddingX(element.wrapperStyles?.paddingX ?? 0);
@@ -72,7 +74,7 @@ export default function ElementAttributesPane({
     setMarginY(element.wrapperStyles?.marginY ?? 0);
     setBorderColor(element.wrapperStyles?.borderColor || "#000000");
     setBorderWidth(element.wrapperStyles?.borderWidth ?? 0);
-    setBorderRadius(element.wrapperStyles?.borderRadius || "md");
+    setBorderRadius(element.wrapperStyles?.borderRadius || "none");
   }, [element.id, element.type]);
 
   useEffect(() => {
@@ -97,12 +99,16 @@ export default function ElementAttributesPane({
     if (element.type === "image") {
       updated.src = src;
     }
+    if (element.type === "video") {
+      updated.url = url;
+    }
     onChange(updated);
   }, [
     color,
     fontSize,
     text,
     src,
+    url,
     bgColor,
     shadow,
     paddingX,
@@ -346,7 +352,9 @@ export default function ElementAttributesPane({
         >
           <h2>
             <AccordionButton>
-              <Box flex="1" textAlign="left">Image</Box>
+              <Box flex="1" textAlign="left">
+                Image
+              </Box>
               <AccordionIcon />
             </AccordionButton>
           </h2>
@@ -360,6 +368,38 @@ export default function ElementAttributesPane({
                   size="sm"
                   value={src}
                   onChange={(e) => setSrc(e.target.value)}
+                />
+              </FormControl>
+            </Stack>
+          </AccordionPanel>
+        </AccordionItem>
+      )}
+
+      {element.type === "video" && (
+        <AccordionItem
+          borderWidth="1px"
+          borderColor="purple.300"
+          borderRadius="md"
+          mb={2}
+        >
+          <h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                Video
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h2>
+          <AccordionPanel pb={2}>
+            <Stack spacing={2}>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">
+                  URL
+                </FormLabel>
+                <Input
+                  size="sm"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
                 />
               </FormControl>
             </Stack>

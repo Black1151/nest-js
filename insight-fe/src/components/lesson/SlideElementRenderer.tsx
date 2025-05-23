@@ -1,24 +1,18 @@
 "use client";
 
-import {
-  Box,
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-} from "@chakra-ui/react";
+import { Box, Text, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import ElementWrapper from "./ElementWrapper";
 import ImageElement from "./ImageElement";
+import VideoElement from "./VideoElement";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface SlideElementRendererProps {
   item: SlideElementDnDItemProps;
 }
 
-export default function SlideElementRenderer({ item }: SlideElementRendererProps) {
+export default function SlideElementRenderer({
+  item,
+}: SlideElementRendererProps) {
   if (item.type === "text") {
     return (
       <ElementWrapper styles={item.wrapperStyles} data-testid="text-element">
@@ -56,9 +50,17 @@ export default function SlideElementRenderer({ item }: SlideElementRendererProps
     );
   }
 
+  if (item.type === "video") {
+    return (
+      <VideoElement url={item.url || ""} wrapperStyles={item.wrapperStyles} />
+    );
+  }
+
   return (
     <ElementWrapper styles={item.wrapperStyles} data-testid="unknown-element">
-      <Text fontSize={14} fontWeight="bold">{item.type}</Text>
+      <Text fontSize={14} fontWeight="bold">
+        {item.type}
+      </Text>
     </ElementWrapper>
   );
 }

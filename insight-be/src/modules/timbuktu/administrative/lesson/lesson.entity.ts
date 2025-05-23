@@ -6,6 +6,7 @@ import {
   ManyToMany,
   JoinTable,
   RelationId,
+  OneToMany,
 } from 'typeorm';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
@@ -15,6 +16,7 @@ import { EducatorProfileEntity } from '../../user-profiles/educator-profile/educ
 import { YearGroupEntity } from '../year-group/year-group.entity';
 import { TopicEntity } from '../topic/topic.entity';
 import { EducatorProfileDto } from '../../user-profiles/educator-profile/dto/educator-profile.dto';
+import { MultipleChoiceQuestionEntity } from '../multiple-choice-question/multiple-choice-question.entity';
 
 @ObjectType()
 @Entity('lessons')
@@ -55,4 +57,8 @@ export class LessonEntity extends AbstractBaseEntity {
   @Field(() => ID, { nullable: true })
   @RelationId((lesson: LessonEntity) => lesson.createdBy)
   createdById?: number;
+
+  @Field(() => [MultipleChoiceQuestionEntity], { nullable: true })
+  @OneToMany(() => MultipleChoiceQuestionEntity, (q) => q.lesson)
+  multipleChoiceQuestions?: MultipleChoiceQuestionEntity[];
 }

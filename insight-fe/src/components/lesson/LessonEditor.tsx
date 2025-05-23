@@ -56,6 +56,7 @@ const AVAILABLE_ELEMENTS = [
   { type: "text", label: "Text" },
   { type: "table", label: "Table" },
   { type: "image", label: "Image" },
+  { type: "video", label: "Video" },
 ];
 
 export default function LessonEditor() {
@@ -153,20 +154,22 @@ export default function LessonEditor() {
                   styles: { color: "#000000", fontSize: "16px" },
                 }
               : type === "image"
-                ? {
-                    src: "https://via.placeholder.com/150",
-                  }
-                : {}),
+              ? {
+                  src: "https://via.placeholder.com/150",
+                }
+              : type === "video"
+              ? { url: "" }
+              : {}),
             wrapperStyles: {
               bgColor: "#ffffff",
-              dropShadow: "md",
-              paddingX: 4,
-              paddingY: 4,
+              dropShadow: "none",
+              paddingX: 0,
+              paddingY: 0,
               marginX: 0,
               marginY: 0,
               borderColor: "#000000",
               borderWidth: 0,
-              borderRadius: "md",
+              borderRadius: "none",
             },
           };
 
