@@ -68,6 +68,25 @@ export default function SlideElementsBoard({
     });
   };
 
+  const updateItem = useCallback(
+    (updated: SlideElementDnDItemProps) => {
+      const newMap = { ...board.columnMap };
+      for (const colId of board.orderedColumnIds) {
+        const col = newMap[colId];
+        const idx = col.items.findIndex((i) => i.id === updated.id);
+        if (idx !== -1) {
+          newMap[colId] = {
+            ...col,
+            items: [...col.items.slice(0, idx), updated, ...col.items.slice(idx + 1)],
+          };
+          break;
+        }
+      }
+      onChange({ ...board, columnMap: newMap });
+    },
+    [board, onChange]
+  );
+
   /* ------------------------------------------------------------------ */
   /*  Card wrapper                                                       */
   /* ------------------------------------------------------------------ */
@@ -85,9 +104,10 @@ export default function SlideElementsBoard({
         item={item}
         onSelect={() => onSelectElement?.(item.id)}
         isSelected={selectedElementId === item.id}
+        onChange={updateItem}
       />
     ),
-    [selectedElementId, onSelectElement]
+    [selectedElementId, onSelectElement, updateItem]
   );
 
   /* ------------------------------------------------------------------ */

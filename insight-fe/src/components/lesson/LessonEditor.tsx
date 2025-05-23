@@ -5,7 +5,10 @@ import { useState, useCallback, useEffect } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsBoard from "./SlideElementsBoard";
 import ElementAttributesPane from "./ElementAttributesPane";
-import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+import {
+  SlideElementDnDItemProps,
+  createRowContainerBoard,
+} from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface LessonState {
   slides: Slide[];
@@ -14,6 +17,7 @@ interface LessonState {
 const AVAILABLE_ELEMENTS = [
   { type: "text", label: "Text" },
   { type: "table", label: "Table" },
+  { type: "row", label: "Row Container" },
 ];
 
 export default function LessonEditor() {
@@ -101,6 +105,9 @@ export default function LessonEditor() {
           type,
           styles: type === "text" ? { color: "#000000", fontSize: "16px" } : {},
         };
+        if (type === "row") {
+          newEl.board = createRowContainerBoard();
+        }
         const firstColumnId = s.board.orderedColumnIds[0];
         const column = s.board.columnMap[firstColumnId];
         const updatedColumn = {

@@ -8,6 +8,33 @@ import {
   Th,
   Td,
 } from "@chakra-ui/react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  DnDBoardMain,
+  BoardState,
+} from "../DnDBoardMain";
+import { ColumnMap, ColumnType } from "../types";
+
+export const createRowContainerBoard = (): BoardState<SlideElementDnDItemProps> => {
+  const colors = ["red.300", "green.300", "blue.300"];
+  const columnMap: ColumnMap<SlideElementDnDItemProps> = {};
+  const orderedColumnIds: string[] = [];
+  colors.forEach((color, idx) => {
+    const id = `col-${crypto.randomUUID()}`;
+    const column: ColumnType<SlideElementDnDItemProps> = {
+      title: `Column ${idx + 1}`,
+      columnId: id,
+      styles: {
+        container: { border: `2px dashed ${color}`, width: "100%" },
+        header: { bg: color, color: "white" },
+      },
+      items: [],
+    };
+    columnMap[id] = column;
+    orderedColumnIds.push(id);
+  });
+  return { columnMap, orderedColumnIds, lastOperation: null };
+};
 
 export interface SlideElementDnDItemProps {
   id: string;
@@ -16,18 +43,21 @@ export interface SlideElementDnDItemProps {
     color?: string;
     fontSize?: string;
   };
+  board?: BoardState<SlideElementDnDItemProps>;
 }
 
 interface SlideElementDnDItemComponentProps {
   item: SlideElementDnDItemProps;
   onSelect?: () => void;
   isSelected?: boolean;
+  onChange?: (item: SlideElementDnDItemProps) => void;
 }
 
 export const SlideElementDnDItem = ({
   item,
   onSelect,
   isSelected,
+  onChange,
 }: SlideElementDnDItemComponentProps) => {
   const baseProps = {
     id: item.id,
@@ -64,6 +94,36 @@ export const SlideElementDnDItem = ({
             </Tr>
           </Tbody>
         </Table>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "row") {
+    const [board, setBoard] = useState<BoardState<SlideElementDnDItemProps>>(
+      item.board ?? createRowContainerBoard()
+    );
+
+    useEffect(() => {
+      onChange?.({ ...item, board });
+    }, [board]);
+
+    const NestedCard = useCallback(
+      ({ item }: { item: SlideElementDnDItemProps }) => (
+        <SlideElementDnDItem item={item} onChange={onChange} />
+      ),
+      [onChange]
+    );
+
+    return (
+      <ContentCard {...baseProps} cursor="default">
+        <DnDBoardMain<SlideElementDnDItemProps>
+          controlled
+          columnMap={board.columnMap}
+          orderedColumnIds={board.orderedColumnIds}
+          CardComponent={NestedCard}
+          onChange={setBoard}
+          enableColumnReorder={false}
+        />
       </ContentCard>
     );
   }
