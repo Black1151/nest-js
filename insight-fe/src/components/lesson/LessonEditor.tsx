@@ -14,6 +14,11 @@ interface LessonState {
 const AVAILABLE_ELEMENTS = [
   { type: "text", label: "Text" },
   { type: "table", label: "Table" },
+  { type: "image", label: "Image" },
+  { type: "video", label: "Video" },
+  { type: "audio", label: "Audio" },
+  { type: "code", label: "Code Snippet" },
+  { type: "quiz", label: "Quiz" },
 ];
 
 export default function LessonEditor() {
@@ -110,6 +115,14 @@ export default function LessonEditor() {
           id: crypto.randomUUID(),
           type,
           styles: type === "text" ? { color: "#000000", fontSize: "16px" } : {},
+          attributes:
+            type === "image" || type === "video" || type === "audio"
+              ? { src: "" }
+              : type === "code"
+              ? { code: "console.log(\"Hello world\");" }
+              : type === "quiz"
+              ? { question: "" }
+              : {},
         };
 
         const firstColumn = s.boards[0].orderedColumnIds[0];
