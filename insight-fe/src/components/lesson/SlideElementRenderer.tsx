@@ -11,6 +11,7 @@ import {
   Td,
 } from "@chakra-ui/react";
 import ElementWrapper from "./ElementWrapper";
+import VideoElement from "./VideoElement";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface SlideElementRendererProps {
@@ -46,6 +47,12 @@ export default function SlideElementRenderer({ item }: SlideElementRendererProps
           </Tbody>
         </Table>
       </ElementWrapper>
+    );
+  }
+
+  if (item.type === "video") {
+    return (
+      <VideoElement url={item.url || ""} wrapperStyles={item.wrapperStyles} />
     );
   }
 
