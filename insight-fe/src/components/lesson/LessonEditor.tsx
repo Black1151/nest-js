@@ -5,6 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
+import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface LessonState {
@@ -225,6 +226,17 @@ export default function LessonEditor() {
               selectedElementId={selectedElementId}
               onSelectElement={setSelectedElementId}
               dropIndicator={dropIndicator}
+            />
+          </Box>
+          <Box p={4} borderWidth="1px" borderRadius="md" minW="300px">
+            <Text mb={2}>Preview</Text>
+            <SlidePreview
+              columnMap={
+                lesson.slides.find((s) => s.id === selectedSlideId)!.columnMap
+              }
+              boards={
+                lesson.slides.find((s) => s.id === selectedSlideId)!.boards
+              }
             />
           </Box>
           <Box p={4} borderWidth="1px" borderRadius="md">
