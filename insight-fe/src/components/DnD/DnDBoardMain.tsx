@@ -285,7 +285,14 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
       const destinationColumn = currentMap[finishColumnId];
       const item = sourceColumn.items[itemIndexInStartColumn];
 
-      const destIdx = itemIndexInFinishColumn ?? 0;
+      // If no explicit destination index is provided, default to the end of
+      // the destination column. Previously this defaulted to `0`, which caused
+      // cards moved between columns to appear at the top rather than where they
+      // were dropped.
+      const destIdx =
+        typeof itemIndexInFinishColumn === "number"
+          ? itemIndexInFinishColumn
+          : destinationColumn.items.length;
       const destItems = Array.from(destinationColumn.items);
       destItems.splice(destIdx, 0, item);
 
