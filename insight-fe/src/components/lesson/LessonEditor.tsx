@@ -59,15 +59,20 @@ const AVAILABLE_ELEMENTS = [
   { type: "video", label: "Video" },
 ];
 
-export default function LessonEditor() {
-  const initialSlide = {
+export default function LessonEditor({
+  initialSlides,
+}: {
+  initialSlides?: Slide[] | null;
+}) {
+  const defaultSlide = {
     id: crypto.randomUUID(),
     title: "Slide 1",
     ...createInitialBoard(),
   };
+  const slidesInit = initialSlides && initialSlides.length > 0 ? initialSlides : [defaultSlide];
   const [state, dispatch] = useReducer(reducer, {
-    slides: [initialSlide],
-    selectedSlideId: initialSlide.id,
+    slides: slidesInit,
+    selectedSlideId: slidesInit[0].id,
     selectedElementId: null,
     dropIndicator: null,
   });
