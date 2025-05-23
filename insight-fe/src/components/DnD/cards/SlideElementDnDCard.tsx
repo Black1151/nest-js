@@ -7,6 +7,7 @@ import {
   Tr,
   Th,
   Td,
+  Image,
 } from "@chakra-ui/react";
 
 export interface SlideElementDnDItemProps {
@@ -16,9 +17,18 @@ export interface SlideElementDnDItemProps {
    * Text content for text elements
    */
   text?: string;
+  /**
+   * Image source url for image elements
+   */
+  url?: string;
   styles?: {
     color?: string;
     fontSize?: string;
+    marginTop?: string;
+    marginBottom?: string;
+    border?: string;
+    borderRadius?: string;
+    boxShadow?: string;
   };
 }
 
@@ -47,6 +57,23 @@ export const SlideElementDnDItem = ({
         <Text color={item.styles?.color} fontSize={item.styles?.fontSize}>
           {item.text || "Sample Text"}
         </Text>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "image") {
+    return (
+      <ContentCard {...baseProps}>
+        <Image
+          src={item.url || "https://via.placeholder.com/150"}
+          alt="image"
+          width="100%"
+          mt={item.styles?.marginTop}
+          mb={item.styles?.marginBottom}
+          border={item.styles?.border}
+          borderRadius={item.styles?.borderRadius}
+          boxShadow={item.styles?.boxShadow}
+        />
       </ContentCard>
     );
   }

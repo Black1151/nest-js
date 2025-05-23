@@ -9,6 +9,7 @@ import {
   Tr,
   Th,
   Td,
+  Image,
 } from "@chakra-ui/react";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -22,6 +23,22 @@ export default function SlideElementRenderer({ item }: SlideElementRendererProps
       <Text color={item.styles?.color} fontSize={item.styles?.fontSize} data-testid="text-element">
         {item.text || "Sample Text"}
       </Text>
+    );
+  }
+
+  if (item.type === "image") {
+    return (
+      <Image
+        src={item.url || "https://via.placeholder.com/150"}
+        alt="image"
+        width="100%"
+        mt={item.styles?.marginTop}
+        mb={item.styles?.marginBottom}
+        border={item.styles?.border}
+        borderRadius={item.styles?.borderRadius}
+        boxShadow={item.styles?.boxShadow}
+        data-testid="image-element"
+      />
     );
   }
 
