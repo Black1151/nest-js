@@ -3,7 +3,7 @@
 import { Flex, Box, Text, Stack } from "@chakra-ui/react";
 import { useState, useCallback, useEffect } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
-import SlideElementsBoard from "./SlideElementsBoard";
+import SlideElementsContainer from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -22,7 +22,7 @@ export default function LessonEditor() {
       {
         id: crypto.randomUUID(),
         title: "Slide 1",
-        board: createInitialBoard(),
+        ...createInitialBoard(),
       },
     ],
   });
@@ -50,10 +50,12 @@ export default function LessonEditor() {
 
   const getSelectedElement = (): SlideElementDnDItemProps | null => {
     if (!selectedSlide || !selectedElementId) return null;
-    for (const colId of selectedSlide.board.orderedColumnIds) {
-      const col = selectedSlide.board.columnMap[colId];
-      const item = col.items.find((i) => i.id === selectedElementId);
-      if (item) return item;
+    for (const board of selectedSlide.boards) {
+      for (const colId of board.orderedColumnIds) {
+        const col = selectedSlide.columnMap[colId];
+        const item = col.items.find((i) => i.id === selectedElementId);
+        if (item) return item;
+      }
     }
     return null;
   };
@@ -64,27 +66,27 @@ export default function LessonEditor() {
       ...prev,
       slides: prev.slides.map((slide) => {
         if (slide.id !== selectedSlideId) return slide;
-        const newMap = {
-          ...slide.board.columnMap,
-        } as typeof slide.board.columnMap;
-        for (const colId of slide.board.orderedColumnIds) {
-          const col = newMap[colId];
-          const idx = col.items.findIndex((i) => i.id === updated.id);
-          if (idx !== -1) {
-            newMap[colId] = {
-              ...col,
-              items: [
-                ...col.items.slice(0, idx),
-                updated,
-                ...col.items.slice(idx + 1),
-              ],
-            };
-            break;
+        const newMap = { ...slide.columnMap } as typeof slide.columnMap;
+        for (const board of slide.boards) {
+          for (const colId of board.orderedColumnIds) {
+            const col = newMap[colId];
+            const idx = col.items.findIndex((i) => i.id === updated.id);
+            if (idx !== -1) {
+              newMap[colId] = {
+                ...col,
+                items: [
+                  ...col.items.slice(0, idx),
+                  updated,
+                  ...col.items.slice(idx + 1),
+                ],
+              };
+              break;
+            }
           }
         }
         return {
           ...slide,
-          board: { ...slide.board, columnMap: newMap },
+          columnMap: newMap,
         };
       }),
     }));
@@ -110,11 +112,10 @@ export default function LessonEditor() {
           styles: type === "text" ? { color: "#000000", fontSize: "16px" } : {},
         };
 
+        const firstColumn = s.boards[0].orderedColumnIds[0];
         const columnId =
-          dropColumnId && s.board.columnMap[dropColumnId]
-            ? dropColumnId
-            : s.board.orderedColumnIds[0];
-        const column = s.board.columnMap[columnId];
+          dropColumnId && s.columnMap[dropColumnId] ? dropColumnId : firstColumn;
+        const column = s.columnMap[columnId];
 
         let insertIndex = column.items.length;
         if (columnEl) {
@@ -141,10 +142,7 @@ export default function LessonEditor() {
 
         return {
           ...s,
-          board: {
-            ...s.board,
-            columnMap: { ...s.board.columnMap, [columnId]: updatedColumn },
-          },
+          columnMap: { ...s.columnMap, [columnId]: updatedColumn },
         };
       });
       return { ...prev, slides };
@@ -167,7 +165,7 @@ export default function LessonEditor() {
 
     const slide = lesson.slides.find((s) => s.id === selectedSlideId);
     if (!slide) return;
-    const column = slide.board.columnMap[dropColumnId];
+    const column = slide.columnMap[dropColumnId];
     if (!column) return;
 
     let insertIndex = column.items.length;
@@ -207,15 +205,20 @@ export default function LessonEditor() {
             onDrop={handleDropElement}
           >
             <Text mb={2}>Slide Elements</Text>
-            <SlideElementsBoard
-              board={
-                lesson.slides.find((s) => s.id === selectedSlideId)?.board!
+            <SlideElementsContainer
+              columnMap={
+                lesson.slides.find((s) => s.id === selectedSlideId)!.columnMap
               }
-              onChange={(board) =>
+              boards={
+                lesson.slides.find((s) => s.id === selectedSlideId)!.boards
+              }
+              onChange={(columnMap, boards) =>
                 setLesson((prev) => ({
                   ...prev,
                   slides: prev.slides.map((s) =>
-                    s.id === selectedSlideId ? { ...s, board } : s
+                    s.id === selectedSlideId
+                      ? { ...s, columnMap, boards }
+                      : s
                   ),
                 }))
               }
