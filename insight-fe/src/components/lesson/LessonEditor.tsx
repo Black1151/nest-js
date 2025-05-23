@@ -1,7 +1,7 @@
 "use client";
 
-import { Flex, Box, Text, Stack, Grid, HStack } from "@chakra-ui/react";
-import { useState, useCallback, useEffect } from "react";
+import { Flex, Box, Text, Grid, HStack } from "@chakra-ui/react";
+import { useState, useCallback } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
