@@ -32,6 +32,9 @@ export default function LessonEditor() {
   const [selectedElementId, setSelectedElementId] = useState<string | null>(
     null
   );
+  const [dropIndicator, setDropIndicator] = useState<
+    { columnId: string; index: number } | null
+  >(null);
 
   const setSlides = useCallback((updater: React.SetStateAction<Slide[]>) => {
     setLesson((prev) => ({
@@ -93,6 +96,11 @@ export default function LessonEditor() {
     const type = e.dataTransfer.getData("text/plain");
     if (!selectedSlideId) return;
     if (!type) return;
+
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    const columnEl = target?.closest('[data-column-id]') as HTMLElement | null;
+    const dropColumnId = columnEl?.dataset.columnId;
+
     setLesson((prev) => {
       const slides = prev.slides.map((s) => {
         if (s.id !== selectedSlideId) return s;
@@ -101,22 +109,82 @@ export default function LessonEditor() {
           type,
           styles: type === "text" ? { color: "#000000", fontSize: "16px" } : {},
         };
-        const firstColumnId = s.board.orderedColumnIds[0];
-        const column = s.board.columnMap[firstColumnId];
+
+        const columnId =
+          dropColumnId && s.board.columnMap[dropColumnId]
+            ? dropColumnId
+            : s.board.orderedColumnIds[0];
+        const column = s.board.columnMap[columnId];
+
+        let insertIndex = column.items.length;
+        if (columnEl) {
+          const cards = Array.from(
+            columnEl.querySelectorAll('[data-card-id]')
+          ) as HTMLElement[];
+          for (let i = 0; i < cards.length; i++) {
+            const rect = cards[i].getBoundingClientRect();
+            if (e.clientY < rect.top + rect.height / 2) {
+              insertIndex = i;
+              break;
+            }
+          }
+        }
+
         const updatedColumn = {
           ...column,
-          items: [...column.items, newEl],
+          items: [
+            ...column.items.slice(0, insertIndex),
+            newEl,
+            ...column.items.slice(insertIndex),
+          ],
         };
+
         return {
           ...s,
           board: {
             ...s.board,
-            columnMap: { ...s.board.columnMap, [firstColumnId]: updatedColumn },
+            columnMap: { ...s.board.columnMap, [columnId]: updatedColumn },
           },
         };
       });
       return { ...prev, slides };
     });
+    setDropIndicator(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const type = e.dataTransfer.getData("text/plain");
+    if (!selectedSlideId || !type) return;
+
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    const columnEl = target?.closest('[data-column-id]') as HTMLElement | null;
+    const dropColumnId = columnEl?.dataset.columnId;
+    if (!dropColumnId) {
+      setDropIndicator(null);
+      return;
+    }
+
+    const slide = lesson.slides.find((s) => s.id === selectedSlideId);
+    if (!slide) return;
+    const column = slide.board.columnMap[dropColumnId];
+    if (!column) return;
+
+    let insertIndex = column.items.length;
+    if (columnEl) {
+      const cards = Array.from(
+        columnEl.querySelectorAll('[data-card-id]')
+      ) as HTMLElement[];
+      for (let i = 0; i < cards.length; i++) {
+        const rect = cards[i].getBoundingClientRect();
+        if (e.clientY < rect.top + rect.height / 2) {
+          insertIndex = i;
+          break;
+        }
+      }
+    }
+
+    setDropIndicator({ columnId: dropColumnId, index: insertIndex });
   };
 
   return (
@@ -134,7 +202,8 @@ export default function LessonEditor() {
             p={4}
             borderWidth="1px"
             borderRadius="md"
-            onDragOver={(e) => e.preventDefault()}
+            onDragOver={handleDragOver}
+            onDragLeave={() => setDropIndicator(null)}
             onDrop={handleDropElement}
           >
             <Text mb={2}>Slide Elements</Text>
@@ -152,6 +221,7 @@ export default function LessonEditor() {
               }
               selectedElementId={selectedElementId}
               onSelectElement={setSelectedElementId}
+              dropIndicator={dropIndicator}
             />
           </Box>
           <Box p={4} borderWidth="1px" borderRadius="md">

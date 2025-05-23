@@ -85,6 +85,8 @@ export interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   onSubmit?: (board: BoardState<TCard>) => void;
   isLoading?: boolean;
   onRemoveColumn?: (columnId: string) => void;
+  /** Optional indicator for external drops */
+  externalDropIndicator?: { columnId: string; index: number } | null;
   /**
    * When `true` this component is *controlled*:
    *  - It never stores its own copy of the board.
@@ -106,6 +108,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   onSubmit,
   isLoading = false,
   onRemoveColumn,
+  externalDropIndicator = null,
   controlled = false,
 }: DnDBoardMainProps<TCard>) => {
   /* -----------------------------------------------------------------------
@@ -584,6 +587,12 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
               enableColumnReorder={enableColumnReorder}
               isLoading={isLoading}
               onRemoveColumn={onRemoveColumn}
+              externalDropIndex={
+                externalDropIndicator &&
+                externalDropIndicator.columnId === columnId
+                  ? externalDropIndicator.index
+                  : null
+              }
             />
           ))}
         </Board>

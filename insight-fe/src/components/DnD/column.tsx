@@ -93,6 +93,8 @@ interface ColumnProps<TCard extends BaseCardDnD> {
   enableColumnReorder?: boolean;
   isLoading?: boolean;
   onRemoveColumn?: (columnId: string) => void;
+  /** Optional index to display an external drop indicator */
+  externalDropIndex?: number | null;
 }
 
 function ColumnBase<TCard extends BaseCardDnD>({
@@ -101,6 +103,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
   enableColumnReorder = true,
   isLoading = false,
   onRemoveColumn,
+  externalDropIndex = null,
 }: ColumnProps<TCard>) {
   const columnId = column.columnId;
   const columnRef = useRef<HTMLDivElement | null>(null);
@@ -292,6 +295,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
         direction="column"
         sx={combinedStyles}
         data-testid={`column-${columnId}`}
+        data-column-id={columnId}
       >
         <Stack ref={columnInnerRef} flexGrow={1} minH={0}>
           <Stack
@@ -331,13 +335,17 @@ function ColumnBase<TCard extends BaseCardDnD>({
                   <LoadingSpinnerCard />
                 ) : (
                   /** Render sorted or raw items: */
-                  sortedItems.map((item: TCard) => (
-                    <Card
-                      key={item.id}
-                      item={item}
-                      CardComponent={CardComponent}
-                    />
+                  sortedItems.map((item: TCard, idx: number) => (
+                    <React.Fragment key={item.id}>
+                      {externalDropIndex === idx && (
+                        <DropIndicator edge="top" gap="0.5rem" />
+                      )}
+                      <Card item={item} CardComponent={CardComponent} />
+                    </React.Fragment>
                   ))
+                )}
+                {externalDropIndex === sortedItems.length && (
+                  <DropIndicator edge="bottom" gap="0.5rem" />
                 )}
               </Stack>
             </Box>
