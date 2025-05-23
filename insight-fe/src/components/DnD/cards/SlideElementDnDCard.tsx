@@ -7,6 +7,9 @@ import {
   Tr,
   Th,
   Td,
+  Image,
+  Box,
+  Code,
 } from "@chakra-ui/react";
 
 export interface SlideElementDnDItemProps {
@@ -64,6 +67,52 @@ export const SlideElementDnDItem = ({
             </Tr>
           </Tbody>
         </Table>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "image") {
+    return (
+      <ContentCard {...baseProps}>
+        <Image src="https://via.placeholder.com/150" alt="Sample image" />
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "video") {
+    return (
+      <ContentCard {...baseProps}>
+        <Box as="video" controls width="100%">
+          <source src="" />
+        </Box>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "audio") {
+    return (
+      <ContentCard {...baseProps}>
+        <Box as="audio" controls width="100%">
+          <source src="" />
+        </Box>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "code") {
+    return (
+      <ContentCard {...baseProps}>
+        <Code width="100%" whiteSpace="pre">
+          console.log("Hello world");
+        </Code>
+      </ContentCard>
+    );
+  }
+
+  if (item.type === "quiz") {
+    return (
+      <ContentCard {...baseProps}>
+        <Text>Quiz placeholder</Text>
       </ContentCard>
     );
   }
