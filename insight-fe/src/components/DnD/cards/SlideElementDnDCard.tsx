@@ -18,6 +18,10 @@ export interface SlideElementDnDItemProps {
    * Text content for text elements
    */
   text?: string;
+  /**
+   * Image source for image elements
+   */
+  src?: string;
   styles?: {
     color?: string;
     fontSize?: string;
@@ -76,6 +80,14 @@ export const SlideElementDnDItem = ({
             </Tr>
           </Tbody>
         </Table>
+      </ElementWrapper>
+    );
+  }
+
+  if (item.type === "image") {
+    return (
+      <ElementWrapper styles={wrapperStyles} {...baseProps}>
+        <img src={item.src} alt="lesson image" style={{ maxWidth: "100%" }} />
       </ElementWrapper>
     );
   }

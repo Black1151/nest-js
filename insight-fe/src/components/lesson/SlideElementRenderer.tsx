@@ -11,6 +11,7 @@ import {
   Td,
 } from "@chakra-ui/react";
 import ElementWrapper from "./ElementWrapper";
+import ImageElement from "./ImageElement";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface SlideElementRendererProps {
@@ -46,6 +47,12 @@ export default function SlideElementRenderer({ item }: SlideElementRendererProps
           </Tbody>
         </Table>
       </ElementWrapper>
+    );
+  }
+
+  if (item.type === "image") {
+    return (
+      <ImageElement src={item.src || ""} wrapperStyles={item.wrapperStyles} />
     );
   }
 
