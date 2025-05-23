@@ -362,10 +362,18 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
             const startIndex = board.orderedColumnIds.findIndex(
               (id) => id === source.data.columnId
             );
+
             const target = location.current.dropTargets[0];
             const indexOfTarget = board.orderedColumnIds.findIndex(
               (id) => id === target.data.columnId
             );
+
+            // If either the dragged column or the target column do not belong
+            // to this board, ignore this drop. This happens when a column is
+            // dragged in from another board.
+            if (startIndex === -1 || indexOfTarget === -1) {
+              return;
+            }
             const closestEdgeOfTarget: Edge | null = extractClosestEdge(
               target.data
             );
