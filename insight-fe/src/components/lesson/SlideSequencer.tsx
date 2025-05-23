@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Button, Stack } from "@chakra-ui/react";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
-import { BoardState } from "@/components/DnD/DnDBoardMain";
+import { ColumnMap } from "@/components/DnD/types";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import {
   draggable,
@@ -19,14 +19,24 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
 
+export interface SlideBoard {
+  id: string;
+  orderedColumnIds: string[];
+}
+
 export interface Slide {
   id: string;
   title: string;
-  board: BoardState<SlideElementDnDItemProps>;
+  columnMap: ColumnMap<SlideElementDnDItemProps>;
+  boards: SlideBoard[];
 }
 
-export const createInitialBoard = (): BoardState<SlideElementDnDItemProps> => {
+export const createInitialBoard = (): {
+  columnMap: ColumnMap<SlideElementDnDItemProps>;
+  boards: SlideBoard[];
+} => {
   const columnId = `col-${crypto.randomUUID()}`;
+  const boardId = crypto.randomUUID();
   return {
     columnMap: {
       [columnId]: {
@@ -39,8 +49,7 @@ export const createInitialBoard = (): BoardState<SlideElementDnDItemProps> => {
         items: [],
       },
     },
-    orderedColumnIds: [columnId],
-    lastOperation: null,
+    boards: [{ id: boardId, orderedColumnIds: [columnId] }],
   };
 };
 
@@ -132,10 +141,18 @@ export default function SlideSequencer({
   const addSlide = useCallback(() => {
     const id = crypto.randomUUID();
     counter.current += 1;
-    setSlides((s) => [
-      ...s,
-      { id, title: `Slide ${s.length + 1}`, board: createInitialBoard() },
-    ]);
+    setSlides((s) => {
+      const initial = createInitialBoard();
+      return [
+        ...s,
+        {
+          id,
+          title: `Slide ${s.length + 1}`,
+          columnMap: initial.columnMap,
+          boards: initial.boards,
+        },
+      ];
+    });
   }, [setSlides]);
 
   useEffect(() => {

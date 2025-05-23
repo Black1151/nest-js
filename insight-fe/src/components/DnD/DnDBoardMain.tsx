@@ -87,6 +87,10 @@ export interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   onRemoveColumn?: (columnId: string) => void;
   /** Optional indicator for external drops */
   externalDropIndicator?: { columnId: string; index: number } | null;
+  /** Optional shared instance id for cross-board drag */
+  instanceId?: symbol;
+  /** Optional shared registry for cross-board drag */
+  registry?: ReturnType<typeof createRegistry>;
   /**
    * When `true` this component is *controlled*:
    *  - It never stores its own copy of the board.
@@ -109,6 +113,8 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   isLoading = false,
   onRemoveColumn,
   externalDropIndicator = null,
+  instanceId: instanceIdProp,
+  registry: registryProp,
   controlled = false,
 }: DnDBoardMainProps<TCard>) => {
   /* -----------------------------------------------------------------------
@@ -179,7 +185,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   /* -----------------------------------------------------------------------
    * 5.  Create a registry for DOM references
    * --------------------------------------------------------------------- */
-  const [registry] = useState(createRegistry);
+  const registry = useRef(registryProp ?? createRegistry()).current;
 
   /* -----------------------------------------------------------------------
    * 6.  Mutator helpers (reorderColumn, reorderCard, moveCard)
@@ -333,7 +339,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   /* -----------------------------------------------------------------------
    * 7.  Unique instance ID for all draggables / droppables in this board
    * --------------------------------------------------------------------- */
-  const [instanceId] = useState(() => Symbol("instance-id"));
+  const instanceId = useRef(instanceIdProp ?? Symbol("instance-id")).current;
 
   /* -----------------------------------------------------------------------
    * 8.  Effect: monitor for elements & handle drop logic

@@ -1,18 +1,25 @@
 "use client";
 
 import { Box, Button, HStack, Text } from "@chakra-ui/react";
-import { DnDBoardMain, BoardState } from "@/components/DnD/DnDBoardMain";
+import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
   SlideElementDnDItemProps,
   SlideElementDnDItem,
 } from "@/components/DnD/cards/SlideElementDnDCard";
-import { ColumnType } from "@/components/DnD/types";
+import { ColumnType, ColumnMap } from "@/components/DnD/types";
+import { createRegistry } from "@/components/DnD/registry";
 import { ContentCard } from "../layout/Card";
 import { useCallback } from "react";
 
 interface SlideElementsBoardProps {
-  board: BoardState<SlideElementDnDItemProps>;
-  onChange: (board: BoardState<SlideElementDnDItemProps>) => void;
+  columnMap: ColumnMap<SlideElementDnDItemProps>;
+  orderedColumnIds: string[];
+  onChange: (
+    columnMap: ColumnMap<SlideElementDnDItemProps>,
+    orderedIds: string[],
+  ) => void;
+  registry: ReturnType<typeof createRegistry>;
+  instanceId: symbol;
   selectedElementId?: string | null;
   onSelectElement?: (id: string) => void;
   dropIndicator?: { columnId: string; index: number } | null;
@@ -28,8 +35,11 @@ const COLUMN_COLORS = [
 ];
 
 export default function SlideElementsBoard({
-  board,
+  columnMap,
+  orderedColumnIds,
   onChange,
+  registry,
+  instanceId,
   selectedElementId,
   onSelectElement,
   dropIndicator,
@@ -38,7 +48,7 @@ export default function SlideElementsBoard({
   /*  Column helpers                                                     */
   /* ------------------------------------------------------------------ */
   const addColumn = () => {
-    const idx = board.orderedColumnIds.length;
+    const idx = orderedColumnIds.length;
     const color = COLUMN_COLORS[idx % COLUMN_COLORS.length];
     const id = `col-${crypto.randomUUID()}` as const;
 
@@ -52,22 +62,20 @@ export default function SlideElementsBoard({
       items: [],
     };
 
-    onChange({
-      ...board,
-      columnMap: { ...board.columnMap, [id]: newColumn },
-      orderedColumnIds: [...board.orderedColumnIds, id],
-    });
+    onChange(
+      { ...columnMap, [id]: newColumn },
+      [...orderedColumnIds, id],
+    );
   };
 
   const removeColumn = (columnId: string) => {
-    if (board.orderedColumnIds.length <= 1) return;
-    const newMap = { ...board.columnMap };
+    if (orderedColumnIds.length <= 1) return;
+    const newMap = { ...columnMap };
     delete newMap[columnId];
-    onChange({
-      ...board,
-      columnMap: newMap,
-      orderedColumnIds: board.orderedColumnIds.filter((id) => id !== columnId),
-    });
+    onChange(
+      newMap,
+      orderedColumnIds.filter((id) => id !== columnId),
+    );
   };
 
   /* ------------------------------------------------------------------ */
@@ -106,13 +114,15 @@ export default function SlideElementsBoard({
       <ContentCard height={700}>
         <DnDBoardMain<SlideElementDnDItemProps>
           controlled
-          columnMap={board.columnMap}
-          orderedColumnIds={board.orderedColumnIds}
+          columnMap={columnMap}
+          orderedColumnIds={orderedColumnIds}
           CardComponent={CardWrapper}
           enableColumnReorder={false}
-          onChange={onChange}
+          onChange={(b) => onChange(b.columnMap, b.orderedColumnIds)}
           onRemoveColumn={removeColumn}
           externalDropIndicator={dropIndicator}
+          instanceId={instanceId}
+          registry={registry}
         />
       </ContentCard>
     </>
