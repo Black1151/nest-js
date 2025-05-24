@@ -5,6 +5,7 @@ import { ColumnMap } from "@/components/DnD/types";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import SlideElementRenderer from "./SlideElementRenderer";
 import { BoardRow } from "./SlideElementsContainer";
+import ElementWrapper from "./ElementWrapper";
 
 interface SlidePreviewProps {
   columnMap: ColumnMap<SlideElementDnDItemProps>;
@@ -15,8 +16,9 @@ export default function SlidePreview({ columnMap, boards }: SlidePreviewProps) {
   return (
     <Stack gap={4}>
       {boards.map((board) => (
-        <Box
+        <ElementWrapper
           key={board.id}
+          styles={board.wrapperStyles}
           display="grid"
           gridTemplateColumns={`repeat(${board.orderedColumnIds.length}, 1fr)`}
           gap={4}
@@ -34,7 +36,7 @@ export default function SlidePreview({ columnMap, boards }: SlidePreviewProps) {
               </Stack>
             );
           })}
-        </Box>
+        </ElementWrapper>
       ))}
     </Stack>
   );
