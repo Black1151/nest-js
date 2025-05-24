@@ -16,7 +16,9 @@ import {
   AccordionIcon,
   HStack,
   VStack,
+  Icon,
 } from "@chakra-ui/react";
+import { Trash2 } from "lucide-react";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { useEffect, useState } from "react";
 
@@ -421,7 +423,13 @@ export default function ElementAttributesPane({
             </Button>
           )}
           {onDelete && (
-            <Button size="sm" colorScheme="red" onClick={onDelete} width="100%">
+            <Button
+              size="sm"
+              colorScheme="red"
+              onClick={onDelete}
+              width="100%"
+              leftIcon={<Icon as={Trash2} boxSize={4} />}
+            >
               Delete
             </Button>
           )}

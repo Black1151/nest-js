@@ -56,7 +56,7 @@ export default function SlideElementsContainer({
     const boardId = crypto.randomUUID();
 
     const newColumn: ColumnType<SlideElementDnDItemProps> = {
-      title: `Column 1`,
+      title: "",
       columnId,
       styles: {
         container: { border: `2px dashed ${color}`, width: "100%" },

@@ -43,7 +43,7 @@ export const createInitialBoard = (): {
   return {
     columnMap: {
       [columnId]: {
-        title: "Column 1",
+        title: "",
         columnId,
         styles: {
           container: { border: "2px dashed red", width: "100%" },
