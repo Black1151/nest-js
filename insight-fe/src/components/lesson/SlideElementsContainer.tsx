@@ -6,7 +6,7 @@ import SlideElementsBoard from "./SlideElementsBoard";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
-import { ContentCard } from "../layout/Card";
+import { ElementWrapperStyles } from "./ElementWrapper";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types";
@@ -14,6 +14,7 @@ import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types";
 export interface BoardRow {
   id: string;
   orderedColumnIds: string[];
+  wrapperStyles?: ElementWrapperStyles;
 }
 
 interface SlideElementsContainerProps {
@@ -66,7 +67,17 @@ export default function SlideElementsContainer({
 
     onChange({ ...columnMap, [columnId]: newColumn }, [
       ...boards,
-      { id: boardId, orderedColumnIds: [columnId] },
+      {
+        id: boardId,
+        orderedColumnIds: [columnId],
+        wrapperStyles: {
+          bgColor: "white",
+          dropShadow: "2xl",
+          paddingX: 4,
+          paddingY: 4,
+          borderRadius: "md",
+        },
+      },
     ]);
   };
 
@@ -152,19 +163,18 @@ export default function SlideElementsContainer({
         Add Container
       </Button>
       {boards.map((b) => (
-        <ContentCard minHeight={400} key={b.id}>
-          <SlideElementsBoard
-            // key={b.id}
-            columnMap={columnMap}
-            orderedColumnIds={b.orderedColumnIds}
-            onChange={(map, ids) => updateBoard(b.id, map, ids)}
-            registry={registry.current}
-            instanceId={instanceId.current}
-            selectedElementId={selectedElementId}
-            onSelectElement={onSelectElement}
-            dropIndicator={dropIndicator}
-          />
-        </ContentCard>
+        <SlideElementsBoard
+          key={b.id}
+          columnMap={columnMap}
+          orderedColumnIds={b.orderedColumnIds}
+          wrapperStyles={b.wrapperStyles}
+          onChange={(map, ids) => updateBoard(b.id, map, ids)}
+          registry={registry.current}
+          instanceId={instanceId.current}
+          selectedElementId={selectedElementId}
+          onSelectElement={onSelectElement}
+          dropIndicator={dropIndicator}
+        />
       ))}
     </Stack>
   );

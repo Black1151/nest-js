@@ -19,9 +19,12 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
 
+import { ElementWrapperStyles } from "./ElementWrapper";
+
 export interface SlideBoard {
   id: string;
   orderedColumnIds: string[];
+  wrapperStyles?: ElementWrapperStyles;
 }
 
 export interface Slide {
@@ -49,7 +52,19 @@ export const createInitialBoard = (): {
         items: [],
       },
     },
-    boards: [{ id: boardId, orderedColumnIds: [columnId] }],
+    boards: [
+      {
+        id: boardId,
+        orderedColumnIds: [columnId],
+        wrapperStyles: {
+          bgColor: "white",
+          dropShadow: "2xl",
+          paddingX: 4,
+          paddingY: 4,
+          borderRadius: "md",
+        },
+      },
+    ],
   };
 };
 

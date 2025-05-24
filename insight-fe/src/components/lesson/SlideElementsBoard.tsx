@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, HStack, Text } from "@chakra-ui/react";
+import { Box, Button, HStack } from "@chakra-ui/react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
   SlideElementDnDItemProps,
@@ -8,12 +8,13 @@ import {
 } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
-import { ContentCard } from "../layout/Card";
+import ElementWrapper, { ElementWrapperStyles } from "./ElementWrapper";
 import { useCallback } from "react";
 
 interface SlideElementsBoardProps {
   columnMap: ColumnMap<SlideElementDnDItemProps>;
   orderedColumnIds: string[];
+  wrapperStyles?: ElementWrapperStyles;
   onChange: (
     columnMap: ColumnMap<SlideElementDnDItemProps>,
     orderedIds: string[],
@@ -37,6 +38,7 @@ const COLUMN_COLORS = [
 export default function SlideElementsBoard({
   columnMap,
   orderedColumnIds,
+  wrapperStyles,
   onChange,
   registry,
   instanceId,
@@ -104,14 +106,14 @@ export default function SlideElementsBoard({
   /*  Render                                                            */
   /* ------------------------------------------------------------------ */
   return (
-    <>
-      <HStack mb={2} justify="flex-end">
+    <ElementWrapper styles={wrapperStyles} minHeight={400}>
+      <HStack mb={2} justify="space-between" align="center">
+        <Box fontWeight="bold">Section</Box>
         <Button size="sm" colorScheme="teal" onClick={addColumn}>
           Add Column
         </Button>
       </HStack>
-
-      <ContentCard height={700}>
+      <Box height={700}>
         <DnDBoardMain<SlideElementDnDItemProps>
           controlled
           columnMap={columnMap}
@@ -123,7 +125,7 @@ export default function SlideElementsBoard({
           instanceId={instanceId}
           registry={registry}
         />
-      </ContentCard>
-    </>
+      </Box>
+    </ElementWrapper>
   );
 }
