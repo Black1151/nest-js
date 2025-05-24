@@ -117,7 +117,6 @@ export default function SlideElementsBoard({
           columnMap={columnMap}
           orderedColumnIds={orderedColumnIds}
           CardComponent={CardWrapper}
-          enableColumnReorder={false}
           onChange={(b) => onChange(b.columnMap, b.orderedColumnIds)}
           onRemoveColumn={removeColumn}
           externalDropIndicator={dropIndicator}
