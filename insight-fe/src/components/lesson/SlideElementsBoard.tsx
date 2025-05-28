@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, Button, HStack, Text } from "@chakra-ui/react";
+import { useState } from "react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
   SlideElementDnDItemProps,
@@ -10,6 +11,7 @@ import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 import { ContentCard } from "../layout/Card";
 import { useCallback } from "react";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface SlideElementsBoardProps {
   columnMap: ColumnMap<SlideElementDnDItemProps>;
@@ -23,6 +25,7 @@ interface SlideElementsBoardProps {
   selectedElementId?: string | null;
   onSelectElement?: (id: string) => void;
   dropIndicator?: { columnId: string; index: number } | null;
+  onRemoveBoard?: () => void;
 }
 
 const COLUMN_COLORS = [
@@ -43,10 +46,13 @@ export default function SlideElementsBoard({
   selectedElementId,
   onSelectElement,
   dropIndicator,
+  onRemoveBoard,
 }: SlideElementsBoardProps) {
   /* ------------------------------------------------------------------ */
   /*  Column helpers                                                     */
   /* ------------------------------------------------------------------ */
+  const [columnIdToDelete, setColumnIdToDelete] = useState<string | null>(null);
+
   const addColumn = () => {
     const idx = orderedColumnIds.length;
     const color = COLUMN_COLORS[idx % COLUMN_COLORS.length];
@@ -68,7 +74,7 @@ export default function SlideElementsBoard({
     );
   };
 
-  const removeColumn = (columnId: string) => {
+  const deleteColumn = (columnId: string) => {
     if (orderedColumnIds.length <= 1) return;
     const newMap = { ...columnMap };
     delete newMap[columnId];
@@ -76,6 +82,21 @@ export default function SlideElementsBoard({
       newMap,
       orderedColumnIds.filter((id) => id !== columnId),
     );
+  };
+
+  const removeColumn = (columnId: string) => {
+    if (columnMap[columnId]?.items.length) {
+      setColumnIdToDelete(columnId);
+      return;
+    }
+    deleteColumn(columnId);
+  };
+
+  const confirmRemoveColumn = () => {
+    if (columnIdToDelete) {
+      deleteColumn(columnIdToDelete);
+      setColumnIdToDelete(null);
+    }
   };
 
   /* ------------------------------------------------------------------ */
@@ -105,7 +126,12 @@ export default function SlideElementsBoard({
   /* ------------------------------------------------------------------ */
   return (
     <>
-      <HStack mb={2} justify="flex-end">
+      <HStack mb={2} justify="space-between">
+        {onRemoveBoard && (
+          <Button size="sm" colorScheme="red" onClick={onRemoveBoard}>
+            Delete Container
+          </Button>
+        )}
         <Button size="sm" colorScheme="teal" onClick={addColumn}>
           Add Column
         </Button>
@@ -124,6 +150,13 @@ export default function SlideElementsBoard({
           registry={registry}
         />
       </ContentCard>
+      <ConfirmationModal
+        isOpen={columnIdToDelete !== null}
+        onClose={() => setColumnIdToDelete(null)}
+        action="delete column"
+        bodyText="This column contains elements. Are you sure you want to delete it?"
+        onConfirm={confirmRemoveColumn}
+      />
     </>
   );
 }
