@@ -1,12 +1,13 @@
 "use client";
 
-import { Button, Stack } from "@chakra-ui/react";
-import { useRef, useEffect } from "react";
+import { Button, Stack, HStack } from "@chakra-ui/react";
+import { useRef, useEffect, useState } from "react";
 import SlideElementsBoard from "./SlideElementsBoard";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 import { ContentCard } from "../layout/Card";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types";
@@ -51,6 +52,7 @@ export default function SlideElementsContainer({
 }: SlideElementsContainerProps) {
   const instanceId = useRef(Symbol("slide-container"));
   const registry = useRef(createRegistry());
+  const [boardIdToDelete, setBoardIdToDelete] = useState<string | null>(null);
 
   const addBoard = () => {
     const colIdx = Object.keys(columnMap).length;
@@ -96,6 +98,40 @@ export default function SlideElementsContainer({
         b.id === boardId ? { ...b, orderedColumnIds: ids } : b
       )
     );
+  };
+
+  const deleteBoard = (boardId: string) => {
+    const board = boards.find((b) => b.id === boardId);
+    if (!board) return;
+    const newMap = { ...columnMap };
+    for (const colId of board.orderedColumnIds) {
+      delete newMap[colId];
+    }
+    onChange(
+      newMap,
+      boards.filter((b) => b.id !== boardId)
+    );
+  };
+
+  const removeBoard = (boardId: string) => {
+    if (boards.length <= 1) return;
+    const board = boards.find((b) => b.id === boardId);
+    if (!board) return;
+    const hasContent = board.orderedColumnIds.some(
+      (id) => columnMap[id]?.items.length > 0
+    );
+    if (hasContent) {
+      setBoardIdToDelete(boardId);
+      return;
+    }
+    deleteBoard(boardId);
+  };
+
+  const confirmRemoveBoard = () => {
+    if (boardIdToDelete) {
+      deleteBoard(boardIdToDelete);
+      setBoardIdToDelete(null);
+    }
   };
 
   // Handle moving columns between boards
@@ -169,7 +205,6 @@ export default function SlideElementsContainer({
       {boards.map((b) => (
         <ContentCard minHeight={400} key={b.id}>
           <SlideElementsBoard
-            // key={b.id}
             columnMap={columnMap}
             orderedColumnIds={b.orderedColumnIds}
             onChange={(map, ids) => updateBoard(b.id, map, ids)}
@@ -178,11 +213,19 @@ export default function SlideElementsContainer({
             selectedElementId={selectedElementId}
             onSelectElement={onSelectElement}
             dropIndicator={dropIndicator}
+            onRemoveBoard={() => removeBoard(b.id)}
             selectedColumnId={selectedColumnId}
             onSelectColumn={onSelectColumn}
           />
         </ContentCard>
       ))}
+      <ConfirmationModal
+        isOpen={boardIdToDelete !== null}
+        onClose={() => setBoardIdToDelete(null)}
+        action="delete container"
+        bodyText="This container has columns with content. Are you sure you want to delete it?"
+        onConfirm={confirmRemoveBoard}
+      />
     </Stack>
   );
 }
