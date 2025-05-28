@@ -23,6 +23,8 @@ interface SlideElementsBoardProps {
   selectedElementId?: string | null;
   onSelectElement?: (id: string) => void;
   dropIndicator?: { columnId: string; index: number } | null;
+  selectedColumnId?: string | null;
+  onSelectColumn?: (id: string) => void;
 }
 
 const COLUMN_COLORS = [
@@ -43,6 +45,8 @@ export default function SlideElementsBoard({
   selectedElementId,
   onSelectElement,
   dropIndicator,
+  selectedColumnId,
+  onSelectColumn,
 }: SlideElementsBoardProps) {
   /* ------------------------------------------------------------------ */
   /*  Column helpers                                                     */
@@ -58,6 +62,17 @@ export default function SlideElementsBoard({
       styles: {
         container: { border: `2px dashed ${color}`, width: "100%" },
         header: { bg: color, color: "white" },
+      },
+      wrapperStyles: {
+        bgColor: "#ffffff",
+        dropShadow: "none",
+        paddingX: 0,
+        paddingY: 0,
+        marginX: 0,
+        marginY: 0,
+        borderColor: "#000000",
+        borderWidth: 0,
+        borderRadius: "none",
       },
       items: [],
     };
@@ -120,6 +135,8 @@ export default function SlideElementsBoard({
           onChange={(b) => onChange(b.columnMap, b.orderedColumnIds)}
           onRemoveColumn={removeColumn}
           externalDropIndicator={dropIndicator}
+          selectedColumnId={selectedColumnId}
+          onSelectColumn={onSelectColumn}
           instanceId={instanceId}
           registry={registry}
         />

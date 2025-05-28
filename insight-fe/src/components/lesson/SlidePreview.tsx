@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, Stack } from "@chakra-ui/react";
+import ElementWrapper from "./ElementWrapper";
 import { ColumnMap } from "@/components/DnD/types";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import SlideElementRenderer from "./SlideElementRenderer";
@@ -25,13 +26,15 @@ export default function SlidePreview({ columnMap, boards }: SlidePreviewProps) {
             const column = columnMap[colId];
             if (!column) return null;
             return (
-              <Stack key={colId} gap={2} data-column-id={colId}>
-                {column.items.map((item) => (
-                  <Box key={item.id} mb={2} data-card-id={item.id}>
-                    <SlideElementRenderer item={item} />
-                  </Box>
-                ))}
-              </Stack>
+              <ElementWrapper key={colId} styles={column.wrapperStyles} data-column-id={colId}>
+                <Stack gap={2}>
+                  {column.items.map((item) => (
+                    <Box key={item.id} mb={2} data-card-id={item.id}>
+                      <SlideElementRenderer item={item} />
+                    </Box>
+                  ))}
+                </Stack>
+              </ElementWrapper>
             );
           })}
         </Box>
