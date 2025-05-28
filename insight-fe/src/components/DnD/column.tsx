@@ -9,7 +9,7 @@ import React, {
 import { createPortal } from "react-dom";
 import invariant from "tiny-invariant";
 import { Box, Flex, Heading, HStack, Spinner, Stack, IconButton } from "@chakra-ui/react";
-import { X } from "lucide-react";
+import { X, Settings } from "lucide-react";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import {
   attachClosestEdge,
@@ -95,6 +95,8 @@ interface ColumnProps<TCard extends BaseCardDnD> {
   onRemoveColumn?: (columnId: string) => void;
   /** Optional index to display an external drop indicator */
   externalDropIndex?: number | null;
+  onSelectColumn?: (columnId: string) => void;
+  isSelected?: boolean;
 }
 
 function ColumnBase<TCard extends BaseCardDnD>({
@@ -104,6 +106,8 @@ function ColumnBase<TCard extends BaseCardDnD>({
   isLoading = false,
   onRemoveColumn,
   externalDropIndex = null,
+  onSelectColumn,
+  isSelected = false,
 }: ColumnProps<TCard>) {
   const columnId = column.columnId;
   const columnRef = useRef<HTMLDivElement | null>(null);
@@ -279,10 +283,24 @@ function ColumnBase<TCard extends BaseCardDnD>({
   // --------------------------------------
   const combinedStyles = {
     ...columnBaseStyles,
+    ...(column.wrapperStyles
+      ? {
+          bg: column.wrapperStyles.bgColor,
+          boxShadow: column.wrapperStyles.dropShadow,
+          px: column.wrapperStyles.paddingX,
+          py: column.wrapperStyles.paddingY,
+          mx: column.wrapperStyles.marginX,
+          my: column.wrapperStyles.marginY,
+          borderColor: column.wrapperStyles.borderColor,
+          borderWidth: column.wrapperStyles.borderWidth,
+          borderRadius: column.wrapperStyles.borderRadius,
+        }
+      : {}),
     ...(column.styles?.container ?? {}),
     // only apply grab cursor if column reordering is enabled
     ...(state.type === "idle" && enableColumnReorder ? idleStyles : {}),
     ...(state.type === "is-card-over" ? cardOverStyles : {}),
+    ...(isSelected ? { borderColor: "blue.400", borderWidth: 2 } : {}),
   };
 
   // --------------------------------------
@@ -303,7 +321,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
             overflow="hidden"
             sx={isDragging ? isDraggingStyles : undefined}
             spacing={0}
-            height="10px"
+            height="100%"
           >
             <HStack
               ref={headerRef}
@@ -315,15 +333,26 @@ function ColumnBase<TCard extends BaseCardDnD>({
               <Heading as="span" size="xs">
                 {column.title}
               </Heading>
-              {onRemoveColumn && (
-                <IconButton
-                  aria-label="Remove column"
-                  icon={<X size={12} />}
-                  size="xs"
-                  variant="ghost"
-                  onClick={() => onRemoveColumn(columnId)}
-                />
-              )}
+              <HStack spacing={1}>
+                {onSelectColumn && (
+                  <IconButton
+                    aria-label="Edit column styles"
+                    icon={<Settings size={12} />}
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => onSelectColumn(columnId)}
+                  />
+                )}
+                {onRemoveColumn && (
+                  <IconButton
+                    aria-label="Remove column"
+                    icon={<X size={12} />}
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => onRemoveColumn(columnId)}
+                  />
+                )}
+              </HStack>
             </HStack>
 
             <Box ref={scrollableRef} sx={scrollContainerStyles}>

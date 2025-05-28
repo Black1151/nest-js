@@ -5,13 +5,16 @@ import { useCallback, useReducer, useMemo } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
+import ColumnAttributesPane from "./ColumnAttributesPane";
 import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+import { ColumnType } from "@/components/DnD/types";
 
 interface LessonState {
   slides: Slide[];
   selectedSlideId: string | null;
   selectedElementId: string | null;
+  selectedColumnId: string | null;
   dropIndicator: { columnId: string; index: number } | null;
 }
 
@@ -19,6 +22,7 @@ type Action =
   | { type: "setSlides"; updater: React.SetStateAction<Slide[]> }
   | { type: "selectSlide"; id: string | null }
   | { type: "selectElement"; id: string | null }
+  | { type: "selectColumn"; id: string | null }
   | {
       type: "setDropIndicator";
       indicator: { columnId: string; index: number } | null;
@@ -35,9 +39,11 @@ function reducer(state: LessonState, action: Action): LessonState {
       return { ...state, slides };
     }
     case "selectSlide":
-      return { ...state, selectedSlideId: action.id, selectedElementId: null };
+      return { ...state, selectedSlideId: action.id, selectedElementId: null, selectedColumnId: null };
     case "selectElement":
-      return { ...state, selectedElementId: action.id };
+      return { ...state, selectedElementId: action.id, selectedColumnId: null };
+    case "selectColumn":
+      return { ...state, selectedColumnId: action.id, selectedElementId: null };
     case "setDropIndicator":
       return { ...state, dropIndicator: action.indicator };
     case "updateSlide":
@@ -69,6 +75,7 @@ export default function LessonEditor() {
     slides: [initialSlide],
     selectedSlideId: initialSlide.id,
     selectedElementId: null,
+    selectedColumnId: null,
     dropIndicator: null,
   });
 
@@ -94,6 +101,11 @@ export default function LessonEditor() {
     }
     return null;
   }, [selectedSlide, state.selectedElementId]);
+
+  const selectedColumn = useMemo(() => {
+    if (!selectedSlide || !state.selectedColumnId) return null;
+    return selectedSlide.columnMap[state.selectedColumnId] || null;
+  }, [selectedSlide, state.selectedColumnId]);
 
   const updateElement = useCallback(
     (updated: SlideElementDnDItemProps) => {
@@ -122,6 +134,21 @@ export default function LessonEditor() {
           }
           return { ...slide, columnMap: newMap };
         },
+      });
+    },
+    [state.selectedSlideId, dispatch]
+  );
+
+  const updateColumn = useCallback(
+    (updated: ColumnType<SlideElementDnDItemProps>) => {
+      if (!state.selectedSlideId) return;
+      dispatch({
+        type: "updateSlide",
+        slideId: state.selectedSlideId,
+        updater: (slide) => ({
+          ...slide,
+          columnMap: { ...slide.columnMap, [updated.columnId]: updated },
+        }),
       });
     },
     [state.selectedSlideId, dispatch]
@@ -370,6 +397,10 @@ export default function LessonEditor() {
                   dispatch({ type: "selectElement", id })
                 }
                 dropIndicator={state.dropIndicator}
+                selectedColumnId={state.selectedColumnId}
+                onSelectColumn={(id) =>
+                  dispatch({ type: "selectColumn", id })
+                }
               />
             </Box>
             <Box
@@ -393,6 +424,12 @@ export default function LessonEditor() {
                   onChange={updateElement}
                   onClone={cloneElement}
                   onDelete={deleteElement}
+                />
+              )}
+              {selectedColumn && (
+                <ColumnAttributesPane
+                  column={selectedColumn}
+                  onChange={updateColumn}
                 />
               )}
             </Box>

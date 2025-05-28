@@ -1,4 +1,5 @@
 import { SystemStyleObject } from "@chakra-ui/react";
+import type { ElementWrapperStyles } from "../lesson/ElementWrapper";
 
 export type State =
   | { type: "idle" }
@@ -37,6 +38,7 @@ export type ColumnType<TCard extends BaseCardDnD> = {
   columnId: string;
   items: TCard[];
   styles?: ColumnStyles;
+  wrapperStyles?: ElementWrapperStyles;
   sortBy?: (item: TCard) => string;
   sortDirection?: "asc" | "desc" | "none";
 };
