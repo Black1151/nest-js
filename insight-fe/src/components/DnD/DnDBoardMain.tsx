@@ -87,6 +87,8 @@ export interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   onRemoveColumn?: (columnId: string) => void;
   /** Optional indicator for external drops */
   externalDropIndicator?: { columnId: string; index: number } | null;
+  selectedColumnId?: string | null;
+  onSelectColumn?: (columnId: string) => void;
   /** Optional shared instance id for cross-board drag */
   instanceId?: symbol;
   /** Optional shared registry for cross-board drag */
@@ -113,6 +115,8 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   isLoading = false,
   onRemoveColumn,
   externalDropIndicator = null,
+  selectedColumnId = null,
+  onSelectColumn,
   instanceId: instanceIdProp,
   registry: registryProp,
   controlled = false,
@@ -605,6 +609,8 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
               enableColumnReorder={enableColumnReorder}
               isLoading={isLoading}
               onRemoveColumn={onRemoveColumn}
+              onSelectColumn={onSelectColumn}
+              isSelected={selectedColumnId === columnId}
               externalDropIndex={
                 externalDropIndicator &&
                 externalDropIndicator.columnId === columnId
