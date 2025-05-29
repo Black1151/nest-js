@@ -3,6 +3,8 @@ import React from "react";
 
 export interface ElementWrapperStyles {
   bgColor?: string;
+  /** Opacity value between 0 and 1 */
+  bgOpacity?: number;
   dropShadow?: string;
   paddingX?: number;
   paddingY?: number;
@@ -19,9 +21,22 @@ interface ElementWrapperProps extends BoxProps {
 }
 
 export default function ElementWrapper({ styles, children, ...props }: ElementWrapperProps) {
+  const hexToRgba = (hex: string, opacity: number) => {
+    const sanitized = hex.replace('#', '');
+    const bigint = parseInt(sanitized, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
+
+  const bgColor = styles?.bgColor
+    ? hexToRgba(styles.bgColor, styles.bgOpacity ?? 0)
+    : undefined;
+
   return (
     <Box
-      bg={styles?.bgColor || "white"}
+      bg={bgColor}
       boxShadow={styles?.dropShadow}
       px={styles?.paddingX}
       py={styles?.paddingY}
