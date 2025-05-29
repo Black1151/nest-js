@@ -26,6 +26,7 @@ interface ColumnAttributesPaneProps {
 
 export default function ColumnAttributesPane({ column, onChange }: ColumnAttributesPaneProps) {
   const [bgColor, setBgColor] = useState(column.wrapperStyles?.bgColor || "#ffffff");
+  const [bgOpacity, setBgOpacity] = useState(column.wrapperStyles?.bgOpacity ?? 0);
   const [shadow, setShadow] = useState(column.wrapperStyles?.dropShadow || "none");
   const [paddingX, setPaddingX] = useState(column.wrapperStyles?.paddingX ?? 0);
   const [paddingY, setPaddingY] = useState(column.wrapperStyles?.paddingY ?? 0);
@@ -37,6 +38,7 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
 
   useEffect(() => {
     setBgColor(column.wrapperStyles?.bgColor || "#ffffff");
+    setBgOpacity(column.wrapperStyles?.bgOpacity ?? 0);
     setShadow(column.wrapperStyles?.dropShadow || "none");
     setPaddingX(column.wrapperStyles?.paddingX ?? 0);
     setPaddingY(column.wrapperStyles?.paddingY ?? 0);
@@ -52,6 +54,7 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
       ...column,
       wrapperStyles: {
         bgColor,
+        bgOpacity,
         dropShadow: shadow,
         paddingX,
         paddingY,
@@ -62,7 +65,7 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
         borderRadius,
       },
     });
-  }, [bgColor, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius]);
+  }, [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius]);
 
   return (
     <Accordion allowMultiple>
@@ -77,7 +80,14 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
           <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
               <FormLabel mb="0" fontSize="sm" w="40%">Background</FormLabel>
-              <Input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} />
+              <Input
+                type="color"
+                value={bgColor}
+                onChange={(e) => {
+                  setBgColor(e.target.value);
+                  setBgOpacity(1);
+                }}
+              />
             </FormControl>
             <FormControl display="flex" alignItems="center">
               <FormLabel mb="0" fontSize="sm" w="40%">Shadow</FormLabel>

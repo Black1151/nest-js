@@ -43,6 +43,9 @@ export default function ElementAttributesPane({
   const [bgColor, setBgColor] = useState(
     element.wrapperStyles?.bgColor || "#ffffff"
   );
+  const [bgOpacity, setBgOpacity] = useState(
+    element.wrapperStyles?.bgOpacity ?? 0
+  );
   const [shadow, setShadow] = useState(
     element.wrapperStyles?.dropShadow || "none"
   );
@@ -74,6 +77,7 @@ export default function ElementAttributesPane({
     setSrc(element.src || "");
     setUrl(element.url || "");
     setBgColor(element.wrapperStyles?.bgColor || "#ffffff");
+    setBgOpacity(element.wrapperStyles?.bgOpacity ?? 0);
     setShadow(element.wrapperStyles?.dropShadow || "none");
     setPaddingX(element.wrapperStyles?.paddingX ?? 0);
     setPaddingY(element.wrapperStyles?.paddingY ?? 0);
@@ -89,6 +93,7 @@ export default function ElementAttributesPane({
       ...element,
       wrapperStyles: {
         bgColor,
+        bgOpacity,
         dropShadow: shadow,
         paddingX,
         paddingY,
@@ -117,6 +122,7 @@ export default function ElementAttributesPane({
     src,
     url,
     bgColor,
+    bgOpacity,
     shadow,
     paddingX,
     paddingY,
@@ -153,7 +159,10 @@ export default function ElementAttributesPane({
               <Input
                 type="color"
                 value={bgColor}
-                onChange={(e) => setBgColor(e.target.value)}
+                onChange={(e) => {
+                  setBgColor(e.target.value);
+                  setBgOpacity(1);
+                }}
               />
             </FormControl>
             <FormControl display="flex" alignItems="center">
