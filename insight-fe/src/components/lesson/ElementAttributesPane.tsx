@@ -40,6 +40,11 @@ export default function ElementAttributesPane({
   const [text, setText] = useState(element.text || "");
   const [src, setSrc] = useState(element.src || "");
   const [url, setUrl] = useState(element.url || "");
+  const [title, setTitle] = useState(element.title || "");
+  const [description, setDescription] = useState(element.description || "");
+  const [questions, setQuestions] = useState(
+    element.questions || ([] as SlideElementDnDItemProps["questions"])
+  );
   const [bgColor, setBgColor] = useState(
     element.wrapperStyles?.bgColor || "#ffffff"
   );
@@ -76,6 +81,9 @@ export default function ElementAttributesPane({
     setText(element.text || "");
     setSrc(element.src || "");
     setUrl(element.url || "");
+    setTitle(element.title || "");
+    setDescription(element.description || "");
+    setQuestions(element.questions || []);
     setBgColor(element.wrapperStyles?.bgColor || "#ffffff");
     setBgOpacity(element.wrapperStyles?.bgOpacity ?? 0);
     setShadow(element.wrapperStyles?.dropShadow || "none");
@@ -114,6 +122,11 @@ export default function ElementAttributesPane({
     if (element.type === "video") {
       updated.url = url;
     }
+    if (element.type === "quiz") {
+      updated.title = title;
+      updated.description = description;
+      updated.questions = questions;
+    }
     onChange(updated);
   }, [
     color,
@@ -121,6 +134,9 @@ export default function ElementAttributesPane({
     text,
     src,
     url,
+    title,
+    description,
+    questions,
     bgColor,
     bgOpacity,
     shadow,
@@ -419,6 +435,146 @@ export default function ElementAttributesPane({
                   onChange={(e) => setUrl(e.target.value)}
                 />
               </FormControl>
+            </Stack>
+          </AccordionPanel>
+        </AccordionItem>
+      )}
+
+      {element.type === "quiz" && (
+        <AccordionItem
+          borderWidth="1px"
+          borderColor="purple.300"
+          borderRadius="md"
+          mb={2}
+        >
+          <h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">Quiz</Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h2>
+          <AccordionPanel pb={2}>
+            <Stack spacing={3}>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">
+                  Title
+                </FormLabel>
+                <Input
+                  size="sm"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </FormControl>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">
+                  Description
+                </FormLabel>
+                <Input
+                  size="sm"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </FormControl>
+              <Box>
+                <Text fontSize="sm" mb={2} fontWeight="bold">
+                  Questions
+                </Text>
+                <Stack spacing={3}>
+                  {questions.map((q, qIdx) => (
+                    <Box key={q.id} p={2} borderWidth="1px" borderRadius="md">
+                      <FormControl mb={2}>
+                        <FormLabel fontSize="sm">Question</FormLabel>
+                        <Input
+                          size="sm"
+                          value={q.text}
+                          onChange={(e) => {
+                            const updated = [...questions];
+                            updated[qIdx] = { ...q, text: e.target.value };
+                            setQuestions(updated);
+                          }}
+                        />
+                      </FormControl>
+                      <Stack spacing={2} mb={2} pl={2}>
+                        {q.options.map((opt, oIdx) => (
+                          <HStack key={oIdx} align="center">
+                            <Input
+                              size="sm"
+                              value={opt}
+                              onChange={(e) => {
+                                const updated = [...questions];
+                                const opts = [...updated[qIdx].options];
+                                opts[oIdx] = e.target.value;
+                                updated[qIdx] = { ...updated[qIdx], options: opts };
+                                setQuestions(updated);
+                              }}
+                            />
+                            <Button
+                              size="xs"
+                              colorScheme="red"
+                              onClick={() => {
+                                const updated = [...questions];
+                                updated[qIdx] = {
+                                  ...updated[qIdx],
+                                  options: updated[qIdx].options.filter((_, i) => i !== oIdx),
+                                };
+                                setQuestions(updated);
+                              }}
+                            >
+                              X
+                            </Button>
+                          </HStack>
+                        ))}
+                        <Button
+                          size="xs"
+                          onClick={() => {
+                            const updated = [...questions];
+                            updated[qIdx] = {
+                              ...updated[qIdx],
+                              options: [...updated[qIdx].options, ""],
+                            };
+                            setQuestions(updated);
+                          }}
+                        >
+                          Add Option
+                        </Button>
+                      </Stack>
+                      <FormControl>
+                        <FormLabel fontSize="sm">Correct Answer</FormLabel>
+                        <Input
+                          size="sm"
+                          value={q.correctAnswer}
+                          onChange={(e) => {
+                            const updated = [...questions];
+                            updated[qIdx] = { ...q, correctAnswer: e.target.value };
+                            setQuestions(updated);
+                          }}
+                        />
+                      </FormControl>
+                      <Button
+                        mt={2}
+                        size="xs"
+                        colorScheme="red"
+                        onClick={() => {
+                          setQuestions(questions.filter((_, i) => i !== qIdx));
+                        }}
+                      >
+                        Delete Question
+                      </Button>
+                    </Box>
+                  ))}
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      setQuestions([
+                        ...questions,
+                        { id: crypto.randomUUID(), text: "", options: [""], correctAnswer: "" },
+                      ])
+                    }
+                  >
+                    Add Question
+                  </Button>
+                </Stack>
+              </Box>
             </Stack>
           </AccordionPanel>
         </AccordionItem>

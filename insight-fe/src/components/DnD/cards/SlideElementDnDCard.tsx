@@ -18,6 +18,23 @@ export interface SlideElementDnDItemProps {
    * Image source for image elements
    */
   src?: string;
+  /**
+   * Quiz title when type is "quiz"
+   */
+  title?: string;
+  /**
+   * Quiz description when type is "quiz"
+   */
+  description?: string;
+  /**
+   * Quiz questions when type is "quiz"
+   */
+  questions?: {
+    id: string;
+    text: string;
+    options: string[];
+    correctAnswer: string;
+  }[];
   styles?: {
     color?: string;
     fontSize?: string;
@@ -97,6 +114,14 @@ export const SlideElementDnDItem = ({
           style={{ maxWidth: "100%" }}
           draggable={false}
         />
+      </ElementWrapper>
+    );
+  }
+
+  if (item.type === "quiz") {
+    return (
+      <ElementWrapper styles={wrapperStyles} {...baseProps}>
+        <Text fontWeight="bold">{item.title || "Quiz"}</Text>
       </ElementWrapper>
     );
   }
