@@ -44,6 +44,9 @@ import { SubjectEntity } from './modules/timbuktu/administrative/subject/subject
 import { YearGroupEntity } from './modules/timbuktu/administrative/year-group/year-group.entity';
 import { TopicEntity } from './modules/timbuktu/administrative/topic/topic.entity';
 import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-tables/class-lesson/class-lesson.entity';
+import { StyleCollectionModule } from './modules/timbuktu/administrative/style-collection/style-collection.module';
+import { StyleCollectionEntity } from './modules/timbuktu/administrative/style-collection/style-collection.entity';
+import { ElementStyleEntity } from './modules/timbuktu/administrative/element-style/element-style.entity';
 
 @Module({
   imports: [
@@ -80,6 +83,8 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
         QuizEntity,
         MultipleChoiceQuestionEntity,
         TopicEntity,
+        StyleCollectionEntity,
+        ElementStyleEntity,
         AssignmentSubmissionEntity,
         AssignmentEntity,
         ClassLessonEntity,
@@ -106,6 +111,7 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
     LessonModule,
     QuizModule,
     MultipleChoiceQuestionModule,
+    StyleCollectionModule,
     AssignmentModule,
     AssignmentSubmissionModule,
     // AuditModule,
