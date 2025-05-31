@@ -1,7 +1,8 @@
 import { extendTheme } from "@chakra-ui/react";
+import { chakraFonts } from "./fonts";
 
 const theme = extendTheme({
-  // Add custom theme configurations here
+  fonts: chakraFonts,
 });
 
 export default theme;
