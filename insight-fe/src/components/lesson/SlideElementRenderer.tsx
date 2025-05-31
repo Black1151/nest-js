@@ -4,6 +4,7 @@ import { Box, Text, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import ElementWrapper from "./ElementWrapper";
 import ImageElement from "./ImageElement";
 import VideoElement from "./VideoElement";
+import QuizElement from "./QuizElement";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface SlideElementRendererProps {
@@ -60,6 +61,17 @@ export default function SlideElementRenderer({
   if (item.type === "video") {
     return (
       <VideoElement url={item.url || ""} wrapperStyles={item.wrapperStyles} />
+    );
+  }
+
+  if (item.type === "quiz") {
+    return (
+      <QuizElement
+        title={item.title || "Untitled Quiz"}
+        description={item.description}
+        questions={item.questions || []}
+        wrapperStyles={item.wrapperStyles}
+      />
     );
   }
 
