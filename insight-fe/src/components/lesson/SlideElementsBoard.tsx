@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, HStack, Text } from "@chakra-ui/react";
+import { Button, HStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
@@ -10,10 +10,13 @@ import {
 import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 import { ContentCard } from "../layout/Card";
+import ElementWrapper, { ElementWrapperStyles } from "./ElementWrapper";
 import { useCallback } from "react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface SlideElementsBoardProps {
+  boardId: string;
+  wrapperStyles?: ElementWrapperStyles;
   columnMap: ColumnMap<SlideElementDnDItemProps>;
   orderedColumnIds: string[];
   onChange: (
@@ -28,6 +31,8 @@ interface SlideElementsBoardProps {
   onRemoveBoard?: () => void;
   selectedColumnId?: string | null;
   onSelectColumn?: (id: string) => void;
+  isSelected?: boolean;
+  onSelectBoard?: () => void;
 }
 
 const COLUMN_COLORS = [
@@ -40,6 +45,8 @@ const COLUMN_COLORS = [
 ];
 
 export default function SlideElementsBoard({
+  boardId,
+  wrapperStyles,
   columnMap,
   orderedColumnIds,
   onChange,
@@ -51,6 +58,8 @@ export default function SlideElementsBoard({
   onRemoveBoard,
   selectedColumnId,
   onSelectColumn,
+  isSelected,
+  onSelectBoard,
 }: SlideElementsBoardProps) {
   /* ------------------------------------------------------------------ */
   /*  Column helpers                                                     */
@@ -148,26 +157,37 @@ export default function SlideElementsBoard({
             Delete Container
           </Button>
         )}
+        {onSelectBoard && (
+          <Button size="sm" onClick={onSelectBoard}>
+            Edit Container
+          </Button>
+        )}
         <Button size="sm" colorScheme="teal" onClick={addColumn}>
           Add Column
         </Button>
       </HStack>
-
-      <ContentCard height={700}>
-        <DnDBoardMain<SlideElementDnDItemProps>
-          controlled
-          columnMap={columnMap}
-          orderedColumnIds={orderedColumnIds}
-          CardComponent={CardWrapper}
-          onChange={(b) => onChange(b.columnMap, b.orderedColumnIds)}
-          onRemoveColumn={removeColumn}
-          externalDropIndicator={dropIndicator}
-          selectedColumnId={selectedColumnId}
-          onSelectColumn={onSelectColumn}
-          instanceId={instanceId}
-          registry={registry}
-        />
-      </ContentCard>
+      <ElementWrapper
+        styles={wrapperStyles}
+        borderColor={isSelected ? "blue.300" : undefined}
+        borderWidth={isSelected ? 2 : undefined}
+        data-board-id={boardId}
+      >
+        <ContentCard height={700} bg="transparent" dropShadow="none">
+          <DnDBoardMain<SlideElementDnDItemProps>
+            controlled
+            columnMap={columnMap}
+            orderedColumnIds={orderedColumnIds}
+            CardComponent={CardWrapper}
+            onChange={(b) => onChange(b.columnMap, b.orderedColumnIds)}
+            onRemoveColumn={removeColumn}
+            externalDropIndicator={dropIndicator}
+            selectedColumnId={selectedColumnId}
+            onSelectColumn={onSelectColumn}
+            instanceId={instanceId}
+            registry={registry}
+          />
+        </ContentCard>
+      </ElementWrapper>
       <ConfirmationModal
         isOpen={columnIdToDelete !== null}
         onClose={() => setColumnIdToDelete(null)}
