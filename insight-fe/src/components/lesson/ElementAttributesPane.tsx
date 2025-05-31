@@ -37,6 +37,18 @@ export default function ElementAttributesPane({
 }: ElementAttributesPaneProps) {
   const [color, setColor] = useState(element.styles?.color || "#000000");
   const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
+  const [fontFamily, setFontFamily] = useState(
+    element.styles?.fontFamily || "Arial"
+  );
+  const [fontWeight, setFontWeight] = useState(
+    element.styles?.fontWeight || "normal"
+  );
+  const [lineHeight, setLineHeight] = useState(
+    element.styles?.lineHeight || "1.2"
+  );
+  const [textAlign, setTextAlign] = useState(
+    element.styles?.textAlign || "left"
+  );
   const [text, setText] = useState(element.text || "");
   const [src, setSrc] = useState(element.src || "");
   const [url, setUrl] = useState(element.url || "");
@@ -73,6 +85,10 @@ export default function ElementAttributesPane({
   useEffect(() => {
     setColor(element.styles?.color || "#000000");
     setFontSize(element.styles?.fontSize || "16px");
+    setFontFamily(element.styles?.fontFamily || "Arial");
+    setFontWeight(element.styles?.fontWeight || "normal");
+    setLineHeight(element.styles?.lineHeight || "1.2");
+    setTextAlign(element.styles?.textAlign || "left");
     setText(element.text || "");
     setSrc(element.src || "");
     setUrl(element.url || "");
@@ -106,7 +122,15 @@ export default function ElementAttributesPane({
     };
     if (element.type === "text") {
       updated.text = text;
-      updated.styles = { ...element.styles, color, fontSize };
+      updated.styles = {
+        ...element.styles,
+        color,
+        fontSize,
+        fontFamily,
+        fontWeight,
+        lineHeight,
+        textAlign,
+      };
     }
     if (element.type === "image") {
       updated.src = src;
@@ -118,6 +142,10 @@ export default function ElementAttributesPane({
   }, [
     color,
     fontSize,
+    fontFamily,
+    fontWeight,
+    lineHeight,
+    textAlign,
     text,
     src,
     url,
@@ -354,6 +382,73 @@ export default function ElementAttributesPane({
                   value={parseInt(fontSize)}
                   onChange={(e) => setFontSize(e.target.value + "px")}
                 />
+              </FormControl>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">
+                  Font
+                </FormLabel>
+                <Select
+                  size="sm"
+                  value={fontFamily}
+                  onChange={(e) => setFontFamily(e.target.value)}
+                >
+                  <option value="Arial">Arial</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Courier New">Courier New</option>
+                </Select>
+              </FormControl>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">
+                  Weight
+                </FormLabel>
+                <Select
+                  size="sm"
+                  value={fontWeight}
+                  onChange={(e) => setFontWeight(e.target.value)}
+                >
+                  <option value="normal">Normal</option>
+                  <option value="bold">Bold</option>
+                  <option value="bolder">Bolder</option>
+                  <option value="lighter">Lighter</option>
+                  <option value="100">100</option>
+                  <option value="200">200</option>
+                  <option value="300">300</option>
+                  <option value="400">400</option>
+                  <option value="500">500</option>
+                  <option value="600">600</option>
+                  <option value="700">700</option>
+                  <option value="800">800</option>
+                  <option value="900">900</option>
+                </Select>
+              </FormControl>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">
+                  Line Height
+                </FormLabel>
+                <Input
+                  size="sm"
+                  type="number"
+                  w="60px"
+                  value={parseFloat(lineHeight)}
+                  onChange={(e) => setLineHeight(e.target.value)}
+                />
+              </FormControl>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">
+                  Align
+                </FormLabel>
+                <Select
+                  size="sm"
+                  value={textAlign}
+                  onChange={(e) => setTextAlign(e.target.value)}
+                >
+                  <option value="left">Left</option>
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                  <option value="justify">Justify</option>
+                </Select>
               </FormControl>
             </Stack>
           </AccordionPanel>
