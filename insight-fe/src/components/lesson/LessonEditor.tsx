@@ -301,7 +301,14 @@ export default function LessonEditor() {
             ...(type === "text"
               ? {
                   text: "Sample Text",
-                  styles: { color: "#000000", fontSize: "16px" },
+                  styles: {
+                    color: "#000000",
+                    fontSize: "16px",
+                    fontFamily: "Arial",
+                    fontWeight: "normal",
+                    lineHeight: "1.2",
+                    textAlign: "left",
+                  },
                 }
               : type === "image"
               ? {
