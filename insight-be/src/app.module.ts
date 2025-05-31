@@ -75,6 +75,7 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
         ClassEntity,
         KeyStageEntity,
         YearGroupEntity,
+        
         SubjectEntity,
         LessonEntity,
         QuizEntity,

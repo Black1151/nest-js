@@ -184,8 +184,15 @@ export default function LessonEditor() {
       skip: !(yearGroupId && subjectId),
       variables:
         yearGroupId && subjectId
-          ? { input: { yearGroupId, subjectId } }
+          ? {
+              input: {
+                yearGroupId: Number(yearGroupId),
+                subjectId: Number(subjectId),
+                withLessons: false,
+              },
+            }
           : undefined,
+
     }
   );
   const topics = yearGroupId && subjectId ? topicData?.topicsByYearAndSubject ?? [] : [];
