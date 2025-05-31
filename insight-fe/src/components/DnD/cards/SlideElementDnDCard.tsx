@@ -21,6 +21,10 @@ export interface SlideElementDnDItemProps {
   styles?: {
     color?: string;
     fontSize?: string;
+    fontFamily?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    textAlign?: string;
   };
   wrapperStyles?: ElementWrapperStyles;
 }
@@ -52,7 +56,14 @@ export const SlideElementDnDItem = ({
   if (item.type === "text") {
     return (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
-        <Text color={item.styles?.color} fontSize={item.styles?.fontSize}>
+        <Text
+          color={item.styles?.color}
+          fontSize={item.styles?.fontSize}
+          fontFamily={item.styles?.fontFamily}
+          fontWeight={item.styles?.fontWeight}
+          lineHeight={item.styles?.lineHeight}
+          textAlign={item.styles?.textAlign as any}
+        >
           {item.text || "Sample Text"}
         </Text>
       </ElementWrapper>

@@ -16,7 +16,14 @@ export default function SlideElementRenderer({
   if (item.type === "text") {
     return (
       <ElementWrapper styles={item.wrapperStyles} data-testid="text-element">
-        <Text color={item.styles?.color} fontSize={item.styles?.fontSize}>
+        <Text
+          color={item.styles?.color}
+          fontSize={item.styles?.fontSize}
+          fontFamily={item.styles?.fontFamily}
+          fontWeight={item.styles?.fontWeight}
+          lineHeight={item.styles?.lineHeight}
+          textAlign={item.styles?.textAlign as any}
+        >
           {item.text || "Sample Text"}
         </Text>
       </ElementWrapper>
