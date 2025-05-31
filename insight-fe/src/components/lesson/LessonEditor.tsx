@@ -10,6 +10,7 @@ import BoardAttributesPane from "./BoardAttributesPane";
 import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
+import { availableFonts } from "@/theme/fonts";
 
 interface LessonState {
   slides: Slide[];
@@ -304,7 +305,7 @@ export default function LessonEditor() {
                   styles: {
                     color: "#000000",
                     fontSize: "16px",
-                    fontFamily: "Arial",
+                    fontFamily: availableFonts[0].fontFamily,
                     fontWeight: "normal",
                     lineHeight: "1.2",
                     textAlign: "left",
