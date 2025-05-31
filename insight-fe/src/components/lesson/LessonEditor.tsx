@@ -3,9 +3,10 @@
 import { Flex, Box, Text, Grid, HStack } from "@chakra-ui/react";
 import { useCallback, useReducer, useMemo } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
-import SlideElementsContainer from "./SlideElementsContainer";
+import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
 import ColumnAttributesPane from "./ColumnAttributesPane";
+import BoardAttributesPane from "./BoardAttributesPane";
 import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
@@ -15,6 +16,7 @@ interface LessonState {
   selectedSlideId: string | null;
   selectedElementId: string | null;
   selectedColumnId: string | null;
+  selectedBoardId: string | null;
   dropIndicator: { columnId: string; index: number } | null;
 }
 
@@ -23,11 +25,18 @@ type Action =
   | { type: "selectSlide"; id: string | null }
   | { type: "selectElement"; id: string | null }
   | { type: "selectColumn"; id: string | null }
+  | { type: "selectBoard"; id: string | null }
   | {
       type: "setDropIndicator";
       indicator: { columnId: string; index: number } | null;
     }
-  | { type: "updateSlide"; slideId: string; updater: (slide: Slide) => Slide };
+  | { type: "updateSlide"; slideId: string; updater: (slide: Slide) => Slide }
+  | {
+      type: "updateBoard";
+      slideId: string;
+      boardId: string;
+      updater: (board: BoardRow) => BoardRow;
+    };
 
 function reducer(state: LessonState, action: Action): LessonState {
   switch (action.type) {
@@ -39,11 +48,34 @@ function reducer(state: LessonState, action: Action): LessonState {
       return { ...state, slides };
     }
     case "selectSlide":
-      return { ...state, selectedSlideId: action.id, selectedElementId: null, selectedColumnId: null };
+      return {
+        ...state,
+        selectedSlideId: action.id,
+        selectedElementId: null,
+        selectedColumnId: null,
+        selectedBoardId: null,
+      };
     case "selectElement":
-      return { ...state, selectedElementId: action.id, selectedColumnId: null };
+      return {
+        ...state,
+        selectedElementId: action.id,
+        selectedColumnId: null,
+        selectedBoardId: null,
+      };
     case "selectColumn":
-      return { ...state, selectedColumnId: action.id, selectedElementId: null };
+      return {
+        ...state,
+        selectedColumnId: action.id,
+        selectedElementId: null,
+        selectedBoardId: null,
+      };
+    case "selectBoard":
+      return {
+        ...state,
+        selectedBoardId: action.id,
+        selectedColumnId: null,
+        selectedElementId: null,
+      };
     case "setDropIndicator":
       return { ...state, dropIndicator: action.indicator };
     case "updateSlide":
@@ -51,6 +83,20 @@ function reducer(state: LessonState, action: Action): LessonState {
         ...state,
         slides: state.slides.map((s) =>
           s.id === action.slideId ? action.updater(s) : s
+        ),
+      };
+    case "updateBoard":
+      return {
+        ...state,
+        slides: state.slides.map((s) =>
+          s.id === action.slideId
+            ? {
+                ...s,
+                boards: s.boards.map((b) =>
+                  b.id === action.boardId ? action.updater(b) : b,
+                ),
+              }
+            : s,
         ),
       };
     default:
@@ -76,6 +122,7 @@ export default function LessonEditor() {
     selectedSlideId: initialSlide.id,
     selectedElementId: null,
     selectedColumnId: null,
+    selectedBoardId: null,
     dropIndicator: null,
   });
 
@@ -106,6 +153,11 @@ export default function LessonEditor() {
     if (!selectedSlide || !state.selectedColumnId) return null;
     return selectedSlide.columnMap[state.selectedColumnId] || null;
   }, [selectedSlide, state.selectedColumnId]);
+
+  const selectedBoard = useMemo(() => {
+    if (!selectedSlide || !state.selectedBoardId) return null;
+    return selectedSlide.boards.find((b) => b.id === state.selectedBoardId) || null;
+  }, [selectedSlide, state.selectedBoardId]);
 
   const updateElement = useCallback(
     (updated: SlideElementDnDItemProps) => {
@@ -149,6 +201,19 @@ export default function LessonEditor() {
           ...slide,
           columnMap: { ...slide.columnMap, [updated.columnId]: updated },
         }),
+      });
+    },
+    [state.selectedSlideId, dispatch]
+  );
+
+  const updateBoard = useCallback(
+    (updated: BoardRow) => {
+      if (!state.selectedSlideId) return;
+      dispatch({
+        type: "updateBoard",
+        slideId: state.selectedSlideId,
+        boardId: updated.id,
+        updater: () => updated,
       });
     },
     [state.selectedSlideId, dispatch]
@@ -402,6 +467,8 @@ export default function LessonEditor() {
                 onSelectColumn={(id) =>
                   dispatch({ type: "selectColumn", id })
                 }
+                selectedBoardId={state.selectedBoardId}
+                onSelectBoard={(id) => dispatch({ type: "selectBoard", id })}
               />
             </Box>
             <Box
@@ -432,6 +499,9 @@ export default function LessonEditor() {
                   column={selectedColumn}
                   onChange={updateColumn}
                 />
+              )}
+              {selectedBoard && (
+                <BoardAttributesPane board={selectedBoard} onChange={updateBoard} />
               )}
             </Box>
           </Grid>
