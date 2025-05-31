@@ -15,6 +15,7 @@ import { AbstractBaseEntity } from 'src/common/base.entity';
 import { EducatorProfileEntity } from '../../user-profiles/educator-profile/educator-profile.entity';
 import { YearGroupEntity } from '../year-group/year-group.entity';
 import { TopicEntity } from '../topic/topic.entity';
+import { SubjectEntity } from '../subject/subject.entity';
 import { EducatorProfileDto } from '../../user-profiles/educator-profile/dto/educator-profile.dto';
 import { MultipleChoiceQuestionEntity } from '../multiple-choice-question/multiple-choice-question.entity';
 import { QuizEntity } from '../quiz/quiz.entity';
@@ -39,6 +40,10 @@ export class LessonEntity extends AbstractBaseEntity {
   @Field(() => TopicEntity, { nullable: false })
   @ManyToOne(() => TopicEntity, (topic) => topic.lessons, { nullable: false })
   topic?: TopicEntity;
+
+  @Field(() => SubjectEntity, { nullable: false })
+  @ManyToOne(() => SubjectEntity, (subject) => subject.lessons, { nullable: false })
+  subject!: SubjectEntity;
 
   @Field(() => [YearGroupEntity], { nullable: true })
   @ManyToMany(() => YearGroupEntity, { nullable: true })
