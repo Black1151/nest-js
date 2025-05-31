@@ -7,6 +7,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { AbstractBaseEntity } from 'src/common/base.entity';
 import { YearGroupEntity } from '../year-group/year-group.entity';
 import { TopicEntity } from '../topic/topic.entity';
+import { LessonEntity } from '../lesson/lesson.entity';
 
 @ObjectType()
 @Entity('subjects')
@@ -20,6 +21,10 @@ export class SubjectEntity extends AbstractBaseEntity {
   @Field(() => [TopicEntity], { nullable: true })
   @OneToMany(() => TopicEntity, (topic) => topic.subject)
   topics?: TopicEntity[];
+
+  @Field(() => [LessonEntity], { nullable: true })
+  @OneToMany(() => LessonEntity, (lesson) => lesson.subject)
+  lessons?: LessonEntity[];
 
   @Field(() => [YearGroupEntity], { nullable: true })
   @ManyToMany(() => YearGroupEntity, (yg) => yg.subjects, {
