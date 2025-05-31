@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Button, Stack } from "@chakra-ui/react";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap } from "@/components/DnD/types";
+import type { ElementWrapperStyles } from "./ElementWrapper";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import {
   draggable,
@@ -22,6 +23,7 @@ import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hi
 export interface SlideBoard {
   id: string;
   orderedColumnIds: string[];
+  wrapperStyles?: ElementWrapperStyles;
 }
 
 export interface Slide {
@@ -61,7 +63,24 @@ export const createInitialBoard = (): {
         items: [],
       },
     },
-    boards: [{ id: boardId, orderedColumnIds: [columnId] }],
+    boards: [
+      {
+        id: boardId,
+        orderedColumnIds: [columnId],
+        wrapperStyles: {
+          bgColor: "#ffffff",
+          bgOpacity: 0,
+          dropShadow: "none",
+          paddingX: 0,
+          paddingY: 0,
+          marginX: 0,
+          marginY: 0,
+          borderColor: "#000000",
+          borderWidth: 0,
+          borderRadius: "none",
+        },
+      },
+    ],
   };
 };
 
