@@ -18,6 +18,7 @@ import {
   VStack,
   Icon,
 } from "@chakra-ui/react";
+import { availableFonts } from "@/theme/fonts";
 import { Trash2 } from "lucide-react";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { useEffect, useState } from "react";
@@ -38,7 +39,7 @@ export default function ElementAttributesPane({
   const [color, setColor] = useState(element.styles?.color || "#000000");
   const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
   const [fontFamily, setFontFamily] = useState(
-    element.styles?.fontFamily || "Arial"
+    element.styles?.fontFamily || availableFonts[0].fontFamily
   );
   const [fontWeight, setFontWeight] = useState(
     element.styles?.fontWeight || "normal"
@@ -90,7 +91,7 @@ export default function ElementAttributesPane({
   useEffect(() => {
     setColor(element.styles?.color || "#000000");
     setFontSize(element.styles?.fontSize || "16px");
-    setFontFamily(element.styles?.fontFamily || "Arial");
+    setFontFamily(element.styles?.fontFamily || availableFonts[0].fontFamily);
     setFontWeight(element.styles?.fontWeight || "normal");
     setLineHeight(element.styles?.lineHeight || "1.2");
     setTextAlign(element.styles?.textAlign || "left");
@@ -408,11 +409,11 @@ export default function ElementAttributesPane({
                   value={fontFamily}
                   onChange={(e) => setFontFamily(e.target.value)}
                 >
-                  <option value="Arial">Arial</option>
-                  <option value="Helvetica">Helvetica</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <option value="Georgia">Georgia</option>
-                  <option value="Courier New">Courier New</option>
+                  {availableFonts.map((f) => (
+                    <option key={f.fontFamily} value={f.fontFamily}>
+                      {f.label}
+                    </option>
+                  ))}
                 </Select>
               </FormControl>
               <FormControl display="flex" alignItems="center">
