@@ -109,6 +109,7 @@ const AVAILABLE_ELEMENTS = [
   { type: "table", label: "Table" },
   { type: "image", label: "Image" },
   { type: "video", label: "Video" },
+  { type: "quiz", label: "Quiz" },
 ];
 
 export default function LessonEditor() {
@@ -308,6 +309,12 @@ export default function LessonEditor() {
                 }
               : type === "video"
               ? { url: "" }
+              : type === "quiz"
+              ? {
+                  title: "Untitled Quiz",
+                  description: "",
+                  questions: [],
+                }
               : {}),
             wrapperStyles: {
               bgColor: "#ffffff",
