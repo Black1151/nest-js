@@ -6,7 +6,7 @@ import SlideElementsBoard from "./SlideElementsBoard";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
-import { ContentCard } from "../layout/Card";
+import type { ElementWrapperStyles } from "./ElementWrapper";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
@@ -15,6 +15,7 @@ import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types";
 export interface BoardRow {
   id: string;
   orderedColumnIds: string[];
+  wrapperStyles?: ElementWrapperStyles;
 }
 
 interface SlideElementsContainerProps {
@@ -29,6 +30,8 @@ interface SlideElementsContainerProps {
   dropIndicator?: { columnId: string; index: number } | null;
   selectedColumnId?: string | null;
   onSelectColumn?: (id: string) => void;
+  selectedBoardId?: string | null;
+  onSelectBoard?: (id: string) => void;
 }
 
 const COLUMN_COLORS = [
@@ -49,6 +52,8 @@ export default function SlideElementsContainer({
   dropIndicator,
   selectedColumnId,
   onSelectColumn,
+  selectedBoardId,
+  onSelectBoard,
 }: SlideElementsContainerProps) {
   const instanceId = useRef(Symbol("slide-container"));
   const registry = useRef(createRegistry());
@@ -84,7 +89,22 @@ export default function SlideElementsContainer({
 
     onChange({ ...columnMap, [columnId]: newColumn }, [
       ...boards,
-      { id: boardId, orderedColumnIds: [columnId] },
+      {
+        id: boardId,
+        orderedColumnIds: [columnId],
+        wrapperStyles: {
+          bgColor: "#ffffff",
+          bgOpacity: 0,
+          dropShadow: "none",
+          paddingX: 0,
+          paddingY: 0,
+          marginX: 0,
+          marginY: 0,
+          borderColor: "#000000",
+          borderWidth: 0,
+          borderRadius: "none",
+        },
+      },
     ]);
   };
 
@@ -204,21 +224,24 @@ export default function SlideElementsContainer({
         Add Container
       </Button>
       {boards.map((b) => (
-        <ContentCard minHeight={400} key={b.id}>
-          <SlideElementsBoard
-            columnMap={columnMap}
-            orderedColumnIds={b.orderedColumnIds}
-            onChange={(map, ids) => updateBoard(b.id, map, ids)}
-            registry={registry.current}
-            instanceId={instanceId.current}
-            selectedElementId={selectedElementId}
-            onSelectElement={onSelectElement}
-            dropIndicator={dropIndicator}
-            onRemoveBoard={() => removeBoard(b.id)}
-            selectedColumnId={selectedColumnId}
-            onSelectColumn={onSelectColumn}
-          />
-        </ContentCard>
+        <SlideElementsBoard
+          key={b.id}
+          boardId={b.id}
+          wrapperStyles={b.wrapperStyles}
+          columnMap={columnMap}
+          orderedColumnIds={b.orderedColumnIds}
+          onChange={(map, ids) => updateBoard(b.id, map, ids)}
+          registry={registry.current}
+          instanceId={instanceId.current}
+          selectedElementId={selectedElementId}
+          onSelectElement={onSelectElement}
+          dropIndicator={dropIndicator}
+          onRemoveBoard={() => removeBoard(b.id)}
+          selectedColumnId={selectedColumnId}
+          onSelectColumn={onSelectColumn}
+          isSelected={selectedBoardId === b.id}
+          onSelectBoard={() => onSelectBoard?.(b.id)}
+        />
       ))}
       <ConfirmationModal
         isOpen={boardIdToDelete !== null}
