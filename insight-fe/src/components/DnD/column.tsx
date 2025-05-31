@@ -31,12 +31,22 @@ import { ColumnContext, type ColumnContextProps } from "./ColumnContext";
 import type { BaseCardDnD, ColumnType } from "./types";
 import { LoadingSpinnerCard } from "../loading/LoadingSpinnerCard";
 
+// Helper to convert hex colors with optional opacity
+const hexToRgba = (hex: string, opacity: number) => {
+  const sanitized = hex.replace("#", "");
+  const bigint = parseInt(sanitized, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
+
 // ------------------------------------------------------------------
 //  Static style objects
 // ------------------------------------------------------------------
 const columnBaseStyles = {
   width: "100%",
-  backgroundColor: "gray.100",
+  backgroundColor: "transparent",
   borderRadius: "md",
   position: "relative",
   transition: "background 200ms ease-in-out",
@@ -285,7 +295,12 @@ function ColumnBase<TCard extends BaseCardDnD>({
     ...columnBaseStyles,
     ...(column.wrapperStyles
       ? {
-          bg: column.wrapperStyles.bgColor,
+          bg: column.wrapperStyles.bgColor
+            ? hexToRgba(
+                column.wrapperStyles.bgColor,
+                column.wrapperStyles.bgOpacity ?? 0,
+              )
+            : undefined,
           boxShadow: column.wrapperStyles.dropShadow,
           px: column.wrapperStyles.paddingX,
           py: column.wrapperStyles.paddingY,
