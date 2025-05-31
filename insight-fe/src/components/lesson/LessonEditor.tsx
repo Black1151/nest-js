@@ -1,7 +1,21 @@
 "use client";
 
-import { Flex, Box, Text, Grid, HStack } from "@chakra-ui/react";
-import { useCallback, useReducer, useMemo } from "react";
+import {
+  Flex,
+  Box,
+  Text,
+  Grid,
+  HStack,
+  Select,
+  Input,
+  Textarea,
+  FormControl,
+  FormLabel,
+} from "@chakra-ui/react";
+import { useCallback, useReducer, useMemo, useState } from "react";
+import { useQuery } from "@apollo/client";
+import { typedGql } from "@/zeus/typedDocumentNode";
+import { $ } from "@/zeus";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -11,6 +25,33 @@ import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
+
+/* -------------------------------------------------------------------------- */
+/* GraphQL documents                                                          */
+/* -------------------------------------------------------------------------- */
+const GET_ALL_YEAR_GROUPS = typedGql("query")({
+  getAllYearGroup: [
+    { data: $("data", "FindAllInput!") },
+    { id: true, year: true },
+  ],
+} as const);
+
+const GET_SUBJECTS_FOR_YEAR_GROUP = typedGql("query")({
+  getYearGroup: [
+    { data: $("data", "IdInput!") },
+    {
+      id: true,
+      subjects: { id: true, name: true },
+    },
+  ],
+} as const);
+
+const GET_TOPICS_BY_YEAR_SUBJECT = typedGql("query")({
+  topicsByYearAndSubject: [
+    { input: $("input", "TopicByYearSubjectInput!") },
+    { id: true, name: true },
+  ],
+} as const);
 
 interface LessonState {
   slides: Slide[];
@@ -114,6 +155,41 @@ const AVAILABLE_ELEMENTS = [
 ];
 
 export default function LessonEditor() {
+  const [yearGroupId, setYearGroupId] = useState<string | null>(null);
+  const [subjectId, setSubjectId] = useState<string | null>(null);
+  const [topicId, setTopicId] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  const { data: yearData, loading: loadingYears } = useQuery(GET_ALL_YEAR_GROUPS, {
+    variables: { data: { all: true } },
+  });
+  const yearGroups = yearData?.getAllYearGroup ?? [];
+
+  const { data: subjectData, loading: loadingSubjects } = useQuery(
+    GET_SUBJECTS_FOR_YEAR_GROUP,
+    {
+      skip: yearGroupId === null,
+      variables:
+        yearGroupId !== null
+          ? { data: { id: Number(yearGroupId), relations: ["subjects"] } }
+          : undefined,
+    }
+  );
+  const subjects = yearGroupId !== null ? subjectData?.getYearGroup?.subjects ?? [] : [];
+
+  const { data: topicData, loading: loadingTopics } = useQuery(
+    GET_TOPICS_BY_YEAR_SUBJECT,
+    {
+      skip: !(yearGroupId && subjectId),
+      variables:
+        yearGroupId && subjectId
+          ? { input: { yearGroupId, subjectId } }
+          : undefined,
+    }
+  );
+  const topics = yearGroupId && subjectId ? topicData?.topicsByYearAndSubject ?? [] : [];
+
   const initialSlide = {
     id: crypto.randomUUID(),
     title: "Slide 1",
@@ -424,6 +500,81 @@ export default function LessonEditor() {
 
   return (
     <Box>
+      <Box mb={4}>
+        <Grid templateColumns="repeat(3, 1fr)" gap={4} mb={4}>
+          <FormControl>
+            <FormLabel>Year</FormLabel>
+            <Select
+              value={yearGroupId ?? ""}
+              onChange={(e) => {
+                setYearGroupId(e.target.value || null);
+                setSubjectId(null);
+                setTopicId(null);
+              }}
+            >
+              {loadingYears && <option value="">Loading...</option>}
+              {!loadingYears && <option value="">─ select ─</option>}
+              {yearGroups.map((yg: any) => (
+                <option key={yg.id} value={String(yg.id)}>
+                  {yg.year}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Subject</FormLabel>
+            <Select
+              value={subjectId ?? ""}
+              onChange={(e) => {
+                setSubjectId(e.target.value || null);
+                setTopicId(null);
+              }}
+              isDisabled={yearGroupId === null}
+            >
+              {loadingSubjects && <option value="">Loading...</option>}
+              {!loadingSubjects && <option value="">─ select ─</option>}
+              {subjects.map((s: any) => (
+                <option key={s.id} value={String(s.id)}>
+                  {s.name}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Topic</FormLabel>
+            <Select
+              value={topicId ?? ""}
+              onChange={(e) => setTopicId(e.target.value || null)}
+              isDisabled={!(yearGroupId && subjectId)}
+            >
+              {loadingTopics && <option value="">Loading...</option>}
+              {!loadingTopics && <option value="">─ select ─</option>}
+              {topics.map((t: any) => (
+                <option key={t.id} value={String(t.id)}>
+                  {t.name}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid templateColumns="1fr 1fr" gap={4}>
+          <FormControl>
+            <FormLabel>Title</FormLabel>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Description</FormLabel>
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </FormControl>
+        </Grid>
+      </Box>
+
       <Box p={4} borderWidth="1px" borderRadius="md">
         <HStack>
           {AVAILABLE_ELEMENTS.map((el) => (
