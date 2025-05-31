@@ -39,6 +39,7 @@ export type ColumnType<TCard extends BaseCardDnD> = {
   items: TCard[];
   styles?: ColumnStyles;
   wrapperStyles?: ElementWrapperStyles;
+  spacing?: number;
   sortBy?: (item: TCard) => string;
   sortDirection?: "asc" | "desc" | "none";
 };

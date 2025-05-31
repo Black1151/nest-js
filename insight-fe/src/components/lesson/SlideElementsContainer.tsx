@@ -16,6 +16,7 @@ export interface BoardRow {
   id: string;
   orderedColumnIds: string[];
   wrapperStyles?: ElementWrapperStyles;
+  spacing?: number;
 }
 
 interface SlideElementsContainerProps {
@@ -85,6 +86,7 @@ export default function SlideElementsContainer({
         borderRadius: "none",
       },
       items: [],
+      spacing: 0,
     };
 
     onChange({ ...columnMap, [columnId]: newColumn }, [
@@ -104,6 +106,7 @@ export default function SlideElementsContainer({
           borderWidth: 0,
           borderRadius: "none",
         },
+        spacing: 0,
       },
     ]);
   };
@@ -228,6 +231,7 @@ export default function SlideElementsContainer({
           key={b.id}
           boardId={b.id}
           wrapperStyles={b.wrapperStyles}
+          spacing={b.spacing}
           columnMap={columnMap}
           orderedColumnIds={b.orderedColumnIds}
           onChange={(map, ids) => updateBoard(b.id, map, ids)}

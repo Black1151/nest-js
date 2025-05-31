@@ -34,6 +34,7 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
   const [borderColor, setBorderColor] = useState(board.wrapperStyles?.borderColor || "#000000");
   const [borderWidth, setBorderWidth] = useState(board.wrapperStyles?.borderWidth ?? 0);
   const [borderRadius, setBorderRadius] = useState(board.wrapperStyles?.borderRadius || "none");
+  const [spacing, setSpacing] = useState(board.spacing ?? 0);
 
   useEffect(() => {
     setBgColor(board.wrapperStyles?.bgColor || "#ffffff");
@@ -46,6 +47,7 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
     setBorderColor(board.wrapperStyles?.borderColor || "#000000");
     setBorderWidth(board.wrapperStyles?.borderWidth ?? 0);
     setBorderRadius(board.wrapperStyles?.borderRadius || "none");
+    setSpacing(board.spacing ?? 0);
   }, [board.id]);
 
   useEffect(() => {
@@ -63,8 +65,9 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
         borderWidth,
         borderRadius,
       },
+      spacing,
     });
-  }, [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius]);
+  }, [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing]);
 
   return (
     <Accordion allowMultiple>
@@ -125,6 +128,10 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
                 </FormControl>
               </HStack>
             </Box>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Spacing</FormLabel>
+              <Input size="sm" type="number" w="60px" value={spacing} onChange={(e) => setSpacing(parseInt(e.target.value))} />
+            </FormControl>
           </Stack>
         </AccordionPanel>
       </AccordionItem>
