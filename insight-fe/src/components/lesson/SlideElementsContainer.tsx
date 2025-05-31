@@ -15,6 +15,8 @@ import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types";
 export interface BoardRow {
   id: string;
   orderedColumnIds: string[];
+  /** Gap between columns in this container */
+  spacing?: number;
 }
 
 interface SlideElementsContainerProps {
@@ -84,19 +86,20 @@ export default function SlideElementsContainer({
 
     onChange({ ...columnMap, [columnId]: newColumn }, [
       ...boards,
-      { id: boardId, orderedColumnIds: [columnId] },
+      { id: boardId, orderedColumnIds: [columnId], spacing: 2 },
     ]);
   };
 
   const updateBoard = (
     boardId: string,
     map: ColumnMap<SlideElementDnDItemProps>,
-    ids: string[]
+    ids: string[],
+    spacing?: number
   ) => {
     onChange(
       map,
       boards.map((b) =>
-        b.id === boardId ? { ...b, orderedColumnIds: ids } : b
+        b.id === boardId ? { ...b, orderedColumnIds: ids, spacing } : b
       )
     );
   };
@@ -208,15 +211,17 @@ export default function SlideElementsContainer({
           <SlideElementsBoard
             columnMap={columnMap}
             orderedColumnIds={b.orderedColumnIds}
-            onChange={(map, ids) => updateBoard(b.id, map, ids)}
+            onChange={(map, ids) => updateBoard(b.id, map, ids, b.spacing)}
             registry={registry.current}
             instanceId={instanceId.current}
+            spacing={b.spacing}
             selectedElementId={selectedElementId}
             onSelectElement={onSelectElement}
             dropIndicator={dropIndicator}
             onRemoveBoard={() => removeBoard(b.id)}
             selectedColumnId={selectedColumnId}
             onSelectColumn={onSelectColumn}
+            onSpacingChange={(val) => updateBoard(b.id, columnMap, b.orderedColumnIds, val)}
           />
         </ContentCard>
       ))}

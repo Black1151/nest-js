@@ -58,10 +58,11 @@ export const createInitialBoard = (): {
           borderWidth: 0,
           borderRadius: "none",
         },
+        spacing: 2,
         items: [],
       },
     },
-    boards: [{ id: boardId, orderedColumnIds: [columnId] }],
+    boards: [{ id: boardId, orderedColumnIds: [columnId], spacing: 2 }],
   };
 };
 

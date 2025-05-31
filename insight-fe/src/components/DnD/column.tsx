@@ -359,6 +359,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
               <Stack
                 flexGrow={1}
                 sx={{ ...cardListStyles, ...(column.styles?.cardList ?? {}) }}
+                spacing={column.spacing ?? 2}
               >
                 {isLoading ? (
                   <LoadingSpinnerCard />

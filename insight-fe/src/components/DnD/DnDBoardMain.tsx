@@ -89,6 +89,8 @@ export interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   externalDropIndicator?: { columnId: string; index: number } | null;
   selectedColumnId?: string | null;
   onSelectColumn?: (columnId: string) => void;
+  /** Gap between columns */
+  columnSpacing?: number;
   /** Optional shared instance id for cross-board drag */
   instanceId?: symbol;
   /** Optional shared registry for cross-board drag */
@@ -119,6 +121,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   onSelectColumn,
   instanceId: instanceIdProp,
   registry: registryProp,
+  columnSpacing = 2,
   controlled = false,
 }: DnDBoardMainProps<TCard>) => {
   /* -----------------------------------------------------------------------
@@ -600,7 +603,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         flex={1}
         justifyContent="space-between"
       >
-        <Board>
+        <Board spacing={columnSpacing}>
           {renderedBoard.orderedColumnIds.map((columnId) => (
             <Column
               key={columnId}

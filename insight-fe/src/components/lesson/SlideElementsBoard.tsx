@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, HStack, Text } from "@chakra-ui/react";
+import { Box, Button, HStack, Input } from "@chakra-ui/react";
 import { useState } from "react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
@@ -22,12 +22,14 @@ interface SlideElementsBoardProps {
   ) => void;
   registry: ReturnType<typeof createRegistry>;
   instanceId: symbol;
+  spacing?: number;
   selectedElementId?: string | null;
   onSelectElement?: (id: string) => void;
   dropIndicator?: { columnId: string; index: number } | null;
   onRemoveBoard?: () => void;
   selectedColumnId?: string | null;
   onSelectColumn?: (id: string) => void;
+  onSpacingChange?: (value: number) => void;
 }
 
 const COLUMN_COLORS = [
@@ -45,12 +47,14 @@ export default function SlideElementsBoard({
   onChange,
   registry,
   instanceId,
+  spacing = 2,
   selectedElementId,
   onSelectElement,
   dropIndicator,
   onRemoveBoard,
   selectedColumnId,
   onSelectColumn,
+  onSpacingChange,
 }: SlideElementsBoardProps) {
   /* ------------------------------------------------------------------ */
   /*  Column helpers                                                     */
@@ -148,9 +152,20 @@ export default function SlideElementsBoard({
             Delete Container
           </Button>
         )}
-        <Button size="sm" colorScheme="teal" onClick={addColumn}>
-          Add Column
-        </Button>
+        <HStack>
+          <Button size="sm" colorScheme="teal" onClick={addColumn}>
+            Add Column
+          </Button>
+          {onSpacingChange && (
+            <Input
+              size="xs"
+              type="number"
+              width="60px"
+              value={spacing}
+              onChange={(e) => onSpacingChange(parseInt(e.target.value))}
+            />
+          )}
+        </HStack>
       </HStack>
 
       <ContentCard height={700}>
@@ -159,6 +174,7 @@ export default function SlideElementsBoard({
           columnMap={columnMap}
           orderedColumnIds={orderedColumnIds}
           CardComponent={CardWrapper}
+          columnSpacing={spacing}
           onChange={(b) => onChange(b.columnMap, b.orderedColumnIds)}
           onRemoveColumn={removeColumn}
           externalDropIndicator={dropIndicator}
