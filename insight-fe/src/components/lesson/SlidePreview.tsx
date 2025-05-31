@@ -16,28 +16,29 @@ export default function SlidePreview({ columnMap, boards }: SlidePreviewProps) {
   return (
     <Stack gap={4}>
       {boards.map((board) => (
-        <Box
-          key={board.id}
-          display="grid"
-          gridTemplateColumns={`repeat(${board.orderedColumnIds.length}, 1fr)`}
-          gap={4}
-        >
-          {board.orderedColumnIds.map((colId) => {
-            const column = columnMap[colId];
-            if (!column) return null;
-            return (
-              <ElementWrapper key={colId} styles={column.wrapperStyles} data-column-id={colId}>
-                <Stack gap={2}>
-                  {column.items.map((item) => (
-                    <Box key={item.id} mb={2} data-card-id={item.id}>
-                      <SlideElementRenderer item={item} />
-                    </Box>
-                  ))}
-                </Stack>
-              </ElementWrapper>
-            );
-          })}
-        </Box>
+        <ElementWrapper key={board.id} styles={board.wrapperStyles} data-board-id={board.id}>
+          <Box
+            display="grid"
+            gridTemplateColumns={`repeat(${board.orderedColumnIds.length}, 1fr)`}
+            gap={4}
+          >
+            {board.orderedColumnIds.map((colId) => {
+              const column = columnMap[colId];
+              if (!column) return null;
+              return (
+                <ElementWrapper key={colId} styles={column.wrapperStyles} data-column-id={colId}>
+                  <Stack gap={2}>
+                    {column.items.map((item) => (
+                      <Box key={item.id} mb={2} data-card-id={item.id}>
+                        <SlideElementRenderer item={item} />
+                      </Box>
+                    ))}
+                  </Stack>
+                </ElementWrapper>
+              );
+            })}
+          </Box>
+        </ElementWrapper>
       ))}
     </Stack>
   );
