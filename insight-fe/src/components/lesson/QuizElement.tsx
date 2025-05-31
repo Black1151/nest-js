@@ -14,6 +14,8 @@ interface QuizElementProps {
   description?: string;
   questions: MultipleChoiceQuestion[];
   wrapperStyles?: ElementWrapperStyles;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 
 export default function QuizElement({
@@ -21,6 +23,8 @@ export default function QuizElement({
   description,
   questions,
   wrapperStyles,
+  isSelected,
+  onSelect,
 }: QuizElementProps) {
   const [current, setCurrent] = useState(0);
   const [choice, setChoice] = useState("");
@@ -47,7 +51,13 @@ export default function QuizElement({
   const finished = results.length === questions.length;
 
   return (
-    <ElementWrapper styles={wrapperStyles} data-testid="quiz-element">
+    <ElementWrapper
+      styles={wrapperStyles}
+      data-testid="quiz-element"
+      borderColor={isSelected ? "blue.300" : undefined}
+      borderWidth={isSelected ? 2 : undefined}
+      onClick={onSelect}
+    >
       <Stack spacing={4}>
         <Box>
           <Text fontWeight="bold">{title}</Text>

@@ -1,9 +1,9 @@
 "use client";
 
 import { Button, Stack, HStack } from "@chakra-ui/react";
-import { useRef, useEffect, useState } from "react";
-import SlideElementsBoard from "./SlideElementsBoard";
-import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+import React, { useRef, useEffect, useState } from "react";
+import SlideElementsBoard, { SlideCardComponentProps } from "./SlideElementsBoard";
+import { SlideElementDnDItemProps, SlideElementDnDItem } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 import type { ElementWrapperStyles } from "./ElementWrapper";
@@ -33,6 +33,7 @@ interface SlideElementsContainerProps {
   onSelectColumn?: (id: string) => void;
   selectedBoardId?: string | null;
   onSelectBoard?: (id: string) => void;
+  CardComponent?: React.ComponentType<SlideCardComponentProps>;
 }
 
 const COLUMN_COLORS = [
@@ -55,6 +56,7 @@ export default function SlideElementsContainer({
   onSelectColumn,
   selectedBoardId,
   onSelectBoard,
+  CardComponent = SlideElementDnDItem,
 }: SlideElementsContainerProps) {
   const instanceId = useRef(Symbol("slide-container"));
   const registry = useRef(createRegistry());
@@ -245,6 +247,7 @@ export default function SlideElementsContainer({
           onSelectColumn={onSelectColumn}
           isSelected={selectedBoardId === b.id}
           onSelectBoard={() => onSelectBoard?.(b.id)}
+          CardComponent={CardComponent}
         />
       ))}
       <ConfirmationModal

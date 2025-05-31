@@ -14,6 +14,14 @@ import ElementWrapper, { ElementWrapperStyles } from "./ElementWrapper";
 import { useCallback } from "react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
+import React from "react";
+
+export interface SlideCardComponentProps {
+  item: SlideElementDnDItemProps;
+  onSelect?: () => void;
+  isSelected?: boolean;
+}
+
 interface SlideElementsBoardProps {
   boardId: string;
   wrapperStyles?: ElementWrapperStyles;
@@ -34,6 +42,7 @@ interface SlideElementsBoardProps {
   onSelectColumn?: (id: string) => void;
   isSelected?: boolean;
   onSelectBoard?: () => void;
+  CardComponent?: React.ComponentType<SlideCardComponentProps>;
 }
 
 const COLUMN_COLORS = [
@@ -62,6 +71,7 @@ export default function SlideElementsBoard({
   onSelectColumn,
   isSelected,
   onSelectBoard,
+  CardComponent = SlideElementDnDItem,
 }: SlideElementsBoardProps) {
   /* ------------------------------------------------------------------ */
   /*  Column helpers                                                     */
@@ -140,13 +150,13 @@ export default function SlideElementsBoard({
 
   const CardWrapper = useCallback(
     ({ item }: { item: SlideElementDnDItemProps }) => (
-      <SlideElementDnDItem
+      <CardComponent
         item={item}
         onSelect={() => onSelectElement?.(item.id)}
         isSelected={selectedElementId === item.id}
       />
     ),
-    [selectedElementId, onSelectElement]
+    [selectedElementId, onSelectElement, CardComponent]
   );
 
   /* ------------------------------------------------------------------ */

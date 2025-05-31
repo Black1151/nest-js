@@ -3,11 +3,11 @@
 import { Flex, Box, Text, Grid, HStack } from "@chakra-ui/react";
 import { useCallback, useReducer, useMemo } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
-import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
+import { BoardRow } from "./SlideElementsContainer";
+import WysiwygSlideBoard from "./WysiwygSlideBoard";
 import ElementAttributesPane from "./ElementAttributesPane";
 import ColumnAttributesPane from "./ColumnAttributesPane";
 import BoardAttributesPane from "./BoardAttributesPane";
-import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
@@ -462,8 +462,8 @@ export default function LessonEditor() {
               }
               onDrop={handleDropElement}
             >
-              <Text mb={2}>Slide Elements</Text>
-              <SlideElementsContainer
+              <Text mb={2}>Slide Preview</Text>
+              <WysiwygSlideBoard
                 columnMap={selectedSlide!.columnMap}
                 boards={selectedSlide!.boards}
                 onChange={(columnMap, boards) =>
@@ -484,18 +484,6 @@ export default function LessonEditor() {
                 }
                 selectedBoardId={state.selectedBoardId}
                 onSelectBoard={(id) => dispatch({ type: "selectBoard", id })}
-              />
-            </Box>
-            <Box
-              p={4}
-              borderWidth="1px"
-              borderRadius="md"
-              minW="300px"
-              bgColor="white"
-            >
-              <SlidePreview
-                columnMap={selectedSlide!.columnMap}
-                boards={selectedSlide!.boards}
               />
             </Box>
 

@@ -6,18 +6,36 @@ import ImageElement from "./ImageElement";
 import VideoElement from "./VideoElement";
 import QuizElement from "./QuizElement";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+import React from "react";
 
 interface SlideElementRendererProps {
   item: SlideElementDnDItemProps;
+  onSelect?: () => void;
+  isSelected?: boolean;
+  onChange?: (item: SlideElementDnDItemProps) => void;
 }
 
 export default function SlideElementRenderer({
   item,
+  onSelect,
+  isSelected,
+  onChange,
 }: SlideElementRendererProps) {
   if (item.type === "text") {
     return (
-      <ElementWrapper styles={item.wrapperStyles} data-testid="text-element">
+      <ElementWrapper
+        styles={item.wrapperStyles}
+        data-testid="text-element"
+        borderColor={isSelected ? "blue.300" : undefined}
+        borderWidth={isSelected ? 2 : undefined}
+        onClick={onSelect}
+      >
         <Text
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) =>
+            onChange?.({ ...item, text: e.currentTarget.textContent || "" })
+          }
           color={item.styles?.color}
           fontSize={item.styles?.fontSize}
           fontFamily={item.styles?.fontFamily}
@@ -54,13 +72,25 @@ export default function SlideElementRenderer({
 
   if (item.type === "image") {
     return (
-      <ImageElement src={item.src || ""} wrapperStyles={item.wrapperStyles} />
+      <ImageElement
+        src={item.src || ""}
+        wrapperStyles={item.wrapperStyles}
+        isSelected={isSelected}
+        onSelect={onSelect}
+        onChange={(src) => onChange?.({ ...item, src })}
+      />
     );
   }
 
   if (item.type === "video") {
     return (
-      <VideoElement url={item.url || ""} wrapperStyles={item.wrapperStyles} />
+      <VideoElement
+        url={item.url || ""}
+        wrapperStyles={item.wrapperStyles}
+        isSelected={isSelected}
+        onSelect={onSelect}
+        onChange={(url) => onChange?.({ ...item, url })}
+      />
     );
   }
 
@@ -71,12 +101,20 @@ export default function SlideElementRenderer({
         description={item.description}
         questions={item.questions || []}
         wrapperStyles={item.wrapperStyles}
+        isSelected={isSelected}
+        onSelect={onSelect}
       />
     );
   }
 
   return (
-    <ElementWrapper styles={item.wrapperStyles} data-testid="unknown-element">
+    <ElementWrapper
+      styles={item.wrapperStyles}
+      data-testid="unknown-element"
+      borderColor={isSelected ? "blue.300" : undefined}
+      borderWidth={isSelected ? 2 : undefined}
+      onClick={onSelect}
+    >
       <Text fontSize={14} fontWeight="bold">
         {item.type}
       </Text>
