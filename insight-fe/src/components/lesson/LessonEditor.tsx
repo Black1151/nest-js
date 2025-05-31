@@ -1,7 +1,7 @@
 "use client";
 
 import { Flex, Box, Text, Grid, HStack } from "@chakra-ui/react";
-import { useCallback, useReducer, useMemo } from "react";
+import { useCallback, useReducer, useMemo, useEffect } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -113,20 +113,32 @@ const AVAILABLE_ELEMENTS = [
   { type: "quiz", label: "Quiz" },
 ];
 
-export default function LessonEditor() {
-  const initialSlide = {
+export default function LessonEditor({
+  initialSlides,
+}: {
+  initialSlides?: Slide[] | null;
+}) {
+  const defaultSlide = {
     id: crypto.randomUUID(),
     title: "Slide 1",
     ...createInitialBoard(),
   };
+  const slidesInit = initialSlides && initialSlides.length > 0 ? initialSlides : [defaultSlide];
   const [state, dispatch] = useReducer(reducer, {
-    slides: [initialSlide],
-    selectedSlideId: initialSlide.id,
+    slides: slidesInit,
+    selectedSlideId: slidesInit[0].id,
     selectedElementId: null,
     selectedColumnId: null,
     selectedBoardId: null,
     dropIndicator: null,
   });
+
+  useEffect(() => {
+    if (initialSlides && initialSlides.length > 0) {
+      dispatch({ type: 'setSlides', updater: initialSlides });
+      dispatch({ type: 'selectSlide', id: initialSlides[0].id });
+    }
+  }, [initialSlides]);
 
   const setSlides = useCallback(
     (updater: React.SetStateAction<Slide[]>) =>
