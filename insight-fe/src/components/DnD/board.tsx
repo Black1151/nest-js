@@ -5,10 +5,11 @@ import { useBoardContext } from "./BoardContext";
 
 type BoardProps = {
   children: ReactNode;
+  spacing?: number;
 };
 
 const Board = forwardRef<HTMLDivElement, BoardProps>(
-  ({ children }: BoardProps, ref) => {
+  ({ children, spacing = 0 }: BoardProps, ref) => {
     const { instanceId } = useBoardContext();
 
     useEffect(() => {
@@ -23,7 +24,7 @@ const Board = forwardRef<HTMLDivElement, BoardProps>(
         justifyContent="center"
         flexDirection="row"
         ref={ref}
-        gap={2}
+        gap={spacing}
         flex={1}
       >
         {children}

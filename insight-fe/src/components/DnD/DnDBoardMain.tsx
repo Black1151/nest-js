@@ -93,6 +93,8 @@ export interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   instanceId?: symbol;
   /** Optional shared registry for cross-board drag */
   registry?: ReturnType<typeof createRegistry>;
+  /** Spacing between columns */
+  spacing?: number;
   /**
    * When `true` this component is *controlled*:
    *  - It never stores its own copy of the board.
@@ -119,6 +121,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   onSelectColumn,
   instanceId: instanceIdProp,
   registry: registryProp,
+  spacing = 0,
   controlled = false,
 }: DnDBoardMainProps<TCard>) => {
   /* -----------------------------------------------------------------------
@@ -600,7 +603,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
         flex={1}
         justifyContent="space-between"
       >
-        <Board>
+        <Board spacing={spacing}>
           {renderedBoard.orderedColumnIds.map((columnId) => (
             <Column
               key={columnId}

@@ -20,14 +20,14 @@ export default function SlidePreview({ columnMap, boards }: SlidePreviewProps) {
           <Box
             display="grid"
             gridTemplateColumns={`repeat(${board.orderedColumnIds.length}, 1fr)`}
-            gap={4}
+            gap={board.spacing ?? 0}
           >
             {board.orderedColumnIds.map((colId) => {
               const column = columnMap[colId];
               if (!column) return null;
               return (
                 <ElementWrapper key={colId} styles={column.wrapperStyles} data-column-id={colId}>
-                  <Stack gap={2}>
+                  <Stack gap={column.spacing ?? 2}>
                     {column.items.map((item) => (
                       <Box key={item.id} mb={2} data-card-id={item.id}>
                         <SlideElementRenderer item={item} />

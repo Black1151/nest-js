@@ -25,6 +25,7 @@ interface SlideElementsBoardProps {
   ) => void;
   registry: ReturnType<typeof createRegistry>;
   instanceId: symbol;
+  spacing?: number;
   selectedElementId?: string | null;
   onSelectElement?: (id: string) => void;
   dropIndicator?: { columnId: string; index: number } | null;
@@ -52,6 +53,7 @@ export default function SlideElementsBoard({
   onChange,
   registry,
   instanceId,
+  spacing = 0,
   selectedElementId,
   onSelectElement,
   dropIndicator,
@@ -91,6 +93,7 @@ export default function SlideElementsBoard({
         borderRadius: "none",
       },
       items: [],
+      spacing: 0,
     };
 
     onChange(
@@ -181,11 +184,12 @@ export default function SlideElementsBoard({
             onChange={(b) => onChange(b.columnMap, b.orderedColumnIds)}
             onRemoveColumn={removeColumn}
             externalDropIndicator={dropIndicator}
-            selectedColumnId={selectedColumnId}
-            onSelectColumn={onSelectColumn}
-            instanceId={instanceId}
-            registry={registry}
-          />
+          selectedColumnId={selectedColumnId}
+          onSelectColumn={onSelectColumn}
+          instanceId={instanceId}
+          registry={registry}
+          spacing={spacing}
+        />
         </ContentCard>
       </ElementWrapper>
       <ConfirmationModal

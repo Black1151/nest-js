@@ -35,6 +35,7 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
   const [borderColor, setBorderColor] = useState(column.wrapperStyles?.borderColor || "#000000");
   const [borderWidth, setBorderWidth] = useState(column.wrapperStyles?.borderWidth ?? 0);
   const [borderRadius, setBorderRadius] = useState(column.wrapperStyles?.borderRadius || "none");
+  const [spacing, setSpacing] = useState(column.spacing ?? 0);
 
   useEffect(() => {
     setBgColor(column.wrapperStyles?.bgColor || "#ffffff");
@@ -47,6 +48,7 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
     setBorderColor(column.wrapperStyles?.borderColor || "#000000");
     setBorderWidth(column.wrapperStyles?.borderWidth ?? 0);
     setBorderRadius(column.wrapperStyles?.borderRadius || "none");
+    setSpacing(column.spacing ?? 0);
   }, [column.columnId]);
 
   useEffect(() => {
@@ -64,8 +66,9 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
         borderWidth,
         borderRadius,
       },
+      spacing,
     });
-  }, [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius]);
+  }, [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing]);
 
   return (
     <Accordion allowMultiple>
@@ -126,6 +129,10 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
                 </FormControl>
               </HStack>
             </Box>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Spacing</FormLabel>
+              <Input size="sm" type="number" w="60px" value={spacing} onChange={(e) => setSpacing(parseInt(e.target.value))} />
+            </FormControl>
           </Stack>
         </AccordionPanel>
       </AccordionItem>
