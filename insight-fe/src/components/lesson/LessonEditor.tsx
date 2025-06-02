@@ -1,7 +1,14 @@
 "use client";
 
 import { Flex, Box, Text, Grid, HStack, Button } from "@chakra-ui/react";
-import { useCallback, useReducer, useMemo, useState, forwardRef, useImperativeHandle } from "react";
+import {
+  useCallback,
+  useReducer,
+  useMemo,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -95,10 +102,10 @@ function reducer(state: LessonState, action: Action): LessonState {
             ? {
                 ...s,
                 boards: s.boards.map((b) =>
-                  b.id === action.boardId ? action.updater(b) : b,
+                  b.id === action.boardId ? action.updater(b) : b
                 ),
               }
-            : s,
+            : s
         ),
       };
     default:
@@ -118,7 +125,10 @@ export interface LessonEditorHandle {
   getContent: () => { slides: Slide[] };
 }
 
-const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref) {
+const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
+  _,
+  ref
+) {
   const initialSlide = {
     id: crypto.randomUUID(),
     title: "Slide 1",
@@ -133,12 +143,18 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
     dropIndicator: null,
   });
 
-  const [styleCollections, setStyleCollections] = useState<string[]>([]);
+  const [styleCollections, setStyleCollections] = useState<
+    { id: number; name: string }[]
+  >([]);
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
 
-  useImperativeHandle(ref, () => ({
-    getContent: () => ({ slides: state.slides }),
-  }), [state.slides]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      getContent: () => ({ slides: state.slides }),
+    }),
+    [state.slides]
+  );
 
   const setSlides = useCallback(
     (updater: React.SetStateAction<Slide[]>) =>
@@ -170,7 +186,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
 
   const selectedBoard = useMemo(() => {
     if (!selectedSlide || !state.selectedBoardId) return null;
-    return selectedSlide.boards.find((b) => b.id === state.selectedBoardId) || null;
+    return (
+      selectedSlide.boards.find((b) => b.id === state.selectedBoardId) || null
+    );
   }, [selectedSlide, state.selectedBoardId]);
 
   const updateElement = useCallback(
@@ -243,7 +261,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
         for (const board of slide.boards) {
           for (const colId of board.orderedColumnIds) {
             const col = newMap[colId];
-            const idx = col.items.findIndex((i) => i.id === state.selectedElementId);
+            const idx = col.items.findIndex(
+              (i) => i.id === state.selectedElementId
+            );
             if (idx !== -1) {
               const orig = col.items[idx];
               const copy = { ...orig, id: crypto.randomUUID() };
@@ -274,11 +294,16 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
         for (const board of slide.boards) {
           for (const colId of board.orderedColumnIds) {
             const col = newMap[colId];
-            const idx = col.items.findIndex((i) => i.id === state.selectedElementId);
+            const idx = col.items.findIndex(
+              (i) => i.id === state.selectedElementId
+            );
             if (idx !== -1) {
               newMap[colId] = {
                 ...col,
-                items: [...col.items.slice(0, idx), ...col.items.slice(idx + 1)],
+                items: [
+                  ...col.items.slice(0, idx),
+                  ...col.items.slice(idx + 1),
+                ],
               };
               return { ...slide, columnMap: newMap };
             }
@@ -491,9 +516,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
                 }
                 dropIndicator={state.dropIndicator}
                 selectedColumnId={state.selectedColumnId}
-                onSelectColumn={(id) =>
-                  dispatch({ type: "selectColumn", id })
-                }
+                onSelectColumn={(id) => dispatch({ type: "selectColumn", id })}
                 selectedBoardId={state.selectedBoardId}
                 onSelectBoard={(id) => dispatch({ type: "selectBoard", id })}
               />
@@ -533,7 +556,10 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
                 />
               )}
               {selectedBoard && (
-                <BoardAttributesPane board={selectedBoard} onChange={updateBoard} />
+                <BoardAttributesPane
+                  board={selectedBoard}
+                  onChange={updateBoard}
+                />
               )}
             </Box>
           </Grid>
@@ -543,12 +569,21 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
         isOpen={isSaveStyleOpen}
         onClose={() => setIsSaveStyleOpen(false)}
         collections={styleCollections}
+        element={selectedElement?.type || ""}
+        onSave={({ name, collectionId }) => {
+          // Placeholder for backend call using style module
+          console.log("save style", {
+            name,
+            collectionId,
+            config: selectedElement,
+          });
+        }}
         onAddCollection={(name) =>
-          setStyleCollections([...styleCollections, name])
+          setStyleCollections([...styleCollections, { id: Date.now(), name }])
         }
       />
     </Box>
   );
-}
+});
 
 export default LessonEditor;
