@@ -578,8 +578,8 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             config: selectedElement,
           });
         }}
-        onAddCollection={(name) =>
-          setStyleCollections([...styleCollections, { id: Date.now(), name }])
+        onAddCollection={(collection) =>
+          setStyleCollections([...styleCollections, collection])
         }
       />
     </Box>
