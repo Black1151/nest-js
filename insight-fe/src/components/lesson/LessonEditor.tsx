@@ -129,7 +129,9 @@ export default function LessonEditor() {
     dropIndicator: null,
   });
 
-  const [styleCollections, setStyleCollections] = useState<string[]>([]);
+  const [styleCollections, setStyleCollections] = useState<
+    { id: number; name: string }[]
+  >([]);
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
 
   const setSlides = useCallback(
@@ -535,8 +537,16 @@ export default function LessonEditor() {
         isOpen={isSaveStyleOpen}
         onClose={() => setIsSaveStyleOpen(false)}
         collections={styleCollections}
+        element={selectedElement?.type || ""}
+        onSave={({ name, collectionId }) => {
+          // Placeholder for backend call using style module
+          console.log("save style", { name, collectionId, config: selectedElement });
+        }}
         onAddCollection={(name) =>
-          setStyleCollections([...styleCollections, name])
+          setStyleCollections([
+            ...styleCollections,
+            { id: Date.now(), name },
+          ])
         }
       />
     </Box>
