@@ -1,7 +1,7 @@
 "use client";
 
 import { Flex, Box, Text, Grid, HStack, Button } from "@chakra-ui/react";
-import { useCallback, useReducer, useMemo, useState } from "react";
+import { useCallback, useReducer, useMemo, useState, forwardRef, useImperativeHandle } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -114,7 +114,11 @@ const AVAILABLE_ELEMENTS = [
   { type: "quiz", label: "Quiz" },
 ];
 
-export default function LessonEditor() {
+export interface LessonEditorHandle {
+  getContent: () => { slides: Slide[] };
+}
+
+const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref) {
   const initialSlide = {
     id: crypto.randomUUID(),
     title: "Slide 1",
@@ -133,6 +137,10 @@ export default function LessonEditor() {
     { id: number; name: string }[]
   >([]);
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    getContent: () => ({ slides: state.slides }),
+  }), [state.slides]);
 
   const setSlides = useCallback(
     (updater: React.SetStateAction<Slide[]>) =>
@@ -552,3 +560,5 @@ export default function LessonEditor() {
     </Box>
   );
 }
+
+export default LessonEditor;
