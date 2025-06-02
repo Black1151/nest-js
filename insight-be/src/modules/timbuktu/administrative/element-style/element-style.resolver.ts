@@ -27,7 +27,7 @@ const BaseResolver = createBaseResolver<
 
 @Resolver(() => ElementStyleEntity)
 export class ElementStyleResolver extends BaseResolver {
-  constructor(private readonly service: ElementStyleService) {
+  constructor(readonly service: ElementStyleService) {
     super(service);
   }
 }

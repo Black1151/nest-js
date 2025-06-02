@@ -5,7 +5,8 @@ export const AllTypesProps: Record<string,any> = {
 		pagination:"PaginationInput"
 	},
 	CreateAssignmentInput:{
-		dueDate:"DateTime"
+		dueDate:"DateTime",
+		relationIds:"RelationIdsInput"
 	},
 	CreateAssignmentSubmissionInput:{
 		submittedAt:"DateTime"
@@ -16,11 +17,19 @@ export const AllTypesProps: Record<string,any> = {
 	CreateEducatorProfileInput:{
 
 	},
+	CreateElementStyleInput:{
+		relationIds:"RelationIdsInput",
+		styles:"JSONObject",
+		wrapperStyles:"JSONObject"
+	},
 	CreateKeyStageInput:{
 
 	},
 	CreateLessonInput:{
 		content:"JSONObject",
+		relationIds:"RelationIdsInput"
+	},
+	CreateMultipleChoiceQuestionInput:{
 		relationIds:"RelationIdsInput"
 	},
 	CreatePermissionGroupInput:{
@@ -29,11 +38,17 @@ export const AllTypesProps: Record<string,any> = {
 	CreatePermissionInput:{
 
 	},
+	CreateQuizInput:{
+		relationIds:"RelationIdsInput"
+	},
 	CreateRoleInput:{
 
 	},
 	CreateStudentProfileInput:{
 
+	},
+	CreateStyleCollectionInput:{
+		relationIds:"RelationIdsInput"
 	},
 	CreateSubjectInput:{
 		relationIds:"RelationIdsInput"
@@ -85,11 +100,17 @@ export const AllTypesProps: Record<string,any> = {
 		createEducatorProfile:{
 			data:"CreateEducatorProfileInput"
 		},
+		createElementStyle:{
+			data:"CreateElementStyleInput"
+		},
 		createKeyStage:{
 			data:"CreateKeyStageInput"
 		},
 		createLesson:{
 			data:"CreateLessonInput"
+		},
+		createMultipleChoiceQuestion:{
+			data:"CreateMultipleChoiceQuestionInput"
 		},
 		createPermission:{
 			data:"CreatePermissionInput"
@@ -97,11 +118,17 @@ export const AllTypesProps: Record<string,any> = {
 		createPermissionGroup:{
 			data:"CreatePermissionGroupInput"
 		},
+		createQuiz:{
+			data:"CreateQuizInput"
+		},
 		createRole:{
 			data:"CreateRoleInput"
 		},
 		createStudentProfile:{
 			data:"CreateStudentProfileInput"
+		},
+		createStyleCollection:{
+			data:"CreateStyleCollectionInput"
 		},
 		createSubject:{
 			data:"CreateSubjectInput"
@@ -130,10 +157,16 @@ export const AllTypesProps: Record<string,any> = {
 		deleteEducatorProfile:{
 			data:"IdInput"
 		},
+		deleteElementStyle:{
+			data:"IdInput"
+		},
 		deleteKeyStage:{
 			data:"IdInput"
 		},
 		deleteLesson:{
+			data:"IdInput"
+		},
+		deleteMultipleChoiceQuestion:{
 			data:"IdInput"
 		},
 		deletePermission:{
@@ -142,10 +175,16 @@ export const AllTypesProps: Record<string,any> = {
 		deletePermissionGroup:{
 			data:"IdInput"
 		},
+		deleteQuiz:{
+			data:"IdInput"
+		},
 		deleteRole:{
 			data:"IdInput"
 		},
 		deleteStudentProfile:{
+			data:"IdInput"
+		},
+		deleteStyleCollection:{
 			data:"IdInput"
 		},
 		deleteSubject:{
@@ -181,11 +220,17 @@ export const AllTypesProps: Record<string,any> = {
 		updateEducatorProfile:{
 			data:"UpdateEducatorProfileInput"
 		},
+		updateElementStyle:{
+			data:"UpdateElementStyleInput"
+		},
 		updateKeyStage:{
 			data:"UpdateKeyStageInput"
 		},
 		updateLesson:{
 			data:"UpdateLessonInput"
+		},
+		updateMultipleChoiceQuestion:{
+			data:"UpdateMultipleChoiceQuestionInput"
 		},
 		updatePermission:{
 			data:"UpdatePermissionInput"
@@ -199,11 +244,17 @@ export const AllTypesProps: Record<string,any> = {
 		updatePermissionGroupsForRole:{
 			data:"SubmitIdArrayByIdRequestDto"
 		},
+		updateQuiz:{
+			data:"UpdateQuizInput"
+		},
 		updateRole:{
 			data:"UpdateRoleInput"
 		},
 		updateStudentProfile:{
 			data:"UpdateStudentProfileInput"
+		},
+		updateStyleCollection:{
+			data:"UpdateStyleCollectionInput"
 		},
 		updateSubject:{
 			data:"UpdateSubjectInput"
@@ -246,10 +297,16 @@ export const AllTypesProps: Record<string,any> = {
 		getAllEducatorProfile:{
 			data:"FindAllInput"
 		},
+		getAllElementStyle:{
+			data:"FindAllInput"
+		},
 		getAllKeyStage:{
 			data:"FindAllInput"
 		},
 		getAllLesson:{
+			data:"FindAllInput"
+		},
+		getAllMultipleChoiceQuestion:{
 			data:"FindAllInput"
 		},
 		getAllPermission:{
@@ -258,10 +315,16 @@ export const AllTypesProps: Record<string,any> = {
 		getAllPermissionGroup:{
 			data:"FindAllInput"
 		},
+		getAllQuiz:{
+			data:"FindAllInput"
+		},
 		getAllRole:{
 			data:"FindAllInput"
 		},
 		getAllStudentProfile:{
+			data:"FindAllInput"
+		},
+		getAllStyleCollection:{
 			data:"FindAllInput"
 		},
 		getAllSubject:{
@@ -300,6 +363,12 @@ export const AllTypesProps: Record<string,any> = {
 		getEducatorProfileBy:{
 			data:"FindOneByInput"
 		},
+		getElementStyle:{
+			data:"IdInput"
+		},
+		getElementStyleBy:{
+			data:"FindOneByInput"
+		},
 		getKeyStage:{
 			data:"IdInput"
 		},
@@ -310,6 +379,12 @@ export const AllTypesProps: Record<string,any> = {
 			data:"IdInput"
 		},
 		getLessonBy:{
+			data:"FindOneByInput"
+		},
+		getMultipleChoiceQuestion:{
+			data:"IdInput"
+		},
+		getMultipleChoiceQuestionBy:{
 			data:"FindOneByInput"
 		},
 		getPermission:{
@@ -330,6 +405,12 @@ export const AllTypesProps: Record<string,any> = {
 		getPermissionsForGroup:{
 			data:"IdRequestDto"
 		},
+		getQuiz:{
+			data:"IdInput"
+		},
+		getQuizBy:{
+			data:"FindOneByInput"
+		},
 		getRole:{
 			data:"IdInput"
 		},
@@ -343,6 +424,12 @@ export const AllTypesProps: Record<string,any> = {
 			data:"IdInput"
 		},
 		getStudentProfileBy:{
+			data:"FindOneByInput"
+		},
+		getStyleCollection:{
+			data:"IdInput"
+		},
+		getStyleCollectionBy:{
 			data:"FindOneByInput"
 		},
 		getSubject:{
@@ -381,10 +468,16 @@ export const AllTypesProps: Record<string,any> = {
 		searchEducatorProfile:{
 			data:"SearchInput"
 		},
+		searchElementStyle:{
+			data:"SearchInput"
+		},
 		searchKeyStage:{
 			data:"SearchInput"
 		},
 		searchLesson:{
+			data:"SearchInput"
+		},
+		searchMultipleChoiceQuestion:{
 			data:"SearchInput"
 		},
 		searchPermission:{
@@ -393,10 +486,16 @@ export const AllTypesProps: Record<string,any> = {
 		searchPermissionGroup:{
 			data:"SearchInput"
 		},
+		searchQuiz:{
+			data:"SearchInput"
+		},
 		searchRole:{
 			data:"SearchInput"
 		},
 		searchStudentProfile:{
+			data:"SearchInput"
+		},
+		searchStyleCollection:{
 			data:"SearchInput"
 		},
 		searchSubject:{
@@ -428,7 +527,8 @@ export const AllTypesProps: Record<string,any> = {
 		pagination:"PaginationInput"
 	},
 	UpdateAssignmentInput:{
-		dueDate:"DateTime"
+		dueDate:"DateTime",
+		relationIds:"RelationIdsInput"
 	},
 	UpdateAssignmentSubmissionInput:{
 		submittedAt:"DateTime"
@@ -439,11 +539,19 @@ export const AllTypesProps: Record<string,any> = {
 	UpdateEducatorProfileInput:{
 
 	},
+	UpdateElementStyleInput:{
+		relationIds:"RelationIdsInput",
+		styles:"JSONObject",
+		wrapperStyles:"JSONObject"
+	},
 	UpdateKeyStageInput:{
 
 	},
 	UpdateLessonInput:{
 		content:"JSONObject",
+		relationIds:"RelationIdsInput"
+	},
+	UpdateMultipleChoiceQuestionInput:{
 		relationIds:"RelationIdsInput"
 	},
 	UpdatePermissionGroupInput:{
@@ -452,11 +560,17 @@ export const AllTypesProps: Record<string,any> = {
 	UpdatePermissionInput:{
 
 	},
+	UpdateQuizInput:{
+		relationIds:"RelationIdsInput"
+	},
 	UpdateRoleInput:{
 
 	},
 	UpdateStudentProfileInput:{
 
+	},
+	UpdateStyleCollectionInput:{
+		relationIds:"RelationIdsInput"
 	},
 	UpdateSubjectInput:{
 		relationIds:"RelationIdsInput"
@@ -489,9 +603,11 @@ export const ReturnTypes: Record<string,any> = {
 		createdAt:"DateTime",
 		description:"String",
 		dueDate:"DateTime",
+		educators:"EducatorProfileDto",
 		id:"ID",
-		lesson:"LessonEntity",
-		title:"String",
+		lessons:"LessonEntity",
+		name:"String",
+		students:"StudentProfileDto",
 		updatedAt:"DateTime"
 	},
 	AssignmentSubmissionEntity:{
@@ -526,6 +642,16 @@ export const ReturnTypes: Record<string,any> = {
 		staffId:"Float",
 		updatedAt:"DateTime"
 	},
+	ElementStyleEntity:{
+		collection:"StyleCollectionEntity",
+		createdAt:"DateTime",
+		elementType:"String",
+		id:"ID",
+		name:"String",
+		styles:"JSONObject",
+		updatedAt:"DateTime",
+		wrapperStyles:"JSONObject"
+	},
 	JSONObject: `scalar.JSONObject` as const,
 	KeyStageEntity:{
 		createdAt:"DateTime",
@@ -543,7 +669,10 @@ export const ReturnTypes: Record<string,any> = {
 		createdById:"ID",
 		description:"String",
 		id:"ID",
+		multipleChoiceQuestions:"MultipleChoiceQuestionEntity",
+		quizzes:"QuizEntity",
 		recommendedYearGroups:"YearGroupEntity",
+		subject:"SubjectEntity",
 		title:"String",
 		topic:"TopicEntity",
 		updatedAt:"DateTime"
@@ -553,17 +682,31 @@ export const ReturnTypes: Record<string,any> = {
 		refreshToken:"String",
 		userDetails:"UserDetails"
 	},
+	MultipleChoiceQuestionEntity:{
+		correctAnswer:"String",
+		createdAt:"DateTime",
+		id:"ID",
+		lesson:"LessonEntity",
+		options:"String",
+		quiz:"QuizEntity",
+		text:"String",
+		updatedAt:"DateTime"
+	},
 	Mutation:{
 		createAssignment:"AssignmentEntity",
 		createAssignmentSubmission:"AssignmentSubmissionEntity",
 		createClass:"ClassEntity",
 		createEducatorProfile:"EducatorProfileDto",
+		createElementStyle:"ElementStyleEntity",
 		createKeyStage:"KeyStageEntity",
 		createLesson:"LessonEntity",
+		createMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
 		createPermission:"Permission",
 		createPermissionGroup:"PermissionGroup",
+		createQuiz:"QuizEntity",
 		createRole:"Role",
 		createStudentProfile:"StudentProfileDto",
+		createStyleCollection:"StyleCollectionEntity",
 		createSubject:"SubjectEntity",
 		createTopic:"TopicEntity",
 		createUser:"User",
@@ -573,12 +716,16 @@ export const ReturnTypes: Record<string,any> = {
 		deleteAssignmentSubmission:"Boolean",
 		deleteClass:"Boolean",
 		deleteEducatorProfile:"Boolean",
+		deleteElementStyle:"Boolean",
 		deleteKeyStage:"Boolean",
 		deleteLesson:"Boolean",
+		deleteMultipleChoiceQuestion:"Boolean",
 		deletePermission:"Boolean",
 		deletePermissionGroup:"Boolean",
+		deleteQuiz:"Boolean",
 		deleteRole:"Boolean",
 		deleteStudentProfile:"Boolean",
+		deleteStyleCollection:"Boolean",
 		deleteSubject:"Boolean",
 		deleteTopic:"Boolean",
 		deleteYearGroup:"Boolean",
@@ -590,14 +737,18 @@ export const ReturnTypes: Record<string,any> = {
 		updateAssignmentSubmission:"AssignmentSubmissionEntity",
 		updateClass:"ClassEntity",
 		updateEducatorProfile:"EducatorProfileDto",
+		updateElementStyle:"ElementStyleEntity",
 		updateKeyStage:"KeyStageEntity",
 		updateLesson:"LessonEntity",
+		updateMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
 		updatePermission:"Permission",
 		updatePermissionGroup:"PermissionGroup",
 		updatePermissionGroupPermissionsFromArray:"PermissionGroup",
 		updatePermissionGroupsForRole:"Role",
+		updateQuiz:"QuizEntity",
 		updateRole:"Role",
 		updateStudentProfile:"StudentProfileDto",
+		updateStyleCollection:"StyleCollectionEntity",
 		updateSubject:"SubjectEntity",
 		updateTopic:"TopicEntity",
 		updateUserByPublicId:"User",
@@ -642,12 +793,16 @@ export const ReturnTypes: Record<string,any> = {
 		getAllAssignmentSubmission:"AssignmentSubmissionEntity",
 		getAllClass:"ClassEntity",
 		getAllEducatorProfile:"EducatorProfileDto",
+		getAllElementStyle:"ElementStyleEntity",
 		getAllKeyStage:"KeyStageEntity",
 		getAllLesson:"LessonEntity",
+		getAllMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
 		getAllPermission:"Permission",
 		getAllPermissionGroup:"PermissionGroup",
+		getAllQuiz:"QuizEntity",
 		getAllRole:"Role",
 		getAllStudentProfile:"StudentProfileDto",
+		getAllStyleCollection:"StyleCollectionEntity",
 		getAllSubject:"SubjectEntity",
 		getAllTopic:"TopicEntity",
 		getAllUsers:"User",
@@ -660,21 +815,29 @@ export const ReturnTypes: Record<string,any> = {
 		getClassBy:"ClassEntity",
 		getEducatorProfile:"EducatorProfileDto",
 		getEducatorProfileBy:"EducatorProfileDto",
+		getElementStyle:"ElementStyleEntity",
+		getElementStyleBy:"ElementStyleEntity",
 		getKeyStage:"KeyStageEntity",
 		getKeyStageBy:"KeyStageEntity",
 		getLesson:"LessonEntity",
 		getLessonBy:"LessonEntity",
+		getMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
+		getMultipleChoiceQuestionBy:"MultipleChoiceQuestionEntity",
 		getPermission:"Permission",
 		getPermissionBy:"Permission",
 		getPermissionGroup:"PermissionGroup",
 		getPermissionGroupBy:"PermissionGroup",
 		getPermissionGroupsForRole:"PermissionGroup",
 		getPermissionsForGroup:"Permission",
+		getQuiz:"QuizEntity",
+		getQuizBy:"QuizEntity",
 		getRole:"Role",
 		getRoleBy:"Role",
 		getRolesForUser:"Role",
 		getStudentProfile:"StudentProfileDto",
 		getStudentProfileBy:"StudentProfileDto",
+		getStyleCollection:"StyleCollectionEntity",
+		getStyleCollectionBy:"StyleCollectionEntity",
 		getSubject:"SubjectEntity",
 		getSubjectBy:"SubjectEntity",
 		getTopic:"TopicEntity",
@@ -687,17 +850,30 @@ export const ReturnTypes: Record<string,any> = {
 		searchAssignmentSubmission:"AssignmentSubmissionEntity",
 		searchClass:"ClassEntity",
 		searchEducatorProfile:"EducatorProfileDto",
+		searchElementStyle:"ElementStyleEntity",
 		searchKeyStage:"KeyStageEntity",
 		searchLesson:"LessonEntity",
+		searchMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
 		searchPermission:"Permission",
 		searchPermissionGroup:"PermissionGroup",
+		searchQuiz:"QuizEntity",
 		searchRole:"Role",
 		searchStudentProfile:"StudentProfileDto",
+		searchStyleCollection:"StyleCollectionEntity",
 		searchSubject:"SubjectEntity",
 		searchTopic:"TopicEntity",
 		searchUsers:"User",
 		searchYearGroup:"YearGroupEntity",
 		topicsByYearAndSubject:"TopicEntity"
+	},
+	QuizEntity:{
+		createdAt:"DateTime",
+		description:"String",
+		id:"ID",
+		lesson:"LessonEntity",
+		multipleChoiceQuestions:"MultipleChoiceQuestionEntity",
+		title:"String",
+		updatedAt:"DateTime"
 	},
 	Role:{
 		createdAt:"DateTime",
@@ -725,9 +901,19 @@ export const ReturnTypes: Record<string,any> = {
 		studentId:"Float",
 		updatedAt:"DateTime"
 	},
+	StyleCollectionEntity:{
+		createdAt:"DateTime",
+		description:"String",
+		elementStyles:"ElementStyleEntity",
+		id:"ID",
+		name:"String",
+		owner:"User",
+		updatedAt:"DateTime"
+	},
 	SubjectEntity:{
 		createdAt:"DateTime",
 		id:"ID",
+		lessons:"LessonEntity",
 		name:"String",
 		topics:"TopicEntity",
 		updatedAt:"DateTime",

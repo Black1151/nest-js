@@ -32,7 +32,7 @@ const BaseResolver = createBaseResolver<
 
 @Resolver(() => StyleCollectionEntity)
 export class StyleCollectionResolver extends BaseResolver {
-  constructor(private readonly service: StyleCollectionService) {
+  constructor(readonly service: StyleCollectionService) {
     super(service);
   }
 }
