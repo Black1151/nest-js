@@ -7,8 +7,18 @@ import {
   FormLabel,
   Input,
 } from "@chakra-ui/react";
+import { gql, useMutation } from "@apollo/client";
 import { BaseModal } from "../modals/BaseModal";
 import AddStyleCollectionModal from "./AddStyleCollectionModal";
+
+const CREATE_STYLE_COLLECTION = gql`
+  mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {
+    createStyleCollection(data: $data) {
+      id
+      name
+    }
+  }
+`;
 
 interface SaveStyleModalProps {
   isOpen: boolean;
@@ -19,7 +29,7 @@ interface SaveStyleModalProps {
    */
   collections: { id: number; name: string }[];
   /** Callback when the user adds a new collection */
-  onAddCollection: (name: string) => void;
+  onAddCollection: (collection: { id: number; name: string }) => void;
   /** Type of the element whose style is being saved */
   element: string;
   /** Callback executed when user submits the form */
@@ -37,6 +47,7 @@ export default function SaveStyleModal({
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [name, setName] = useState("");
   const [collectionId, setCollectionId] = useState<number | "">("");
+  const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
 
   return (
     <>
@@ -84,8 +95,16 @@ export default function SaveStyleModal({
       <AddStyleCollectionModal
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        onSave={(name) => {
-          onAddCollection(name);
+        onSave={async (name) => {
+          const { data } = await createCollection({
+            variables: { data: { name } },
+          });
+          if (data?.createStyleCollection) {
+            onAddCollection({
+              id: data.createStyleCollection.id,
+              name: data.createStyleCollection.name,
+            });
+          }
           setIsAddOpen(false);
         }}
       />
