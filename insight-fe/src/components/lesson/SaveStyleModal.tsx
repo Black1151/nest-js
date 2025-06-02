@@ -18,6 +18,11 @@ interface SaveStyleModalProps {
    * selected id can be sent to the backend style module.
    */
   collections: { id: number; name: string }[];
+  /**
+   * Whether the collections are still loading from the server.
+   * When true, show a loading indicator in the dropdown.
+   */
+  isLoading?: boolean;
   /** Callback when the user adds a new collection */
   onAddCollection: (name: string) => void;
   /** Type of the element whose style is being saved */
@@ -30,6 +35,7 @@ export default function SaveStyleModal({
   isOpen,
   onClose,
   collections,
+  isLoading = false,
   onAddCollection,
   element,
   onSave,
@@ -53,10 +59,15 @@ export default function SaveStyleModal({
           <FormControl>
             <FormLabel>Collection</FormLabel>
             <Select
-              placeholder="Select collection"
               value={collectionId}
               onChange={(e) => setCollectionId(parseInt(e.target.value))}
             >
+              {isLoading && <option value="">Loading...</option>}
+              {!isLoading && (
+                <option key="__empty" value="">
+                  ─ select ─
+                </option>
+              )}
               {collections.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
