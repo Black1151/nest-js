@@ -8,7 +8,9 @@ import {
   useState,
   forwardRef,
   useImperativeHandle,
+  useEffect,
 } from "react";
+import { gql, useQuery } from "@apollo/client";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -19,6 +21,15 @@ import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnD
 import { ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
 import SaveStyleModal from "./SaveStyleModal";
+
+const GET_STYLE_COLLECTIONS = gql`
+  query GetStyleCollections {
+    getAllStyleCollection(data: { all: true }) {
+      id
+      name
+    }
+  }
+`;
 
 interface LessonState {
   slides: Slide[];
@@ -147,6 +158,14 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     { id: number; name: string }[]
   >([]);
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
+
+  const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
+
+  useEffect(() => {
+    if (collectionsData?.getAllStyleCollection) {
+      setStyleCollections(collectionsData.getAllStyleCollection);
+    }
+  }, [collectionsData]);
 
   useImperativeHandle(
     ref,
