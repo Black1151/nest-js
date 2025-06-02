@@ -14,9 +14,11 @@ import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
 
 export const LessonBuilderPageClient = () => {
-  const [yearGroupId, setYearGroupId] = useState<string | null>(null);
-  const [subjectId, setSubjectId] = useState<string | null>(null);
-  const [topicId, setTopicId] = useState<string | null>(null);
+  const [{ yearGroupId, subjectId, topicId }, setDropdownIds] = useState<{
+    yearGroupId: string | null;
+    subjectId: string | null;
+    topicId: string | null;
+  }>({ yearGroupId: null, subjectId: null, topicId: null });
   const [isSaveOpen, setIsSaveOpen] = useState(false);
   const editorRef = useRef<LessonEditorHandle>(null);
 
@@ -60,11 +62,9 @@ export const LessonBuilderPageClient = () => {
           <Text mb={2}>Year Group</Text>
           <YearGroupDropdown
             value={yearGroupId}
-            onChange={(id) => {
-              setYearGroupId(id);
-              setSubjectId(null);
-              setTopicId(null);
-            }}
+            onChange={(id) =>
+              setDropdownIds({ yearGroupId: id, subjectId: null, topicId: null })
+            }
           />
         </Box>
         <Box>
@@ -72,10 +72,13 @@ export const LessonBuilderPageClient = () => {
           <SubjectDropdown
             yearGroupId={yearGroupId}
             value={subjectId}
-            onChange={(id) => {
-              setSubjectId(id);
-              setTopicId(null);
-            }}
+            onChange={(id) =>
+              setDropdownIds({
+                yearGroupId,
+                subjectId: id,
+                topicId: null,
+              })
+            }
           />
         </Box>
         <Box>
@@ -84,7 +87,9 @@ export const LessonBuilderPageClient = () => {
             yearGroupId={yearGroupId}
             subjectId={subjectId}
             value={topicId}
-            onChange={setTopicId}
+            onChange={(id) =>
+              setDropdownIds({ yearGroupId, subjectId, topicId: id })
+            }
           />
         </Box>
         <Button
