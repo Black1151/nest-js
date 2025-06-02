@@ -22,9 +22,11 @@ export type AssignmentEntity = {
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   dueDate?: Maybe<Scalars['DateTime']['output']>;
+  educators?: Maybe<Array<EducatorProfileDto>>;
   id: Scalars['ID']['output'];
-  lesson: LessonEntity;
-  title: Scalars['String']['output'];
+  lessons?: Maybe<Array<LessonEntity>>;
+  name: Scalars['String']['output'];
+  students?: Maybe<Array<StudentProfileDto>>;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -71,8 +73,9 @@ export type CreateAssignmentInput = {
   classId: Scalars['ID']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   dueDate?: InputMaybe<Scalars['DateTime']['input']>;
-  lessonId: Scalars['ID']['input'];
-  title: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
 export type CreateAssignmentSubmissionInput = {
@@ -94,6 +97,16 @@ export type CreateEducatorProfileInput = {
   staffId: Scalars['Float']['input'];
 };
 
+export type CreateElementStyleInput = {
+  collectionId: Scalars['ID']['input'];
+  elementType: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  styles: Scalars['JSONObject']['input'];
+  wrapperStyles?: InputMaybe<Scalars['JSONObject']['input']>;
+};
+
 export type CreateKeyStageInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
@@ -109,6 +122,16 @@ export type CreateLessonInput = {
   title: Scalars['String']['input'];
 };
 
+export type CreateMultipleChoiceQuestionInput = {
+  correctAnswer: Scalars['String']['input'];
+  lessonId: Scalars['ID']['input'];
+  options: Array<Scalars['String']['input']>;
+  quizId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  text: Scalars['String']['input'];
+};
+
 export type CreatePermissionGroupInput = {
   description: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -119,6 +142,14 @@ export type CreatePermissionInput = {
   name: Scalars['String']['input'];
 };
 
+export type CreateQuizInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  lessonId: Scalars['ID']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  title: Scalars['String']['input'];
+};
+
 export type CreateRoleInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
@@ -127,6 +158,13 @@ export type CreateRoleInput = {
 export type CreateStudentProfileInput = {
   schoolYear: Scalars['Float']['input'];
   studentId: Scalars['Float']['input'];
+};
+
+export type CreateStyleCollectionInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
 export type CreateSubjectInput = {
@@ -188,6 +226,18 @@ export type EducatorProfileDto = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type ElementStyleEntity = {
+  __typename?: 'ElementStyleEntity';
+  collection: StyleCollectionEntity;
+  createdAt: Scalars['DateTime']['output'];
+  elementType: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  styles: Scalars['JSONObject']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  wrapperStyles?: Maybe<Scalars['JSONObject']['output']>;
+};
+
 export type FilterInput = {
   /** Column (property) name to filter on */
   column: Scalars['String']['input'];
@@ -244,7 +294,10 @@ export type LessonEntity = {
   createdById?: Maybe<Scalars['ID']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  multipleChoiceQuestions?: Maybe<Array<MultipleChoiceQuestionEntity>>;
+  quizzes?: Maybe<Array<QuizEntity>>;
   recommendedYearGroups?: Maybe<Array<YearGroupEntity>>;
+  subject: SubjectEntity;
   title: Scalars['String']['output'];
   topic: TopicEntity;
   updatedAt: Scalars['DateTime']['output'];
@@ -262,6 +315,18 @@ export type LoginResponse = {
   userDetails: UserDetails;
 };
 
+export type MultipleChoiceQuestionEntity = {
+  __typename?: 'MultipleChoiceQuestionEntity';
+  correctAnswer: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  lesson: LessonEntity;
+  options: Array<Scalars['String']['output']>;
+  quiz?: Maybe<QuizEntity>;
+  text: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   /** Create one Assignment */
@@ -272,18 +337,26 @@ export type Mutation = {
   createClass: ClassEntity;
   /** Create one EducatorProfile */
   createEducatorProfile: EducatorProfileDto;
+  /** Create one ElementStyle */
+  createElementStyle: ElementStyleEntity;
   /** Create one KeyStage */
   createKeyStage: KeyStageEntity;
   /** Create one Lesson */
   createLesson: LessonEntity;
+  /** Create one MultipleChoiceQuestion */
+  createMultipleChoiceQuestion: MultipleChoiceQuestionEntity;
   /** Create one Permission */
   createPermission: Permission;
   /** Create one PermissionGroup */
   createPermissionGroup: PermissionGroup;
+  /** Create one Quiz */
+  createQuiz: QuizEntity;
   /** Create one Role */
   createRole: Role;
   /** Create one StudentProfile */
   createStudentProfile: StudentProfileDto;
+  /** Create one StyleCollection */
+  createStyleCollection: StyleCollectionEntity;
   /** Create one Subject */
   createSubject: SubjectEntity;
   /** Create one Topic */
@@ -300,18 +373,26 @@ export type Mutation = {
   deleteClass: Scalars['Boolean']['output'];
   /** Delete one EducatorProfile */
   deleteEducatorProfile: Scalars['Boolean']['output'];
+  /** Delete one ElementStyle */
+  deleteElementStyle: Scalars['Boolean']['output'];
   /** Delete one KeyStage */
   deleteKeyStage: Scalars['Boolean']['output'];
   /** Delete one Lesson */
   deleteLesson: Scalars['Boolean']['output'];
+  /** Delete one MultipleChoiceQuestion */
+  deleteMultipleChoiceQuestion: Scalars['Boolean']['output'];
   /** Delete one Permission */
   deletePermission: Scalars['Boolean']['output'];
   /** Delete one PermissionGroup */
   deletePermissionGroup: Scalars['Boolean']['output'];
+  /** Delete one Quiz */
+  deleteQuiz: Scalars['Boolean']['output'];
   /** Delete one Role */
   deleteRole: Scalars['Boolean']['output'];
   /** Delete one StudentProfile */
   deleteStudentProfile: Scalars['Boolean']['output'];
+  /** Delete one StyleCollection */
+  deleteStyleCollection: Scalars['Boolean']['output'];
   /** Delete one Subject */
   deleteSubject: Scalars['Boolean']['output'];
   /** Delete one Topic */
@@ -330,20 +411,28 @@ export type Mutation = {
   updateClass: ClassEntity;
   /** Updates one EducatorProfile */
   updateEducatorProfile: EducatorProfileDto;
+  /** Updates one ElementStyle */
+  updateElementStyle: ElementStyleEntity;
   /** Updates one KeyStage */
   updateKeyStage: KeyStageEntity;
   /** Updates one Lesson */
   updateLesson: LessonEntity;
+  /** Updates one MultipleChoiceQuestion */
+  updateMultipleChoiceQuestion: MultipleChoiceQuestionEntity;
   /** Updates one Permission */
   updatePermission: Permission;
   /** Updates one PermissionGroup */
   updatePermissionGroup: PermissionGroup;
   updatePermissionGroupPermissionsFromArray: PermissionGroup;
   updatePermissionGroupsForRole: Role;
+  /** Updates one Quiz */
+  updateQuiz: QuizEntity;
   /** Updates one Role */
   updateRole: Role;
   /** Updates one StudentProfile */
   updateStudentProfile: StudentProfileDto;
+  /** Updates one StyleCollection */
+  updateStyleCollection: StyleCollectionEntity;
   /** Updates one Subject */
   updateSubject: SubjectEntity;
   /** Updates one Topic */
@@ -375,6 +464,11 @@ export type MutationCreateEducatorProfileArgs = {
 };
 
 
+export type MutationCreateElementStyleArgs = {
+  data: CreateElementStyleInput;
+};
+
+
 export type MutationCreateKeyStageArgs = {
   data: CreateKeyStageInput;
 };
@@ -382,6 +476,11 @@ export type MutationCreateKeyStageArgs = {
 
 export type MutationCreateLessonArgs = {
   data: CreateLessonInput;
+};
+
+
+export type MutationCreateMultipleChoiceQuestionArgs = {
+  data: CreateMultipleChoiceQuestionInput;
 };
 
 
@@ -395,6 +494,11 @@ export type MutationCreatePermissionGroupArgs = {
 };
 
 
+export type MutationCreateQuizArgs = {
+  data: CreateQuizInput;
+};
+
+
 export type MutationCreateRoleArgs = {
   data: CreateRoleInput;
 };
@@ -402,6 +506,11 @@ export type MutationCreateRoleArgs = {
 
 export type MutationCreateStudentProfileArgs = {
   data: CreateStudentProfileInput;
+};
+
+
+export type MutationCreateStyleCollectionArgs = {
+  data: CreateStyleCollectionInput;
 };
 
 
@@ -450,12 +559,22 @@ export type MutationDeleteEducatorProfileArgs = {
 };
 
 
+export type MutationDeleteElementStyleArgs = {
+  data: IdInput;
+};
+
+
 export type MutationDeleteKeyStageArgs = {
   data: IdInput;
 };
 
 
 export type MutationDeleteLessonArgs = {
+  data: IdInput;
+};
+
+
+export type MutationDeleteMultipleChoiceQuestionArgs = {
   data: IdInput;
 };
 
@@ -470,12 +589,22 @@ export type MutationDeletePermissionGroupArgs = {
 };
 
 
+export type MutationDeleteQuizArgs = {
+  data: IdInput;
+};
+
+
 export type MutationDeleteRoleArgs = {
   data: IdInput;
 };
 
 
 export type MutationDeleteStudentProfileArgs = {
+  data: IdInput;
+};
+
+
+export type MutationDeleteStyleCollectionArgs = {
   data: IdInput;
 };
 
@@ -535,6 +664,11 @@ export type MutationUpdateEducatorProfileArgs = {
 };
 
 
+export type MutationUpdateElementStyleArgs = {
+  data: UpdateElementStyleInput;
+};
+
+
 export type MutationUpdateKeyStageArgs = {
   data: UpdateKeyStageInput;
 };
@@ -542,6 +676,11 @@ export type MutationUpdateKeyStageArgs = {
 
 export type MutationUpdateLessonArgs = {
   data: UpdateLessonInput;
+};
+
+
+export type MutationUpdateMultipleChoiceQuestionArgs = {
+  data: UpdateMultipleChoiceQuestionInput;
 };
 
 
@@ -565,6 +704,11 @@ export type MutationUpdatePermissionGroupsForRoleArgs = {
 };
 
 
+export type MutationUpdateQuizArgs = {
+  data: UpdateQuizInput;
+};
+
+
 export type MutationUpdateRoleArgs = {
   data: UpdateRoleInput;
 };
@@ -572,6 +716,11 @@ export type MutationUpdateRoleArgs = {
 
 export type MutationUpdateStudentProfileArgs = {
   data: UpdateStudentProfileInput;
+};
+
+
+export type MutationUpdateStyleCollectionArgs = {
+  data: UpdateStyleCollectionInput;
 };
 
 
@@ -665,18 +814,26 @@ export type Query = {
   getAllClass: Array<ClassEntity>;
   /** Returns all EducatorProfile (optionally filtered) */
   getAllEducatorProfile: Array<EducatorProfileDto>;
+  /** Returns all ElementStyle (optionally filtered) */
+  getAllElementStyle: Array<ElementStyleEntity>;
   /** Returns all KeyStage (optionally filtered) */
   getAllKeyStage: Array<KeyStageEntity>;
   /** Returns all Lesson (optionally filtered) */
   getAllLesson: Array<LessonEntity>;
+  /** Returns all MultipleChoiceQuestion (optionally filtered) */
+  getAllMultipleChoiceQuestion: Array<MultipleChoiceQuestionEntity>;
   /** Returns all Permission (optionally filtered) */
   getAllPermission: Array<Permission>;
   /** Returns all PermissionGroup (optionally filtered) */
   getAllPermissionGroup: Array<PermissionGroup>;
+  /** Returns all Quiz (optionally filtered) */
+  getAllQuiz: Array<QuizEntity>;
   /** Returns all Role (optionally filtered) */
   getAllRole: Array<Role>;
   /** Returns all StudentProfile (optionally filtered) */
   getAllStudentProfile: Array<StudentProfileDto>;
+  /** Returns all StyleCollection (optionally filtered) */
+  getAllStyleCollection: Array<StyleCollectionEntity>;
   /** Returns all Subject (optionally filtered) */
   getAllSubject: Array<SubjectEntity>;
   /** Returns all Topic (optionally filtered) */
@@ -700,6 +857,10 @@ export type Query = {
   getEducatorProfile: EducatorProfileDto;
   /** Returns one EducatorProfile by given conditions */
   getEducatorProfileBy: EducatorProfileDto;
+  /** Returns one ElementStyle */
+  getElementStyle: ElementStyleEntity;
+  /** Returns one ElementStyle by given conditions */
+  getElementStyleBy: ElementStyleEntity;
   /** Returns one KeyStage */
   getKeyStage: KeyStageEntity;
   /** Returns one KeyStage by given conditions */
@@ -708,6 +869,10 @@ export type Query = {
   getLesson: LessonEntity;
   /** Returns one Lesson by given conditions */
   getLessonBy: LessonEntity;
+  /** Returns one MultipleChoiceQuestion */
+  getMultipleChoiceQuestion: MultipleChoiceQuestionEntity;
+  /** Returns one MultipleChoiceQuestion by given conditions */
+  getMultipleChoiceQuestionBy: MultipleChoiceQuestionEntity;
   /** Returns one Permission */
   getPermission: Permission;
   /** Returns one Permission by given conditions */
@@ -718,6 +883,10 @@ export type Query = {
   getPermissionGroupBy: PermissionGroup;
   getPermissionGroupsForRole: Array<PermissionGroup>;
   getPermissionsForGroup: Array<Permission>;
+  /** Returns one Quiz */
+  getQuiz: QuizEntity;
+  /** Returns one Quiz by given conditions */
+  getQuizBy: QuizEntity;
   /** Returns one Role */
   getRole: Role;
   /** Returns one Role by given conditions */
@@ -727,6 +896,10 @@ export type Query = {
   getStudentProfile: StudentProfileDto;
   /** Returns one StudentProfile by given conditions */
   getStudentProfileBy: StudentProfileDto;
+  /** Returns one StyleCollection */
+  getStyleCollection: StyleCollectionEntity;
+  /** Returns one StyleCollection by given conditions */
+  getStyleCollectionBy: StyleCollectionEntity;
   /** Returns one Subject */
   getSubject: SubjectEntity;
   /** Returns one Subject by given conditions */
@@ -749,18 +922,26 @@ export type Query = {
   searchClass: Array<ClassEntity>;
   /** Search EducatorProfile records by given columns */
   searchEducatorProfile: Array<EducatorProfileDto>;
+  /** Search ElementStyle records by given columns */
+  searchElementStyle: Array<ElementStyleEntity>;
   /** Search KeyStage records by given columns */
   searchKeyStage: Array<KeyStageEntity>;
   /** Search Lesson records by given columns */
   searchLesson: Array<LessonEntity>;
+  /** Search MultipleChoiceQuestion records by given columns */
+  searchMultipleChoiceQuestion: Array<MultipleChoiceQuestionEntity>;
   /** Search Permission records by given columns */
   searchPermission: Array<Permission>;
   /** Search PermissionGroup records by given columns */
   searchPermissionGroup: Array<PermissionGroup>;
+  /** Search Quiz records by given columns */
+  searchQuiz: Array<QuizEntity>;
   /** Search Role records by given columns */
   searchRole: Array<Role>;
   /** Search StudentProfile records by given columns */
   searchStudentProfile: Array<StudentProfileDto>;
+  /** Search StyleCollection records by given columns */
+  searchStyleCollection: Array<StyleCollectionEntity>;
   /** Search Subject records by given columns */
   searchSubject: Array<SubjectEntity>;
   /** Search Topic records by given columns */
@@ -797,12 +978,22 @@ export type QueryGetAllEducatorProfileArgs = {
 };
 
 
+export type QueryGetAllElementStyleArgs = {
+  data: FindAllInput;
+};
+
+
 export type QueryGetAllKeyStageArgs = {
   data: FindAllInput;
 };
 
 
 export type QueryGetAllLessonArgs = {
+  data: FindAllInput;
+};
+
+
+export type QueryGetAllMultipleChoiceQuestionArgs = {
   data: FindAllInput;
 };
 
@@ -817,12 +1008,22 @@ export type QueryGetAllPermissionGroupArgs = {
 };
 
 
+export type QueryGetAllQuizArgs = {
+  data: FindAllInput;
+};
+
+
 export type QueryGetAllRoleArgs = {
   data: FindAllInput;
 };
 
 
 export type QueryGetAllStudentProfileArgs = {
+  data: FindAllInput;
+};
+
+
+export type QueryGetAllStyleCollectionArgs = {
   data: FindAllInput;
 };
 
@@ -887,6 +1088,16 @@ export type QueryGetEducatorProfileByArgs = {
 };
 
 
+export type QueryGetElementStyleArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetElementStyleByArgs = {
+  data: FindOneByInput;
+};
+
+
 export type QueryGetKeyStageArgs = {
   data: IdInput;
 };
@@ -903,6 +1114,16 @@ export type QueryGetLessonArgs = {
 
 
 export type QueryGetLessonByArgs = {
+  data: FindOneByInput;
+};
+
+
+export type QueryGetMultipleChoiceQuestionArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetMultipleChoiceQuestionByArgs = {
   data: FindOneByInput;
 };
 
@@ -937,6 +1158,16 @@ export type QueryGetPermissionsForGroupArgs = {
 };
 
 
+export type QueryGetQuizArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetQuizByArgs = {
+  data: FindOneByInput;
+};
+
+
 export type QueryGetRoleArgs = {
   data: IdInput;
 };
@@ -958,6 +1189,16 @@ export type QueryGetStudentProfileArgs = {
 
 
 export type QueryGetStudentProfileByArgs = {
+  data: FindOneByInput;
+};
+
+
+export type QueryGetStyleCollectionArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetStyleCollectionByArgs = {
   data: FindOneByInput;
 };
 
@@ -1022,12 +1263,22 @@ export type QuerySearchEducatorProfileArgs = {
 };
 
 
+export type QuerySearchElementStyleArgs = {
+  data: SearchInput;
+};
+
+
 export type QuerySearchKeyStageArgs = {
   data: SearchInput;
 };
 
 
 export type QuerySearchLessonArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchMultipleChoiceQuestionArgs = {
   data: SearchInput;
 };
 
@@ -1042,12 +1293,22 @@ export type QuerySearchPermissionGroupArgs = {
 };
 
 
+export type QuerySearchQuizArgs = {
+  data: SearchInput;
+};
+
+
 export type QuerySearchRoleArgs = {
   data: SearchInput;
 };
 
 
 export type QuerySearchStudentProfileArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchStyleCollectionArgs = {
   data: SearchInput;
 };
 
@@ -1074,6 +1335,17 @@ export type QuerySearchYearGroupArgs = {
 
 export type QueryTopicsByYearAndSubjectArgs = {
   input: TopicByYearSubjectInput;
+};
+
+export type QuizEntity = {
+  __typename?: 'QuizEntity';
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lesson: LessonEntity;
+  multipleChoiceQuestions?: Maybe<Array<MultipleChoiceQuestionEntity>>;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type RelationIdsInput = {
@@ -1123,10 +1395,22 @@ export type StudentProfileDto = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type StyleCollectionEntity = {
+  __typename?: 'StyleCollectionEntity';
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  elementStyles?: Maybe<Array<ElementStyleEntity>>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  owner?: Maybe<User>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type SubjectEntity = {
   __typename?: 'SubjectEntity';
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
+  lessons?: Maybe<Array<LessonEntity>>;
   name: Scalars['String']['output'];
   topics?: Maybe<Array<TopicEntity>>;
   updatedAt: Scalars['DateTime']['output'];
@@ -1161,8 +1445,9 @@ export type UpdateAssignmentInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   dueDate?: InputMaybe<Scalars['DateTime']['input']>;
   id: Scalars['ID']['input'];
-  lessonId?: InputMaybe<Scalars['ID']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
 export type UpdateAssignmentSubmissionInput = {
@@ -1187,6 +1472,17 @@ export type UpdateEducatorProfileInput = {
   staffId?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateElementStyleInput = {
+  collectionId?: InputMaybe<Scalars['ID']['input']>;
+  elementType?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  styles?: InputMaybe<Scalars['JSONObject']['input']>;
+  wrapperStyles?: InputMaybe<Scalars['JSONObject']['input']>;
+};
+
 export type UpdateKeyStageInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
@@ -1204,6 +1500,17 @@ export type UpdateLessonInput = {
   title?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateMultipleChoiceQuestionInput = {
+  correctAnswer?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  lessonId?: InputMaybe<Scalars['ID']['input']>;
+  options?: InputMaybe<Array<Scalars['String']['input']>>;
+  quizId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  text?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UpdatePermissionGroupInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
@@ -1216,6 +1523,15 @@ export type UpdatePermissionInput = {
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateQuizInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  lessonId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UpdateRoleInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
@@ -1226,6 +1542,14 @@ export type UpdateStudentProfileInput = {
   id: Scalars['Int']['input'];
   schoolYear?: InputMaybe<Scalars['Float']['input']>;
   studentId?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type UpdateStyleCollectionInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
 export type UpdateSubjectInput = {

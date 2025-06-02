@@ -11,6 +11,8 @@ import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
+import { useMutation } from "@apollo/client";
+import { CREATE_ELEMENT_STYLE } from "@/graphql/style-collections";
 
 interface LessonState {
   slides: Slide[];
@@ -83,7 +85,7 @@ function reducer(state: LessonState, action: Action): LessonState {
       return {
         ...state,
         slides: state.slides.map((s) =>
-          s.id === action.slideId ? action.updater(s) : s
+          s.id === action.slideId ? action.updater(s) : s,
         ),
       };
     case "updateBoard":
@@ -128,15 +130,17 @@ export default function LessonEditor() {
     dropIndicator: null,
   });
 
+  const [createElementStyle] = useMutation(CREATE_ELEMENT_STYLE);
+
   const setSlides = useCallback(
     (updater: React.SetStateAction<Slide[]>) =>
       dispatch({ type: "setSlides", updater }),
-    [dispatch]
+    [dispatch],
   );
 
   const selectedSlide = useMemo(
     () => state.slides.find((s) => s.id === state.selectedSlideId) || null,
-    [state.slides, state.selectedSlideId]
+    [state.slides, state.selectedSlideId],
   );
 
   const selectedElement = useMemo(() => {
@@ -158,7 +162,9 @@ export default function LessonEditor() {
 
   const selectedBoard = useMemo(() => {
     if (!selectedSlide || !state.selectedBoardId) return null;
-    return selectedSlide.boards.find((b) => b.id === state.selectedBoardId) || null;
+    return (
+      selectedSlide.boards.find((b) => b.id === state.selectedBoardId) || null
+    );
   }, [selectedSlide, state.selectedBoardId]);
 
   const updateElement = useCallback(
@@ -190,7 +196,7 @@ export default function LessonEditor() {
         },
       });
     },
-    [state.selectedSlideId, dispatch]
+    [state.selectedSlideId, dispatch],
   );
 
   const updateColumn = useCallback(
@@ -205,7 +211,7 @@ export default function LessonEditor() {
         }),
       });
     },
-    [state.selectedSlideId, dispatch]
+    [state.selectedSlideId, dispatch],
   );
 
   const updateBoard = useCallback(
@@ -218,7 +224,7 @@ export default function LessonEditor() {
         updater: () => updated,
       });
     },
-    [state.selectedSlideId, dispatch]
+    [state.selectedSlideId, dispatch],
   );
 
   const cloneElement = useCallback(() => {
@@ -231,7 +237,9 @@ export default function LessonEditor() {
         for (const board of slide.boards) {
           for (const colId of board.orderedColumnIds) {
             const col = newMap[colId];
-            const idx = col.items.findIndex((i) => i.id === state.selectedElementId);
+            const idx = col.items.findIndex(
+              (i) => i.id === state.selectedElementId,
+            );
             if (idx !== -1) {
               const orig = col.items[idx];
               const copy = { ...orig, id: crypto.randomUUID() };
@@ -262,11 +270,16 @@ export default function LessonEditor() {
         for (const board of slide.boards) {
           for (const colId of board.orderedColumnIds) {
             const col = newMap[colId];
-            const idx = col.items.findIndex((i) => i.id === state.selectedElementId);
+            const idx = col.items.findIndex(
+              (i) => i.id === state.selectedElementId,
+            );
             if (idx !== -1) {
               newMap[colId] = {
                 ...col,
-                items: [...col.items.slice(0, idx), ...col.items.slice(idx + 1)],
+                items: [
+                  ...col.items.slice(0, idx),
+                  ...col.items.slice(idx + 1),
+                ],
               };
               return { ...slide, columnMap: newMap };
             }
@@ -278,6 +291,21 @@ export default function LessonEditor() {
     dispatch({ type: "selectElement", id: null });
   }, [state.selectedSlideId, state.selectedElementId, dispatch]);
 
+  const saveStylePreset = useCallback(() => {
+    if (!selectedElement) return;
+    createElementStyle({
+      variables: {
+        data: {
+          name: `${selectedElement.type} preset`,
+          elementType: selectedElement.type,
+          styles: selectedElement.styles ?? {},
+          wrapperStyles: selectedElement.wrapperStyles ?? {},
+          collectionId: 1,
+        },
+      },
+    });
+  }, [selectedElement, createElementStyle]);
+
   const handleDropElement = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
@@ -288,7 +316,7 @@ export default function LessonEditor() {
 
       const target = document.elementFromPoint(e.clientX, e.clientY);
       const columnEl = target?.closest(
-        "[data-column-id]"
+        "[data-column-id]",
       ) as HTMLElement | null;
       const dropColumnId = columnEl?.dataset.columnId;
 
@@ -312,18 +340,18 @@ export default function LessonEditor() {
                   },
                 }
               : type === "image"
-              ? {
-                  src: "https://via.placeholder.com/150",
-                }
-              : type === "video"
-              ? { url: "" }
-              : type === "quiz"
-              ? {
-                  title: "Untitled Quiz",
-                  description: "",
-                  questions: [],
-                }
-              : {}),
+                ? {
+                    src: "https://via.placeholder.com/150",
+                  }
+                : type === "video"
+                  ? { url: "" }
+                  : type === "quiz"
+                    ? {
+                        title: "Untitled Quiz",
+                        description: "",
+                        questions: [],
+                      }
+                    : {}),
             wrapperStyles: {
               bgColor: "#ffffff",
               bgOpacity: 0,
@@ -348,7 +376,7 @@ export default function LessonEditor() {
           let insertIndex = column.items.length;
           if (columnEl) {
             const cards = Array.from(
-              columnEl.querySelectorAll("[data-card-id]")
+              columnEl.querySelectorAll("[data-card-id]"),
             ) as HTMLElement[];
             for (let i = 0; i < cards.length; i++) {
               const rect = cards[i].getBoundingClientRect();
@@ -376,7 +404,7 @@ export default function LessonEditor() {
       });
       dispatch({ type: "setDropIndicator", indicator: null });
     },
-    [state.selectedSlideId, dispatch]
+    [state.selectedSlideId, dispatch],
   );
 
   const handleDragOver = useCallback(
@@ -387,7 +415,7 @@ export default function LessonEditor() {
 
       const target = document.elementFromPoint(e.clientX, e.clientY);
       const columnEl = target?.closest(
-        "[data-column-id]"
+        "[data-column-id]",
       ) as HTMLElement | null;
       const dropColumnId = columnEl?.dataset.columnId;
       if (!dropColumnId) {
@@ -403,7 +431,7 @@ export default function LessonEditor() {
       let insertIndex = column.items.length;
       if (columnEl) {
         const cards = Array.from(
-          columnEl.querySelectorAll("[data-card-id]")
+          columnEl.querySelectorAll("[data-card-id]"),
         ) as HTMLElement[];
         for (let i = 0; i < cards.length; i++) {
           const rect = cards[i].getBoundingClientRect();
@@ -419,7 +447,7 @@ export default function LessonEditor() {
         indicator: { columnId: dropColumnId, index: insertIndex },
       });
     },
-    [state.selectedSlideId, state.slides, dispatch]
+    [state.selectedSlideId, state.slides, dispatch],
   );
 
   return (
@@ -479,9 +507,7 @@ export default function LessonEditor() {
                 }
                 dropIndicator={state.dropIndicator}
                 selectedColumnId={state.selectedColumnId}
-                onSelectColumn={(id) =>
-                  dispatch({ type: "selectColumn", id })
-                }
+                onSelectColumn={(id) => dispatch({ type: "selectColumn", id })}
                 selectedBoardId={state.selectedBoardId}
                 onSelectBoard={(id) => dispatch({ type: "selectBoard", id })}
               />
@@ -507,6 +533,7 @@ export default function LessonEditor() {
                   onChange={updateElement}
                   onClone={cloneElement}
                   onDelete={deleteElement}
+                  onSaveStyle={saveStylePreset}
                 />
               )}
               {selectedColumn && (
@@ -516,7 +543,10 @@ export default function LessonEditor() {
                 />
               )}
               {selectedBoard && (
-                <BoardAttributesPane board={selectedBoard} onChange={updateBoard} />
+                <BoardAttributesPane
+                  board={selectedBoard}
+                  onChange={updateBoard}
+                />
               )}
             </Box>
           </Grid>
