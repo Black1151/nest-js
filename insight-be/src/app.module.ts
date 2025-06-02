@@ -31,6 +31,8 @@ import { QuizModule } from './modules/timbuktu/administrative/quiz/quiz.module';
 import { SubjectModule } from './modules/timbuktu/administrative/subject/subject.module';
 import { YearGroupModule } from './modules/timbuktu/administrative/year-group/year-group.module';
 import { TopicModule } from './modules/timbuktu/administrative/topic/topic.module';
+import { StyleCollectionModule } from './modules/timbuktu/administrative/style-collection/style-collection.module';
+import { StyleModule } from './modules/timbuktu/administrative/style/style.module';
 import { AssignmentSubmissionModule } from './modules/timbuktu/administrative/assignment-submission/assignment-submission.model';
 import { AssignmentModule } from './modules/timbuktu/administrative/assignment/assignment.module';
 import { AssignmentSubmissionEntity } from './modules/timbuktu/administrative/assignment-submission/assignment-submission.entity';
@@ -44,6 +46,8 @@ import { SubjectEntity } from './modules/timbuktu/administrative/subject/subject
 import { YearGroupEntity } from './modules/timbuktu/administrative/year-group/year-group.entity';
 import { TopicEntity } from './modules/timbuktu/administrative/topic/topic.entity';
 import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-tables/class-lesson/class-lesson.entity';
+import { StyleCollectionEntity } from './modules/timbuktu/administrative/style-collection/style-collection.entity';
+import { StyleEntity } from './modules/timbuktu/administrative/style/style.entity';
 
 @Module({
   imports: [
@@ -83,6 +87,8 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
         AssignmentSubmissionEntity,
         AssignmentEntity,
         ClassLessonEntity,
+        StyleCollectionEntity,
+        StyleEntity,
       ],
       synchronize: true,
     }),
@@ -102,6 +108,8 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
     YearGroupModule,
     SubjectModule,
     TopicModule,
+    StyleCollectionModule,
+    StyleModule,
     ClassModule,
     LessonModule,
     QuizModule,
