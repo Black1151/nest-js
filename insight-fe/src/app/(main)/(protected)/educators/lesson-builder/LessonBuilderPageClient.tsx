@@ -2,7 +2,14 @@
 
 import { Box, Flex, Text, Button } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import LessonEditor, { LessonEditorHandle } from "@/components/lesson/LessonEditor";
+import LessonEditor, {
+  LessonEditorHandle,
+} from "@/components/lesson/LessonEditor";
+import { Box, Flex, Text, Button } from "@chakra-ui/react";
+import { useState, useRef } from "react";
+import LessonEditor, {
+  LessonEditorHandle,
+} from "@/components/lesson/LessonEditor";
 import YearGroupDropdown from "@/components/dropdowns/YearGroupDropdown";
 import SubjectDropdown from "@/components/dropdowns/SubjectDropdown";
 import SaveLessonModal from "@/components/lesson/SaveLessonModal";
@@ -24,7 +31,13 @@ export const LessonBuilderPageClient = () => {
     onCompleted: () => setIsSaveOpen(false),
   });
 
-  const handleSave = async ({ title, description }: { title: string; description: string }) => {
+  const handleSave = async ({
+    title,
+    description,
+  }: {
+    title: string;
+    description: string;
+  }) => {
     if (!yearGroupId || !subjectId) return;
     const content = editorRef.current?.getContent() ?? { slides: [] };
     await createLesson({
@@ -33,10 +46,8 @@ export const LessonBuilderPageClient = () => {
           title,
           description: description.length > 0 ? description : null,
           content,
-          relationIds: [
-            { relation: "recommendedYearGroups", ids: [Number(yearGroupId)] },
-            { relation: "subject", ids: [Number(subjectId)] },
-          ],
+          recommendedYearGroupIds: [Number(yearGroupId)],
+          relationIds: [{ relation: "subject", ids: [Number(subjectId)] }],
         },
       },
     });

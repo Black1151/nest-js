@@ -5,8 +5,9 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
+    const backend = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
     const nestResp = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
+      `${backend}/graphql`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
