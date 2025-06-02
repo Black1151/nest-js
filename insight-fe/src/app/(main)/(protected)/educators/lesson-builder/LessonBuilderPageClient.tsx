@@ -7,6 +7,7 @@ import LessonEditor, {
 } from "@/components/lesson/LessonEditor";
 import YearGroupDropdown from "@/components/dropdowns/YearGroupDropdown";
 import SubjectDropdown from "@/components/dropdowns/SubjectDropdown";
+import TopicDropdown from "@/components/dropdowns/TopicDropdown";
 import SaveLessonModal from "@/components/lesson/SaveLessonModal";
 import { useMutation } from "@apollo/client";
 import { typedGql } from "@/zeus/typedDocumentNode";
@@ -15,6 +16,7 @@ import { $ } from "@/zeus";
 export const LessonBuilderPageClient = () => {
   const [yearGroupId, setYearGroupId] = useState<string | null>(null);
   const [subjectId, setSubjectId] = useState<string | null>(null);
+  const [topicId, setTopicId] = useState<string | null>(null);
   const [isSaveOpen, setIsSaveOpen] = useState(false);
   const editorRef = useRef<LessonEditorHandle>(null);
 
@@ -33,7 +35,7 @@ export const LessonBuilderPageClient = () => {
     title: string;
     description: string;
   }) => {
-    if (!yearGroupId || !subjectId) return;
+    if (!yearGroupId || !subjectId || !topicId) return;
     const content = editorRef.current?.getContent() ?? { slides: [] };
     await createLesson({
       variables: {
@@ -42,7 +44,10 @@ export const LessonBuilderPageClient = () => {
           description: description.length > 0 ? description : null,
           content,
           recommendedYearGroupIds: [Number(yearGroupId)],
-          relationIds: [{ relation: "subject", ids: [Number(subjectId)] }],
+          relationIds: [
+            { relation: "subject", ids: [Number(subjectId)] },
+            { relation: "topic", ids: [Number(topicId)] },
+          ],
         },
       },
     });
@@ -58,6 +63,7 @@ export const LessonBuilderPageClient = () => {
             onChange={(id) => {
               setYearGroupId(id);
               setSubjectId(null);
+              setTopicId(null);
             }}
           />
         </Box>
@@ -66,13 +72,25 @@ export const LessonBuilderPageClient = () => {
           <SubjectDropdown
             yearGroupId={yearGroupId}
             value={subjectId}
-            onChange={setSubjectId}
+            onChange={(id) => {
+              setSubjectId(id);
+              setTopicId(null);
+            }}
+          />
+        </Box>
+        <Box>
+          <Text mb={2}>Topic</Text>
+          <TopicDropdown
+            yearGroupId={yearGroupId}
+            subjectId={subjectId}
+            value={topicId}
+            onChange={setTopicId}
           />
         </Box>
         <Button
           onClick={() => setIsSaveOpen(true)}
           colorScheme="blue"
-          isDisabled={!yearGroupId || !subjectId}
+          isDisabled={!yearGroupId || !subjectId || !topicId}
         >
           Save Lesson
         </Button>
