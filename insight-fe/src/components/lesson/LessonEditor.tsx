@@ -1,7 +1,7 @@
 "use client";
 
-import { Flex, Box, Text, Grid, HStack } from "@chakra-ui/react";
-import { useCallback, useReducer, useMemo } from "react";
+import { Flex, Box, Text, Grid, HStack, Button } from "@chakra-ui/react";
+import { useCallback, useReducer, useMemo, useState } from "react";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -11,6 +11,7 @@ import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
+import SaveStyleModal from "./SaveStyleModal";
 
 interface LessonState {
   slides: Slide[];
@@ -127,6 +128,9 @@ export default function LessonEditor() {
     selectedBoardId: null,
     dropIndicator: null,
   });
+
+  const [styleCollections, setStyleCollections] = useState<string[]>([]);
+  const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
 
   const setSlides = useCallback(
     (updater: React.SetStateAction<Slide[]>) =>
@@ -500,7 +504,12 @@ export default function LessonEditor() {
             </Box>
 
             <Box p={4} borderWidth="1px" borderRadius="md" minW="200px">
-              <Text mb={2}>Attributes</Text>
+              <HStack justify="space-between" mb={2}>
+                <Text>Attributes</Text>
+                <Button size="xs" onClick={() => setIsSaveStyleOpen(true)}>
+                  Save Style
+                </Button>
+              </HStack>
               {selectedElement && (
                 <ElementAttributesPane
                   element={selectedElement}
@@ -522,6 +531,14 @@ export default function LessonEditor() {
           </Grid>
         )}
       </Flex>
+      <SaveStyleModal
+        isOpen={isSaveStyleOpen}
+        onClose={() => setIsSaveStyleOpen(false)}
+        collections={styleCollections}
+        onAddCollection={(name) =>
+          setStyleCollections([...styleCollections, name])
+        }
+      />
     </Box>
   );
 }
