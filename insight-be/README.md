@@ -57,6 +57,12 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## OpenAI Lesson Generation
+
+Set the `OPENAI_API_KEY` environment variable before starting the backend to enable lesson generation. A new GraphQL mutation `generateLessonFromPrompt(prompt: String!)` returns AI generated lesson data containing `title`, `description` and `content`.
+
+The lesson builder page includes a text field for sending these prompts so that AI can modify slides without replacing the drag and drop editor.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
