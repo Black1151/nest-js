@@ -7,8 +7,9 @@ export async function POST(req: NextRequest) {
 
     console.log(originalBody);
 
+    const backend = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
     const nestResp = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
+      `${backend}/graphql`,
       {
         method: "POST",
         headers: {
