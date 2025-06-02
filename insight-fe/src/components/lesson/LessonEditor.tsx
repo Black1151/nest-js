@@ -1,7 +1,8 @@
 "use client";
 
 import { Flex, Box, Text, Grid, HStack, Button } from "@chakra-ui/react";
-import { useCallback, useReducer, useMemo, useState } from "react";
+import { useCallback, useReducer, useMemo, useState, useEffect } from "react";
+import { gql, useQuery } from "@apollo/client";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -114,6 +115,15 @@ const AVAILABLE_ELEMENTS = [
   { type: "quiz", label: "Quiz" },
 ];
 
+const GET_STYLE_COLLECTIONS = gql`
+  query GetStyleCollections($data: FindAllInput!) {
+    getAllStyleCollection(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
 export default function LessonEditor() {
   const initialSlide = {
     id: crypto.randomUUID(),
@@ -133,6 +143,17 @@ export default function LessonEditor() {
     { id: number; name: string }[]
   >([]);
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
+
+  const { data: styleColData, loading: styleColLoading } = useQuery(
+    GET_STYLE_COLLECTIONS,
+    { variables: { data: { all: true } } }
+  );
+
+  useEffect(() => {
+    if (styleColData?.getAllStyleCollection) {
+      setStyleCollections(styleColData.getAllStyleCollection);
+    }
+  }, [styleColData]);
 
   const setSlides = useCallback(
     (updater: React.SetStateAction<Slide[]>) =>
@@ -537,6 +558,7 @@ export default function LessonEditor() {
         isOpen={isSaveStyleOpen}
         onClose={() => setIsSaveStyleOpen(false)}
         collections={styleCollections}
+        isLoading={styleColLoading}
         element={selectedElement?.type || ""}
         onSave={({ name, collectionId }) => {
           // Placeholder for backend call using style module
