@@ -5,11 +5,6 @@ import { useState, useRef } from "react";
 import LessonEditor, {
   LessonEditorHandle,
 } from "@/components/lesson/LessonEditor";
-import { Box, Flex, Text, Button } from "@chakra-ui/react";
-import { useState, useRef } from "react";
-import LessonEditor, {
-  LessonEditorHandle,
-} from "@/components/lesson/LessonEditor";
 import YearGroupDropdown from "@/components/dropdowns/YearGroupDropdown";
 import SubjectDropdown from "@/components/dropdowns/SubjectDropdown";
 import SaveLessonModal from "@/components/lesson/SaveLessonModal";
