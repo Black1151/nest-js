@@ -60,12 +60,14 @@ export const LessonBuilderPageClient = () => {
       </Flex>
 
       <LessonEditor ref={editorRef} />
-      <SaveLessonModal
-        isOpen={isSaveOpen}
-        onClose={() => setIsSaveOpen(false)}
-        onSave={handleSave}
-        isSaving={saving}
-      />
+      {isSaveOpen && (
+        <SaveLessonModal
+          isOpen={isSaveOpen}
+          onClose={() => setIsSaveOpen(false)}
+          onSave={handleSave}
+          isSaving={saving}
+        />
+      )}
     </Flex>
   );
 };

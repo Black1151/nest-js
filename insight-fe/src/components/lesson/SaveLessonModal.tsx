@@ -1,3 +1,5 @@
+"use client";
+
 import { BaseModal } from "../modals/BaseModal";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
