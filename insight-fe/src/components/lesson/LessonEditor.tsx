@@ -16,7 +16,6 @@ import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
 import ColumnAttributesPane from "./ColumnAttributesPane";
 import BoardAttributesPane from "./BoardAttributesPane";
-import SlidePreview from "./SlidePreview";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
@@ -521,7 +520,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           onSelect={(id) => dispatch({ type: "selectSlide", id })}
         />
         {state.selectedSlideId && (
-          <Grid gap={4} flex={1} templateColumns="1fr 1fr 300px">
+          <Grid gap={4} flex={1} templateColumns="1fr 300px">
             <Box
               flex="1"
               p={4}
@@ -555,19 +554,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
                 onSelectBoard={(id) => dispatch({ type: "selectBoard", id })}
               />
             </Box>
-            <Box
-              p={4}
-              borderWidth="1px"
-              borderRadius="md"
-              minW="300px"
-              bgColor="white"
-            >
-              <SlidePreview
-                columnMap={selectedSlide!.columnMap}
-                boards={selectedSlide!.boards}
-              />
-            </Box>
-
             <Box p={4} borderWidth="1px" borderRadius="md" minW="200px">
               <HStack justify="space-between" mb={2}>
                 <Text>Attributes</Text>

@@ -3,6 +3,8 @@
 import { Flex, Button } from "@chakra-ui/react";
 import { useState, useRef } from "react";
 import LessonEditor, { LessonEditorHandle } from "@/components/lesson/LessonEditor";
+import LessonPreviewModal from "@/components/lesson/LessonPreviewModal";
+import { Slide } from "@/components/lesson/SlideSequencer";
 import SaveLessonModal from "@/components/lesson/SaveLessonModal";
 import LoadLessonModal from "@/components/lesson/LoadLessonModal";
 import { useMutation, useLazyQuery } from "@apollo/client";
@@ -12,6 +14,8 @@ import { $ } from "@/zeus";
 export const LessonBuilderPageClient = () => {
   const [isSaveOpen, setIsSaveOpen] = useState(false);
   const [isLoadOpen, setIsLoadOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewSlides, setPreviewSlides] = useState<Slide[]>([]);
   const editorRef = useRef<LessonEditorHandle>(null);
 
   const CREATE_LESSON = typedGql("mutation")({
@@ -30,6 +34,12 @@ export const LessonBuilderPageClient = () => {
   });
 
   const [fetchLesson, { loading: loadingLesson }] = useLazyQuery(GET_LESSON);
+
+  const openPreview = () => {
+    const slides = editorRef.current?.getContent().slides ?? [];
+    setPreviewSlides(slides);
+    setIsPreviewOpen(true);
+  };
 
   const handleSave = async ({
     title,
@@ -74,6 +84,7 @@ export const LessonBuilderPageClient = () => {
   return (
     <Flex direction="column" gap={4}>
       <Flex justifyContent="flex-end" gap={2}>
+        <Button onClick={openPreview}>Show Preview</Button>
         <Button onClick={() => setIsLoadOpen(true)}>Load Lesson</Button>
         <Button onClick={() => setIsSaveOpen(true)} colorScheme="blue">
           Save Lesson
@@ -95,6 +106,13 @@ export const LessonBuilderPageClient = () => {
           onClose={() => setIsLoadOpen(false)}
           onLoad={handleLoad}
           isLoading={loadingLesson}
+        />
+      )}
+      {isPreviewOpen && (
+        <LessonPreviewModal
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          slides={previewSlides}
         />
       )}
     </Flex>
