@@ -408,6 +408,10 @@ export default function ElementAttributesPane({
                 <option value="sm">Small</option>
                 <option value="md">Medium</option>
                 <option value="lg">Large</option>
+                <option value="xl">Extra Large</option>
+                <option value="2xl">2x Large</option>
+                <option value="3xl">3x Large</option>
+                <option value="full">Fully Rounded</option>
                 <option value="50%">Circular</option>
               </Select>
             </FormControl>
