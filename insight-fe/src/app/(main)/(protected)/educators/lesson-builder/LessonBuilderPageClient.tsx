@@ -1,24 +1,14 @@
 "use client";
 
-import { Box, Flex, Text, Button } from "@chakra-ui/react";
+import { Flex, Button } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import LessonEditor, {
-  LessonEditorHandle,
-} from "@/components/lesson/LessonEditor";
-import YearGroupDropdown from "@/components/dropdowns/YearGroupDropdown";
-import SubjectDropdown from "@/components/dropdowns/SubjectDropdown";
-import TopicDropdown from "@/components/dropdowns/TopicDropdown";
+import LessonEditor, { LessonEditorHandle } from "@/components/lesson/LessonEditor";
 import SaveLessonModal from "@/components/lesson/SaveLessonModal";
 import { useMutation } from "@apollo/client";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
 
 export const LessonBuilderPageClient = () => {
-  const [{ yearGroupId, subjectId, topicId }, setDropdownIds] = useState<{
-    yearGroupId: string | null;
-    subjectId: string | null;
-    topicId: string | null;
-  }>({ yearGroupId: null, subjectId: null, topicId: null });
   const [isSaveOpen, setIsSaveOpen] = useState(false);
   const editorRef = useRef<LessonEditorHandle>(null);
 
@@ -33,9 +23,15 @@ export const LessonBuilderPageClient = () => {
   const handleSave = async ({
     title,
     description,
+    yearGroupId,
+    subjectId,
+    topicId,
   }: {
     title: string;
     description: string;
+    yearGroupId: string | null;
+    subjectId: string | null;
+    topicId: string | null;
   }) => {
     if (!yearGroupId || !subjectId || !topicId) return;
     const content = editorRef.current?.getContent() ?? { slides: [] };
@@ -57,57 +53,21 @@ export const LessonBuilderPageClient = () => {
 
   return (
     <Flex direction="column" gap={4}>
-      <Flex gap={8} alignItems="flex-end">
-        <Box>
-          <Text mb={2}>Year Group</Text>
-          <YearGroupDropdown
-            value={yearGroupId}
-            onChange={(id) =>
-              setDropdownIds({ yearGroupId: id, subjectId: null, topicId: null })
-            }
-          />
-        </Box>
-        <Box>
-          <Text mb={2}>Subject</Text>
-          <SubjectDropdown
-            yearGroupId={yearGroupId}
-            value={subjectId}
-            onChange={(id) =>
-              setDropdownIds({
-                yearGroupId,
-                subjectId: id,
-                topicId: null,
-              })
-            }
-          />
-        </Box>
-        <Box>
-          <Text mb={2}>Topic</Text>
-          <TopicDropdown
-            yearGroupId={yearGroupId}
-            subjectId={subjectId}
-            value={topicId}
-            onChange={(id) =>
-              setDropdownIds({ yearGroupId, subjectId, topicId: id })
-            }
-          />
-        </Box>
-        <Button
-          onClick={() => setIsSaveOpen(true)}
-          colorScheme="blue"
-          isDisabled={!yearGroupId || !subjectId || !topicId}
-        >
+      <Flex justifyContent="flex-end">
+        <Button onClick={() => setIsSaveOpen(true)} colorScheme="blue">
           Save Lesson
         </Button>
       </Flex>
 
       <LessonEditor ref={editorRef} />
-      <SaveLessonModal
-        isOpen={isSaveOpen}
-        onClose={() => setIsSaveOpen(false)}
-        onSave={handleSave}
-        isSaving={saving}
-      />
+      {isSaveOpen && (
+        <SaveLessonModal
+          isOpen={isSaveOpen}
+          onClose={() => setIsSaveOpen(false)}
+          onSave={handleSave}
+          isSaving={saving}
+        />
+      )}
     </Flex>
   );
 };
