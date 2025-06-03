@@ -1,7 +1,7 @@
 "use client";
 
-import { HStack, IconButton } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, HStack, IconButton, Stack } from "@chakra-ui/react";
+import { useState, useRef, useEffect } from "react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
   SlideElementDnDItemProps,
@@ -14,6 +14,17 @@ import ElementWrapper, { ElementWrapperStyles } from "./ElementWrapper";
 import { useCallback } from "react";
 import { X, Settings, Plus } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import {
+  attachClosestEdge,
+  extractClosestEdge,
+  type Edge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 
 interface SlideElementsBoardProps {
   boardId: string;
@@ -26,6 +37,7 @@ interface SlideElementsBoardProps {
   ) => void;
   registry: ReturnType<typeof createRegistry>;
   instanceId: symbol;
+  boardInstanceId: symbol;
   spacing?: number;
   selectedElementId?: string | null;
   onSelectElement?: (id: string) => void;
@@ -54,6 +66,7 @@ export default function SlideElementsBoard({
   onChange,
   registry,
   instanceId,
+  boardInstanceId,
   spacing = 0,
   selectedElementId,
   onSelectElement,
@@ -68,6 +81,42 @@ export default function SlideElementsBoard({
   /*  Column helpers                                                     */
   /* ------------------------------------------------------------------ */
   const [columnIdToDelete, setColumnIdToDelete] = useState<string | null>(null);
+  const boardRef = useRef<HTMLDivElement | null>(null);
+  const dragHandleRef = useRef<HTMLDivElement | null>(null);
+  const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+
+  useEffect(() => {
+    if (!boardRef.current || !dragHandleRef.current) return;
+    const el = boardRef.current;
+    return combine(
+      draggable({
+        element: el,
+        dragHandle: dragHandleRef.current,
+        getInitialData: () => ({
+          type: "board",
+          boardId,
+          instanceId: boardInstanceId,
+        }),
+      }),
+      dropTargetForElements({
+        element: el,
+        canDrop: ({ source }) =>
+          source.data.instanceId === boardInstanceId &&
+          source.data.type === "board",
+        getIsSticky: () => true,
+        getData: ({ input, element }) =>
+          attachClosestEdge(
+            { type: "board", boardId },
+            { input, element, allowedEdges: ["top", "bottom"] }
+          ),
+        onDragEnter: (args) =>
+          setClosestEdge(extractClosestEdge(args.self.data)),
+        onDrag: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
+        onDragLeave: () => setClosestEdge(null),
+        onDrop: () => setClosestEdge(null),
+      })
+    );
+  }, [boardInstanceId, boardId]);
 
   const addColumn = () => {
     const idx = orderedColumnIds.length;
@@ -154,8 +203,9 @@ export default function SlideElementsBoard({
   /*  Render                                                            */
   /* ------------------------------------------------------------------ */
   return (
-    <>
+    <Box ref={boardRef} position="relative">
       <HStack
+        ref={dragHandleRef}
         mb={2}
         justify="flex-end"
         bg="gray.100"
@@ -163,6 +213,7 @@ export default function SlideElementsBoard({
         py={1}
         borderRadius="md"
         spacing={1}
+        cursor="grab"
       >
         {onRemoveBoard && (
           <IconButton
@@ -222,6 +273,7 @@ export default function SlideElementsBoard({
         bodyText="This column contains elements. Are you sure you want to delete it?"
         onConfirm={confirmRemoveColumn}
       />
-    </>
+      {closestEdge && <DropIndicator edge={closestEdge} gap="4px" />}
+    </Box>
   );
 }

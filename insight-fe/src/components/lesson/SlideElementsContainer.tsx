@@ -8,9 +8,19 @@ import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 import type { ElementWrapperStyles } from "./ElementWrapper";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
-import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types";
+import {
+  monitorForElements,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { autoScrollWindowForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
+import {
+  attachClosestEdge,
+  extractClosestEdge,
+  type Edge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
 
 export interface BoardRow {
   id: string;
@@ -57,6 +67,8 @@ export default function SlideElementsContainer({
   onSelectBoard,
 }: SlideElementsContainerProps) {
   const instanceId = useRef(Symbol("slide-container"));
+  const boardInstanceId = useRef(Symbol("board-container"));
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const registry = useRef(createRegistry());
   const [boardIdToDelete, setBoardIdToDelete] = useState<string | null>(null);
 
@@ -158,6 +170,76 @@ export default function SlideElementsContainer({
     }
   };
 
+  useEffect(() => {
+    if (!containerRef.current) return;
+    return dropTargetForElements({
+      element: containerRef.current,
+      canDrop: ({ source }) =>
+        source.data.instanceId === boardInstanceId.current &&
+        source.data.type === "board",
+      getData: () => ({ columnId: "boards" }),
+      getIsSticky: () => true,
+    });
+  }, []);
+
+  useEffect(() => {
+    return autoScrollWindowForElements({
+      canScroll: ({ source }) =>
+        source.data.instanceId === boardInstanceId.current &&
+        source.data.type === "board",
+    });
+  }, []);
+
+  useEffect(() => {
+    return monitorForElements({
+      canMonitor: ({ source }) =>
+        source.data.instanceId === boardInstanceId.current,
+      onDrop: ({ source, location }) => {
+        if (source.data.type !== "board") return;
+        if (!location.current.dropTargets.length) return;
+
+        const startIndex = boards.findIndex((b) => b.id === source.data.boardId);
+        if (startIndex === -1) return;
+
+        if (location.current.dropTargets.length === 1) {
+          const destinationIndex = getReorderDestinationIndex({
+            startIndex,
+            indexOfTarget: boards.length - 1,
+            closestEdgeOfTarget: null,
+            axis: "vertical",
+          });
+          const reordered = reorder({
+            list: boards,
+            startIndex,
+            finishIndex: destinationIndex,
+          });
+          onChange(columnMap, reordered);
+          return;
+        }
+
+        if (location.current.dropTargets.length === 2) {
+          const [destinationRecord] = location.current.dropTargets;
+          const indexOfTarget = boards.findIndex(
+            (b) => b.id === destinationRecord.data.boardId,
+          );
+          const closestEdgeOfTarget = extractClosestEdge(destinationRecord.data);
+          const destinationIndex = getReorderDestinationIndex({
+            startIndex,
+            indexOfTarget,
+            closestEdgeOfTarget,
+            axis: "vertical",
+          });
+          const reordered = reorder({
+            list: boards,
+            startIndex,
+            finishIndex: destinationIndex,
+          });
+          onChange(columnMap, reordered);
+        }
+      },
+    });
+  }, [boards, columnMap, onChange]);
+
   // Handle moving columns between boards
   useEffect(() => {
     return monitorForElements({
@@ -217,7 +299,7 @@ export default function SlideElementsContainer({
   }, [boards, columnMap, onChange]);
 
   return (
-    <Stack gap={4}>
+    <Stack gap={4} ref={containerRef}>
       <Button
         size="sm"
         colorScheme="teal"
@@ -237,6 +319,7 @@ export default function SlideElementsContainer({
           onChange={(map, ids) => updateBoard(b.id, map, ids)}
           registry={registry.current}
           instanceId={instanceId.current}
+          boardInstanceId={boardInstanceId.current}
           selectedElementId={selectedElementId}
           onSelectElement={onSelectElement}
           dropIndicator={dropIndicator}
