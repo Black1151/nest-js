@@ -9,6 +9,11 @@ import { createRegistry } from "@/components/DnD/registry";
 import type { ElementWrapperStyles } from "./ElementWrapper";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import {
+  COLUMN_COLORS,
+  createDefaultBoard,
+  createDefaultColumn,
+} from "./defaults";
+import {
   monitorForElements,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -45,14 +50,6 @@ interface SlideElementsContainerProps {
   onSelectBoard?: (id: string) => void;
 }
 
-const COLUMN_COLORS = [
-  "red.300",
-  "green.300",
-  "blue.300",
-  "orange.300",
-  "purple.300",
-  "teal.300",
-];
 
 export default function SlideElementsContainer({
   columnMap,
@@ -75,52 +72,13 @@ export default function SlideElementsContainer({
   const addBoard = () => {
     const colIdx = Object.keys(columnMap).length;
     const color = COLUMN_COLORS[colIdx % COLUMN_COLORS.length];
-    const columnId = `col-${crypto.randomUUID()}`;
-    const boardId = crypto.randomUUID();
+    const column = createDefaultColumn(color);
+    const board = createDefaultBoard(column.columnId);
 
-    const newColumn: ColumnType<SlideElementDnDItemProps> = {
-      title: "",
-      columnId,
-      styles: {
-        container: { border: "1px dashed gray", width: "100%" },
-        header: { bg: color, color: "white", px: 2, py: 1 },
-      },
-      wrapperStyles: {
-        bgColor: "#ffffff",
-        bgOpacity: 0,
-        dropShadow: "none",
-        paddingX: 0,
-        paddingY: 0,
-        marginX: 0,
-        marginY: 0,
-        borderColor: "#000000",
-        borderWidth: 0,
-        borderRadius: "none",
-      },
-      items: [],
-      spacing: 0,
-    };
-
-    onChange({ ...columnMap, [columnId]: newColumn }, [
-      ...boards,
-      {
-        id: boardId,
-        orderedColumnIds: [columnId],
-        wrapperStyles: {
-          bgColor: "#ffffff",
-          bgOpacity: 1,
-          dropShadow: "none",
-          paddingX: 0,
-          paddingY: 0,
-          marginX: 0,
-          marginY: 0,
-          borderColor: "#000000",
-          borderWidth: 0,
-          borderRadius: "none",
-        },
-        spacing: 0,
-      },
-    ]);
+    onChange(
+      { ...columnMap, [column.columnId]: column },
+      [...boards, { ...board, spacing: 0 }]
+    );
   };
 
   const updateBoard = (
