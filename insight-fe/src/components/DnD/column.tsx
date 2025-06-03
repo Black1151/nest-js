@@ -69,7 +69,6 @@ const columnHeaderStyles = {
 };
 
 const scrollContainerStyles = {
-  height: "100%",
   overflowY: "auto",
   py: 1,
   flex: 1,
@@ -339,7 +338,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
             overflow="hidden"
             sx={isDragging ? isDraggingStyles : undefined}
             spacing={0}
-            height="100%"
           >
             <HStack
               ref={headerRef}
