@@ -16,6 +16,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import useDebouncedEffect from "@/hooks/useDebouncedEffect";
 import type { BoardRow } from "./SlideElementsContainer";
 
 interface BoardAttributesPaneProps {
@@ -50,24 +51,28 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
     setSpacing(board.spacing ?? 0);
   }, [board.id]);
 
-  useEffect(() => {
-    onChange({
-      ...board,
-      wrapperStyles: {
-        bgColor,
-        bgOpacity,
-        dropShadow: shadow,
-        paddingX,
-        paddingY,
-        marginX,
-        marginY,
-        borderColor,
-        borderWidth,
-        borderRadius,
-      },
-      spacing,
-    });
-  }, [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing]);
+  useDebouncedEffect(
+    () => {
+      onChange({
+        ...board,
+        wrapperStyles: {
+          bgColor,
+          bgOpacity,
+          dropShadow: shadow,
+          paddingX,
+          paddingY,
+          marginX,
+          marginY,
+          borderColor,
+          borderWidth,
+          borderRadius,
+        },
+        spacing,
+      });
+    },
+    [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing],
+    100
+  );
 
   return (
     <Accordion allowMultiple>
