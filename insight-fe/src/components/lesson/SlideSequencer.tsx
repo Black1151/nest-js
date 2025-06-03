@@ -69,7 +69,7 @@ export const createInitialBoard = (): {
         orderedColumnIds: [columnId],
         wrapperStyles: {
           bgColor: "#ffffff",
-          bgOpacity: 0,
+          bgOpacity: 1,
           dropShadow: "none",
           paddingX: 0,
           paddingY: 0,
