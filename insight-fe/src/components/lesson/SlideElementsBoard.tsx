@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, HStack } from "@chakra-ui/react";
+import { HStack, IconButton } from "@chakra-ui/react";
 import { useState } from "react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
@@ -12,6 +12,7 @@ import { createRegistry } from "@/components/DnD/registry";
 import { ContentCard } from "../layout/Card";
 import ElementWrapper, { ElementWrapperStyles } from "./ElementWrapper";
 import { useCallback } from "react";
+import { X, Settings, Plus } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface SlideElementsBoardProps {
@@ -154,20 +155,42 @@ export default function SlideElementsBoard({
   /* ------------------------------------------------------------------ */
   return (
     <>
-      <HStack mb={2} justify="space-between">
+      <HStack
+        mb={2}
+        justify="flex-end"
+        bg="gray.100"
+        px={2}
+        py={1}
+        borderRadius="md"
+        spacing={1}
+      >
         {onRemoveBoard && (
-          <Button size="sm" colorScheme="red" onClick={onRemoveBoard}>
-            Delete Container
-          </Button>
+          <IconButton
+            aria-label="Delete container"
+            icon={<X size={12} />}
+            size="xs"
+            variant="ghost"
+            colorScheme="red"
+            onClick={onRemoveBoard}
+          />
         )}
         {onSelectBoard && (
-          <Button size="sm" onClick={onSelectBoard}>
-            Edit Container
-          </Button>
+          <IconButton
+            aria-label="Edit container"
+            icon={<Settings size={12} />}
+            size="xs"
+            variant="ghost"
+            onClick={onSelectBoard}
+          />
         )}
-        <Button size="sm" colorScheme="teal" onClick={addColumn}>
-          Add Column
-        </Button>
+        <IconButton
+          aria-label="Add column"
+          icon={<Plus size={12} />}
+          size="xs"
+          variant="ghost"
+          colorScheme="teal"
+          onClick={addColumn}
+        />
       </HStack>
       <ElementWrapper
         styles={wrapperStyles}
