@@ -25,7 +25,7 @@ interface BoardAttributesPaneProps {
 
 export default function BoardAttributesPane({ board, onChange }: BoardAttributesPaneProps) {
   const [bgColor, setBgColor] = useState(board.wrapperStyles?.bgColor || "#ffffff");
-  const [bgOpacity, setBgOpacity] = useState(board.wrapperStyles?.bgOpacity ?? 0);
+  const [bgOpacity, setBgOpacity] = useState(board.wrapperStyles?.bgOpacity ?? 1);
   const [shadow, setShadow] = useState(board.wrapperStyles?.dropShadow || "none");
   const [paddingX, setPaddingX] = useState(board.wrapperStyles?.paddingX ?? 0);
   const [paddingY, setPaddingY] = useState(board.wrapperStyles?.paddingY ?? 0);
@@ -38,7 +38,7 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
 
   useEffect(() => {
     setBgColor(board.wrapperStyles?.bgColor || "#ffffff");
-    setBgOpacity(board.wrapperStyles?.bgOpacity ?? 0);
+    setBgOpacity(board.wrapperStyles?.bgOpacity ?? 1);
     setShadow(board.wrapperStyles?.dropShadow || "none");
     setPaddingX(board.wrapperStyles?.paddingX ?? 0);
     setPaddingY(board.wrapperStyles?.paddingY ?? 0);
