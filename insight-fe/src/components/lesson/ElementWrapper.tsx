@@ -5,6 +5,9 @@ export interface ElementWrapperStyles {
   bgColor?: string;
   /** Opacity value between 0 and 1 */
   bgOpacity?: number;
+  gradientFrom?: string;
+  gradientTo?: string;
+  gradientDirection?: number;
   dropShadow?: string;
   paddingX?: number;
   paddingY?: number;
@@ -30,13 +33,15 @@ export default function ElementWrapper({ styles, children, ...props }: ElementWr
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   };
 
-  const bgColor = styles?.bgColor
+  const background = styles?.gradientFrom && styles?.gradientTo
+    ? `linear-gradient(${styles.gradientDirection ?? 0}deg, ${styles.gradientFrom}, ${styles.gradientTo})`
+    : styles?.bgColor
     ? hexToRgba(styles.bgColor, styles.bgOpacity ?? 0)
     : undefined;
 
   return (
     <Box
-      bg={bgColor}
+      bg={background}
       boxShadow={styles?.dropShadow}
       px={styles?.paddingX}
       py={styles?.paddingY}
