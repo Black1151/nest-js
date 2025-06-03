@@ -15,6 +15,10 @@ import { useCallback } from "react";
 import { X, Settings, Plus } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import {
+  COLUMN_COLORS,
+  createDefaultColumn,
+} from "./defaults";
+import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -49,14 +53,6 @@ interface SlideElementsBoardProps {
   onSelectBoard?: () => void;
 }
 
-const COLUMN_COLORS = [
-  "red.300",
-  "green.300",
-  "blue.300",
-  "orange.300",
-  "purple.300",
-  "teal.300",
-];
 
 export default function SlideElementsBoard({
   boardId,
@@ -121,32 +117,8 @@ export default function SlideElementsBoard({
   const addColumn = () => {
     const idx = orderedColumnIds.length;
     const color = COLUMN_COLORS[idx % COLUMN_COLORS.length];
-    const id = `col-${crypto.randomUUID()}` as const;
-
-    const newColumn: ColumnType<SlideElementDnDItemProps> = {
-      title: "",
-      columnId: id,
-      styles: {
-        container: { border: "1px dashed gray", width: "100%" },
-        header: { bg: color, color: "white", px: 2, py: 1 },
-      },
-      wrapperStyles: {
-        bgColor: "#ffffff",
-        bgOpacity: 0,
-        dropShadow: "none",
-        paddingX: 0,
-        paddingY: 0,
-        marginX: 0,
-        marginY: 0,
-        borderColor: "#000000",
-        borderWidth: 0,
-        borderRadius: "none",
-      },
-      items: [],
-      spacing: 0,
-    };
-
-    onChange({ ...columnMap, [id]: newColumn }, [...orderedColumnIds, id]);
+    const column = createDefaultColumn(color);
+    onChange({ ...columnMap, [column.columnId]: column }, [...orderedColumnIds, column.columnId]);
   };
 
   const deleteColumn = (columnId: string) => {

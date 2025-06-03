@@ -11,7 +11,8 @@ import {
   useEffect,
 } from "react";
 import { gql, useQuery } from "@apollo/client";
-import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
+import SlideSequencer, { Slide } from "./SlideSequencer";
+import { createInitialBoard } from "./defaults";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
 import ColumnAttributesPane from "./ColumnAttributesPane";

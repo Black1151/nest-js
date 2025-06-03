@@ -19,12 +19,7 @@ import {
   type Edge,
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
-
-export interface SlideBoard {
-  id: string;
-  orderedColumnIds: string[];
-  wrapperStyles?: ElementWrapperStyles;
-}
+import { createInitialBoard, SlideBoard } from "./defaults";
 
 export interface Slide {
   id: string;
@@ -32,57 +27,6 @@ export interface Slide {
   columnMap: ColumnMap<SlideElementDnDItemProps>;
   boards: SlideBoard[];
 }
-
-export const createInitialBoard = (): {
-  columnMap: ColumnMap<SlideElementDnDItemProps>;
-  boards: SlideBoard[];
-} => {
-  const columnId = `col-${crypto.randomUUID()}`;
-  const boardId = crypto.randomUUID();
-  return {
-    columnMap: {
-      [columnId]: {
-        title: "",
-        columnId,
-        styles: {
-          container: { border: "1px dashed gray", width: "100%" },
-          header: { bg: "red.300", color: "white", px: 2, py: 1 },
-        },
-        wrapperStyles: {
-          bgColor: "#ffffff",
-          bgOpacity: 0,
-          dropShadow: "none",
-          paddingX: 0,
-          paddingY: 0,
-          marginX: 0,
-          marginY: 0,
-          borderColor: "#000000",
-          borderWidth: 0,
-          borderRadius: "none",
-        },
-        items: [],
-      },
-    },
-    boards: [
-      {
-        id: boardId,
-        orderedColumnIds: [columnId],
-        wrapperStyles: {
-          bgColor: "#ffffff",
-          bgOpacity: 1,
-          dropShadow: "none",
-          paddingX: 0,
-          paddingY: 0,
-          marginX: 0,
-          marginY: 0,
-          borderColor: "#000000",
-          borderWidth: 0,
-          borderRadius: "none",
-        },
-      },
-    ],
-  };
-};
 
 interface SlideItemProps {
   slide: Slide;
