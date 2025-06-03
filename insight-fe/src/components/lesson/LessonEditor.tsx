@@ -134,6 +134,7 @@ const AVAILABLE_ELEMENTS = [
 
 export interface LessonEditorHandle {
   getContent: () => { slides: Slide[] };
+  setContent: (slides: Slide[]) => void;
 }
 
 const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
@@ -171,8 +172,12 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     ref,
     () => ({
       getContent: () => ({ slides: state.slides }),
+      setContent: (slides: Slide[]) => {
+        dispatch({ type: "setSlides", updater: slides });
+        dispatch({ type: "selectSlide", id: slides[0]?.id ?? null });
+      },
     }),
-    [state.slides]
+    [state.slides, dispatch]
   );
 
   const setSlides = useCallback(
