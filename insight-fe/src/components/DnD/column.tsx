@@ -52,6 +52,9 @@ const columnBaseStyles = {
   transition: "background 200ms ease-in-out",
   flex: 1,
   overflowY: "auto",
+  borderWidth: "1px",
+  borderStyle: "dashed",
+  borderColor: "gray.300",
 };
 
 const idleStyles = { cursor: "grab" };
@@ -59,8 +62,8 @@ const cardOverStyles = { bg: "blue.50" };
 const isDraggingStyles = { opacity: 0.4 };
 
 const columnHeaderStyles = {
-  px: 4,
-  py: 3,
+  px: 2,
+  py: 1,
   color: "gray.500",
   userSelect: "none",
 };
