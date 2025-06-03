@@ -51,6 +51,9 @@ export const createInitialBoard = (): {
         wrapperStyles: {
           bgColor: "#ffffff",
           bgOpacity: 0,
+          gradientFrom: "",
+          gradientTo: "",
+          gradientDirection: 0,
           dropShadow: "none",
           paddingX: 0,
           paddingY: 0,
@@ -70,6 +73,9 @@ export const createInitialBoard = (): {
         wrapperStyles: {
           bgColor: "#ffffff",
           bgOpacity: 1,
+          gradientFrom: "",
+          gradientTo: "",
+          gradientDirection: 0,
           dropShadow: "none",
           paddingX: 0,
           paddingY: 0,

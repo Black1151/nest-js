@@ -298,12 +298,20 @@ function ColumnBase<TCard extends BaseCardDnD>({
     ...columnBaseStyles,
     ...(column.wrapperStyles
       ? {
-          bg: column.wrapperStyles.bgColor
-            ? hexToRgba(
-                column.wrapperStyles.bgColor,
-                column.wrapperStyles.bgOpacity ?? 0,
-              )
-            : undefined,
+          bg:
+            column.wrapperStyles.gradientFrom &&
+            column.wrapperStyles.gradientTo
+              ? `linear-gradient(${
+                  column.wrapperStyles.gradientDirection ?? 0
+                }deg, ${column.wrapperStyles.gradientFrom}, ${
+                  column.wrapperStyles.gradientTo
+                })`
+              : column.wrapperStyles.bgColor
+              ? hexToRgba(
+                  column.wrapperStyles.bgColor,
+                  column.wrapperStyles.bgOpacity ?? 0,
+                )
+              : undefined,
           boxShadow: column.wrapperStyles.dropShadow,
           px: column.wrapperStyles.paddingX,
           py: column.wrapperStyles.paddingY,
