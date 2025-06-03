@@ -14,13 +14,11 @@ export const getStateStyle = (state: State["type"]) => {
     case "idle":
       return {
         cursor: "grab",
-        boxShadow: "md",
         opacity: 1,
       };
     case "dragging":
       return {
         opacity: 0.4,
-        boxShadow: "md",
       };
     case "preview":
       return {};
