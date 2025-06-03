@@ -23,6 +23,7 @@ import { Trash2 } from "lucide-react";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import EditQuizModal from "./EditQuizModal";
 import { useEffect, useState } from "react";
+import useDebouncedEffect from "@/hooks/useDebouncedEffect";
 
 interface ElementAttributesPaneProps {
   element: SlideElementDnDItemProps;
@@ -115,52 +116,54 @@ export default function ElementAttributesPane({
     setBorderRadius(element.wrapperStyles?.borderRadius || "none");
   }, [element.id, element.type]);
 
-  useEffect(() => {
-    const updated: SlideElementDnDItemProps = {
-      ...element,
-      wrapperStyles: {
-        bgColor,
-        bgOpacity,
-        dropShadow: shadow,
-        paddingX,
-        paddingY,
-        marginX,
-        marginY,
-        borderColor,
-        borderWidth,
-        borderRadius,
-      },
-    };
-    if (element.type === "text") {
-      updated.text = text;
-      updated.styles = {
-        ...element.styles,
-        color,
-        fontSize,
-        fontFamily,
-        fontWeight,
-        lineHeight,
-        textAlign,
+  useDebouncedEffect(
+    () => {
+      const updated: SlideElementDnDItemProps = {
+        ...element,
+        wrapperStyles: {
+          bgColor,
+          bgOpacity,
+          dropShadow: shadow,
+          paddingX,
+          paddingY,
+          marginX,
+          marginY,
+          borderColor,
+          borderWidth,
+          borderRadius,
+        },
       };
-    }
-    if (element.type === "image") {
-      updated.src = src;
-    }
-    if (element.type === "video") {
-      updated.url = url;
-    }
-    if (element.type === "quiz") {
-      updated.title = title;
-      updated.description = description;
-      updated.questions = questions;
-    }
-    onChange(updated);
-  }, [
-    color,
-    fontSize,
-    fontFamily,
-    fontWeight,
-    lineHeight,
+      if (element.type === "text") {
+        updated.text = text;
+        updated.styles = {
+          ...element.styles,
+          color,
+          fontSize,
+          fontFamily,
+          fontWeight,
+          lineHeight,
+          textAlign,
+        };
+      }
+      if (element.type === "image") {
+        updated.src = src;
+      }
+      if (element.type === "video") {
+        updated.url = url;
+      }
+      if (element.type === "quiz") {
+        updated.title = title;
+        updated.description = description;
+        updated.questions = questions;
+      }
+      onChange(updated);
+    },
+    [
+      color,
+      fontSize,
+      fontFamily,
+      fontWeight,
+      lineHeight,
     textAlign,
     text,
     src,
@@ -178,7 +181,9 @@ export default function ElementAttributesPane({
     borderColor,
     borderWidth,
     borderRadius,
-  ]);
+  ],
+    100
+  );
 
   return (
     <>

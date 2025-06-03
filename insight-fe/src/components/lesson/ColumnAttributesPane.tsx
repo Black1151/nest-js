@@ -16,6 +16,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import useDebouncedEffect from "@/hooks/useDebouncedEffect";
 import { ColumnType } from "@/components/DnD/types";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -51,24 +52,28 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
     setSpacing(column.spacing ?? 0);
   }, [column.columnId]);
 
-  useEffect(() => {
-    onChange({
-      ...column,
-      wrapperStyles: {
-        bgColor,
-        bgOpacity,
-        dropShadow: shadow,
-        paddingX,
-        paddingY,
-        marginX,
-        marginY,
-        borderColor,
-        borderWidth,
-        borderRadius,
-      },
-      spacing,
-    });
-  }, [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing]);
+  useDebouncedEffect(
+    () => {
+      onChange({
+        ...column,
+        wrapperStyles: {
+          bgColor,
+          bgOpacity,
+          dropShadow: shadow,
+          paddingX,
+          paddingY,
+          marginX,
+          marginY,
+          borderColor,
+          borderWidth,
+          borderRadius,
+        },
+        spacing,
+      });
+    },
+    [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing],
+    100
+  );
 
   return (
     <Accordion allowMultiple>
