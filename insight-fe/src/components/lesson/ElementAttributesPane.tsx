@@ -192,7 +192,7 @@ export default function ElementAttributesPane({
         <h2>
           <AccordionButton>
             <Box flex="1" textAlign="left">
-              Wrapper
+              Background
             </Box>
             <AccordionIcon />
           </AccordionButton>
@@ -200,9 +200,7 @@ export default function ElementAttributesPane({
         <AccordionPanel pb={2}>
           <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
-              <FormLabel mb="0" fontSize="sm" w="40%">
-                Background
-              </FormLabel>
+              <FormLabel mb="0" fontSize="sm" w="40%">Color</FormLabel>
               <Input
                 type="color"
                 value={bgColor}
@@ -212,6 +210,26 @@ export default function ElementAttributesPane({
                 }}
               />
             </FormControl>
+          </Stack>
+        </AccordionPanel>
+      </AccordionItem>
+
+      <AccordionItem
+        borderWidth="1px"
+        borderColor="blue.300"
+        borderRadius="md"
+        mb={2}
+      >
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">
+              Wrapper
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={2}>
+          <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
               <FormLabel mb="0" fontSize="sm" w="40%">
                 Shadow
