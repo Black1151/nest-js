@@ -156,7 +156,7 @@ export default function SlideElementsBoard({
   return (
     <>
       <HStack
-        mb={2}
+        mb={0}
         justify="flex-end"
         bg="gray.100"
         px={2}
