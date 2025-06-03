@@ -211,6 +211,7 @@ export default function SlideElementsBoard({
     <Box
       ref={boardRef}
       position="relative"
+      overflow="hidden"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -227,11 +228,11 @@ export default function SlideElementsBoard({
         top={0}
         right={0}
         left={0}
-        zIndex={1}
-        transform={showControls ? "translateY(0)" : "translateY(-100%)"}
+        zIndex={showControls ? 1 : 0}
+        transform={showControls ? "translateY(0)" : "translateY(100%)"}
         transition="transform 0.2s"
         pointerEvents={showControls ? "auto" : "none"}
-      >
+        >
         {onRemoveBoard && (
           <IconButton
             aria-label="Delete container"
@@ -280,6 +281,7 @@ export default function SlideElementsBoard({
             instanceId={instanceId}
             registry={registry}
             spacing={spacing}
+            showControls={showControls}
           />
         </ContentCard>
       </ElementWrapper>

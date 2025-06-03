@@ -95,6 +95,8 @@ export interface DnDBoardMainProps<TCard extends BaseCardDnD> {
   registry?: ReturnType<typeof createRegistry>;
   /** Spacing between columns */
   spacing?: number;
+  /** Whether column headers should be visible */
+  showControls?: boolean;
   /**
    * When `true` this component is *controlled*:
    *  - It never stores its own copy of the board.
@@ -122,6 +124,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   instanceId: instanceIdProp,
   registry: registryProp,
   spacing = 0,
+  showControls = true,
   controlled = false,
 }: DnDBoardMainProps<TCard>) => {
   /* -----------------------------------------------------------------------
@@ -614,6 +617,7 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
               onRemoveColumn={onRemoveColumn}
               onSelectColumn={onSelectColumn}
               isSelected={selectedColumnId === columnId}
+              showControls={showControls}
               externalDropIndex={
                 externalDropIndicator &&
                 externalDropIndicator.columnId === columnId

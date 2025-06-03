@@ -110,6 +110,7 @@ interface ColumnProps<TCard extends BaseCardDnD> {
   externalDropIndex?: number | null;
   onSelectColumn?: (columnId: string) => void;
   isSelected?: boolean;
+  showControls?: boolean;
 }
 
 function ColumnBase<TCard extends BaseCardDnD>({
@@ -121,6 +122,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
   externalDropIndex = null,
   onSelectColumn,
   isSelected = false,
+  showControls = true,
 }: ColumnProps<TCard>) {
   const columnId = column.columnId;
   const columnRef = useRef<HTMLDivElement | null>(null);
@@ -347,6 +349,9 @@ function ColumnBase<TCard extends BaseCardDnD>({
               align="center"
               sx={{ ...columnHeaderStyles, ...(column.styles?.header ?? {}) }}
               data-testid={`column-header-${columnId}`}
+              transform={showControls ? "translateY(0)" : "translateY(100%)"}
+              transition="transform 0.2s"
+              pointerEvents={showControls ? "auto" : "none"}
             >
               <Heading as="span" size="xs">
                 {column.title}
