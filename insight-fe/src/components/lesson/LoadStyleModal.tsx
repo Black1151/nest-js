@@ -10,7 +10,7 @@ import { gql, useQuery } from "@apollo/client";
 import { BaseModal } from "../modals/BaseModal";
 
 const GET_STYLES = gql`
-  query GetStyles($collectionId: Int!, $element: PageElementType!) {
+  query GetStyles($collectionId: String!, $element: PageElementType!) {
     getAllStyle(
       data: {
         all: true
@@ -51,7 +51,7 @@ export default function LoadStyleModal({
   const { data: stylesData } = useQuery(GET_STYLES, {
     variables:
       collectionId !== "" && elementType
-        ? { collectionId: Number(collectionId), element: elementType }
+        ? { collectionId: String(collectionId), element: elementType }
         : undefined,
     skip: collectionId === "" || !elementType,
   });
@@ -76,7 +76,10 @@ export default function LoadStyleModal({
           <Select
             placeholder="Select collection"
             value={collectionId}
-            onChange={(e) => setCollectionId(parseInt(e.target.value))}
+            onChange={(e) => {
+              const val = e.target.value;
+              setCollectionId(val === "" ? "" : parseInt(val, 10));
+            }}
           >
             {collections.map((c) => (
               <option key={c.id} value={c.id}>
@@ -90,7 +93,10 @@ export default function LoadStyleModal({
           <Select
             placeholder="Select style"
             value={styleId}
-            onChange={(e) => setStyleId(parseInt(e.target.value))}
+            onChange={(e) => {
+              const val = e.target.value;
+              setStyleId(val === "" ? "" : parseInt(val, 10));
+            }}
           >
             {styles.map((s) => (
               <option key={s.id} value={s.id}>
