@@ -78,9 +78,9 @@ const scrollContainerStyles = {
 
 const cardListStyles = {
   boxSizing: "border-box",
-  minHeight: "100%",
   px: 1,
   overflowY: "auto",
+  pb: 2,
 };
 
 // ------------------------------------------------------------------
