@@ -21,6 +21,7 @@ import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnD
 import { ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
 import SaveStyleModal from "./SaveStyleModal";
+import LoadStyleModal from "./LoadStyleModal";
 
 const GET_STYLE_COLLECTIONS = gql`
   query GetStyleCollections {
@@ -167,6 +168,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     { id: number; name: string }[]
   >([]);
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
+  const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
 
   const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
 
@@ -569,9 +571,14 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             <Box p={4} borderWidth="1px" borderRadius="md" minW="200px">
               <HStack justify="space-between" mb={2}>
                 <Text>Attributes</Text>
-                <Button size="xs" onClick={() => setIsSaveStyleOpen(true)}>
-                  Save Style
-                </Button>
+                <HStack>
+                  <Button size="xs" onClick={() => setIsLoadStyleOpen(true)}>
+                    Load Style
+                  </Button>
+                  <Button size="xs" onClick={() => setIsSaveStyleOpen(true)}>
+                    Save Style
+                  </Button>
+                </HStack>
               </HStack>
               {selectedElement && (
                 <ElementAttributesPane
@@ -614,6 +621,16 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         onAddCollection={(collection) =>
           setStyleCollections([...styleCollections, collection])
         }
+      />
+      <LoadStyleModal
+        isOpen={isLoadStyleOpen}
+        onClose={() => setIsLoadStyleOpen(false)}
+        collections={styleCollections}
+        onLoad={(collectionId) => {
+          if (!selectedElement) return;
+          // Placeholder for backend call using style module
+          console.log("load style", { collectionId });
+        }}
       />
     </Box>
   );
