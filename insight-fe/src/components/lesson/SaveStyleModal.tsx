@@ -30,8 +30,6 @@ interface SaveStyleModalProps {
   collections: { id: number; name: string }[];
   /** Callback when the user adds a new collection */
   onAddCollection: (collection: { id: number; name: string }) => void;
-  /** Type of the element whose style is being saved */
-  element: string;
   /** Callback executed when user submits the form */
   onSave: (data: { name: string; collectionId: number }) => void;
 }
@@ -41,7 +39,6 @@ export default function SaveStyleModal({
   onClose,
   collections,
   onAddCollection,
-  element,
   onSave,
 }: SaveStyleModalProps) {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -56,10 +53,6 @@ export default function SaveStyleModal({
           <FormControl>
             <FormLabel>Style Name</FormLabel>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Element</FormLabel>
-            <Input value={element} isReadOnly />
           </FormControl>
           <FormControl>
             <FormLabel>Collection</FormLabel>
