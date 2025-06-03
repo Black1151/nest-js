@@ -626,10 +626,11 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         isOpen={isLoadStyleOpen}
         onClose={() => setIsLoadStyleOpen(false)}
         collections={styleCollections}
-        onLoad={(collectionId) => {
+        elementType={selectedElement ? ELEMENT_TYPE_TO_ENUM[selectedElement.type] : null}
+        onLoad={(styleId) => {
           if (!selectedElement) return;
           // Placeholder for backend call using style module
-          console.log("load style", { collectionId });
+          console.log("load style", { styleId });
         }}
       />
     </Box>
