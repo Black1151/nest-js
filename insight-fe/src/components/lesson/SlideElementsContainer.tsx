@@ -12,6 +12,7 @@ import {
   monitorForElements,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { autoScrollWindowForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
 import {
@@ -178,6 +179,14 @@ export default function SlideElementsContainer({
         source.data.type === "board",
       getData: () => ({ columnId: "boards" }),
       getIsSticky: () => true,
+    });
+  }, []);
+
+  useEffect(() => {
+    return autoScrollWindowForElements({
+      canScroll: ({ source }) =>
+        source.data.instanceId === boardInstanceId.current &&
+        source.data.type === "board",
     });
   }, []);
 
