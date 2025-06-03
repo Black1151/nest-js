@@ -155,43 +155,6 @@ export default function SlideElementsBoard({
   /* ------------------------------------------------------------------ */
   return (
     <>
-      <HStack
-        mb={0}
-        justify="flex-end"
-        bg="gray.100"
-        px={2}
-        py={1}
-        borderRadius="md"
-        spacing={1}
-      >
-        {onRemoveBoard && (
-          <IconButton
-            aria-label="Delete container"
-            icon={<X size={12} />}
-            size="xs"
-            variant="ghost"
-            colorScheme="red"
-            onClick={onRemoveBoard}
-          />
-        )}
-        {onSelectBoard && (
-          <IconButton
-            aria-label="Edit container"
-            icon={<Settings size={12} />}
-            size="xs"
-            variant="ghost"
-            onClick={onSelectBoard}
-          />
-        )}
-        <IconButton
-          aria-label="Add column"
-          icon={<Plus size={12} />}
-          size="xs"
-          variant="ghost"
-          colorScheme="teal"
-          onClick={addColumn}
-        />
-      </HStack>
       <ElementWrapper
         styles={wrapperStyles}
         borderColor={isSelected ? "blue.300" : undefined}
@@ -199,6 +162,43 @@ export default function SlideElementsBoard({
         data-board-id={boardId}
       >
         <ContentCard height={700} bg="transparent" dropShadow="none" p={0}>
+          <HStack
+            mb={0}
+            justify="flex-end"
+            bg="gray.100"
+            px={2}
+            py={1}
+            borderRadius="md"
+            spacing={1}
+          >
+            {onRemoveBoard && (
+              <IconButton
+                aria-label="Delete container"
+                icon={<X size={12} />}
+                size="xs"
+                variant="ghost"
+                colorScheme="red"
+                onClick={onRemoveBoard}
+              />
+            )}
+            {onSelectBoard && (
+              <IconButton
+                aria-label="Edit container"
+                icon={<Settings size={12} />}
+                size="xs"
+                variant="ghost"
+                onClick={onSelectBoard}
+              />
+            )}
+            <IconButton
+              aria-label="Add column"
+              icon={<Plus size={12} />}
+              size="xs"
+              variant="ghost"
+              colorScheme="teal"
+              onClick={addColumn}
+            />
+          </HStack>
           <DnDBoardMain<SlideElementDnDItemProps>
             controlled
             columnMap={columnMap}
