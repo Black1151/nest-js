@@ -4,21 +4,32 @@ import { Flex, Button } from "@chakra-ui/react";
 import { useState, useRef } from "react";
 import LessonEditor, { LessonEditorHandle } from "@/components/lesson/LessonEditor";
 import SaveLessonModal from "@/components/lesson/SaveLessonModal";
-import { useMutation } from "@apollo/client";
+import LoadLessonModal from "@/components/lesson/LoadLessonModal";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
 
 export const LessonBuilderPageClient = () => {
   const [isSaveOpen, setIsSaveOpen] = useState(false);
+  const [isLoadOpen, setIsLoadOpen] = useState(false);
   const editorRef = useRef<LessonEditorHandle>(null);
 
   const CREATE_LESSON = typedGql("mutation")({
     createLesson: [{ data: $("data", "CreateLessonInput!") }, { id: true }],
   } as const);
 
+  const GET_LESSON = typedGql("query")({
+    getLesson: [
+      { data: $("data", "IdInput!") },
+      { id: true, title: true, content: true },
+    ],
+  } as const);
+
   const [createLesson, { loading: saving }] = useMutation(CREATE_LESSON, {
     onCompleted: () => setIsSaveOpen(false),
   });
+
+  const [fetchLesson, { loading: loadingLesson }] = useLazyQuery(GET_LESSON);
 
   const handleSave = async ({
     title,
@@ -49,11 +60,21 @@ export const LessonBuilderPageClient = () => {
         },
       },
     });
+  }; 
+
+  const handleLoad = async (lessonId: string) => {
+    const { data } = await fetchLesson({
+      variables: { data: { id: Number(lessonId) } },
+    });
+    const slides = data?.getLesson?.content?.slides ?? [];
+    editorRef.current?.setContent(slides);
+    setIsLoadOpen(false);
   };
 
   return (
     <Flex direction="column" gap={4}>
-      <Flex justifyContent="flex-end">
+      <Flex justifyContent="flex-end" gap={2}>
+        <Button onClick={() => setIsLoadOpen(true)}>Load Lesson</Button>
         <Button onClick={() => setIsSaveOpen(true)} colorScheme="blue">
           Save Lesson
         </Button>
@@ -66,6 +87,14 @@ export const LessonBuilderPageClient = () => {
           onClose={() => setIsSaveOpen(false)}
           onSave={handleSave}
           isSaving={saving}
+        />
+      )}
+      {isLoadOpen && (
+        <LoadLessonModal
+          isOpen={isLoadOpen}
+          onClose={() => setIsLoadOpen(false)}
+          onLoad={handleLoad}
+          isLoading={loadingLesson}
         />
       )}
     </Flex>
