@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, HStack, IconButton, Stack } from "@chakra-ui/react";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
   SlideElementDnDItemProps,
@@ -11,7 +11,6 @@ import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 import { ContentCard } from "../layout/Card";
 import ElementWrapper, { ElementWrapperStyles } from "./ElementWrapper";
-import { useCallback } from "react";
 import { X, Settings, Plus } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import {
@@ -84,6 +83,7 @@ export default function SlideElementsBoard({
   const boardRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLDivElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+  const [showControls, setShowControls] = useState(false);
 
   useEffect(() => {
     if (!boardRef.current || !dragHandleRef.current) return;
@@ -199,8 +199,22 @@ export default function SlideElementsBoard({
   /* ------------------------------------------------------------------ */
   /*  Render                                                            */
   /* ------------------------------------------------------------------ */
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!boardRef.current) return;
+    const rect = boardRef.current.getBoundingClientRect();
+    setShowControls(e.clientY - rect.top < 40);
+  };
+
+  const handleMouseLeave = () => setShowControls(false);
+
   return (
-    <Box ref={boardRef} position="relative">
+    <Box
+      ref={boardRef}
+      position="relative"
+      overflow="hidden"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
       <HStack
         ref={dragHandleRef}
         justify="flex-end"
@@ -210,7 +224,15 @@ export default function SlideElementsBoard({
         borderRadius="md"
         spacing={1}
         cursor="grab"
-      >
+        position="absolute"
+        top={0}
+        right={0}
+        left={0}
+        zIndex={showControls ? 1 : 0}
+        transform={showControls ? "translateY(0)" : "translateY(100%)"}
+        transition="transform 0.2s"
+        pointerEvents={showControls ? "auto" : "none"}
+        >
         {onRemoveBoard && (
           <IconButton
             aria-label="Delete container"
@@ -259,6 +281,7 @@ export default function SlideElementsBoard({
             instanceId={instanceId}
             registry={registry}
             spacing={spacing}
+            showControls={showControls}
           />
         </ContentCard>
       </ElementWrapper>
