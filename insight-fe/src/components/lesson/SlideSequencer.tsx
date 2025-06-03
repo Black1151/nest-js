@@ -45,8 +45,8 @@ export const createInitialBoard = (): {
         title: "",
         columnId,
         styles: {
-          container: { border: "2px dashed red", width: "100%" },
-          header: { bg: "red.300", color: "white" },
+          container: { border: "1px dashed gray", width: "100%" },
+          header: { bg: "red.300", color: "white", px: 2, py: 1 },
         },
         wrapperStyles: {
           bgColor: "#ffffff",

@@ -77,8 +77,8 @@ export default function SlideElementsBoard({
       title: "",
       columnId: id,
       styles: {
-        container: { border: `2px dashed ${color}`, width: "100%" },
-        header: { bg: color, color: "white" },
+        container: { border: "1px dashed gray", width: "100%" },
+        header: { bg: color, color: "white", px: 2, py: 1 },
       },
       wrapperStyles: {
         bgColor: "#ffffff",
