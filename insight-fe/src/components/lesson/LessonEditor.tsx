@@ -132,6 +132,14 @@ const AVAILABLE_ELEMENTS = [
   { type: "quiz", label: "Quiz" },
 ];
 
+const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
+  text: "Text",
+  table: "Table",
+  image: "Image",
+  video: "Video",
+  quiz: "Quiz",
+};
+
 export interface LessonEditorHandle {
   getContent: () => { slides: Slide[] };
   setContent: (slides: Slide[]) => void;
@@ -593,12 +601,13 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         isOpen={isSaveStyleOpen}
         onClose={() => setIsSaveStyleOpen(false)}
         collections={styleCollections}
-        element={selectedElement?.type || ""}
         onSave={({ name, collectionId }) => {
+          if (!selectedElement) return;
           // Placeholder for backend call using style module
           console.log("save style", {
             name,
             collectionId,
+            element: ELEMENT_TYPE_TO_ENUM[selectedElement.type],
             config: selectedElement,
           });
         }}
