@@ -1,4 +1,5 @@
 import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
+import { PageElementType } from './style.entity';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { HasRelationsInput } from 'src/common/base.inputs';
 
@@ -7,8 +8,8 @@ export class CreateStyleInput extends HasRelationsInput {
   @Field()
   name: string;
 
-  @Field()
-  element: string;
+  @Field(() => PageElementType)
+  element: PageElementType;
 
   @Field(() => GraphQLJSONObject)
   config: Record<string, any>;
