@@ -198,7 +198,9 @@ export default function SlideElementsContainer({
         if (source.data.type !== "board") return;
         if (!location.current.dropTargets.length) return;
 
-        const startIndex = boards.findIndex((b) => b.id === source.data.boardId);
+        const startIndex = boards.findIndex(
+          (b) => b.id === source.data.boardId
+        );
         if (startIndex === -1) return;
 
         if (location.current.dropTargets.length === 1) {
@@ -220,9 +222,11 @@ export default function SlideElementsContainer({
         if (location.current.dropTargets.length === 2) {
           const [destinationRecord] = location.current.dropTargets;
           const indexOfTarget = boards.findIndex(
-            (b) => b.id === destinationRecord.data.boardId,
+            (b) => b.id === destinationRecord.data.boardId
           );
-          const closestEdgeOfTarget = extractClosestEdge(destinationRecord.data);
+          const closestEdgeOfTarget = extractClosestEdge(
+            destinationRecord.data
+          );
           const destinationIndex = getReorderDestinationIndex({
             startIndex,
             indexOfTarget,
@@ -299,7 +303,7 @@ export default function SlideElementsContainer({
   }, [boards, columnMap, onChange]);
 
   return (
-    <Stack gap={4} ref={containerRef}>
+    <Stack ref={containerRef}>
       <Button
         size="sm"
         colorScheme="teal"

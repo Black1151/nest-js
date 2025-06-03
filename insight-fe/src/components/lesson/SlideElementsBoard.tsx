@@ -33,7 +33,7 @@ interface SlideElementsBoardProps {
   orderedColumnIds: string[];
   onChange: (
     columnMap: ColumnMap<SlideElementDnDItemProps>,
-    orderedIds: string[],
+    orderedIds: string[]
   ) => void;
   registry: ReturnType<typeof createRegistry>;
   instanceId: symbol;
@@ -146,10 +146,7 @@ export default function SlideElementsBoard({
       spacing: 0,
     };
 
-    onChange(
-      { ...columnMap, [id]: newColumn },
-      [...orderedColumnIds, id],
-    );
+    onChange({ ...columnMap, [id]: newColumn }, [...orderedColumnIds, id]);
   };
 
   const deleteColumn = (columnId: string) => {
@@ -158,7 +155,7 @@ export default function SlideElementsBoard({
     delete newMap[columnId];
     onChange(
       newMap,
-      orderedColumnIds.filter((id) => id !== columnId),
+      orderedColumnIds.filter((id) => id !== columnId)
     );
   };
 
@@ -206,7 +203,6 @@ export default function SlideElementsBoard({
     <Box ref={boardRef} position="relative">
       <HStack
         ref={dragHandleRef}
-        mb={2}
         justify="flex-end"
         bg="gray.100"
         px={2}
@@ -258,12 +254,12 @@ export default function SlideElementsBoard({
             onChange={(b) => onChange(b.columnMap, b.orderedColumnIds)}
             onRemoveColumn={removeColumn}
             externalDropIndicator={dropIndicator}
-          selectedColumnId={selectedColumnId}
-          onSelectColumn={onSelectColumn}
-          instanceId={instanceId}
-          registry={registry}
-          spacing={spacing}
-        />
+            selectedColumnId={selectedColumnId}
+            onSelectColumn={onSelectColumn}
+            instanceId={instanceId}
+            registry={registry}
+            spacing={spacing}
+          />
         </ContentCard>
       </ElementWrapper>
       <ConfirmationModal
