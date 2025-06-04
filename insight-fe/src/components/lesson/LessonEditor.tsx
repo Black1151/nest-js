@@ -10,7 +10,7 @@ import {
   useImperativeHandle,
   useEffect,
 } from "react";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
@@ -25,6 +25,15 @@ import LoadStyleModal from "./LoadStyleModal";
 const GET_STYLE_COLLECTIONS = gql`
   query GetStyleCollections {
     getAllStyleCollection(data: { all: true }) {
+      id
+      name
+    }
+  }
+`;
+
+const CREATE_STYLE = gql`
+  mutation CreateStyle($data: CreateStyleInput!) {
+    createStyle(data: $data) {
       id
       name
     }
@@ -173,6 +182,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
 
   const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
+  const [createStyle] = useMutation(CREATE_STYLE);
 
   useEffect(() => {
     if (collectionsData?.getAllStyleCollection) {
@@ -627,12 +637,15 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         collections={styleCollections}
         onSave={({ name, collectionId }) => {
           if (!selectedElement) return;
-          // Placeholder for backend call using style module
-          console.log("save style", {
-            name,
-            collectionId,
-            element: ELEMENT_TYPE_TO_ENUM[selectedElement.type],
-            config: selectedElement,
+          createStyle({
+            variables: {
+              data: {
+                name,
+                collectionId,
+                element: ELEMENT_TYPE_TO_ENUM[selectedElement.type],
+                config: selectedElement,
+              },
+            },
           });
         }}
         onAddCollection={(collection) =>
