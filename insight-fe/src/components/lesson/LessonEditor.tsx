@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Box, Text, Grid, HStack, Button } from "@chakra-ui/react";
+import { Flex, Box, Text, Grid, HStack, Button, Select } from "@chakra-ui/react";
 import {
   useCallback,
   useReducer,
@@ -166,6 +166,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [styleCollections, setStyleCollections] = useState<
     { id: number; name: string }[]
   >([]);
+  const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
+    ""
+  );
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
 
@@ -514,6 +517,23 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           ))}
         </HStack>
       </Box>
+
+      <Select
+        mt={2}
+        placeholder="Select collection"
+        value={selectedCollectionId}
+        onChange={(e) =>
+          setSelectedCollectionId(
+            e.target.value === "" ? "" : parseInt(e.target.value, 10)
+          )
+        }
+      >
+        {styleCollections.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.name}
+          </option>
+        ))}
+      </Select>
 
       <Flex gap={6} alignItems="flex-start">
         <SlideSequencer
