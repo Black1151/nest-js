@@ -518,22 +518,30 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         </HStack>
       </Box>
 
-      <Select
-        mt={2}
-        placeholder="Select collection"
-        value={selectedCollectionId}
-        onChange={(e) =>
-          setSelectedCollectionId(
-            e.target.value === "" ? "" : parseInt(e.target.value, 10)
-          )
-        }
-      >
-        {styleCollections.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
-        ))}
-      </Select>
+      <HStack mt={2} alignItems="flex-start">
+        <Select
+          placeholder="Select collection"
+          value={selectedCollectionId}
+          onChange={(e) =>
+            setSelectedCollectionId(
+              e.target.value === "" ? "" : parseInt(e.target.value, 10)
+            )
+          }
+        >
+          {styleCollections.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </Select>
+        <HStack>
+          {AVAILABLE_ELEMENTS.map((el) => (
+            <Button key={el.type} size="sm">
+              {el.label}
+            </Button>
+          ))}
+        </HStack>
+      </HStack>
 
       <Flex gap={6} alignItems="flex-start">
         <SlideSequencer
