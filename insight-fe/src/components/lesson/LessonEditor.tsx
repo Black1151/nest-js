@@ -412,6 +412,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
               borderWidth: 0,
               borderRadius: "none",
             },
+            animation: undefined,
           };
 
           const firstColumn = s.boards[0].orderedColumnIds[0];
