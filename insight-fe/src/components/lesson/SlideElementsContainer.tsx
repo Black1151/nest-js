@@ -7,6 +7,10 @@ import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnD
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 import type { ElementWrapperStyles } from "./ElementWrapper";
+import {
+  defaultBoardWrapperStyles,
+  defaultColumnWrapperStyles,
+} from "./defaultStyles";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import {
   monitorForElements,
@@ -85,21 +89,7 @@ export default function SlideElementsContainer({
         container: { border: "1px dashed gray", width: "100%" },
         header: { bg: color, color: "white", px: 2, py: 1 },
       },
-      wrapperStyles: {
-        bgColor: "#ffffff",
-        bgOpacity: 0,
-        gradientFrom: "",
-        gradientTo: "",
-        gradientDirection: 0,
-        dropShadow: "none",
-        paddingX: 0,
-        paddingY: 0,
-        marginX: 0,
-        marginY: 0,
-        borderColor: "#000000",
-        borderWidth: 0,
-        borderRadius: "none",
-      },
+      wrapperStyles: { ...defaultColumnWrapperStyles },
       items: [],
       spacing: 0,
     };
@@ -109,21 +99,7 @@ export default function SlideElementsContainer({
       {
         id: boardId,
         orderedColumnIds: [columnId],
-      wrapperStyles: {
-        bgColor: "#ffffff",
-        bgOpacity: 1,
-        gradientFrom: "",
-        gradientTo: "",
-        gradientDirection: 0,
-        dropShadow: "none",
-          paddingX: 0,
-          paddingY: 0,
-          marginX: 0,
-          marginY: 0,
-          borderColor: "#000000",
-          borderWidth: 0,
-          borderRadius: "none",
-        },
+        wrapperStyles: { ...defaultBoardWrapperStyles },
         spacing: 0,
       },
     ]);
