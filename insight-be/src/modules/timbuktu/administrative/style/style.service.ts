@@ -17,4 +17,22 @@ export class StyleService extends BaseService<
   ) {
     super(styleRepository, dataSource);
   }
+
+  async create(data: CreateStyleInput): Promise<StyleEntity> {
+    const { collectionId, relationIds = [], ...rest } = data;
+    const relations = [
+      ...relationIds,
+      { relation: 'collection', ids: [collectionId] },
+    ];
+    return super.create({ ...rest, relationIds: relations } as any);
+  }
+
+  async update(data: UpdateStyleInput): Promise<StyleEntity> {
+    const { collectionId, relationIds = [], ...rest } = data;
+    const relations = [
+      ...relationIds,
+      ...(collectionId ? [{ relation: 'collection', ids: [collectionId] }] : []),
+    ];
+    return super.update({ ...rest, relationIds: relations } as any);
+  }
 }
