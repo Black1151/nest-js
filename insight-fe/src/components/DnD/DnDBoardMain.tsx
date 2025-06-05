@@ -16,9 +16,8 @@ import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/clo
 import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types";
 import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
 import * as liveRegion from "@atlaskit/pragmatic-drag-and-drop-live-region";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
+import { useBoardDnD } from "@/hooks/useBoardDnD";
 
 import Board from "./board";
 import { BoardContext, type BoardContextValue } from "./BoardContext";
@@ -351,149 +350,9 @@ export const DnDBoardMain = <TCard extends BaseCardDnD>({
   /* -----------------------------------------------------------------------
    * 8.  Effect: monitor for elements & handle drop logic
    * --------------------------------------------------------------------- */
-  useEffect(() => {
-    return combine(
-      monitorForElements({
-        canMonitor({ source }) {
-          return source.data.instanceId === instanceId;
-        },
-        onDrop(args) {
-          const { location, source } = args;
-
-          if (!location.current.dropTargets.length) return;
-
-          // Column -> column
-          if (source.data.type === "column") {
-            const board = getBoard();
-
-            const startIndex = board.orderedColumnIds.findIndex(
-              (id) => id === source.data.columnId
-            );
-
-            // If the column does not belong to this board, ignore here.
-            if (startIndex === -1) {
-              return;
-            }
-
-            const target = location.current.dropTargets[0];
-            const indexOfTarget = board.orderedColumnIds.findIndex(
-              (id) => id === target.data.columnId
-            );
-
-            // Ignore drops onto columns outside this board
-            if (indexOfTarget === -1) {
-              return;
-            }
-
-            const closestEdgeOfTarget: Edge | null = extractClosestEdge(
-              target.data
-            );
-
-            const finishIndex = getReorderDestinationIndex({
-              startIndex,
-              indexOfTarget,
-              closestEdgeOfTarget,
-              axis: "horizontal",
-            });
-
-            reorderColumn({ startIndex, finishIndex, trigger: "pointer" });
-            return;
-          }
-
-          // Card -> ???
-          if (source.data.type === "card") {
-            const board = getBoard();
-            const itemId = source.data.itemId as string;
-
-            const [, startColumnRecord] = location.initial.dropTargets;
-            const sourceColumnId = startColumnRecord.data.columnId as string;
-            const sourceColumn = board.columnMap[sourceColumnId];
-            const itemIndex = sourceColumn.items.findIndex(
-              (i) => i.id === itemId
-            );
-
-            // Dropped directly onto a column
-            if (location.current.dropTargets.length === 1) {
-              const [destinationColumnRecord] = location.current.dropTargets;
-              const destinationId = destinationColumnRecord.data
-                .columnId as string;
-              const destinationColumn = board.columnMap[destinationId];
-
-              if (sourceColumn === destinationColumn) {
-                // reorder within same column
-                const destinationIndex = getReorderDestinationIndex({
-                  startIndex: itemIndex,
-                  indexOfTarget: sourceColumn.items.length - 1,
-                  closestEdgeOfTarget: null,
-                  axis: "vertical",
-                });
-                reorderCard({
-                  columnId: sourceColumn.columnId,
-                  startIndex: itemIndex,
-                  finishIndex: destinationIndex,
-                  trigger: "pointer",
-                });
-              } else {
-                // move to end of different column
-                moveCard({
-                  itemIndexInStartColumn: itemIndex,
-                  startColumnId: sourceColumn.columnId,
-                  finishColumnId: destinationColumn.columnId,
-                  trigger: "pointer",
-                });
-              }
-              return;
-            }
-
-            // Dropped onto a card (target card + its column)
-            if (location.current.dropTargets.length === 2) {
-              const [destinationCardRecord, destinationColumnRecord] =
-                location.current.dropTargets;
-              const destinationColumnId = destinationColumnRecord.data
-                .columnId as string;
-              const destinationColumn = board.columnMap[destinationColumnId];
-
-              const indexOfTarget = destinationColumn.items.findIndex(
-                (i) => i.id === destinationCardRecord.data.itemId
-              );
-              const closestEdgeOfTarget: Edge | null = extractClosestEdge(
-                destinationCardRecord.data
-              );
-
-              if (sourceColumn === destinationColumn) {
-                // reorder within same column
-                const destinationIndex = getReorderDestinationIndex({
-                  startIndex: itemIndex,
-                  indexOfTarget,
-                  closestEdgeOfTarget,
-                  axis: "vertical",
-                });
-                reorderCard({
-                  columnId: sourceColumn.columnId,
-                  startIndex: itemIndex,
-                  finishIndex: destinationIndex,
-                  trigger: "pointer",
-                });
-              } else {
-                // move to specific index in different column
-                const destinationIndex =
-                  closestEdgeOfTarget === "bottom"
-                    ? indexOfTarget + 1
-                    : indexOfTarget;
-                moveCard({
-                  itemIndexInStartColumn: itemIndex,
-                  startColumnId: sourceColumn.columnId,
-                  finishColumnId: destinationColumn.columnId,
-                  itemIndexInFinishColumn: destinationIndex,
-                  trigger: "pointer",
-                });
-              }
-            }
-          }
-        },
-      })
-    );
-  }, [instanceId, reorderColumn, reorderCard, moveCard]);
+  // Hook listens for drop events on columns and cards
+  // and delegates reordering/moving via callbacks.
+  useBoardDnD(instanceId, getBoard, reorderColumn, reorderCard, moveCard);
 
   /* -----------------------------------------------------------------------
    * 9.  Effect: flashes and live-region announcements (unchanged)
