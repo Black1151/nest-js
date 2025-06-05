@@ -1,6 +1,14 @@
 "use client";
 
-import { Flex, Box, Text, Grid, HStack, Button, Select } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Text,
+  Grid,
+  HStack,
+  Button,
+  Select,
+} from "@chakra-ui/react";
 import {
   useCallback,
   useReducer,
@@ -10,13 +18,16 @@ import {
   useImperativeHandle,
   useEffect,
 } from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import SlideSequencer, { Slide, createInitialBoard } from "./SlideSequencer";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import ElementAttributesPane from "./ElementAttributesPane";
 import ColumnAttributesPane from "./ColumnAttributesPane";
 import BoardAttributesPane from "./BoardAttributesPane";
-import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+import {
+  SlideElementDnDItemProps,
+  SlideElementDnDItem,
+} from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
 import SaveStyleModal from "./SaveStyleModal";
@@ -36,6 +47,24 @@ const CREATE_STYLE = gql`
     createStyle(data: $data) {
       id
       name
+    }
+  }
+`;
+
+const GET_STYLES_WITH_CONFIG = gql`
+  query GetStylesWithConfig($collectionId: String!, $element: PageElementType!) {
+    getAllStyle(
+      data: {
+        all: true
+        filters: [
+          { column: "collectionId", value: $collectionId }
+          { column: "element", value: $element }
+        ]
+      }
+    ) {
+      id
+      name
+      config
     }
   }
 `;
@@ -180,6 +209,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   );
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
+  const [styleItems, setStyleItems] = useState<SlideElementDnDItemProps[]>([]);
+
+  const [fetchStyles, { data: stylesData }] = useLazyQuery(GET_STYLES_WITH_CONFIG);
 
   const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
   const [createStyle] = useMutation(CREATE_STYLE);
@@ -189,6 +221,24 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       setStyleCollections(collectionsData.getAllStyleCollection);
     }
   }, [collectionsData]);
+
+  useEffect(() => {
+    if (selectedCollectionId === "") {
+      setStyleItems([]);
+    }
+  }, [selectedCollectionId]);
+
+  useEffect(() => {
+    if (stylesData?.getAllStyle) {
+      const items = stylesData.getAllStyle.map((s: any) => ({
+        ...(s.config as SlideElementDnDItemProps),
+        id: crypto.randomUUID(),
+      }));
+      setStyleItems(items);
+    } else {
+      setStyleItems([]);
+    }
+  }, [stylesData]);
 
   useImperativeHandle(
     ref,
@@ -365,7 +415,18 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
 
-      const type = e.dataTransfer.getData("text/plain");
+      const raw = e.dataTransfer.getData("text/plain");
+      let type = raw;
+      let config: SlideElementDnDItemProps | null = null;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          type = parsed.type;
+          config = parsed.config as SlideElementDnDItemProps;
+        }
+      } catch {
+        /* ignore */
+      }
       if (!state.selectedSlideId) return;
       if (!type) return;
 
@@ -379,50 +440,52 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         type: "updateSlide",
         slideId: state.selectedSlideId,
         updater: (s) => {
-          const newEl: SlideElementDnDItemProps = {
-            id: crypto.randomUUID(),
-            type,
-            ...(type === "text"
-              ? {
-                  text: "Sample Text",
-                  styles: {
-                    color: "#000000",
-                    fontSize: "16px",
-                    fontFamily: availableFonts[0].fontFamily,
-                    fontWeight: "normal",
-                    lineHeight: "1.2",
-                    textAlign: "left",
-                  },
-                }
-              : type === "image"
-              ? {
-                  src: "https://via.placeholder.com/150",
-                }
-              : type === "video"
-              ? { url: "" }
-              : type === "quiz"
-              ? {
-                  title: "Untitled Quiz",
-                  description: "",
-                  questions: [],
-                }
-              : {}),
-            wrapperStyles: {
-              bgColor: "#ffffff",
-              bgOpacity: 0,
-              gradientFrom: "",
-              gradientTo: "",
-              gradientDirection: 0,
-              dropShadow: "none",
-              paddingX: 0,
-              paddingY: 0,
-              marginX: 0,
-              marginY: 0,
-              borderColor: "#000000",
-              borderWidth: 0,
-              borderRadius: "none",
-            },
-          };
+          const newEl: SlideElementDnDItemProps = config
+            ? { ...config, id: crypto.randomUUID() }
+            : {
+                id: crypto.randomUUID(),
+                type,
+                ...(type === "text"
+                  ? {
+                      text: "Sample Text",
+                      styles: {
+                        color: "#000000",
+                        fontSize: "16px",
+                        fontFamily: availableFonts[0].fontFamily,
+                        fontWeight: "normal",
+                        lineHeight: "1.2",
+                        textAlign: "left",
+                      },
+                    }
+                  : type === "image"
+                  ? {
+                      src: "https://via.placeholder.com/150",
+                    }
+                  : type === "video"
+                  ? { url: "" }
+                  : type === "quiz"
+                  ? {
+                      title: "Untitled Quiz",
+                      description: "",
+                      questions: [],
+                    }
+                  : {}),
+                wrapperStyles: {
+                  bgColor: "#ffffff",
+                  bgOpacity: 0,
+                  gradientFrom: "",
+                  gradientTo: "",
+                  gradientDirection: 0,
+                  dropShadow: "none",
+                  paddingX: 0,
+                  paddingY: 0,
+                  marginX: 0,
+                  marginY: 0,
+                  borderColor: "#000000",
+                  borderWidth: 0,
+                  borderRadius: "none",
+                },
+              };
 
           const firstColumn = s.boards[0].orderedColumnIds[0];
           const columnId =
@@ -546,12 +609,47 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         </Select>
         <HStack>
           {AVAILABLE_ELEMENTS.map((el) => (
-            <Button key={el.type} size="sm">
+            <Button
+              key={el.type}
+              size="sm"
+              onClick={() => {
+                if (selectedCollectionId === "") return;
+                fetchStyles({
+                  variables: {
+                    collectionId: String(selectedCollectionId),
+                    element: ELEMENT_TYPE_TO_ENUM[el.type],
+                  },
+                });
+              }}
+            >
               {el.label}
             </Button>
           ))}
         </HStack>
       </HStack>
+
+      {styleItems.length > 0 && (
+        <HStack mt={2} overflowX="auto">
+          {styleItems.map((item, idx) => (
+            <Box
+              key={idx}
+              p={2}
+              borderWidth="1px"
+              borderRadius="md"
+              bg="white"
+              draggable
+              onDragStart={(e) =>
+                e.dataTransfer.setData(
+                  "text/plain",
+                  JSON.stringify({ type: item.type, config: item })
+                )
+              }
+            >
+              <SlideElementDnDItem item={item} />
+            </Box>
+          ))}
+        </HStack>
+      )}
 
       <Flex gap={6} alignItems="flex-start">
         <SlideSequencer
