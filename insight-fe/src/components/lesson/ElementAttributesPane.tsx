@@ -23,6 +23,7 @@ import { Trash2 } from "lucide-react";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import EditQuizModal from "./EditQuizModal";
 import { useEffect, useState } from "react";
+import useStyleAttributes from "./hooks/useStyleAttributes";
 
 interface ElementAttributesPaneProps {
   element: SlideElementDnDItemProps;
@@ -60,46 +61,39 @@ export default function ElementAttributesPane({
     element.questions || ([] as SlideElementDnDItemProps["questions"])
   );
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
-  const [bgColor, setBgColor] = useState(
-    element.wrapperStyles?.bgColor || "#ffffff"
-  );
-  const [bgOpacity, setBgOpacity] = useState(
-    element.wrapperStyles?.bgOpacity ?? 0
-  );
-  const [gradientFrom, setGradientFrom] = useState(
-    element.wrapperStyles?.gradientFrom || ""
-  );
-  const [gradientTo, setGradientTo] = useState(
-    element.wrapperStyles?.gradientTo || ""
-  );
-  const [gradientDirection, setGradientDirection] = useState(
-    element.wrapperStyles?.gradientDirection ?? 0
-  );
-  const [backgroundType, setBackgroundType] = useState(
-    element.wrapperStyles?.gradientFrom && element.wrapperStyles?.gradientTo
-      ? "gradient"
-      : "color"
-  );
-  const [shadow, setShadow] = useState(
-    element.wrapperStyles?.dropShadow || "none"
-  );
-  const [paddingX, setPaddingX] = useState(
-    element.wrapperStyles?.paddingX ?? 0
-  );
-  const [paddingY, setPaddingY] = useState(
-    element.wrapperStyles?.paddingY ?? 0
-  );
-  const [marginX, setMarginX] = useState(element.wrapperStyles?.marginX ?? 0);
-  const [marginY, setMarginY] = useState(element.wrapperStyles?.marginY ?? 0);
-  const [borderColor, setBorderColor] = useState(
-    element.wrapperStyles?.borderColor || "#000000"
-  );
-  const [borderWidth, setBorderWidth] = useState(
-    element.wrapperStyles?.borderWidth ?? 0
-  );
-  const [borderRadius, setBorderRadius] = useState(
-    element.wrapperStyles?.borderRadius || "none"
-  );
+  const {
+    bgColor,
+    setBgColor,
+    bgOpacity,
+    setBgOpacity,
+    gradientFrom,
+    setGradientFrom,
+    gradientTo,
+    setGradientTo,
+    gradientDirection,
+    setGradientDirection,
+    backgroundType,
+    setBackgroundType,
+    shadow,
+    setShadow,
+    paddingX,
+    setPaddingX,
+    paddingY,
+    setPaddingY,
+    marginX,
+    setMarginX,
+    marginY,
+    setMarginY,
+    borderColor,
+    setBorderColor,
+    borderWidth,
+    setBorderWidth,
+    borderRadius,
+    setBorderRadius,
+  } = useStyleAttributes({
+    wrapperStyles: element.wrapperStyles,
+    deps: [element.id, element.type],
+  });
   const [animationEnabled, setAnimationEnabled] = useState(
     !!element.animation
   );
@@ -126,24 +120,6 @@ export default function ElementAttributesPane({
     setTitle(element.title || "");
     setDescription(element.description || "");
     setQuestions(element.questions || []);
-    setBgColor(element.wrapperStyles?.bgColor || "#ffffff");
-    setBgOpacity(element.wrapperStyles?.bgOpacity ?? 0);
-    setGradientFrom(element.wrapperStyles?.gradientFrom || "");
-    setGradientTo(element.wrapperStyles?.gradientTo || "");
-    setGradientDirection(element.wrapperStyles?.gradientDirection ?? 0);
-    setBackgroundType(
-      element.wrapperStyles?.gradientFrom && element.wrapperStyles?.gradientTo
-        ? "gradient"
-        : "color"
-    );
-    setShadow(element.wrapperStyles?.dropShadow || "none");
-    setPaddingX(element.wrapperStyles?.paddingX ?? 0);
-    setPaddingY(element.wrapperStyles?.paddingY ?? 0);
-    setMarginX(element.wrapperStyles?.marginX ?? 0);
-    setMarginY(element.wrapperStyles?.marginY ?? 0);
-    setBorderColor(element.wrapperStyles?.borderColor || "#000000");
-    setBorderWidth(element.wrapperStyles?.borderWidth ?? 0);
-    setBorderRadius(element.wrapperStyles?.borderRadius || "none");
     setAnimationEnabled(!!element.animation);
     setAnimationDirection(element.animation?.direction || "left");
     setAnimationDelay(element.animation?.delay ?? 0);
