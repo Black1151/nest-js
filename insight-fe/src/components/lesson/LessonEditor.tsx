@@ -52,7 +52,7 @@ const CREATE_STYLE = gql`
 `;
 
 const GET_STYLES_WITH_CONFIG = gql`
-  query GetStylesWithConfig($collectionId: String!, $element: PageElementType!) {
+  query GetStylesWithConfig($collectionId: String!, $element: String!) {
     getAllStyle(
       data: {
         all: true
