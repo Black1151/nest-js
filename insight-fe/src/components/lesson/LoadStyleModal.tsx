@@ -10,7 +10,7 @@ import { gql, useQuery } from "@apollo/client";
 import { BaseModal } from "../modals/BaseModal";
 
 const GET_STYLES = gql`
-  query GetStyles($collectionId: String!, $element: PageElementType!) {
+  query GetStyles($collectionId: String!, $element: String!) {
     getAllStyle(
       data: {
         all: true
