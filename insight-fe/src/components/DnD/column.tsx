@@ -8,7 +8,15 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import invariant from "tiny-invariant";
-import { Box, Flex, Heading, HStack, Spinner, Stack, IconButton } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Heading,
+  HStack,
+  Spinner,
+  Stack,
+  IconButton,
+} from "@chakra-ui/react";
 import { X, Settings } from "lucide-react";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import {
@@ -301,7 +309,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
           bg: column.wrapperStyles.bgColor
             ? hexToRgba(
                 column.wrapperStyles.bgColor,
-                column.wrapperStyles.bgOpacity ?? 0,
+                column.wrapperStyles.bgOpacity ?? 0
               )
             : undefined,
           boxShadow: column.wrapperStyles.dropShadow,

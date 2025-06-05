@@ -245,7 +245,7 @@ export default function SlideElementsBoard({
         borderWidth={isSelected ? 2 : undefined}
         data-board-id={boardId}
       >
-        <ContentCard height={700} bg="transparent" dropShadow="none" p={0}>
+        <ContentCard pb={25} bg="transparent" dropShadow="none" p={0}>
           <DnDBoardMain<SlideElementDnDItemProps>
             controlled
             columnMap={columnMap}
