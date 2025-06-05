@@ -15,7 +15,7 @@ import {
   AccordionIcon,
   HStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import useStyleAttributes from "./hooks/useStyleAttributes";
 import { ColumnType } from "@/components/DnD/types";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -25,71 +25,44 @@ interface ColumnAttributesPaneProps {
 }
 
 export default function ColumnAttributesPane({ column, onChange }: ColumnAttributesPaneProps) {
-  const [bgColor, setBgColor] = useState(column.wrapperStyles?.bgColor || "#ffffff");
-  const [bgOpacity, setBgOpacity] = useState(column.wrapperStyles?.bgOpacity ?? 0);
-  const [gradientFrom, setGradientFrom] = useState(column.wrapperStyles?.gradientFrom || "");
-  const [gradientTo, setGradientTo] = useState(column.wrapperStyles?.gradientTo || "");
-  const [gradientDirection, setGradientDirection] = useState(
-    column.wrapperStyles?.gradientDirection ?? 0
-  );
-  const [backgroundType, setBackgroundType] = useState(
-    column.wrapperStyles?.gradientFrom && column.wrapperStyles?.gradientTo
-      ? "gradient"
-      : "color"
-  );
-  const [shadow, setShadow] = useState(column.wrapperStyles?.dropShadow || "none");
-  const [paddingX, setPaddingX] = useState(column.wrapperStyles?.paddingX ?? 0);
-  const [paddingY, setPaddingY] = useState(column.wrapperStyles?.paddingY ?? 0);
-  const [marginX, setMarginX] = useState(column.wrapperStyles?.marginX ?? 0);
-  const [marginY, setMarginY] = useState(column.wrapperStyles?.marginY ?? 0);
-  const [borderColor, setBorderColor] = useState(column.wrapperStyles?.borderColor || "#000000");
-  const [borderWidth, setBorderWidth] = useState(column.wrapperStyles?.borderWidth ?? 0);
-  const [borderRadius, setBorderRadius] = useState(column.wrapperStyles?.borderRadius || "none");
-  const [spacing, setSpacing] = useState(column.spacing ?? 0);
-
-  useEffect(() => {
-    setBgColor(column.wrapperStyles?.bgColor || "#ffffff");
-    setBgOpacity(column.wrapperStyles?.bgOpacity ?? 0);
-    setGradientFrom(column.wrapperStyles?.gradientFrom || "");
-    setGradientTo(column.wrapperStyles?.gradientTo || "");
-    setGradientDirection(column.wrapperStyles?.gradientDirection ?? 0);
-    setBackgroundType(
-      column.wrapperStyles?.gradientFrom && column.wrapperStyles?.gradientTo
-        ? "gradient"
-        : "color"
-    );
-    setShadow(column.wrapperStyles?.dropShadow || "none");
-    setPaddingX(column.wrapperStyles?.paddingX ?? 0);
-    setPaddingY(column.wrapperStyles?.paddingY ?? 0);
-    setMarginX(column.wrapperStyles?.marginX ?? 0);
-    setMarginY(column.wrapperStyles?.marginY ?? 0);
-    setBorderColor(column.wrapperStyles?.borderColor || "#000000");
-    setBorderWidth(column.wrapperStyles?.borderWidth ?? 0);
-    setBorderRadius(column.wrapperStyles?.borderRadius || "none");
-    setSpacing(column.spacing ?? 0);
-  }, [column.columnId]);
-
-  useEffect(() => {
-    onChange({
-      ...column,
-      wrapperStyles: {
-        bgColor,
-        bgOpacity,
-        gradientFrom,
-        gradientTo,
-        gradientDirection,
-        dropShadow: shadow,
-        paddingX,
-        paddingY,
-        marginX,
-        marginY,
-        borderColor,
-        borderWidth,
-        borderRadius,
-      },
-      spacing,
-    });
-  }, [bgColor, bgOpacity, gradientFrom, gradientTo, gradientDirection, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing, backgroundType]);
+  const {
+    bgColor,
+    setBgColor,
+    bgOpacity,
+    setBgOpacity,
+    gradientFrom,
+    setGradientFrom,
+    gradientTo,
+    setGradientTo,
+    gradientDirection,
+    setGradientDirection,
+    backgroundType,
+    setBackgroundType,
+    shadow,
+    setShadow,
+    paddingX,
+    setPaddingX,
+    paddingY,
+    setPaddingY,
+    marginX,
+    setMarginX,
+    marginY,
+    setMarginY,
+    borderColor,
+    setBorderColor,
+    borderWidth,
+    setBorderWidth,
+    borderRadius,
+    setBorderRadius,
+    spacing,
+    setSpacing,
+  } = useStyleAttributes({
+    wrapperStyles: column.wrapperStyles,
+    spacing: column.spacing,
+    deps: [column.columnId],
+    onChange: ({ wrapperStyles, spacing }) =>
+      onChange({ ...column, wrapperStyles, spacing }),
+  });
 
   return (
     <Accordion allowMultiple>
