@@ -32,6 +32,11 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
   const [gradientDirection, setGradientDirection] = useState(
     column.wrapperStyles?.gradientDirection ?? 0
   );
+  const [backgroundType, setBackgroundType] = useState(
+    column.wrapperStyles?.gradientFrom && column.wrapperStyles?.gradientTo
+      ? "gradient"
+      : "color"
+  );
   const [shadow, setShadow] = useState(column.wrapperStyles?.dropShadow || "none");
   const [paddingX, setPaddingX] = useState(column.wrapperStyles?.paddingX ?? 0);
   const [paddingY, setPaddingY] = useState(column.wrapperStyles?.paddingY ?? 0);
@@ -48,6 +53,11 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
     setGradientFrom(column.wrapperStyles?.gradientFrom || "");
     setGradientTo(column.wrapperStyles?.gradientTo || "");
     setGradientDirection(column.wrapperStyles?.gradientDirection ?? 0);
+    setBackgroundType(
+      column.wrapperStyles?.gradientFrom && column.wrapperStyles?.gradientTo
+        ? "gradient"
+        : "color"
+    );
     setShadow(column.wrapperStyles?.dropShadow || "none");
     setPaddingX(column.wrapperStyles?.paddingX ?? 0);
     setPaddingY(column.wrapperStyles?.paddingY ?? 0);
@@ -79,7 +89,7 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
       },
       spacing,
     });
-  }, [bgColor, bgOpacity, gradientFrom, gradientTo, gradientDirection, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing]);
+  }, [bgColor, bgOpacity, gradientFrom, gradientTo, gradientDirection, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing, backgroundType]);
 
   return (
     <Accordion allowMultiple>
@@ -93,42 +103,71 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
         <AccordionPanel pb={2}>
           <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
-              <FormLabel mb="0" fontSize="sm" w="40%">Color</FormLabel>
-              <Input
-                type="color"
-                value={bgColor}
-                onChange={(e) => {
-                  setBgColor(e.target.value);
-                  setBgOpacity(1);
-                }}
-              />
-            </FormControl>
-            <FormControl display="flex" alignItems="center">
-              <FormLabel mb="0" fontSize="sm" w="40%">Grad. From</FormLabel>
-              <Input
-                type="color"
-                value={gradientFrom}
-                onChange={(e) => setGradientFrom(e.target.value)}
-              />
-            </FormControl>
-            <FormControl display="flex" alignItems="center">
-              <FormLabel mb="0" fontSize="sm" w="40%">Grad. To</FormLabel>
-              <Input
-                type="color"
-                value={gradientTo}
-                onChange={(e) => setGradientTo(e.target.value)}
-              />
-            </FormControl>
-            <FormControl display="flex" alignItems="center">
-              <FormLabel mb="0" fontSize="sm" w="40%">Direction</FormLabel>
-              <Input
+              <FormLabel mb="0" fontSize="sm" w="40%">Type</FormLabel>
+              <Select
                 size="sm"
-                type="number"
-                w="60px"
-                value={gradientDirection}
-                onChange={(e) => setGradientDirection(parseInt(e.target.value))}
-              />
+                value={backgroundType}
+                onChange={(e) => {
+                  const value = e.target.value as "color" | "gradient";
+                  setBackgroundType(value);
+                  if (value === "color") {
+                    setGradientFrom("");
+                    setGradientTo("");
+                    setGradientDirection(0);
+                  } else {
+                    setBgColor("#ffffff");
+                  }
+                }}
+              >
+                <option value="color">Color</option>
+                <option value="gradient">Gradient</option>
+              </Select>
             </FormControl>
+            {backgroundType === "color" && (
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">Color</FormLabel>
+                <Input
+                  type="color"
+                  value={bgColor}
+                  onChange={(e) => {
+                    setBgColor(e.target.value);
+                    setBgOpacity(1);
+                  }}
+                />
+              </FormControl>
+            )}
+            {backgroundType === "gradient" && (
+              <>
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel mb="0" fontSize="sm" w="40%">Grad. From</FormLabel>
+                  <Input
+                    type="color"
+                    value={gradientFrom}
+                    onChange={(e) => setGradientFrom(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel mb="0" fontSize="sm" w="40%">Grad. To</FormLabel>
+                  <Input
+                    type="color"
+                    value={gradientTo}
+                    onChange={(e) => setGradientTo(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel mb="0" fontSize="sm" w="40%">Direction</FormLabel>
+                  <Input
+                    size="sm"
+                    type="number"
+                    w="60px"
+                    value={gradientDirection}
+                    onChange={(e) =>
+                      setGradientDirection(parseInt(e.target.value))
+                    }
+                  />
+                </FormControl>
+              </>
+            )}
           </Stack>
         </AccordionPanel>
       </AccordionItem>
