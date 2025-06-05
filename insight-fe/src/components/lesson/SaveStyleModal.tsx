@@ -59,7 +59,11 @@ export default function SaveStyleModal({
             <Select
               placeholder="Select collection"
               value={collectionId}
-              onChange={(e) => setCollectionId(parseInt(e.target.value))}
+              onChange={(e) =>
+                setCollectionId(
+                  e.target.value === "" ? "" : parseInt(e.target.value)
+                )
+              }
             >
               {collections.map((c) => (
                 <option key={c.id} value={c.id}>
