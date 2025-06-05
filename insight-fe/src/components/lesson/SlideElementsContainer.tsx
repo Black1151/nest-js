@@ -88,6 +88,9 @@ export default function SlideElementsContainer({
       wrapperStyles: {
         bgColor: "#ffffff",
         bgOpacity: 0,
+        gradientFrom: "",
+        gradientTo: "",
+        gradientDirection: 0,
         dropShadow: "none",
         paddingX: 0,
         paddingY: 0,
@@ -106,10 +109,13 @@ export default function SlideElementsContainer({
       {
         id: boardId,
         orderedColumnIds: [columnId],
-        wrapperStyles: {
-          bgColor: "#ffffff",
-          bgOpacity: 1,
-          dropShadow: "none",
+      wrapperStyles: {
+        bgColor: "#ffffff",
+        bgOpacity: 1,
+        gradientFrom: "",
+        gradientTo: "",
+        gradientDirection: 0,
+        dropShadow: "none",
           paddingX: 0,
           paddingY: 0,
           marginX: 0,

@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Box, Text, Grid, HStack, Button } from "@chakra-ui/react";
+import { Flex, Box, Text, Grid, HStack, Button, Select } from "@chakra-ui/react";
 import {
   useCallback,
   useReducer,
@@ -166,6 +166,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [styleCollections, setStyleCollections] = useState<
     { id: number; name: string }[]
   >([]);
+  const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
+    ""
+  );
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
 
@@ -397,6 +400,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             wrapperStyles: {
               bgColor: "#ffffff",
               bgOpacity: 0,
+              gradientFrom: "",
+              gradientTo: "",
+              gradientDirection: 0,
               dropShadow: "none",
               paddingX: 0,
               paddingY: 0,
@@ -511,6 +517,31 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           ))}
         </HStack>
       </Box>
+
+      <HStack mt={2} alignItems="flex-start">
+        <Select
+          placeholder="Select collection"
+          value={selectedCollectionId}
+          onChange={(e) =>
+            setSelectedCollectionId(
+              e.target.value === "" ? "" : parseInt(e.target.value, 10)
+            )
+          }
+        >
+          {styleCollections.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </Select>
+        <HStack>
+          {AVAILABLE_ELEMENTS.map((el) => (
+            <Button key={el.type} size="sm">
+              {el.label}
+            </Button>
+          ))}
+        </HStack>
+      </HStack>
 
       <Flex gap={6} alignItems="flex-start">
         <SlideSequencer

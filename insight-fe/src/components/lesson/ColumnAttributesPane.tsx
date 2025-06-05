@@ -27,6 +27,11 @@ interface ColumnAttributesPaneProps {
 export default function ColumnAttributesPane({ column, onChange }: ColumnAttributesPaneProps) {
   const [bgColor, setBgColor] = useState(column.wrapperStyles?.bgColor || "#ffffff");
   const [bgOpacity, setBgOpacity] = useState(column.wrapperStyles?.bgOpacity ?? 0);
+  const [gradientFrom, setGradientFrom] = useState(column.wrapperStyles?.gradientFrom || "");
+  const [gradientTo, setGradientTo] = useState(column.wrapperStyles?.gradientTo || "");
+  const [gradientDirection, setGradientDirection] = useState(
+    column.wrapperStyles?.gradientDirection ?? 0
+  );
   const [shadow, setShadow] = useState(column.wrapperStyles?.dropShadow || "none");
   const [paddingX, setPaddingX] = useState(column.wrapperStyles?.paddingX ?? 0);
   const [paddingY, setPaddingY] = useState(column.wrapperStyles?.paddingY ?? 0);
@@ -40,6 +45,9 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
   useEffect(() => {
     setBgColor(column.wrapperStyles?.bgColor || "#ffffff");
     setBgOpacity(column.wrapperStyles?.bgOpacity ?? 0);
+    setGradientFrom(column.wrapperStyles?.gradientFrom || "");
+    setGradientTo(column.wrapperStyles?.gradientTo || "");
+    setGradientDirection(column.wrapperStyles?.gradientDirection ?? 0);
     setShadow(column.wrapperStyles?.dropShadow || "none");
     setPaddingX(column.wrapperStyles?.paddingX ?? 0);
     setPaddingY(column.wrapperStyles?.paddingY ?? 0);
@@ -57,6 +65,9 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
       wrapperStyles: {
         bgColor,
         bgOpacity,
+        gradientFrom,
+        gradientTo,
+        gradientDirection,
         dropShadow: shadow,
         paddingX,
         paddingY,
@@ -68,21 +79,21 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
       },
       spacing,
     });
-  }, [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing]);
+  }, [bgColor, bgOpacity, gradientFrom, gradientTo, gradientDirection, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing]);
 
   return (
     <Accordion allowMultiple>
       <AccordionItem borderWidth="1px" borderColor="blue.300" borderRadius="md" mb={2}>
         <h2>
           <AccordionButton>
-            <Box flex="1" textAlign="left">Wrapper</Box>
+            <Box flex="1" textAlign="left">Background</Box>
             <AccordionIcon />
           </AccordionButton>
         </h2>
         <AccordionPanel pb={2}>
           <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
-              <FormLabel mb="0" fontSize="sm" w="40%">Background</FormLabel>
+              <FormLabel mb="0" fontSize="sm" w="40%">Color</FormLabel>
               <Input
                 type="color"
                 value={bgColor}
@@ -92,6 +103,45 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
                 }}
               />
             </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Grad. From</FormLabel>
+              <Input
+                type="color"
+                value={gradientFrom}
+                onChange={(e) => setGradientFrom(e.target.value)}
+              />
+            </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Grad. To</FormLabel>
+              <Input
+                type="color"
+                value={gradientTo}
+                onChange={(e) => setGradientTo(e.target.value)}
+              />
+            </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Direction</FormLabel>
+              <Input
+                size="sm"
+                type="number"
+                w="60px"
+                value={gradientDirection}
+                onChange={(e) => setGradientDirection(parseInt(e.target.value))}
+              />
+            </FormControl>
+          </Stack>
+        </AccordionPanel>
+      </AccordionItem>
+
+      <AccordionItem borderWidth="1px" borderColor="blue.300" borderRadius="md" mb={2}>
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">Wrapper</Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={2}>
+          <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
               <FormLabel mb="0" fontSize="sm" w="40%">Shadow</FormLabel>
               <Select size="sm" value={shadow} onChange={(e) => setShadow(e.target.value)}>
@@ -160,6 +210,10 @@ export default function ColumnAttributesPane({ column, onChange }: ColumnAttribu
                 <option value="sm">Small</option>
                 <option value="md">Medium</option>
                 <option value="lg">Large</option>
+                <option value="xl">Extra Large</option>
+                <option value="2xl">2x Large</option>
+                <option value="3xl">3x Large</option>
+                <option value="full">Fully Rounded</option>
                 <option value="50%">Circular</option>
               </Select>
             </FormControl>

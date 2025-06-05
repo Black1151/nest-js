@@ -66,6 +66,15 @@ export default function ElementAttributesPane({
   const [bgOpacity, setBgOpacity] = useState(
     element.wrapperStyles?.bgOpacity ?? 0
   );
+  const [gradientFrom, setGradientFrom] = useState(
+    element.wrapperStyles?.gradientFrom || ""
+  );
+  const [gradientTo, setGradientTo] = useState(
+    element.wrapperStyles?.gradientTo || ""
+  );
+  const [gradientDirection, setGradientDirection] = useState(
+    element.wrapperStyles?.gradientDirection ?? 0
+  );
   const [shadow, setShadow] = useState(
     element.wrapperStyles?.dropShadow || "none"
   );
@@ -105,6 +114,9 @@ export default function ElementAttributesPane({
     setQuestions(element.questions || []);
     setBgColor(element.wrapperStyles?.bgColor || "#ffffff");
     setBgOpacity(element.wrapperStyles?.bgOpacity ?? 0);
+    setGradientFrom(element.wrapperStyles?.gradientFrom || "");
+    setGradientTo(element.wrapperStyles?.gradientTo || "");
+    setGradientDirection(element.wrapperStyles?.gradientDirection ?? 0);
     setShadow(element.wrapperStyles?.dropShadow || "none");
     setPaddingX(element.wrapperStyles?.paddingX ?? 0);
     setPaddingY(element.wrapperStyles?.paddingY ?? 0);
@@ -121,6 +133,9 @@ export default function ElementAttributesPane({
       wrapperStyles: {
         bgColor,
         bgOpacity,
+        gradientFrom,
+        gradientTo,
+        gradientDirection,
         dropShadow: shadow,
         paddingX,
         paddingY,
@@ -170,6 +185,9 @@ export default function ElementAttributesPane({
     questions,
     bgColor,
     bgOpacity,
+    gradientFrom,
+    gradientTo,
+    gradientDirection,
     shadow,
     paddingX,
     paddingY,
@@ -192,7 +210,7 @@ export default function ElementAttributesPane({
         <h2>
           <AccordionButton>
             <Box flex="1" textAlign="left">
-              Wrapper
+              Background
             </Box>
             <AccordionIcon />
           </AccordionButton>
@@ -200,9 +218,7 @@ export default function ElementAttributesPane({
         <AccordionPanel pb={2}>
           <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
-              <FormLabel mb="0" fontSize="sm" w="40%">
-                Background
-              </FormLabel>
+              <FormLabel mb="0" fontSize="sm" w="40%">Color</FormLabel>
               <Input
                 type="color"
                 value={bgColor}
@@ -212,6 +228,52 @@ export default function ElementAttributesPane({
                 }}
               />
             </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Grad. From</FormLabel>
+              <Input
+                type="color"
+                value={gradientFrom}
+                onChange={(e) => setGradientFrom(e.target.value)}
+              />
+            </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Grad. To</FormLabel>
+              <Input
+                type="color"
+                value={gradientTo}
+                onChange={(e) => setGradientTo(e.target.value)}
+              />
+            </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Direction</FormLabel>
+              <Input
+                size="sm"
+                type="number"
+                w="60px"
+                value={gradientDirection}
+                onChange={(e) => setGradientDirection(parseInt(e.target.value))}
+              />
+            </FormControl>
+          </Stack>
+        </AccordionPanel>
+      </AccordionItem>
+
+      <AccordionItem
+        borderWidth="1px"
+        borderColor="blue.300"
+        borderRadius="md"
+        mb={2}
+      >
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">
+              Wrapper
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={2}>
+          <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
               <FormLabel mb="0" fontSize="sm" w="40%">
                 Shadow
@@ -346,6 +408,10 @@ export default function ElementAttributesPane({
                 <option value="sm">Small</option>
                 <option value="md">Medium</option>
                 <option value="lg">Large</option>
+                <option value="xl">Extra Large</option>
+                <option value="2xl">2x Large</option>
+                <option value="3xl">3x Large</option>
+                <option value="full">Fully Rounded</option>
                 <option value="50%">Circular</option>
               </Select>
             </FormControl>

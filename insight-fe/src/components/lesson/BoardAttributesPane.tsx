@@ -26,6 +26,11 @@ interface BoardAttributesPaneProps {
 export default function BoardAttributesPane({ board, onChange }: BoardAttributesPaneProps) {
   const [bgColor, setBgColor] = useState(board.wrapperStyles?.bgColor || "#ffffff");
   const [bgOpacity, setBgOpacity] = useState(board.wrapperStyles?.bgOpacity ?? 1);
+  const [gradientFrom, setGradientFrom] = useState(board.wrapperStyles?.gradientFrom || "");
+  const [gradientTo, setGradientTo] = useState(board.wrapperStyles?.gradientTo || "");
+  const [gradientDirection, setGradientDirection] = useState(
+    board.wrapperStyles?.gradientDirection ?? 0
+  );
   const [shadow, setShadow] = useState(board.wrapperStyles?.dropShadow || "none");
   const [paddingX, setPaddingX] = useState(board.wrapperStyles?.paddingX ?? 0);
   const [paddingY, setPaddingY] = useState(board.wrapperStyles?.paddingY ?? 0);
@@ -39,6 +44,9 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
   useEffect(() => {
     setBgColor(board.wrapperStyles?.bgColor || "#ffffff");
     setBgOpacity(board.wrapperStyles?.bgOpacity ?? 1);
+    setGradientFrom(board.wrapperStyles?.gradientFrom || "");
+    setGradientTo(board.wrapperStyles?.gradientTo || "");
+    setGradientDirection(board.wrapperStyles?.gradientDirection ?? 0);
     setShadow(board.wrapperStyles?.dropShadow || "none");
     setPaddingX(board.wrapperStyles?.paddingX ?? 0);
     setPaddingY(board.wrapperStyles?.paddingY ?? 0);
@@ -56,6 +64,9 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
       wrapperStyles: {
         bgColor,
         bgOpacity,
+        gradientFrom,
+        gradientTo,
+        gradientDirection,
         dropShadow: shadow,
         paddingX,
         paddingY,
@@ -67,21 +78,21 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
       },
       spacing,
     });
-  }, [bgColor, bgOpacity, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing]);
+  }, [bgColor, bgOpacity, gradientFrom, gradientTo, gradientDirection, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing]);
 
   return (
     <Accordion allowMultiple>
       <AccordionItem borderWidth="1px" borderColor="blue.300" borderRadius="md" mb={2}>
         <h2>
           <AccordionButton>
-            <Box flex="1" textAlign="left">Wrapper</Box>
+            <Box flex="1" textAlign="left">Background</Box>
             <AccordionIcon />
           </AccordionButton>
         </h2>
         <AccordionPanel pb={2}>
           <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
-              <FormLabel mb="0" fontSize="sm" w="40%">Background</FormLabel>
+              <FormLabel mb="0" fontSize="sm" w="40%">Color</FormLabel>
               <Input
                 type="color"
                 value={bgColor}
@@ -91,6 +102,45 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
                 }}
               />
             </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Grad. From</FormLabel>
+              <Input
+                type="color"
+                value={gradientFrom}
+                onChange={(e) => setGradientFrom(e.target.value)}
+              />
+            </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Grad. To</FormLabel>
+              <Input
+                type="color"
+                value={gradientTo}
+                onChange={(e) => setGradientTo(e.target.value)}
+              />
+            </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Direction</FormLabel>
+              <Input
+                size="sm"
+                type="number"
+                w="60px"
+                value={gradientDirection}
+                onChange={(e) => setGradientDirection(parseInt(e.target.value))}
+              />
+            </FormControl>
+          </Stack>
+        </AccordionPanel>
+      </AccordionItem>
+
+      <AccordionItem borderWidth="1px" borderColor="blue.300" borderRadius="md" mb={2}>
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">Wrapper</Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={2}>
+          <Stack spacing={2}>
             <FormControl display="flex" alignItems="center">
               <FormLabel mb="0" fontSize="sm" w="40%">Shadow</FormLabel>
               <Select size="sm" value={shadow} onChange={(e) => setShadow(e.target.value)}>
@@ -159,6 +209,10 @@ export default function BoardAttributesPane({ board, onChange }: BoardAttributes
                 <option value="sm">Small</option>
                 <option value="md">Medium</option>
                 <option value="lg">Large</option>
+                <option value="xl">Extra Large</option>
+                <option value="2xl">2x Large</option>
+                <option value="3xl">3x Large</option>
+                <option value="full">Fully Rounded</option>
                 <option value="50%">Circular</option>
               </Select>
             </FormControl>
