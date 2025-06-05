@@ -13,6 +13,7 @@ import {
 } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
+import { defaultColumnWrapperStyles } from "../defaultStyles";
 
 export interface LessonEditorHandle {
   getContent: () => { slides: Slide[] };
@@ -353,21 +354,7 @@ export function useLessonEditorState(ref?: React.Ref<LessonEditorHandle>) {
                       questions: [],
                     }
                   : {}),
-                wrapperStyles: {
-                  bgColor: "#ffffff",
-                  bgOpacity: 0,
-                  gradientFrom: "",
-                  gradientTo: "",
-                  gradientDirection: 0,
-                  dropShadow: "none",
-                  paddingX: 0,
-                  paddingY: 0,
-                  marginX: 0,
-                  marginY: 0,
-                  borderColor: "#000000",
-                  borderWidth: 0,
-                  borderRadius: "none",
-                },
+                wrapperStyles: { ...defaultColumnWrapperStyles },
                 animation: undefined,
               };
 
