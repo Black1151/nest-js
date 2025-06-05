@@ -620,7 +620,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
                 fetchStyles({
                   variables: {
                     collectionId: String(selectedCollectionId),
-                    element: ELEMENT_TYPE_TO_ENUM[el.type],
+                    element: el.type,
                   },
                 });
               }}
@@ -757,9 +757,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         isOpen={isLoadStyleOpen}
         onClose={() => setIsLoadStyleOpen(false)}
         collections={styleCollections}
-        elementType={
-          selectedElement ? ELEMENT_TYPE_TO_ENUM[selectedElement.type] : null
-        }
+        elementType={selectedElement ? selectedElement.type : null}
         onLoad={(styleId) => {
           if (!selectedElement) return;
           // Placeholder for backend call using style module
