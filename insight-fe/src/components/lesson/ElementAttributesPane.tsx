@@ -95,6 +95,15 @@ export default function ElementAttributesPane({
   const [borderRadius, setBorderRadius] = useState(
     element.wrapperStyles?.borderRadius || "none"
   );
+  const [animationEnabled, setAnimationEnabled] = useState(
+    !!element.animation
+  );
+  const [animationDirection, setAnimationDirection] = useState(
+    element.animation?.direction || "left"
+  );
+  const [animationDelay, setAnimationDelay] = useState(
+    element.animation?.delay ?? 0
+  );
 
   // Reset local state only when a new element is selected
   // using id/type avoids resets when the parent simply updates
@@ -125,6 +134,9 @@ export default function ElementAttributesPane({
     setBorderColor(element.wrapperStyles?.borderColor || "#000000");
     setBorderWidth(element.wrapperStyles?.borderWidth ?? 0);
     setBorderRadius(element.wrapperStyles?.borderRadius || "none");
+    setAnimationEnabled(!!element.animation);
+    setAnimationDirection(element.animation?.direction || "left");
+    setAnimationDelay(element.animation?.delay ?? 0);
   }, [element.id, element.type]);
 
   useEffect(() => {
@@ -145,6 +157,9 @@ export default function ElementAttributesPane({
         borderWidth,
         borderRadius,
       },
+      animation: animationEnabled
+        ? { type: "flyInFade", direction: animationDirection, delay: animationDelay }
+        : undefined,
     };
     if (element.type === "text") {
       updated.text = text;
@@ -196,6 +211,9 @@ export default function ElementAttributesPane({
     borderColor,
     borderWidth,
     borderRadius,
+    animationEnabled,
+    animationDirection,
+    animationDelay,
   ]);
 
   return (
@@ -252,6 +270,60 @@ export default function ElementAttributesPane({
                 w="60px"
                 value={gradientDirection}
                 onChange={(e) => setGradientDirection(parseInt(e.target.value))}
+              />
+            </FormControl>
+          </Stack>
+        </AccordionPanel>
+      </AccordionItem>
+
+      <AccordionItem
+        borderWidth="1px"
+        borderColor="orange.300"
+        borderRadius="md"
+        mb={2}
+      >
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">Animation</Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={2}>
+          <Stack spacing={2}>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Enable</FormLabel>
+              <Select
+                size="sm"
+                value={animationEnabled ? "on" : "off"}
+                onChange={(e) => setAnimationEnabled(e.target.value === "on")}
+              >
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </Select>
+            </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Direction</FormLabel>
+              <Select
+                size="sm"
+                value={animationDirection}
+                onChange={(e) =>
+                  setAnimationDirection(e.target.value as any)
+                }
+              >
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="top">Top</option>
+                <option value="bottom">Bottom</option>
+              </Select>
+            </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel mb="0" fontSize="sm" w="40%">Delay (ms)</FormLabel>
+              <Input
+                size="sm"
+                type="number"
+                w="60px"
+                value={animationDelay}
+                onChange={(e) => setAnimationDelay(parseInt(e.target.value))}
               />
             </FormControl>
           </Stack>

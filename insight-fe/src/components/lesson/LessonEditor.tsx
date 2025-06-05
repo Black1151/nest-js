@@ -211,7 +211,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
   const [styleItems, setStyleItems] = useState<SlideElementDnDItemProps[]>([]);
 
-  const [fetchStyles, { data: stylesData }] = useLazyQuery(GET_STYLES_WITH_CONFIG);
+  const [fetchStyles, { data: stylesData }] = useLazyQuery(
+    GET_STYLES_WITH_CONFIG
+  );
 
   const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
   const [createStyle] = useMutation(CREATE_STYLE);
@@ -485,6 +487,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
                   borderWidth: 0,
                   borderRadius: "none",
                 },
+                animation: undefined,
               };
 
           const firstColumn = s.boards[0].orderedColumnIds[0];
@@ -754,7 +757,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         isOpen={isLoadStyleOpen}
         onClose={() => setIsLoadStyleOpen(false)}
         collections={styleCollections}
-        elementType={selectedElement ? ELEMENT_TYPE_TO_ENUM[selectedElement.type] : null}
+        elementType={
+          selectedElement ? ELEMENT_TYPE_TO_ENUM[selectedElement.type] : null
+        }
         onLoad={(styleId) => {
           if (!selectedElement) return;
           // Placeholder for backend call using style module

@@ -2,6 +2,13 @@ import ElementWrapper, {
   ElementWrapperStyles,
 } from "@/components/lesson/ElementWrapper";
 import { Box, Text, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+
+export interface ElementAnimation {
+  type: "flyInFade";
+  direction: "left" | "right" | "top" | "bottom";
+  delay: number;
+}
 
 export interface SlideElementDnDItemProps {
   id: string;
@@ -44,6 +51,7 @@ export interface SlideElementDnDItemProps {
     textAlign?: string;
   };
   wrapperStyles?: ElementWrapperStyles;
+  animation?: ElementAnimation;
 }
 
 interface SlideElementDnDItemComponentProps {
@@ -63,6 +71,30 @@ export const SlideElementDnDItem = ({
     onClick: onSelect,
   };
 
+  const MotionBox = motion(Box);
+
+  const animationProps = item.animation
+    ? {
+        initial: {
+          opacity: 0,
+          x:
+            item.animation.direction === "left"
+              ? -50
+              : item.animation.direction === "right"
+              ? 50
+              : 0,
+          y:
+            item.animation.direction === "top"
+              ? -50
+              : item.animation.direction === "bottom"
+              ? 50
+              : 0,
+        },
+        animate: { opacity: 1, x: 0, y: 0 },
+        transition: { delay: item.animation.delay / 1000 },
+      }
+    : {};
+
   const wrapperStyles: ElementWrapperStyles = {
     ...item.wrapperStyles,
     borderColor: isSelected ? "blue.400" : item.wrapperStyles?.borderColor,
@@ -70,8 +102,16 @@ export const SlideElementDnDItem = ({
     borderRadius: item.wrapperStyles?.borderRadius,
   };
 
+  let content: React.ReactElement = (
+    <ElementWrapper styles={wrapperStyles} {...baseProps}>
+      <Text fontSize={14} fontWeight="bold">
+        {item.type}
+      </Text>
+    </ElementWrapper>
+  );
+
   if (item.type === "text") {
-    return (
+    content = (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Text
           color={item.styles?.color}
@@ -85,10 +125,8 @@ export const SlideElementDnDItem = ({
         </Text>
       </ElementWrapper>
     );
-  }
-
-  if (item.type === "table") {
-    return (
+  } else if (item.type === "table") {
+    content = (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Table size="sm">
           <Thead>
@@ -106,18 +144,14 @@ export const SlideElementDnDItem = ({
         </Table>
       </ElementWrapper>
     );
-  }
-
-  if (item.type === "video") {
-    return (
+  } else if (item.type === "video") {
+    content = (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Box as="video" src={item.url} controls width="100%" />
       </ElementWrapper>
     );
-  }
-
-  if (item.type === "image") {
-    return (
+  } else if (item.type === "image") {
+    content = (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <img
           src={item.src}
@@ -127,21 +161,13 @@ export const SlideElementDnDItem = ({
         />
       </ElementWrapper>
     );
-  }
-
-  if (item.type === "quiz") {
-    return (
+  } else if (item.type === "quiz") {
+    content = (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Text fontWeight="bold">{item.title || "Quiz"}</Text>
       </ElementWrapper>
     );
   }
 
-  return (
-    <ElementWrapper styles={wrapperStyles} {...baseProps}>
-      <Text fontSize={14} fontWeight="bold">
-        {item.type}
-      </Text>
-    </ElementWrapper>
-  );
+  return <MotionBox {...animationProps}>{content}</MotionBox>;
 };

@@ -1,6 +1,8 @@
 "use client";
 
+import React from "react";
 import { Box, Text, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import ElementWrapper from "./ElementWrapper";
 import ImageElement from "./ImageElement";
 import VideoElement from "./VideoElement";
@@ -14,8 +16,36 @@ interface SlideElementRendererProps {
 export default function SlideElementRenderer({
   item,
 }: SlideElementRendererProps) {
+  const MotionBox = motion(Box);
+  const animationProps = item.animation
+    ? {
+        initial: {
+          opacity: 0,
+          x:
+            item.animation.direction === "left"
+              ? -50
+              : item.animation.direction === "right"
+              ? 50
+              : 0,
+          y:
+            item.animation.direction === "top"
+              ? -50
+              : item.animation.direction === "bottom"
+              ? 50
+              : 0,
+        },
+        animate: { opacity: 1, x: 0, y: 0 },
+        transition: { delay: item.animation.delay / 1000 },
+      }
+    : {};
+  let content: React.ReactElement = (
+    <ElementWrapper styles={item.wrapperStyles} data-testid="unknown-element">
+      <Text fontSize={14} fontWeight="bold">{item.type}</Text>
+    </ElementWrapper>
+  );
+
   if (item.type === "text") {
-    return (
+    content = (
       <ElementWrapper styles={item.wrapperStyles} data-testid="text-element">
         <Text
           color={item.styles?.color}
@@ -29,10 +59,8 @@ export default function SlideElementRenderer({
         </Text>
       </ElementWrapper>
     );
-  }
-
-  if (item.type === "table") {
-    return (
+  } else if (item.type === "table") {
+    content = (
       <ElementWrapper styles={item.wrapperStyles} data-testid="table-element">
         <Table size="sm">
           <Thead>
@@ -50,22 +78,16 @@ export default function SlideElementRenderer({
         </Table>
       </ElementWrapper>
     );
-  }
-
-  if (item.type === "image") {
-    return (
+  } else if (item.type === "image") {
+    content = (
       <ImageElement src={item.src || ""} wrapperStyles={item.wrapperStyles} />
     );
-  }
-
-  if (item.type === "video") {
-    return (
+  } else if (item.type === "video") {
+    content = (
       <VideoElement url={item.url || ""} wrapperStyles={item.wrapperStyles} />
     );
-  }
-
-  if (item.type === "quiz") {
-    return (
+  } else if (item.type === "quiz") {
+    content = (
       <QuizElement
         title={item.title || "Untitled Quiz"}
         description={item.description}
@@ -75,11 +97,5 @@ export default function SlideElementRenderer({
     );
   }
 
-  return (
-    <ElementWrapper styles={item.wrapperStyles} data-testid="unknown-element">
-      <Text fontSize={14} fontWeight="bold">
-        {item.type}
-      </Text>
-    </ElementWrapper>
-  );
+  return <MotionBox {...animationProps}>{content}</MotionBox>;
 }
