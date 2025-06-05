@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId, JoinColumn } from 'typeorm';
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { AbstractBaseEntity } from 'src/common/base.entity';
@@ -33,9 +33,11 @@ export class StyleEntity extends AbstractBaseEntity {
   @ManyToOne(() => StyleCollectionEntity, (collection) => collection.styles, {
     nullable: false,
   })
+  @JoinColumn({ name: 'collection_id' })
   collection!: StyleCollectionEntity;
 
   @Field(() => ID)
+  @Column({ name: 'collection_id' })
   @RelationId((style: StyleEntity) => style.collection)
   collectionId!: number;
 }
