@@ -15,7 +15,7 @@ import {
   AccordionIcon,
   HStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import useStyleAttributes from "./hooks/useStyleAttributes";
 import type { BoardRow } from "./SlideElementsContainer";
 
 interface BoardAttributesPaneProps {
@@ -24,71 +24,45 @@ interface BoardAttributesPaneProps {
 }
 
 export default function BoardAttributesPane({ board, onChange }: BoardAttributesPaneProps) {
-  const [bgColor, setBgColor] = useState(board.wrapperStyles?.bgColor || "#ffffff");
-  const [bgOpacity, setBgOpacity] = useState(board.wrapperStyles?.bgOpacity ?? 1);
-  const [gradientFrom, setGradientFrom] = useState(board.wrapperStyles?.gradientFrom || "");
-  const [gradientTo, setGradientTo] = useState(board.wrapperStyles?.gradientTo || "");
-  const [gradientDirection, setGradientDirection] = useState(
-    board.wrapperStyles?.gradientDirection ?? 0
-  );
-  const [backgroundType, setBackgroundType] = useState(
-    board.wrapperStyles?.gradientFrom && board.wrapperStyles?.gradientTo
-      ? "gradient"
-      : "color"
-  );
-  const [shadow, setShadow] = useState(board.wrapperStyles?.dropShadow || "none");
-  const [paddingX, setPaddingX] = useState(board.wrapperStyles?.paddingX ?? 0);
-  const [paddingY, setPaddingY] = useState(board.wrapperStyles?.paddingY ?? 0);
-  const [marginX, setMarginX] = useState(board.wrapperStyles?.marginX ?? 0);
-  const [marginY, setMarginY] = useState(board.wrapperStyles?.marginY ?? 0);
-  const [borderColor, setBorderColor] = useState(board.wrapperStyles?.borderColor || "#000000");
-  const [borderWidth, setBorderWidth] = useState(board.wrapperStyles?.borderWidth ?? 0);
-  const [borderRadius, setBorderRadius] = useState(board.wrapperStyles?.borderRadius || "none");
-  const [spacing, setSpacing] = useState(board.spacing ?? 0);
-
-  useEffect(() => {
-    setBgColor(board.wrapperStyles?.bgColor || "#ffffff");
-    setBgOpacity(board.wrapperStyles?.bgOpacity ?? 1);
-    setGradientFrom(board.wrapperStyles?.gradientFrom || "");
-    setGradientTo(board.wrapperStyles?.gradientTo || "");
-    setGradientDirection(board.wrapperStyles?.gradientDirection ?? 0);
-    setBackgroundType(
-      board.wrapperStyles?.gradientFrom && board.wrapperStyles?.gradientTo
-        ? "gradient"
-        : "color"
-    );
-    setShadow(board.wrapperStyles?.dropShadow || "none");
-    setPaddingX(board.wrapperStyles?.paddingX ?? 0);
-    setPaddingY(board.wrapperStyles?.paddingY ?? 0);
-    setMarginX(board.wrapperStyles?.marginX ?? 0);
-    setMarginY(board.wrapperStyles?.marginY ?? 0);
-    setBorderColor(board.wrapperStyles?.borderColor || "#000000");
-    setBorderWidth(board.wrapperStyles?.borderWidth ?? 0);
-    setBorderRadius(board.wrapperStyles?.borderRadius || "none");
-    setSpacing(board.spacing ?? 0);
-  }, [board.id]);
-
-  useEffect(() => {
-    onChange({
-      ...board,
-      wrapperStyles: {
-        bgColor,
-        bgOpacity,
-        gradientFrom,
-        gradientTo,
-        gradientDirection,
-        dropShadow: shadow,
-        paddingX,
-        paddingY,
-        marginX,
-        marginY,
-        borderColor,
-        borderWidth,
-        borderRadius,
-      },
-      spacing,
-    });
-  }, [bgColor, bgOpacity, gradientFrom, gradientTo, gradientDirection, shadow, paddingX, paddingY, marginX, marginY, borderColor, borderWidth, borderRadius, spacing, backgroundType]);
+  const {
+    bgColor,
+    setBgColor,
+    bgOpacity,
+    setBgOpacity,
+    gradientFrom,
+    setGradientFrom,
+    gradientTo,
+    setGradientTo,
+    gradientDirection,
+    setGradientDirection,
+    backgroundType,
+    setBackgroundType,
+    shadow,
+    setShadow,
+    paddingX,
+    setPaddingX,
+    paddingY,
+    setPaddingY,
+    marginX,
+    setMarginX,
+    marginY,
+    setMarginY,
+    borderColor,
+    setBorderColor,
+    borderWidth,
+    setBorderWidth,
+    borderRadius,
+    setBorderRadius,
+    spacing,
+    setSpacing,
+  } = useStyleAttributes({
+    wrapperStyles: board.wrapperStyles,
+    spacing: board.spacing,
+    deps: [board.id],
+    defaultBgOpacity: 1,
+    onChange: ({ wrapperStyles, spacing }) =>
+      onChange({ ...board, wrapperStyles, spacing }),
+  });
 
   return (
     <Accordion allowMultiple>
