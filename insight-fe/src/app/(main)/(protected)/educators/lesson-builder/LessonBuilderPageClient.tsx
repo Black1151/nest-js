@@ -2,7 +2,7 @@
 
 import { Flex, Button } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import LessonEditor, { LessonEditorHandle } from "@/components/lesson/LessonEditor";
+import LessonEditor from "@/components/lesson/LessonEditor";
 import LessonPreviewModal from "@/components/lesson/LessonPreviewModal";
 import { Slide } from "@/components/lesson/SlideSequencer";
 import SaveLessonModal from "@/components/lesson/SaveLessonModal";
@@ -10,6 +10,7 @@ import LoadLessonModal from "@/components/lesson/LoadLessonModal";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
+import { LessonEditorHandle } from "@/components/lesson/hooks/useLessonEditorState";
 
 export const LessonBuilderPageClient = () => {
   const [isSaveOpen, setIsSaveOpen] = useState(false);
@@ -70,7 +71,7 @@ export const LessonBuilderPageClient = () => {
         },
       },
     });
-  }; 
+  };
 
   const handleLoad = async (lessonId: string) => {
     const { data } = await fetchLesson({
