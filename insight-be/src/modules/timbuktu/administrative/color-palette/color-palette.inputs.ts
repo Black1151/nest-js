@@ -1,5 +1,5 @@
 import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
-import { HasRelationsInput } from 'src/common/base.inputs';
+import { HasRelationsInput, FindAllInput } from 'src/common/base.inputs';
 
 @InputType()
 export class CreateColorPaletteInput extends HasRelationsInput {
@@ -17,4 +17,10 @@ export class CreateColorPaletteInput extends HasRelationsInput {
 export class UpdateColorPaletteInput extends PartialType(CreateColorPaletteInput) {
   @Field(() => ID)
   id: number;
+}
+
+@InputType()
+export class FindAllColorPaletteInput extends FindAllInput {
+  @Field(() => ID, { nullable: true })
+  collectionId?: number;
 }

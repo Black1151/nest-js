@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { BaseService } from 'src/common/base.service';
+import { BaseService, FindAllOpts } from 'src/common/base.service';
 import { ColorPaletteEntity } from './color-palette.entity';
 import { CreateColorPaletteInput, UpdateColorPaletteInput } from './color-palette.inputs';
 
@@ -34,5 +34,18 @@ export class ColorPaletteService extends BaseService<
       ...(collectionId ? [{ relation: 'collection', ids: [collectionId] }] : []),
     ];
     return super.update({ ...rest, relationIds: relations } as any);
+  }
+
+  async findAll(
+    opts: FindAllOpts & { collectionId?: number },
+  ): Promise<ColorPaletteEntity[]> {
+    const { collectionId, filters = [], ...rest } = opts;
+    const finalFilters = [
+      ...filters,
+      ...(collectionId
+        ? [{ column: 'collectionId', value: collectionId }]
+        : []),
+    ];
+    return super.findAll({ ...rest, filters: finalFilters });
   }
 }
