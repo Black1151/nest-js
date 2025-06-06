@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type DependencyList } from "react";
-import type { ElementWrapperStyles } from "../ElementWrapper";
+import type { ElementWrapperStyles } from "../elements/ElementWrapper";
 
 export interface StyleAttributesChange {
   wrapperStyles: ElementWrapperStyles;
@@ -31,14 +31,14 @@ export default function useStyleAttributes({
   const [gradientFrom, setGradientFrom] = useState(
     wrapperStyles?.gradientFrom || ""
   );
-  const [gradientTo, setGradientTo] = useState(
-    wrapperStyles?.gradientTo || ""
-  );
+  const [gradientTo, setGradientTo] = useState(wrapperStyles?.gradientTo || "");
   const [gradientDirection, setGradientDirection] = useState(
     wrapperStyles?.gradientDirection ?? 0
   );
   const [backgroundType, setBackgroundType] = useState(
-    wrapperStyles?.gradientFrom && wrapperStyles?.gradientTo ? "gradient" : "color"
+    wrapperStyles?.gradientFrom && wrapperStyles?.gradientTo
+      ? "gradient"
+      : "color"
   );
   const [shadow, setShadow] = useState(wrapperStyles?.dropShadow || "none");
   const [paddingX, setPaddingX] = useState(wrapperStyles?.paddingX ?? 0);

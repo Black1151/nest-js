@@ -1,6 +1,6 @@
 import ElementWrapper, {
   ElementWrapperStyles,
-} from "@/components/lesson/ElementWrapper";
+} from "@/components/lesson/elements/ElementWrapper";
 import { Box, Text, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 

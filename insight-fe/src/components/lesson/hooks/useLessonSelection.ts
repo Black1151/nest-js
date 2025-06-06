@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useReducer, useMemo, useImperativeHandle } from "react";
-import { Slide, createInitialBoard } from "../SlideSequencer";
-import { BoardRow } from "../SlideElementsContainer";
+import { BoardRow } from "../slide/SlideElementsContainer";
+import { Slide, createInitialBoard } from "../slide/SlideSequencer";
 
 export interface LessonEditorHandle {
   getContent: () => { slides: Slide[] };
@@ -24,7 +24,10 @@ export type Action =
   | { type: "selectElement"; id: string | null }
   | { type: "selectColumn"; id: string | null }
   | { type: "selectBoard"; id: string | null }
-  | { type: "setDropIndicator"; indicator: { columnId: string; index: number } | null }
+  | {
+      type: "setDropIndicator";
+      indicator: { columnId: string; index: number } | null;
+    }
   | { type: "updateSlide"; slideId: string; updater: (slide: Slide) => Slide }
   | {
       type: "updateBoard";
@@ -173,7 +176,9 @@ export function useLessonSelection(ref?: React.Ref<LessonEditorHandle>) {
 
   const selectedBoard = useMemo(() => {
     if (!selectedSlide || !state.selectedBoardId) return null;
-    return selectedSlide.boards.find((b) => b.id === state.selectedBoardId) || null;
+    return (
+      selectedSlide.boards.find((b) => b.id === state.selectedBoardId) || null
+    );
   }, [selectedSlide, state.selectedBoardId]);
 
   return {

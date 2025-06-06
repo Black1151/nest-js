@@ -4,11 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Button, Stack } from "@chakra-ui/react";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap } from "@/components/DnD/types";
-import type { ElementWrapperStyles } from "./ElementWrapper";
-import {
-  defaultBoardWrapperStyles,
-  defaultColumnWrapperStyles,
-} from "./defaultStyles";
+
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import {
   draggable,
@@ -22,6 +18,11 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
 import { useSlideDnD } from "@/hooks/useSlideDnD";
+import {
+  defaultColumnWrapperStyles,
+  defaultBoardWrapperStyles,
+} from "../defaultStyles";
+import { ElementWrapperStyles } from "../elements/ElementWrapper";
 
 export interface SlideBoard {
   id: string;
@@ -106,14 +107,14 @@ function SlideItem({
               input,
               element,
               allowedEdges: ["top", "bottom"],
-            },
+            }
           ),
         onDragEnter: (args) =>
           setClosestEdge(extractClosestEdge(args.self.data)),
         onDrag: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
         onDragLeave: () => setClosestEdge(null),
         onDrop: () => setClosestEdge(null),
-      }),
+      })
     );
   }, [instanceId, slide.id]);
 

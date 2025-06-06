@@ -24,7 +24,9 @@ export default function QuizElement({
 }: QuizElementProps) {
   const [current, setCurrent] = useState(0);
   const [choice, setChoice] = useState("");
-  const [results, setResults] = useState<{ id: string; correct: boolean }[]>([]);
+  const [results, setResults] = useState<{ id: string; correct: boolean }[]>(
+    []
+  );
   const [showFeedback, setShowFeedback] = useState<null | boolean>(null);
 
   const currentQuestion = questions[current];
@@ -70,7 +72,12 @@ export default function QuizElement({
               </Stack>
             </RadioGroup>
             {showFeedback === null ? (
-              <Button mt={2} size="sm" onClick={submitAnswer} isDisabled={!choice}>
+              <Button
+                mt={2}
+                size="sm"
+                onClick={submitAnswer}
+                isDisabled={!choice}
+              >
                 Submit
               </Button>
             ) : (

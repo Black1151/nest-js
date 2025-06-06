@@ -1,23 +1,17 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Accordion,
-  HStack,
-  Icon,
-} from "@chakra-ui/react";
+import { Box, Button, Accordion, HStack, Icon } from "@chakra-ui/react";
 import { availableFonts } from "@/theme/fonts";
 import { Trash2 } from "lucide-react";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { useEffect, useState } from "react";
-import useStyleAttributes from "./hooks/useStyleAttributes";
-import WrapperSettings from "./attributes/WrapperSettings";
-import AnimationSettings from "./attributes/AnimationSettings";
-import TextAttributes from "./attributes/TextAttributes";
-import ImageAttributes from "./attributes/ImageAttributes";
-import VideoAttributes from "./attributes/VideoAttributes";
-import QuizAttributes from "./attributes/QuizAttributes";
+import QuizAttributes from "../attributes/QuizAttributes";
+import AnimationSettings from "../attributes/AnimationSettings";
+import ImageAttributes from "../attributes/ImageAttributes";
+import TextAttributes from "../attributes/TextAttributes";
+import VideoAttributes from "../attributes/VideoAttributes";
+import WrapperSettings from "../attributes/WrapperSettings";
+import useStyleAttributes from "../hooks/useStyleAttributes";
 
 interface ElementAttributesPaneProps {
   element: SlideElementDnDItemProps;
@@ -89,9 +83,7 @@ export default function ElementAttributesPane({
     borderRadius,
     setBorderRadius,
   } = styleAttrs;
-  const [animationEnabled, setAnimationEnabled] = useState(
-    !!element.animation
-  );
+  const [animationEnabled, setAnimationEnabled] = useState(!!element.animation);
   const [animationDirection, setAnimationDirection] = useState(
     element.animation?.direction || "left"
   );
@@ -139,7 +131,11 @@ export default function ElementAttributesPane({
         borderRadius,
       },
       animation: animationEnabled
-        ? { type: "flyInFade", direction: animationDirection, delay: animationDelay }
+        ? {
+            type: "flyInFade",
+            direction: animationDirection,
+            delay: animationDelay,
+          }
         : undefined,
     };
     if (element.type === "text") {

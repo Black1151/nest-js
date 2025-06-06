@@ -9,13 +9,15 @@ import {
   CREATE_STYLE,
   GET_STYLES_WITH_CONFIG,
 } from "@/graphql/lesson";
-import {
-  SlideElementDnDItemProps,
-} from "@/components/DnD/cards/SlideElementDnDCard";
-import SlideToolbar from "./SlideToolbar";
-import SlideCanvas from "./SlideCanvas";
+import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+
+import SlideCanvas from "./slide/SlideCanvas";
 import StyleModals from "./StyleModals";
-import { useLessonEditorState, LessonEditorHandle } from "./hooks/useLessonEditorState";
+import {
+  useLessonEditorState,
+  LessonEditorHandle,
+} from "./hooks/useLessonEditorState";
+import SlideToolbar from "./slide/SlideToolbar";
 
 const AVAILABLE_ELEMENTS = [
   { type: "text", label: "Text" },
@@ -33,7 +35,10 @@ const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   quiz: "Quiz",
 };
 
-const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref) {
+const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
+  _,
+  ref
+) {
   const editor = useLessonEditorState(ref);
 
   const [styleCollections, setStyleCollections] = useState<

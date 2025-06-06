@@ -3,11 +3,12 @@
 import React from "react";
 import { Box, Text, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import ElementWrapper from "./ElementWrapper";
-import ImageElement from "./ImageElement";
-import VideoElement from "./VideoElement";
-import QuizElement from "./QuizElement";
+
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+import ElementWrapper from "../elements/ElementWrapper";
+import ImageElement from "../elements/ImageElement";
+import QuizElement from "../elements/QuizElement";
+import VideoElement from "../elements/VideoElement";
 
 interface SlideElementRendererProps {
   item: SlideElementDnDItemProps;
@@ -40,7 +41,9 @@ export default function SlideElementRenderer({
     : {};
   let content: React.ReactElement = (
     <ElementWrapper styles={item.wrapperStyles} data-testid="unknown-element">
-      <Text fontSize={14} fontWeight="bold">{item.type}</Text>
+      <Text fontSize={14} fontWeight="bold">
+        {item.type}
+      </Text>
     </ElementWrapper>
   );
 

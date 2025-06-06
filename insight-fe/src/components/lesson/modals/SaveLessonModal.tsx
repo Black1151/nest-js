@@ -1,6 +1,5 @@
 "use client";
 
-import { BaseModal } from "../modals/BaseModal";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   Button,
@@ -16,6 +15,7 @@ import { useLessonFilters } from "@/hooks/useLessonFilters";
 import YearGroupDropdown from "@/components/dropdowns/YearGroupDropdown";
 import SubjectDropdown from "@/components/dropdowns/SubjectDropdown";
 import TopicDropdown from "@/components/dropdowns/TopicDropdown";
+import { BaseModal } from "@/components/modals/BaseModal";
 
 interface FormValues {
   title: string;
@@ -32,14 +32,25 @@ interface SaveLessonModalProps {
   isSaving?: boolean;
 }
 
-export default function SaveLessonModal({ isOpen, onClose, onSave, isSaving = false }: SaveLessonModalProps) {
+export default function SaveLessonModal({
+  isOpen,
+  onClose,
+  onSave,
+  isSaving = false,
+}: SaveLessonModalProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm<FormValues>({
-    defaultValues: { title: "", description: "", yearGroupId: null, subjectId: null, topicId: null },
+    defaultValues: {
+      title: "",
+      description: "",
+      yearGroupId: null,
+      subjectId: null,
+      topicId: null,
+    },
     mode: "onChange",
   });
 
@@ -84,7 +95,12 @@ export default function SaveLessonModal({ isOpen, onClose, onSave, isSaving = fa
         </HStack>
       }
     >
-      <Stack as="form" id="save-lesson-form" onSubmit={handleSubmit(onSubmit)} spacing={4}>
+      <Stack
+        as="form"
+        id="save-lesson-form"
+        onSubmit={handleSubmit(onSubmit)}
+        spacing={4}
+      >
         <FormControl isRequired>
           <FormLabel>Year Group</FormLabel>
           <YearGroupDropdown
@@ -111,7 +127,9 @@ export default function SaveLessonModal({ isOpen, onClose, onSave, isSaving = fa
         </FormControl>
         <FormControl isInvalid={!!errors.title} isRequired>
           <FormLabel>Lesson name</FormLabel>
-          <Input {...register("title", { required: "Lesson name is required" })} />
+          <Input
+            {...register("title", { required: "Lesson name is required" })}
+          />
           <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
         </FormControl>
         <FormControl>

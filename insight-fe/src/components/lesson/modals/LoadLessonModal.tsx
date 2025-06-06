@@ -1,7 +1,13 @@
 "use client";
 
-import { BaseModal } from "../modals/BaseModal";
-import { Button, FormControl, FormLabel, HStack, Stack } from "@chakra-ui/react";
+import { BaseModal } from "../../modals/BaseModal";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  HStack,
+  Stack,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { useLessonFilters } from "@/hooks/useLessonFilters";
 import YearGroupDropdown from "@/components/dropdowns/YearGroupDropdown";

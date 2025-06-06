@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, HStack, Input } from "@chakra-ui/react";
-import { BaseModal } from "../modals/BaseModal";
+import { BaseModal } from "@/components/modals/BaseModal";
 
 interface AddStyleCollectionModalProps {
   isOpen: boolean;

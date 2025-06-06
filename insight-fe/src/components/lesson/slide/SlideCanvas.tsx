@@ -1,13 +1,14 @@
 "use client";
 
 import { Flex, Grid, Box, Text, HStack, Button } from "@chakra-ui/react";
-import SlideSequencer, { Slide } from "./SlideSequencer";
-import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
-import ElementAttributesPane from "./ElementAttributesPane";
-import ColumnAttributesPane from "./ColumnAttributesPane";
-import BoardAttributesPane from "./BoardAttributesPane";
+
+import BoardAttributesPane from "../attributes-pane/BoardAttributesPane";
 import { ColumnType } from "@/components/DnD/types";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
+import ColumnAttributesPane from "../attributes-pane/ColumnAttributesPane";
+import ElementAttributesPane from "../attributes-pane/ElementAttributesPane";
+import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
+import SlideSequencer, { Slide } from "./SlideSequencer";
 
 interface SlideCanvasProps {
   slides: Slide[];
