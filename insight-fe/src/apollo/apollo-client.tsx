@@ -3,8 +3,8 @@ import {
   InMemoryCache,
   HttpLink,
   from,
-  onError,
 } from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
 import { ensureRefresh } from "../refreshClient";
 
 const httpLink = new HttpLink({
