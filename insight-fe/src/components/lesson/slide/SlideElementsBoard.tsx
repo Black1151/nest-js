@@ -205,7 +205,7 @@ export default function SlideElementsBoard({
             onClick={onRemoveBoard}
           />
         )}
-        {onSelectBoard && (
+        <ContentCard pb={0} bg="transparent" dropShadow="none" p={0}>
           <IconButton
             aria-label="Edit container"
             icon={<Settings size={12} />}
