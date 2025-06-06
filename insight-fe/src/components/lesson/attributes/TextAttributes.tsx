@@ -13,6 +13,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { availableFonts } from "@/theme/fonts";
+import PaletteColorPicker from "../PaletteColorPicker";
 
 interface TextAttributesProps {
   text: string;
@@ -51,6 +52,8 @@ export default function TextAttributes({
   colorPalettes,
   selectedPaletteId,
 }: TextAttributesProps) {
+  const paletteColors = colorPalettes?.find((p) => p.id === selectedPaletteId)?.colors ?? [];
+
   return (
     <AccordionItem borderWidth="1px" borderColor="purple.300" borderRadius="md" mb={2}>
       <h2>
@@ -71,7 +74,11 @@ export default function TextAttributes({
             <FormLabel mb="0" fontSize="sm" w="40%">
               Color
             </FormLabel>
-            <Input type="color" value={color} onChange={(e) => setColor(e.target.value)} />
+            <PaletteColorPicker
+              value={color}
+              onChange={setColor}
+              paletteColors={paletteColors}
+            />
           </FormControl>
           <FormControl display="flex" alignItems="center">
             <FormLabel mb="0" fontSize="sm" w="40%">
