@@ -186,7 +186,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
               variables: {
                 collectionId: String(selectedCollectionId),
                 element: editor.selectedElement.type,
-                groupId: groupId ?? null,
               },
             });
           }
