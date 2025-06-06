@@ -10,7 +10,7 @@ import { gql, useQuery } from "@apollo/client";
 import { BaseModal } from "@/components/modals/BaseModal";
 
 const GET_STYLES = gql`
-  query GetStyles($collectionId: String!, $element: String!, $groupId: String) {
+  query GetStyles($collectionId: String!, $element: String!, $groupId: String!) {
     getAllStyle(
       data: {
         all: true
@@ -55,14 +55,14 @@ export default function LoadStyleModal({
 
   const { data: stylesData } = useQuery(GET_STYLES, {
     variables:
-      collectionId !== "" && elementType
+      collectionId !== "" && elementType && groupId !== ""
         ? {
             collectionId: String(collectionId),
             element: elementType,
-            groupId: groupId === "" ? null : String(groupId),
+            groupId: String(groupId),
           }
         : undefined,
-    skip: collectionId === "" || !elementType,
+    skip: collectionId === "" || !elementType || groupId === "",
   });
 
 

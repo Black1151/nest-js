@@ -45,18 +45,13 @@ export const CREATE_STYLE_GROUP = gql`
 `;
 
 export const GET_STYLES_WITH_CONFIG = gql`
-  query GetStylesWithConfig(
-    $collectionId: String!
-    $element: String!
-    $groupId: String
-  ) {
+  query GetStylesWithConfig($collectionId: String!, $element: String!) {
     getAllStyle(
       data: {
         all: true
         filters: [
           { column: "collectionId", value: $collectionId }
           { column: "element", value: $element }
-          { column: "groupId", value: $groupId }
         ]
       }
     ) {
