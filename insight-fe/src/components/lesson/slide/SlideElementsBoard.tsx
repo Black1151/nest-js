@@ -172,6 +172,7 @@ export default function SlideElementsBoard({
         position="absolute"
         top={0}
         left={0}
+        zIndex={1}
         transform="translateY(-100%)"
         transition="transform 0.2s"
         _groupHover={{ transform: "translateY(0)" }}
