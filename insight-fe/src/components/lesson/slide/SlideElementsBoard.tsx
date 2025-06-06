@@ -162,7 +162,7 @@ export default function SlideElementsBoard({
     <Box ref={boardRef} position="relative" role="group" overflow="hidden">
       <HStack
         ref={dragHandleRef}
-        justify="flex-end"
+        justify="flex-start"
         bg="gray.100"
         px={2}
         py={1}
@@ -171,7 +171,7 @@ export default function SlideElementsBoard({
         cursor="grab"
         position="absolute"
         top={0}
-        right={0}
+        left={0}
         transform="translateY(-100%)"
         transition="transform 0.2s"
         _groupHover={{ transform: "translateY(0)" }}
