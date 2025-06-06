@@ -82,6 +82,7 @@ const cardListStyles = {
   boxSizing: "border-box",
   minHeight: "100%",
   px: 1,
+  pb: 4,
   overflowY: "auto",
 };
 
