@@ -350,42 +350,63 @@ function ColumnBase<TCard extends BaseCardDnD>({
             spacing={0}
             height="100%"
           >
-            <HStack
-              position="absolute"
-              top={1}
-              right={1}
-              spacing={1}
-              zIndex={1}
-            >
+            <Box position="absolute" top={0} right={0} width={6} height={6} role="group" zIndex={1}>
               {enableColumnReorder && (
-                <IconButton
-                  ref={dragHandleRef}
-                  aria-label="Drag column"
-                  icon={<GripVertical size={12} />}
-                  size="xs"
-                  variant="ghost"
-                  cursor="grab"
-                />
+                <Box
+                  opacity={0}
+                  transition="opacity 0.2s"
+                  pointerEvents="none"
+                  _groupHover={{ opacity: 1 }}
+                >
+                  <GripVertical size={12} />
+                </Box>
               )}
-              {onSelectColumn && (
-                <IconButton
-                  aria-label="Edit column styles"
-                  icon={<Settings size={12} />}
-                  size="xs"
-                  variant="ghost"
-                  onClick={() => onSelectColumn(columnId)}
-                />
-              )}
-              {onRemoveColumn && (
-                <IconButton
-                  aria-label="Remove column"
-                  icon={<X size={12} />}
-                  size="xs"
-                  variant="ghost"
-                  onClick={() => onRemoveColumn(columnId)}
-                />
-              )}
-            </HStack>
+              <HStack
+                ref={dragHandleRef}
+                justify="flex-end"
+                bg="gray.100"
+                px={2}
+                py={1}
+                borderRadius="md"
+                spacing={1}
+                cursor="grab"
+                position="absolute"
+                top={0}
+                right={0}
+                transform="translateY(-100%)"
+                transition="transform 0.2s"
+                _groupHover={{ transform: "translateY(0)" }}
+                _hover={{ transform: "translateY(0)" }}
+              >
+                {enableColumnReorder && (
+                  <IconButton
+                    aria-label="Drag column"
+                    icon={<GripVertical size={12} />}
+                    size="xs"
+                    variant="ghost"
+                    cursor="grab"
+                  />
+                )}
+                {onSelectColumn && (
+                  <IconButton
+                    aria-label="Edit column styles"
+                    icon={<Settings size={12} />}
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => onSelectColumn(columnId)}
+                  />
+                )}
+                {onRemoveColumn && (
+                  <IconButton
+                    aria-label="Remove column"
+                    icon={<X size={12} />}
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => onRemoveColumn(columnId)}
+                  />
+                )}
+              </HStack>
+            </Box>
 
             <Box ref={scrollableRef} sx={scrollContainerStyles}>
               <Stack
