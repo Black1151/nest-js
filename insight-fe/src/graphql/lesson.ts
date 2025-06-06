@@ -35,3 +35,21 @@ export const GET_STYLES_WITH_CONFIG = gql`
     }
   }
 `;
+
+export const CREATE_LESSON = gql`
+  mutation CreateLesson($data: CreateLessonInput!) {
+    createLesson(data: $data) {
+      id
+    }
+  }
+`;
+
+export const GET_LESSON = gql`
+  query GetLesson($data: IdInput!) {
+    getLesson(data: $data) {
+      id
+      title
+      content
+    }
+  }
+`;

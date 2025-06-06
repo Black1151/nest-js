@@ -8,8 +8,7 @@ import { Slide } from "@/components/lesson/SlideSequencer";
 import SaveLessonModal from "@/components/lesson/SaveLessonModal";
 import LoadLessonModal from "@/components/lesson/LoadLessonModal";
 import { useMutation, useLazyQuery } from "@apollo/client";
-import { typedGql } from "@/zeus/typedDocumentNode";
-import { $ } from "@/zeus";
+import { CREATE_LESSON, GET_LESSON } from "@/graphql/lesson";
 import { LessonEditorHandle } from "@/components/lesson/hooks/useLessonEditorState";
 
 export const LessonBuilderPageClient = () => {
@@ -19,16 +18,6 @@ export const LessonBuilderPageClient = () => {
   const [previewSlides, setPreviewSlides] = useState<Slide[]>([]);
   const editorRef = useRef<LessonEditorHandle>(null);
 
-  const CREATE_LESSON = typedGql("mutation")({
-    createLesson: [{ data: $("data", "CreateLessonInput!") }, { id: true }],
-  } as const);
-
-  const GET_LESSON = typedGql("query")({
-    getLesson: [
-      { data: $("data", "IdInput!") },
-      { id: true, title: true, content: true },
-    ],
-  } as const);
 
   const [createLesson, { loading: saving }] = useMutation(CREATE_LESSON, {
     onCompleted: () => setIsSaveOpen(false),
