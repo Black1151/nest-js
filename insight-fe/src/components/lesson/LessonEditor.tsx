@@ -127,9 +127,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
         closeLoad={() => setIsLoadStyleOpen(false)}
         styleCollections={styleCollections}
         selectedElement={editor.selectedElement}
-        onSave={({ name, collectionId }) => {
+        onSave={async ({ name, collectionId }) => {
           if (!editor.selectedElement) return;
-          createStyle({
+          await createStyle({
             variables: {
               data: {
                 name,
@@ -139,6 +139,18 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
               },
             },
           });
+
+          if (
+            selectedCollectionId !== "" &&
+            collectionId === selectedCollectionId
+          ) {
+            fetchStyles({
+              variables: {
+                collectionId: String(selectedCollectionId),
+                element: editor.selectedElement.type,
+              },
+            });
+          }
         }}
         onAddCollection={(collection) =>
           setStyleCollections([...styleCollections, collection])
