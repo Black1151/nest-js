@@ -394,6 +394,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
                     icon={<X size={12} />}
                     size="xs"
                     variant="ghost"
+                    colorScheme="red"
                     onClick={() => onRemoveColumn(columnId)}
                   />
                 )}
