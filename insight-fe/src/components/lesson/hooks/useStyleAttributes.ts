@@ -54,7 +54,7 @@ export default function useStyleAttributes({
   const [borderRadius, setBorderRadius] = useState(
     wrapperStyles?.borderRadius || "none"
   );
-  const [spacing, setSpacing] = useState(initialSpacing ?? 0);
+  const [spacing, setSpacing] = useState<number | undefined>(initialSpacing);
 
   // Reset when dependencies change (new item selected)
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function useStyleAttributes({
     setBorderColor(wrapperStyles?.borderColor || "#000000");
     setBorderWidth(wrapperStyles?.borderWidth ?? 0);
     setBorderRadius(wrapperStyles?.borderRadius || "none");
-    setSpacing(initialSpacing ?? 0);
+    setSpacing(initialSpacing);
   }, deps);
 
   // Propagate changes upwards
