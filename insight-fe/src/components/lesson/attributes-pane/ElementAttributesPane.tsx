@@ -18,6 +18,8 @@ interface ElementAttributesPaneProps {
   onChange: (updated: SlideElementDnDItemProps) => void;
   onClone?: () => void;
   onDelete?: () => void;
+  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  selectedPaletteId?: number | "";
 }
 
 export default function ElementAttributesPane({
@@ -25,6 +27,8 @@ export default function ElementAttributesPane({
   onChange,
   onClone,
   onDelete,
+  colorPalettes,
+  selectedPaletteId,
 }: ElementAttributesPaneProps) {
   const [color, setColor] = useState(element.styles?.color || "#000000");
   const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
@@ -197,7 +201,11 @@ export default function ElementAttributesPane({
   return (
     <>
       <Accordion allowMultiple>
-        <WrapperSettings attrs={styleAttrs} />
+        <WrapperSettings
+          attrs={styleAttrs}
+          colorPalettes={colorPalettes}
+          selectedPaletteId={selectedPaletteId}
+        />
         <AnimationSettings
           enabled={animationEnabled}
           setEnabled={setAnimationEnabled}
@@ -222,6 +230,8 @@ export default function ElementAttributesPane({
             setLineHeight={setLineHeight}
             textAlign={textAlign}
             setTextAlign={setTextAlign}
+            colorPalettes={colorPalettes}
+            selectedPaletteId={selectedPaletteId}
           />
         )}
         {element.type === "image" && (

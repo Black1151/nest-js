@@ -18,9 +18,15 @@ import type useStyleAttributes from "../hooks/useStyleAttributes";
 
 interface WrapperSettingsProps {
   attrs: ReturnType<typeof useStyleAttributes>;
+  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  selectedPaletteId?: number | "";
 }
 
-export default function WrapperSettings({ attrs }: WrapperSettingsProps) {
+export default function WrapperSettings({
+  attrs,
+  colorPalettes,
+  selectedPaletteId,
+}: WrapperSettingsProps) {
   const {
     bgColor,
     setBgColor,

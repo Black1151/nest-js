@@ -32,6 +32,8 @@ interface SlideCanvasProps {
   handleDropElement: (e: React.DragEvent<HTMLDivElement>) => void;
   openSaveStyle: () => void;
   openLoadStyle: () => void;
+  colorPalettes: { id: number; name: string; colors: string[] }[];
+  selectedPaletteId: number | "";
 }
 
 export default function SlideCanvas({
@@ -56,6 +58,8 @@ export default function SlideCanvas({
   handleDropElement,
   openSaveStyle,
   openLoadStyle,
+  colorPalettes,
+  selectedPaletteId,
 }: SlideCanvasProps) {
   return (
     <Flex gap={6} alignItems="flex-start">
@@ -116,18 +120,24 @@ export default function SlideCanvas({
                 onChange={updateElement}
                 onClone={cloneElement}
                 onDelete={deleteElement}
+                colorPalettes={colorPalettes}
+                selectedPaletteId={selectedPaletteId}
               />
             )}
             {selectedColumn && (
               <ColumnAttributesPane
                 column={selectedColumn}
                 onChange={updateColumn}
+                colorPalettes={colorPalettes}
+                selectedPaletteId={selectedPaletteId}
               />
             )}
             {selectedBoard && (
               <BoardAttributesPane
                 board={selectedBoard}
                 onChange={updateBoard}
+                colorPalettes={colorPalettes}
+                selectedPaletteId={selectedPaletteId}
               />
             )}
           </Box>
