@@ -7,7 +7,7 @@ import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import {
   GET_STYLE_COLLECTIONS,
   CREATE_STYLE,
-  GET_STYLES_WITH_CONFIG,
+  GET_STYLES_WITH_CONFIG_BY_GROUP,
   GET_STYLE_GROUPS,
 } from "@/graphql/lesson";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
@@ -55,9 +55,20 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
   const [styleItems, setStyleItems] = useState<SlideElementDnDItemProps[]>([]);
+  const [selectedElementType, setSelectedElementType] = useState<string | null>(
+    null
+  );
+  const [selectedGroupId, setSelectedGroupId] = useState<number | "">("");
 
-  const [fetchStyles, { data: stylesData, refetch }] = useLazyQuery(
-    GET_STYLES_WITH_CONFIG,
+  // Sync toolbar element type with the currently selected element on the canvas
+  useEffect(() => {
+    if (editor.selectedElement && selectedCollectionId !== "") {
+      setSelectedElementType(editor.selectedElement.type);
+    }
+  }, [editor.selectedElement, selectedCollectionId]);
+
+  const [fetchStyles, { data: stylesData }] = useLazyQuery(
+    GET_STYLES_WITH_CONFIG_BY_GROUP,
     { fetchPolicy: "network-only" }
   );
   const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
@@ -74,24 +85,24 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   useEffect(() => {
     if (selectedCollectionId === "") {
       setStyleItems([]);
+      setSelectedElementType(null);
+      setSelectedGroupId("");
     }
   }, [selectedCollectionId]);
 
   useEffect(() => {
-    if (
-      selectedCollectionId !== "" &&
-      editor.selectedElement
-    ) {
+    if (selectedCollectionId !== "" && selectedElementType) {
       fetchGroups({
         variables: {
           collectionId: String(selectedCollectionId),
-          element: editor.selectedElement.type,
+          element: selectedElementType,
         },
       });
     } else {
       setStyleGroups([]);
     }
-  }, [selectedCollectionId, editor.selectedElement?.type]);
+    setSelectedGroupId("");
+  }, [selectedCollectionId, selectedElementType]);
 
   useEffect(() => {
     if (groupsData?.getAllStyleGroup) {
@@ -100,6 +111,24 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       setStyleGroups([]);
     }
   }, [groupsData]);
+
+  useEffect(() => {
+    if (
+      selectedCollectionId !== "" &&
+      selectedElementType &&
+      selectedGroupId !== ""
+    ) {
+      fetchStyles({
+        variables: {
+          collectionId: String(selectedCollectionId),
+          element: selectedElementType,
+          groupId: String(selectedGroupId),
+        },
+      });
+    } else {
+      setStyleItems([]);
+    }
+  }, [selectedCollectionId, selectedElementType, selectedGroupId]);
 
   useEffect(() => {
     if (stylesData?.getAllStyle) {
@@ -118,18 +147,14 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       <SlideToolbar
         availableElements={AVAILABLE_ELEMENTS}
         styleCollections={styleCollections}
+        styleGroups={styleGroups}
         selectedCollectionId={selectedCollectionId}
         onSelectCollection={setSelectedCollectionId}
+        selectedElementType={selectedElementType}
+        onSelectElement={setSelectedElementType}
+        selectedGroupId={selectedGroupId}
+        onSelectGroup={setSelectedGroupId}
         styleItems={styleItems}
-        onFetchStyles={async (type) => {
-          if (selectedCollectionId === "") return;
-          await fetchStyles({
-            variables: {
-              collectionId: String(selectedCollectionId),
-              element: type,
-            },
-          });
-        }}
       />
 
       <SlideCanvas
@@ -180,12 +205,16 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
 
           if (
             selectedCollectionId !== "" &&
-            collectionId === selectedCollectionId
+            collectionId === selectedCollectionId &&
+            selectedElementType === editor.selectedElement.type &&
+            selectedGroupId !== "" &&
+            groupId === selectedGroupId
           ) {
             await fetchStyles({
               variables: {
                 collectionId: String(selectedCollectionId),
-                element: editor.selectedElement.type,
+                element: selectedElementType,
+                groupId: String(selectedGroupId),
               },
             });
           }

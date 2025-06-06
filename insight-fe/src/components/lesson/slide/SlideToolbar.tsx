@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack, Select, Button } from "@chakra-ui/react";
+import { Box, HStack, VStack, Select, Button } from "@chakra-ui/react";
 import {
   SlideElementDnDItemProps,
   SlideElementDnDItem,
@@ -9,19 +9,27 @@ import {
 interface SlideToolbarProps {
   availableElements: { type: string; label: string }[];
   styleCollections: { id: number; name: string }[];
+  styleGroups: { id: number; name: string }[];
   selectedCollectionId: number | "";
   onSelectCollection: (id: number | "") => void;
+  selectedElementType: string | null;
+  onSelectElement: (type: string) => void;
+  selectedGroupId: number | "";
+  onSelectGroup: (id: number | "") => void;
   styleItems: SlideElementDnDItemProps[];
-  onFetchStyles: (element: string) => void;
 }
 
 export default function SlideToolbar({
   availableElements,
   styleCollections,
+  styleGroups,
   selectedCollectionId,
   onSelectCollection,
+  selectedElementType,
+  onSelectElement,
+  selectedGroupId,
+  onSelectGroup,
   styleItems,
-  onFetchStyles,
 }: SlideToolbarProps) {
   return (
     <>
@@ -42,7 +50,7 @@ export default function SlideToolbar({
           ))}
         </HStack>
       </Box>
-      <HStack mt={2} alignItems="flex-start">
+      <VStack mt={2} alignItems="flex-start">
         <Select
           placeholder="Select collection"
           value={selectedCollectionId}
@@ -63,13 +71,30 @@ export default function SlideToolbar({
             <Button
               key={el.type}
               size="sm"
-              onClick={() => onFetchStyles(el.type)}
+              onClick={() => onSelectElement(el.type)}
             >
               {el.label}
             </Button>
           ))}
         </HStack>
-      </HStack>
+        {selectedElementType && (
+          <Select
+            placeholder="Select group"
+            value={selectedGroupId}
+            onChange={(e) =>
+              onSelectGroup(
+                e.target.value === "" ? "" : parseInt(e.target.value, 10)
+              )
+            }
+          >
+            {styleGroups.map((g) => (
+              <option key={g.id} value={g.id}>
+                {g.name}
+              </option>
+            ))}
+          </Select>
+        )}
+      </VStack>
       {styleItems.length > 0 && (
         <HStack mt={2} overflowX="auto">
           {styleItems.map((item, idx) => (
