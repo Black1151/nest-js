@@ -34,6 +34,7 @@ import { TopicModule } from './modules/timbuktu/administrative/topic/topic.modul
 import { StyleCollectionModule } from './modules/timbuktu/administrative/style-collection/style-collection.module';
 import { StyleModule } from './modules/timbuktu/administrative/style/style.module';
 import { StyleGroupModule } from './modules/timbuktu/administrative/style-group/style-group.module';
+import { ColorPaletteModule } from './modules/timbuktu/administrative/color-palette/color-palette.module';
 import { AssignmentSubmissionModule } from './modules/timbuktu/administrative/assignment-submission/assignment-submission.model';
 import { AssignmentModule } from './modules/timbuktu/administrative/assignment/assignment.module';
 import { AssignmentSubmissionEntity } from './modules/timbuktu/administrative/assignment-submission/assignment-submission.entity';
@@ -50,6 +51,7 @@ import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-table
 import { StyleCollectionEntity } from './modules/timbuktu/administrative/style-collection/style-collection.entity';
 import { StyleEntity } from './modules/timbuktu/administrative/style/style.entity';
 import { StyleGroupEntity } from './modules/timbuktu/administrative/style-group/style-group.entity';
+import { ColorPaletteEntity } from './modules/timbuktu/administrative/color-palette/color-palette.entity';
 
 @Module({
   imports: [
@@ -92,6 +94,7 @@ import { StyleGroupEntity } from './modules/timbuktu/administrative/style-group/
         StyleCollectionEntity,
         StyleEntity,
         StyleGroupEntity,
+        ColorPaletteEntity,
       ],
       synchronize: true,
     }),
@@ -114,6 +117,7 @@ import { StyleGroupEntity } from './modules/timbuktu/administrative/style-group/
     StyleCollectionModule,
     StyleModule,
     StyleGroupModule,
+    ColorPaletteModule,
     ClassModule,
     LessonModule,
     QuizModule,
