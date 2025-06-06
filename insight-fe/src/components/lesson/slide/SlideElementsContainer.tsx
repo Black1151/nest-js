@@ -150,7 +150,7 @@ export default function SlideElementsContainer({
   );
 
   return (
-    <Stack ref={containerRef}>
+    <Stack ref={containerRef} spacing={0}>
       <Button
         size="sm"
         colorScheme="teal"
