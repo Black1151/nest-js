@@ -102,3 +102,41 @@ export const GET_LESSON = gql`
     }
   }
 `;
+
+export const GET_COLOR_PALETTES = gql`
+  query GetColorPalettes($collectionId: String!) {
+    getAllColorPalette(
+      data: { all: true, filters: [{ column: "collectionId", value: $collectionId }] }
+    ) {
+      id
+      name
+      colors
+    }
+  }
+`;
+
+export const CREATE_COLOR_PALETTE = gql`
+  mutation CreateColorPalette($data: CreateColorPaletteInput!) {
+    createColorPalette(data: $data) {
+      id
+      name
+      colors
+    }
+  }
+`;
+
+export const UPDATE_COLOR_PALETTE = gql`
+  mutation UpdateColorPalette($data: UpdateColorPaletteInput!) {
+    updateColorPalette(data: $data) {
+      id
+      name
+      colors
+    }
+  }
+`;
+
+export const DELETE_COLOR_PALETTE = gql`
+  mutation DeleteColorPalette($data: IdInput!) {
+    deleteColorPalette(data: $data)
+  }
+`;
