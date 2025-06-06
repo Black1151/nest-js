@@ -15,6 +15,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import type useStyleAttributes from "../hooks/useStyleAttributes";
+import PaletteColorPicker from "../PaletteColorPicker";
 
 interface WrapperSettingsProps {
   attrs: ReturnType<typeof useStyleAttributes>;
@@ -60,6 +61,8 @@ export default function WrapperSettings({
     setSpacing,
   } = attrs;
 
+  const paletteColors = colorPalettes?.find((p) => p.id === selectedPaletteId)?.colors ?? [];
+
   return (
     <>
       <AccordionItem borderWidth="1px" borderColor="blue.300" borderRadius="md" mb={2}>
@@ -95,13 +98,13 @@ export default function WrapperSettings({
             {backgroundType === "color" && (
               <FormControl display="flex" alignItems="center">
                 <FormLabel mb="0" fontSize="sm" w="40%">Color</FormLabel>
-                <Input
-                  type="color"
+                <PaletteColorPicker
                   value={bgColor}
-                  onChange={(e) => {
-                    setBgColor(e.target.value);
+                  onChange={(val) => {
+                    setBgColor(val);
                     setBgOpacity(1);
                   }}
+                  paletteColors={paletteColors}
                 />
               </FormControl>
             )}
@@ -109,18 +112,18 @@ export default function WrapperSettings({
               <>
                 <FormControl display="flex" alignItems="center">
                   <FormLabel mb="0" fontSize="sm" w="40%">Grad. From</FormLabel>
-                  <Input
-                    type="color"
+                  <PaletteColorPicker
                     value={gradientFrom}
-                    onChange={(e) => setGradientFrom(e.target.value)}
+                    onChange={setGradientFrom}
+                    paletteColors={paletteColors}
                   />
                 </FormControl>
                 <FormControl display="flex" alignItems="center">
                   <FormLabel mb="0" fontSize="sm" w="40%">Grad. To</FormLabel>
-                  <Input
-                    type="color"
+                  <PaletteColorPicker
                     value={gradientTo}
-                    onChange={(e) => setGradientTo(e.target.value)}
+                    onChange={setGradientTo}
+                    paletteColors={paletteColors}
                   />
                 </FormControl>
                 <FormControl display="flex" alignItems="center">
@@ -254,7 +257,11 @@ export default function WrapperSettings({
               <FormLabel mb="0" fontSize="sm" w="40%">
                 Color
               </FormLabel>
-              <Input type="color" value={borderColor} onChange={(e) => setBorderColor(e.target.value)} />
+              <PaletteColorPicker
+                value={borderColor}
+                onChange={setBorderColor}
+                paletteColors={paletteColors}
+              />
             </FormControl>
             <FormControl display="flex" alignItems="center">
               <FormLabel mb="0" fontSize="sm" w="40%">
