@@ -22,10 +22,11 @@ import {
  */
 export function useBoardDragDrop(
   boardRef: RefObject<HTMLDivElement>,
-  dragHandleRef: RefObject<HTMLDivElement>,
+  dragHandleRef: RefObject<HTMLElement>,
   boardId: string,
   boardInstanceId: symbol,
-  setClosestEdge: Dispatch<SetStateAction<Edge | null>>
+  setClosestEdge: Dispatch<SetStateAction<Edge | null>>,
+  setIsDragging?: Dispatch<SetStateAction<boolean>>
 ) {
   useEffect(() => {
     if (!boardRef.current || !dragHandleRef.current) return;
@@ -39,6 +40,8 @@ export function useBoardDragDrop(
           boardId,
           instanceId: boardInstanceId,
         }),
+        onDragStart: () => setIsDragging?.(true),
+        onDrop: () => setIsDragging?.(false),
       }),
       dropTargetForElements({
         element: el,
@@ -57,5 +60,5 @@ export function useBoardDragDrop(
         onDrop: () => setClosestEdge(null),
       })
     );
-  }, [boardRef, dragHandleRef, boardInstanceId, boardId, setClosestEdge]);
+  }, [boardRef, dragHandleRef, boardInstanceId, boardId, setClosestEdge, setIsDragging]);
 }

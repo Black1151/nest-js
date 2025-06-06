@@ -11,7 +11,7 @@ import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 
 import { useCallback } from "react";
-import { X, Settings, Plus, GripVertical } from "lucide-react";
+import { X, Plus, GripVertical } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { type Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
@@ -78,15 +78,18 @@ export default function SlideElementsBoard({
   /* ------------------------------------------------------------------ */
   const [columnIdToDelete, setColumnIdToDelete] = useState<string | null>(null);
   const boardRef = useRef<HTMLDivElement | null>(null);
-  const dragHandleRef = useRef<HTMLDivElement | null>(null);
+  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+  const [showControls, setShowControls] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   useBoardDragDrop(
     boardRef,
     dragHandleRef,
     boardId,
     boardInstanceId,
-    setClosestEdge
+    setClosestEdge,
+    setIsDragging
   );
 
   const addColumn = () => {
@@ -164,21 +167,24 @@ export default function SlideElementsBoard({
         position="absolute"
         top={0}
         left={0}
-        width={6}
-        height={6}
         role="group"
         zIndex={1}
+        onMouseLeave={() => setShowControls(false)}
       >
-        <Box
-          opacity={0}
-          transition="opacity 0.2s"
-          pointerEvents="none"
-          _groupHover={{ opacity: 1 }}
-        >
-          <GripVertical size={12} />
-        </Box>
-        <HStack
+        <IconButton
           ref={dragHandleRef}
+          aria-label="Drag container"
+          icon={<GripVertical size={12} />}
+          size="xs"
+          variant="ghost"
+          cursor="grab"
+          onClick={() => {
+            if (isDragging) return;
+            onSelectBoard?.();
+            setShowControls((v) => !v);
+          }}
+        />
+        <HStack
           justify="flex-start"
           bg="gray.100"
           px={2}
@@ -189,19 +195,9 @@ export default function SlideElementsBoard({
           position="absolute"
           top={0}
           left={0}
-          transform="translateY(-100%)"
+          transform={showControls ? "translateY(0)" : "translateY(-100%)"}
           transition="transform 0.2s"
-          _groupHover={{ transform: "translateY(0)" }}
-          _hover={{ transform: "translateY(0)" }}
-          _active={{ transform: "translateY(0)" }}
         >
-          <IconButton
-            aria-label="Drag container"
-            icon={<GripVertical size={12} />}
-            size="xs"
-            variant="ghost"
-            cursor="grab"
-          />
           {onRemoveBoard && (
             <IconButton
               aria-label="Delete container"
@@ -212,15 +208,6 @@ export default function SlideElementsBoard({
               onClick={onRemoveBoard}
             />
           )}
-          <ContentCard pb={0} bg="transparent" dropShadow="none" p={0}>
-            <IconButton
-              aria-label="Edit container"
-              icon={<Settings size={12} />}
-              size="xs"
-              variant="ghost"
-              onClick={onSelectBoard}
-            />
-          </ContentCard>
           <IconButton
             aria-label="Add column"
             icon={<Plus size={12} />}
