@@ -81,13 +81,15 @@ export default function SlideElementsBoard({
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
   const [showControls, setShowControls] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   useBoardDragDrop(
     boardRef,
     dragHandleRef,
     boardId,
     boardInstanceId,
-    setClosestEdge
+    setClosestEdge,
+    setIsDragging
   );
 
   const addColumn = () => {
@@ -161,7 +163,14 @@ export default function SlideElementsBoard({
   // ------------------------------------------------------------------
   return (
     <Box ref={boardRef} position="relative" overflow="hidden">
-      <Box position="absolute" top={0} left={0} role="group" zIndex={1}>
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        role="group"
+        zIndex={1}
+        onMouseLeave={() => setShowControls(false)}
+      >
         <IconButton
           ref={dragHandleRef}
           aria-label="Drag container"
@@ -170,6 +179,7 @@ export default function SlideElementsBoard({
           variant="ghost"
           cursor="grab"
           onClick={() => {
+            if (isDragging) return;
             onSelectBoard?.();
             setShowControls((v) => !v);
           }}

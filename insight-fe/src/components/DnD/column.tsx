@@ -351,7 +351,14 @@ function ColumnBase<TCard extends BaseCardDnD>({
             spacing={0}
             height="100%"
           >
-            <Box position="absolute" top={0} right={0} role="group" zIndex={1}>
+            <Box
+              position="absolute"
+              top={0}
+              right={0}
+              role="group"
+              zIndex={1}
+              onMouseLeave={() => setShowControls(false)}
+            >
               {enableColumnReorder && (
                 <IconButton
                   ref={dragHandleRef}
@@ -361,6 +368,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
                   variant="ghost"
                   cursor="grab"
                   onClick={() => {
+                    if (isDragging) return;
                     onSelectColumn?.(columnId);
                     setShowControls((v) => !v);
                   }}
