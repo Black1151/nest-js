@@ -46,8 +46,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
   const [styleItems, setStyleItems] = useState<SlideElementDnDItemProps[]>([]);
 
-  const [fetchStyles, { data: stylesData }] = useLazyQuery(
-    GET_STYLES_WITH_CONFIG
+  const [fetchStyles, { data: stylesData, refetch }] = useLazyQuery(
+    GET_STYLES_WITH_CONFIG,
+    { fetchPolicy: "network-only" }
   );
 
   const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
@@ -85,9 +86,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
         selectedCollectionId={selectedCollectionId}
         onSelectCollection={setSelectedCollectionId}
         styleItems={styleItems}
-        onFetchStyles={(type) => {
+        onFetchStyles={async (type) => {
           if (selectedCollectionId === "") return;
-          fetchStyles({
+          await fetchStyles({
             variables: {
               collectionId: String(selectedCollectionId),
               element: type,
@@ -144,7 +145,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(_, ref
             selectedCollectionId !== "" &&
             collectionId === selectedCollectionId
           ) {
-            fetchStyles({
+            await fetchStyles({
               variables: {
                 collectionId: String(selectedCollectionId),
                 element: editor.selectedElement.type,
