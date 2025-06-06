@@ -133,13 +133,14 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         closeLoad={() => setIsLoadStyleOpen(false)}
         styleCollections={styleCollections}
         selectedElement={editor.selectedElement}
-        onSave={async ({ name, collectionId }) => {
+        onSave={async ({ name, collectionId, groupId }) => {
           if (!editor.selectedElement) return;
           await createStyle({
             variables: {
               data: {
                 name,
                 collectionId,
+                groupId: groupId ?? undefined,
                 element: ELEMENT_TYPE_TO_ENUM[editor.selectedElement.type],
                 config: editor.selectedElement,
               },
@@ -154,6 +155,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
               variables: {
                 collectionId: String(selectedCollectionId),
                 element: editor.selectedElement.type,
+                groupId: groupId ?? null,
               },
             });
           }
