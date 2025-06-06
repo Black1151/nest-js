@@ -7,7 +7,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
-import { BaseModal } from "../modals/BaseModal";
+import { BaseModal } from "@/components/modals/BaseModal";
 
 const GET_STYLES = gql`
   query GetStyles($collectionId: String!, $element: String!) {

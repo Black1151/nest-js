@@ -1,7 +1,8 @@
 "use client";
 
-import SaveStyleModal from "./SaveStyleModal";
-import LoadStyleModal from "./LoadStyleModal";
+import LoadStyleModal from "./modals/LoadStyleModal";
+import SaveStyleModal from "./modals/SaveStyleModal";
+
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface StyleModalsProps {

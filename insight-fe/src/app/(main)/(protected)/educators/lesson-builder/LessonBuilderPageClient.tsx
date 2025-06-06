@@ -3,13 +3,13 @@
 import { Flex, Button } from "@chakra-ui/react";
 import { useState, useRef } from "react";
 import LessonEditor from "@/components/lesson/LessonEditor";
-import LessonPreviewModal from "@/components/lesson/LessonPreviewModal";
-import { Slide } from "@/components/lesson/SlideSequencer";
-import SaveLessonModal from "@/components/lesson/SaveLessonModal";
-import LoadLessonModal from "@/components/lesson/LoadLessonModal";
+import LessonPreviewModal from "@/components/lesson/modals/LessonPreviewModal";
+import LoadLessonModal from "@/components/lesson/modals/LoadLessonModal";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { CREATE_LESSON, GET_LESSON } from "@/graphql/lesson";
 import { LessonEditorHandle } from "@/components/lesson/hooks/useLessonEditorState";
+import { Slide } from "@/components/lesson/slide/SlideSequencer";
+import SaveLessonModal from "@/components/lesson/modals/SaveLessonModal";
 
 export const LessonBuilderPageClient = () => {
   const [isSaveOpen, setIsSaveOpen] = useState(false);
@@ -17,7 +17,6 @@ export const LessonBuilderPageClient = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewSlides, setPreviewSlides] = useState<Slide[]>([]);
   const editorRef = useRef<LessonEditorHandle>(null);
-
 
   const [createLesson, { loading: saving }] = useMutation(CREATE_LESSON, {
     onCompleted: () => setIsSaveOpen(false),

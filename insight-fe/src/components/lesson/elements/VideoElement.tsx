@@ -6,7 +6,10 @@ interface VideoElementProps {
   wrapperStyles?: ElementWrapperStyles;
 }
 
-export default function VideoElement({ url, wrapperStyles }: VideoElementProps) {
+export default function VideoElement({
+  url,
+  wrapperStyles,
+}: VideoElementProps) {
   return (
     <ElementWrapper styles={wrapperStyles}>
       <Box as="video" src={url} controls width="100%" />

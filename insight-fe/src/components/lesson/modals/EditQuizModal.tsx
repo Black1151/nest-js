@@ -1,6 +1,6 @@
 "use client";
 
-import { BaseModal } from "../modals/BaseModal";
+import { BaseModal } from "../../modals/BaseModal";
 import {
   Box,
   Button,
@@ -101,7 +101,9 @@ export default function EditQuizModal({
                           const updated = [...questions];
                           updated[qIdx] = {
                             ...updated[qIdx],
-                            options: updated[qIdx].options.filter((_, i) => i !== oIdx),
+                            options: updated[qIdx].options.filter(
+                              (_, i) => i !== oIdx
+                            ),
                           };
                           setQuestions(updated);
                         }}

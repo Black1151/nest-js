@@ -1,4 +1,4 @@
-import type { ElementWrapperStyles } from "./ElementWrapper";
+import type { ElementWrapperStyles } from "./elements/ElementWrapper";
 
 export const defaultColumnWrapperStyles: ElementWrapperStyles = {
   bgColor: "#ffffff",

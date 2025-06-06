@@ -9,17 +9,18 @@ import {
 } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
-import { ContentCard } from "../layout/Card";
-import ElementWrapper, { ElementWrapperStyles } from "./ElementWrapper";
-import {
-  defaultColumnWrapperStyles,
-} from "./defaultStyles";
+
 import { useCallback } from "react";
 import { X, Settings, Plus } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { type Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import { useBoardDragDrop } from "@/hooks/useBoardDragDrop";
+import { ContentCard } from "@/components/layout/Card";
+import { defaultColumnWrapperStyles } from "../defaultStyles";
+import ElementWrapper, {
+  ElementWrapperStyles,
+} from "../elements/ElementWrapper";
 
 interface SlideElementsBoardProps {
   boardId: string;

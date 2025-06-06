@@ -8,7 +8,7 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { gql, useMutation } from "@apollo/client";
-import { BaseModal } from "../modals/BaseModal";
+import { BaseModal } from "../../modals/BaseModal";
 import AddStyleCollectionModal from "./AddStyleCollectionModal";
 
 const CREATE_STYLE_COLLECTION = gql`

@@ -8,7 +8,10 @@ interface ImageElementProps {
   wrapperStyles?: ElementWrapperStyles;
 }
 
-export default function ImageElement({ src, wrapperStyles }: ImageElementProps) {
+export default function ImageElement({
+  src,
+  wrapperStyles,
+}: ImageElementProps) {
   return (
     <ElementWrapper styles={wrapperStyles} data-testid="image-element">
       <Image

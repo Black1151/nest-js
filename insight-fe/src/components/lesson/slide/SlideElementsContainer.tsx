@@ -6,13 +6,14 @@ import SlideElementsBoard from "./SlideElementsBoard";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
-import type { ElementWrapperStyles } from "./ElementWrapper";
-import {
-  defaultBoardWrapperStyles,
-  defaultColumnWrapperStyles,
-} from "./defaultStyles";
+
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { useContainerDragDrop } from "@/hooks/useContainerDragDrop";
+import {
+  defaultColumnWrapperStyles,
+  defaultBoardWrapperStyles,
+} from "../defaultStyles";
+import { ElementWrapperStyles } from "../elements/ElementWrapper";
 
 export interface BoardRow {
   id: string;

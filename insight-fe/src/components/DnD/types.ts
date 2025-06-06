@@ -1,5 +1,5 @@
 import { SystemStyleObject } from "@chakra-ui/react";
-import type { ElementWrapperStyles } from "../lesson/ElementWrapper";
+import type { ElementWrapperStyles } from "../lesson/elements/ElementWrapper";
 
 export type State =
   | { type: "idle" }

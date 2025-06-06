@@ -1,16 +1,19 @@
 "use client";
 
 import { Accordion } from "@chakra-ui/react";
-import useStyleAttributes from "./hooks/useStyleAttributes";
-import WrapperSettings from "./attributes/WrapperSettings";
-import type { BoardRow } from "./SlideElementsContainer";
+import useStyleAttributes from "../hooks/useStyleAttributes";
+import WrapperSettings from "../attributes/WrapperSettings";
+import { BoardRow } from "../slide/SlideElementsContainer";
 
 interface BoardAttributesPaneProps {
   board: BoardRow;
   onChange: (updated: BoardRow) => void;
 }
 
-export default function BoardAttributesPane({ board, onChange }: BoardAttributesPaneProps) {
+export default function BoardAttributesPane({
+  board,
+  onChange,
+}: BoardAttributesPaneProps) {
   const styleAttrs = useStyleAttributes({
     wrapperStyles: board.wrapperStyles,
     spacing: board.spacing,

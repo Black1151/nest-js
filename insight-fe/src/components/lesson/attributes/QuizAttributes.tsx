@@ -9,7 +9,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import EditQuizModal from "../EditQuizModal";
+import EditQuizModal from "../modals/EditQuizModal";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 interface QuizAttributesProps {
@@ -18,7 +18,9 @@ interface QuizAttributesProps {
   description: string;
   setDescription: (val: string) => void;
   questions: SlideElementDnDItemProps["questions"];
-  setQuestions: React.Dispatch<React.SetStateAction<SlideElementDnDItemProps["questions"]>>;
+  setQuestions: React.Dispatch<
+    React.SetStateAction<SlideElementDnDItemProps["questions"]>
+  >;
 }
 
 export default function QuizAttributes({
@@ -31,10 +33,17 @@ export default function QuizAttributes({
 }: QuizAttributesProps) {
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
   return (
-    <AccordionItem borderWidth="1px" borderColor="purple.300" borderRadius="md" mb={2}>
+    <AccordionItem
+      borderWidth="1px"
+      borderColor="purple.300"
+      borderRadius="md"
+      mb={2}
+    >
       <h2>
         <AccordionButton>
-          <Box flex="1" textAlign="left">Quiz</Box>
+          <Box flex="1" textAlign="left">
+            Quiz
+          </Box>
           <AccordionIcon />
         </AccordionButton>
       </h2>
@@ -56,4 +65,3 @@ export default function QuizAttributes({
     </AccordionItem>
   );
 }
-

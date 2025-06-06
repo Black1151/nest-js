@@ -1,9 +1,9 @@
 "use client";
 
 import { Box, Stack, Text } from "@chakra-ui/react";
-import { BaseModal } from "../modals/BaseModal";
-import SlidePreview from "./SlidePreview";
-import { Slide } from "./SlideSequencer";
+import { BaseModal } from "../../modals/BaseModal";
+import SlidePreview from "../slide/SlidePreview";
+import { Slide } from "../slide/SlideSequencer";
 
 interface LessonPreviewModalProps {
   isOpen: boolean;
@@ -17,7 +17,12 @@ export default function LessonPreviewModal({
   slides,
 }: LessonPreviewModalProps) {
   return (
-    <BaseModal isOpen={isOpen} onClose={onClose} size="6xl" title="Lesson Preview">
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="6xl"
+      title="Lesson Preview"
+    >
       <Stack spacing={6} py={2}>
         {slides.length === 0 && <Text>No slides available</Text>}
         {slides.map((slide) => (
