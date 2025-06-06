@@ -7,7 +7,6 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
-import { GET_STYLE_GROUPS } from "@/graphql/lesson";
 import { BaseModal } from "@/components/modals/BaseModal";
 
 const GET_STYLES = gql`
@@ -35,6 +34,8 @@ interface LoadStyleModalProps {
   collections: { id: number; name: string }[];
   /** Element type for filtering styles */
   elementType: string | null;
+  /** Groups for the selected collection/element */
+  groups: { id: number; name: string }[];
   /** Callback executed when user chooses a style */
   onLoad: (styleId: number) => void;
 }
@@ -44,13 +45,13 @@ export default function LoadStyleModal({
   onClose,
   collections,
   elementType,
+  groups,
   onLoad,
 }: LoadStyleModalProps) {
   const [collectionId, setCollectionId] = useState<number | "">("");
   const [groupId, setGroupId] = useState<number | "">("");
   const [styleId, setStyleId] = useState<number | "">("");
   const [styles, setStyles] = useState<{ id: number; name: string }[]>([]);
-  const [groups, setGroups] = useState<{ id: number; name: string }[]>([]);
 
   const { data: stylesData } = useQuery(GET_STYLES, {
     variables:
@@ -64,21 +65,6 @@ export default function LoadStyleModal({
     skip: collectionId === "" || !elementType,
   });
 
-  const { data: groupsData } = useQuery(GET_STYLE_GROUPS, {
-    variables:
-      collectionId !== "" && elementType
-        ? { collectionId: String(collectionId), element: elementType }
-        : undefined,
-    skip: collectionId === "" || !elementType,
-  });
-
-  const { data: groupsData, refetch: refetchGroups } = useQuery(GET_STYLE_GROUPS, {
-    variables:
-      collectionId !== "" && elementType
-        ? { collectionId: String(collectionId), element: elementType }
-        : undefined,
-    skip: collectionId === "" || !elementType,
-  });
 
   useEffect(() => {
     if (stylesData?.getAllStyle) {
@@ -88,13 +74,6 @@ export default function LoadStyleModal({
     }
   }, [stylesData]);
 
-  useEffect(() => {
-    if (groupsData?.getAllStyleGroup) {
-      setGroups(groupsData.getAllStyleGroup);
-    } else {
-      setGroups([]);
-    }
-  }, [groupsData]);
 
   useEffect(() => {
     setStyleId("");

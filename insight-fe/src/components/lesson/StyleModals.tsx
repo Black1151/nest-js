@@ -11,9 +11,11 @@ interface StyleModalsProps {
   closeSave: () => void;
   closeLoad: () => void;
   styleCollections: { id: number; name: string }[];
+  styleGroups: { id: number; name: string }[];
   selectedElement: SlideElementDnDItemProps | null;
   onSave: (data: { name: string; collectionId: number; groupId: number | null }) => void;
   onAddCollection: (collection: { id: number; name: string }) => void;
+  onAddGroup: (group: { id: number; name: string }) => void;
   onLoad: (styleId: number) => void;
 }
 
@@ -23,9 +25,11 @@ export default function StyleModals({
   closeSave,
   closeLoad,
   styleCollections,
+  styleGroups,
   selectedElement,
   onSave,
   onAddCollection,
+  onAddGroup,
   onLoad,
 }: StyleModalsProps) {
   return (
@@ -35,14 +39,17 @@ export default function StyleModals({
         onClose={closeSave}
         collections={styleCollections}
         elementType={selectedElement ? selectedElement.type : null}
+        groups={styleGroups}
         onSave={onSave}
         onAddCollection={onAddCollection}
+        onAddGroup={onAddGroup}
       />
       <LoadStyleModal
         isOpen={isLoadOpen}
         onClose={closeLoad}
         collections={styleCollections}
         elementType={selectedElement ? selectedElement.type : null}
+        groups={styleGroups}
         onLoad={onLoad}
       />
     </>

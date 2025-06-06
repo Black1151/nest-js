@@ -7,11 +7,11 @@ import {
   FormLabel,
   Input,
 } from "@chakra-ui/react";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { BaseModal } from "../../modals/BaseModal";
 import AddStyleCollectionModal from "./AddStyleCollectionModal";
 import AddStyleGroupModal from "./AddStyleGroupModal";
-import { GET_STYLE_GROUPS, CREATE_STYLE_GROUP } from "@/graphql/lesson";
+import { CREATE_STYLE_GROUP } from "@/graphql/lesson";
 
 const CREATE_STYLE_COLLECTION = gql`
   mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {
@@ -32,8 +32,12 @@ interface SaveStyleModalProps {
   collections: { id: number; name: string }[];
   /** Currently selected element type for filtering groups */
   elementType: string | null;
+  /** Groups available for the selected collection/element */
+  groups: { id: number; name: string }[];
   /** Callback when the user adds a new collection */
   onAddCollection: (collection: { id: number; name: string }) => void;
+  /** Callback when user creates a new group */
+  onAddGroup: (group: { id: number; name: string }) => void;
   /** Callback executed when user submits the form */
   onSave: (data: {
     name: string;
@@ -47,7 +51,9 @@ export default function SaveStyleModal({
   onClose,
   collections,
   elementType,
+  groups,
   onAddCollection,
+  onAddGroup,
   onSave,
 }: SaveStyleModalProps) {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -55,25 +61,8 @@ export default function SaveStyleModal({
   const [name, setName] = useState("");
   const [collectionId, setCollectionId] = useState<number | "">("");
   const [groupId, setGroupId] = useState<number | "">("");
-  const [groups, setGroups] = useState<{ id: number; name: string }[]>([]);
   const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
   const [createGroup] = useMutation(CREATE_STYLE_GROUP);
-
-  const { data: groupData, refetch: refetchGroups } = useQuery(GET_STYLE_GROUPS, {
-    variables:
-      collectionId !== "" && elementType
-        ? { collectionId: String(collectionId), element: elementType }
-        : undefined,
-    skip: collectionId === "" || !elementType,
-  });
-
-  useEffect(() => {
-    if (groupData?.getAllStyleGroup) {
-      setGroups(groupData.getAllStyleGroup);
-    } else {
-      setGroups([]);
-    }
-  }, [groupData]);
 
   useEffect(() => {
     setGroupId("");
@@ -179,7 +168,10 @@ export default function SaveStyleModal({
             },
           });
           if (data?.createStyleGroup) {
-            await refetchGroups();
+            onAddGroup({
+              id: data.createStyleGroup.id,
+              name: data.createStyleGroup.name,
+            });
           }
           setIsAddGroupOpen(false);
         }}

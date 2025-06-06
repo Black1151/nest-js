@@ -8,6 +8,7 @@ import {
   GET_STYLE_COLLECTIONS,
   CREATE_STYLE,
   GET_STYLES_WITH_CONFIG,
+  GET_STYLE_GROUPS,
 } from "@/graphql/lesson";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -44,6 +45,10 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [styleCollections, setStyleCollections] = useState<
     { id: number; name: string }[]
   >([]);
+  const [styleGroups, setStyleGroups] = useState<{
+    id: number;
+    name: string;
+  }[]>([]);
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
     ""
   );
@@ -55,6 +60,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     GET_STYLES_WITH_CONFIG,
     { fetchPolicy: "network-only" }
   );
+  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
 
   const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
   const [createStyle] = useMutation(CREATE_STYLE);
@@ -70,6 +76,30 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       setStyleItems([]);
     }
   }, [selectedCollectionId]);
+
+  useEffect(() => {
+    if (
+      selectedCollectionId !== "" &&
+      editor.selectedElement
+    ) {
+      fetchGroups({
+        variables: {
+          collectionId: String(selectedCollectionId),
+          element: editor.selectedElement.type,
+        },
+      });
+    } else {
+      setStyleGroups([]);
+    }
+  }, [selectedCollectionId, editor.selectedElement?.type]);
+
+  useEffect(() => {
+    if (groupsData?.getAllStyleGroup) {
+      setStyleGroups(groupsData.getAllStyleGroup);
+    } else {
+      setStyleGroups([]);
+    }
+  }, [groupsData]);
 
   useEffect(() => {
     if (stylesData?.getAllStyle) {
@@ -132,6 +162,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         closeSave={() => setIsSaveStyleOpen(false)}
         closeLoad={() => setIsLoadStyleOpen(false)}
         styleCollections={styleCollections}
+        styleGroups={styleGroups}
         selectedElement={editor.selectedElement}
         onSave={async ({ name, collectionId, groupId }) => {
           if (!editor.selectedElement) return;
@@ -163,6 +194,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         onAddCollection={(collection) =>
           setStyleCollections([...styleCollections, collection])
         }
+        onAddGroup={(group) => setStyleGroups([...styleGroups, group])}
         onLoad={(styleId) => {
           if (!editor.selectedElement) return;
           console.log("load style", { styleId });
