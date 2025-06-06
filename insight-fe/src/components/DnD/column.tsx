@@ -17,7 +17,7 @@ import {
   Stack,
   IconButton,
 } from "@chakra-ui/react";
-import { X, Settings, GripVertical } from "lucide-react";
+import { X, GripVertical } from "lucide-react";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import {
   attachClosestEdge,
@@ -388,15 +388,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
                 transform={showControls ? "translateY(0)" : "translateY(-100%)"}
                 transition="transform 0.2s"
               >
-                {onSelectColumn && (
-                  <IconButton
-                    aria-label="Edit column styles"
-                    icon={<Settings size={12} />}
-                    size="xs"
-                    variant="ghost"
-                    onClick={() => onSelectColumn(columnId)}
-                  />
-                )}
                 {onRemoveColumn && (
                   <IconButton
                     aria-label="Remove column"

@@ -11,7 +11,7 @@ import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 
 import { useCallback } from "react";
-import { X, Settings, Plus, GripVertical } from "lucide-react";
+import { X, Plus, GripVertical } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { type Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
@@ -208,15 +208,6 @@ export default function SlideElementsBoard({
               onClick={onRemoveBoard}
             />
           )}
-          <ContentCard pb={0} bg="transparent" dropShadow="none" p={0}>
-            <IconButton
-              aria-label="Edit container"
-              icon={<Settings size={12} />}
-              size="xs"
-              variant="ghost"
-              onClick={onSelectBoard}
-            />
-          </ContentCard>
           <IconButton
             aria-label="Add column"
             icon={<Plus size={12} />}
