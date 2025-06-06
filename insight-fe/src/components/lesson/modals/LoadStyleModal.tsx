@@ -7,16 +7,18 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
+import { GET_STYLE_GROUPS } from "@/graphql/lesson";
 import { BaseModal } from "@/components/modals/BaseModal";
 
 const GET_STYLES = gql`
-  query GetStyles($collectionId: String!, $element: String!) {
+  query GetStyles($collectionId: String!, $element: String!, $groupId: String) {
     getAllStyle(
       data: {
         all: true
         filters: [
           { column: "collectionId", value: $collectionId }
           { column: "element", value: $element }
+          { column: "groupId", value: $groupId }
         ]
       }
     ) {
@@ -45,10 +47,32 @@ export default function LoadStyleModal({
   onLoad,
 }: LoadStyleModalProps) {
   const [collectionId, setCollectionId] = useState<number | "">("");
+  const [groupId, setGroupId] = useState<number | "">("");
   const [styleId, setStyleId] = useState<number | "">("");
   const [styles, setStyles] = useState<{ id: number; name: string }[]>([]);
+  const [groups, setGroups] = useState<{ id: number; name: string }[]>([]);
 
   const { data: stylesData } = useQuery(GET_STYLES, {
+    variables:
+      collectionId !== "" && elementType
+        ? {
+            collectionId: String(collectionId),
+            element: elementType,
+            groupId: groupId === "" ? null : String(groupId),
+          }
+        : undefined,
+    skip: collectionId === "" || !elementType,
+  });
+
+  const { data: groupsData } = useQuery(GET_STYLE_GROUPS, {
+    variables:
+      collectionId !== "" && elementType
+        ? { collectionId: String(collectionId), element: elementType }
+        : undefined,
+    skip: collectionId === "" || !elementType,
+  });
+
+  const { data: groupsData, refetch: refetchGroups } = useQuery(GET_STYLE_GROUPS, {
     variables:
       collectionId !== "" && elementType
         ? { collectionId: String(collectionId), element: elementType }
@@ -65,8 +89,21 @@ export default function LoadStyleModal({
   }, [stylesData]);
 
   useEffect(() => {
+    if (groupsData?.getAllStyleGroup) {
+      setGroups(groupsData.getAllStyleGroup);
+    } else {
+      setGroups([]);
+    }
+  }, [groupsData]);
+
+  useEffect(() => {
     setStyleId("");
-  }, [collectionId]);
+    setGroupId("");
+  }, [collectionId, elementType]);
+
+  useEffect(() => {
+    setStyleId("");
+  }, [groupId]);
 
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} title="Load Style">
@@ -88,7 +125,24 @@ export default function LoadStyleModal({
             ))}
           </Select>
         </FormControl>
-        <FormControl isDisabled={collectionId === ""}>
+        <FormControl isDisabled={collectionId === "" || !elementType}>
+          <FormLabel>Group</FormLabel>
+          <Select
+            placeholder="Select group"
+            value={groupId}
+            onChange={(e) => {
+              const val = e.target.value;
+              setGroupId(val === "" ? "" : parseInt(val, 10));
+            }}
+          >
+            {groups.map((g) => (
+              <option key={g.id} value={g.id}>
+                {g.name}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl isDisabled={collectionId === "" || !elementType || groupId === ""}>
           <FormLabel>Style</FormLabel>
           <Select
             placeholder="Select style"
@@ -113,6 +167,7 @@ export default function LoadStyleModal({
               onLoad(styleId);
               setStyleId("");
               setCollectionId("");
+              setGroupId("");
               onClose();
             }
           }}
