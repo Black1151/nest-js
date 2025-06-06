@@ -195,34 +195,34 @@ export default function SlideElementsBoard({
           _hover={{ transform: "translateY(0)" }}
           _active={{ transform: "translateY(0)" }}
         >
-        {onRemoveBoard && (
+          {onRemoveBoard && (
+            <IconButton
+              aria-label="Delete container"
+              icon={<X size={12} />}
+              size="xs"
+              variant="ghost"
+              colorScheme="red"
+              onClick={onRemoveBoard}
+            />
+          )}
+          <ContentCard pb={0} bg="transparent" dropShadow="none" p={0}>
+            <IconButton
+              aria-label="Edit container"
+              icon={<Settings size={12} />}
+              size="xs"
+              variant="ghost"
+              onClick={onSelectBoard}
+            />
+          </ContentCard>
           <IconButton
-            aria-label="Delete container"
-            icon={<X size={12} />}
+            aria-label="Add column"
+            icon={<Plus size={12} />}
             size="xs"
             variant="ghost"
-            colorScheme="red"
-            onClick={onRemoveBoard}
+            colorScheme="teal"
+            onClick={addColumn}
           />
-        )}
-        <ContentCard pb={0} bg="transparent" dropShadow="none" p={0}>
-          <IconButton
-            aria-label="Edit container"
-            icon={<Settings size={12} />}
-            size="xs"
-            variant="ghost"
-            onClick={onSelectBoard}
-          />
-        )}
-        <IconButton
-          aria-label="Add column"
-          icon={<Plus size={12} />}
-          size="xs"
-          variant="ghost"
-          colorScheme="teal"
-          onClick={addColumn}
-        />
-      </HStack>
+        </HStack>
       </Box>
       <ElementWrapper
         styles={wrapperStyles}
@@ -230,7 +230,7 @@ export default function SlideElementsBoard({
         borderWidth={isSelected ? 2 : undefined}
         data-board-id={boardId}
       >
-        <ContentCard pb={25} bg="transparent" dropShadow="none" p={0}>
+        <ContentCard bg="transparent" dropShadow="none" p={0}>
           <DnDBoardMain<SlideElementDnDItemProps>
             controlled
             columnMap={columnMap}
