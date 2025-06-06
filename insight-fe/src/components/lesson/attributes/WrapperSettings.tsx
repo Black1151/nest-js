@@ -50,6 +50,8 @@ export default function WrapperSettings({ attrs }: WrapperSettingsProps) {
     setBorderWidth,
     borderRadius,
     setBorderRadius,
+    spacing,
+    setSpacing,
   } = attrs;
 
   return (
@@ -215,6 +217,20 @@ export default function WrapperSettings({ attrs }: WrapperSettingsProps) {
                 </FormControl>
               </HStack>
             </Box>
+            {typeof spacing !== "undefined" && typeof setSpacing !== "undefined" && (
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0" fontSize="sm" w="40%">
+                  Spacing
+                </FormLabel>
+                <Input
+                  size="sm"
+                  type="number"
+                  w="60px"
+                  value={spacing}
+                  onChange={(e) => setSpacing(parseInt(e.target.value))}
+                />
+              </FormControl>
+            )}
           </Stack>
         </AccordionPanel>
       </AccordionItem>
