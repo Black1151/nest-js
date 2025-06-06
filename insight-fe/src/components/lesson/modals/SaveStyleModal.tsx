@@ -13,6 +13,14 @@ import AddStyleCollectionModal from "./AddStyleCollectionModal";
 import AddStyleGroupModal from "./AddStyleGroupModal";
 import { CREATE_STYLE_GROUP } from "@/graphql/lesson";
 
+const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
+  text: "Text",
+  table: "Table",
+  image: "Image",
+  video: "Video",
+  quiz: "Quiz",
+};
+
 const CREATE_STYLE_COLLECTION = gql`
   mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {
     createStyleCollection(data: $data) {
@@ -163,7 +171,7 @@ export default function SaveStyleModal({
               data: {
                 name,
                 collectionId,
-                element: elementType,
+                element: ELEMENT_TYPE_TO_ENUM[elementType],
               },
             },
           });
