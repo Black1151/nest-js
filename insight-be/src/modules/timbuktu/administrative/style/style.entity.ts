@@ -1,19 +1,10 @@
 import { Column, Entity, ManyToOne, RelationId, JoinColumn } from 'typeorm';
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { AbstractBaseEntity } from 'src/common/base.entity';
 import { StyleCollectionEntity } from '../style-collection/style-collection.entity';
 import { StyleGroupEntity } from '../style-group/style-group.entity';
-
-export enum PageElementType {
-  Text = 'text',
-  Table = 'table',
-  Image = 'image',
-  Video = 'video',
-  Quiz = 'quiz',
-}
-
-registerEnumType(PageElementType, { name: 'PageElementType' });
+import { PageElementType } from './page-element-type';
 
 @ObjectType()
 @Entity('styles')
