@@ -9,6 +9,23 @@ export const GET_STYLE_COLLECTIONS = gql`
   }
 `;
 
+export const GET_STYLE_GROUPS = gql`
+  query GetStyleGroups($collectionId: String!, $element: String!) {
+    getAllStyleGroup(
+      data: {
+        all: true
+        filters: [
+          { column: "collectionId", value: $collectionId }
+          { column: "element", value: $element }
+        ]
+      }
+    ) {
+      id
+      name
+    }
+  }
+`;
+
 export const CREATE_STYLE = gql`
   mutation CreateStyle($data: CreateStyleInput!) {
     createStyle(data: $data) {
@@ -18,14 +35,28 @@ export const CREATE_STYLE = gql`
   }
 `;
 
+export const CREATE_STYLE_GROUP = gql`
+  mutation CreateStyleGroup($data: CreateStyleGroupInput!) {
+    createStyleGroup(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
 export const GET_STYLES_WITH_CONFIG = gql`
-  query GetStylesWithConfig($collectionId: String!, $element: String!) {
+  query GetStylesWithConfig(
+    $collectionId: String!
+    $element: String!
+    $groupId: String
+  ) {
     getAllStyle(
       data: {
         all: true
         filters: [
           { column: "collectionId", value: $collectionId }
           { column: "element", value: $element }
+          { column: "groupId", value: $groupId }
         ]
       }
     ) {
