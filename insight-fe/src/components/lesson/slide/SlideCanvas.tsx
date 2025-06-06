@@ -32,6 +32,7 @@ interface SlideCanvasProps {
   handleDropElement: (e: React.DragEvent<HTMLDivElement>) => void;
   openSaveStyle: () => void;
   openLoadStyle: () => void;
+  openAddPalette: () => void;
   colorPalettes: { id: number; name: string; colors: string[] }[];
   selectedPaletteId: number | "";
 }
@@ -58,6 +59,7 @@ export default function SlideCanvas({
   handleDropElement,
   openSaveStyle,
   openLoadStyle,
+  openAddPalette,
   colorPalettes,
   selectedPaletteId,
 }: SlideCanvasProps) {
@@ -111,6 +113,9 @@ export default function SlideCanvas({
                 </Button>
                 <Button size="xs" onClick={openSaveStyle}>
                   Save Style
+                </Button>
+                <Button size="xs" onClick={openAddPalette}>
+                  Add Palette
                 </Button>
               </HStack>
             </HStack>

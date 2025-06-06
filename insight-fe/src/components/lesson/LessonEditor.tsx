@@ -61,6 +61,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | "">("");
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [styleItems, setStyleItems] = useState<SlideElementDnDItemProps[]>([]);
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null
@@ -205,6 +206,11 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         handleDropElement={editor.handleDropElement}
         openSaveStyle={() => setIsSaveStyleOpen(true)}
         openLoadStyle={() => setIsLoadStyleOpen(true)}
+        openAddPalette={() => {
+          if (selectedCollectionId !== "") {
+            setIsPaletteOpen(true);
+          }
+        }}
         colorPalettes={colorPalettes}
         selectedPaletteId={selectedPaletteId}
       />
@@ -212,10 +218,13 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       <StyleModals
         isSaveOpen={isSaveStyleOpen}
         isLoadOpen={isLoadStyleOpen}
+        isPaletteOpen={isPaletteOpen}
         closeSave={() => setIsSaveStyleOpen(false)}
         closeLoad={() => setIsLoadStyleOpen(false)}
+        closePalette={() => setIsPaletteOpen(false)}
         styleCollections={styleCollections}
         styleGroups={styleGroups}
+        selectedCollectionId={selectedCollectionId}
         selectedElement={editor.selectedElement}
         onSave={async ({ name, collectionId, groupId }) => {
           if (!editor.selectedElement) return;
@@ -251,6 +260,12 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           setStyleCollections([...styleCollections, collection])
         }
         onAddGroup={(group) => setStyleGroups([...styleGroups, group])}
+        onAddPalette={(palette) => {
+          setColorPalettes((p) => [...p, palette]);
+          fetchPalettes({
+            variables: { collectionId: String(selectedCollectionId) },
+          });
+        }}
         onLoad={(styleId) => {
           if (!editor.selectedElement) return;
           console.log("load style", { styleId });
