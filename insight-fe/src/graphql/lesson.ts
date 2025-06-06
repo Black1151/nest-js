@@ -62,6 +62,29 @@ export const GET_STYLES_WITH_CONFIG = gql`
   }
 `;
 
+export const GET_STYLES_WITH_CONFIG_BY_GROUP = gql`
+  query GetStylesWithConfigByGroup(
+    $collectionId: String!
+    $element: String!
+    $groupId: String!
+  ) {
+    getAllStyle(
+      data: {
+        all: true
+        filters: [
+          { column: "collectionId", value: $collectionId }
+          { column: "element", value: $element }
+          { column: "groupId", value: $groupId }
+        ]
+      }
+    ) {
+      id
+      name
+      config
+    }
+  }
+`;
+
 export const CREATE_LESSON = gql`
   mutation CreateLesson($data: CreateLessonInput!) {
     createLesson(data: $data) {
