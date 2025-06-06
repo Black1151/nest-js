@@ -11,7 +11,7 @@ import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 
 import { useCallback } from "react";
-import { X, Settings, Plus } from "lucide-react";
+import { X, Settings, Plus, GripVertical } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { type Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
@@ -159,25 +159,41 @@ export default function SlideElementsBoard({
   /*  Render                                                            */
   /* ------------------------------------------------------------------ */
   return (
-    <Box ref={boardRef} position="relative" role="group" overflow="hidden">
-      <HStack
-        ref={dragHandleRef}
-        justify="flex-start"
-        bg="gray.100"
-        px={2}
-        py={1}
-        borderRadius="md"
-        spacing={1}
-        cursor="grab"
+    <Box ref={boardRef} position="relative" overflow="hidden">
+      <Box
         position="absolute"
         top={0}
         left={0}
+        width={6}
+        height={6}
+        role="group"
         zIndex={1}
-        transform="translateY(-100%)"
-        transition="transform 0.2s"
-        _groupHover={{ transform: "translateY(0)" }}
-        _hover={{ transform: "translateY(0)" }}
       >
+        <Box
+          opacity={0}
+          transition="opacity 0.2s"
+          pointerEvents="none"
+          _groupHover={{ opacity: 1 }}
+        >
+          <GripVertical size={12} />
+        </Box>
+        <HStack
+          ref={dragHandleRef}
+          justify="flex-start"
+          bg="gray.100"
+          px={2}
+          py={1}
+          borderRadius="md"
+          spacing={1}
+          cursor="grab"
+          position="absolute"
+          top={0}
+          left={0}
+          transform="translateY(-100%)"
+          transition="transform 0.2s"
+          _groupHover={{ transform: "translateY(0)" }}
+          _hover={{ transform: "translateY(0)" }}
+        >
         {onRemoveBoard && (
           <IconButton
             aria-label="Delete container"
@@ -206,6 +222,7 @@ export default function SlideElementsBoard({
           onClick={addColumn}
         />
       </HStack>
+      </Box>
       <ElementWrapper
         styles={wrapperStyles}
         borderColor={isSelected ? "blue.300" : undefined}
