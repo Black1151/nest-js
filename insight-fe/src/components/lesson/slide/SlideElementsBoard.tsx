@@ -195,6 +195,13 @@ export default function SlideElementsBoard({
           _hover={{ transform: "translateY(0)" }}
           _active={{ transform: "translateY(0)" }}
         >
+          <IconButton
+            aria-label="Drag container"
+            icon={<GripVertical size={12} />}
+            size="xs"
+            variant="ghost"
+            cursor="grab"
+          />
           {onRemoveBoard && (
             <IconButton
               aria-label="Delete container"
