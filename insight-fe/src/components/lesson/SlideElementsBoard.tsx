@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, HStack, IconButton, Stack } from "@chakra-ui/react";
-import { useState, useRef, useEffect } from "react";
+import { Box, HStack, IconButton } from "@chakra-ui/react";
+import { useState, useRef } from "react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
   SlideElementDnDItemProps,
@@ -14,17 +14,9 @@ import ElementWrapper, { ElementWrapperStyles } from "./ElementWrapper";
 import { useCallback } from "react";
 import { X, Settings, Plus } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
-import {
-  draggable,
-  dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import {
-  attachClosestEdge,
-  extractClosestEdge,
-  type Edge,
-} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { type Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
+import { useBoardDragDrop } from "@/hooks/useBoardDragDrop";
 
 interface SlideElementsBoardProps {
   boardId: string;
@@ -85,38 +77,13 @@ export default function SlideElementsBoard({
   const dragHandleRef = useRef<HTMLDivElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
-  useEffect(() => {
-    if (!boardRef.current || !dragHandleRef.current) return;
-    const el = boardRef.current;
-    return combine(
-      draggable({
-        element: el,
-        dragHandle: dragHandleRef.current,
-        getInitialData: () => ({
-          type: "board",
-          boardId,
-          instanceId: boardInstanceId,
-        }),
-      }),
-      dropTargetForElements({
-        element: el,
-        canDrop: ({ source }) =>
-          source.data.instanceId === boardInstanceId &&
-          source.data.type === "board",
-        getIsSticky: () => true,
-        getData: ({ input, element }) =>
-          attachClosestEdge(
-            { type: "board", boardId },
-            { input, element, allowedEdges: ["top", "bottom"] }
-          ),
-        onDragEnter: (args) =>
-          setClosestEdge(extractClosestEdge(args.self.data)),
-        onDrag: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
-        onDragLeave: () => setClosestEdge(null),
-        onDrop: () => setClosestEdge(null),
-      })
-    );
-  }, [boardInstanceId, boardId]);
+  useBoardDragDrop(
+    boardRef,
+    dragHandleRef,
+    boardId,
+    boardInstanceId,
+    setClosestEdge
+  );
 
   const addColumn = () => {
     const idx = orderedColumnIds.length;

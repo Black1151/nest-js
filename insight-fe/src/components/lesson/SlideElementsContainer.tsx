@@ -1,26 +1,14 @@
 "use client";
 
 import { Button, Stack, HStack } from "@chakra-ui/react";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import SlideElementsBoard from "./SlideElementsBoard";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 import type { ElementWrapperStyles } from "./ElementWrapper";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
-import {
-  monitorForElements,
-  dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { autoScrollWindowForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
-import {
-  attachClosestEdge,
-  extractClosestEdge,
-  type Edge,
-} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
-import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
+import { useContainerDragDrop } from "@/hooks/useContainerDragDrop";
 
 export interface BoardRow {
   id: string;
@@ -176,137 +164,14 @@ export default function SlideElementsContainer({
     }
   };
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-    return dropTargetForElements({
-      element: containerRef.current,
-      canDrop: ({ source }) =>
-        source.data.instanceId === boardInstanceId.current &&
-        source.data.type === "board",
-      getData: () => ({ columnId: "boards" }),
-      getIsSticky: () => true,
-    });
-  }, []);
-
-  useEffect(() => {
-    return autoScrollWindowForElements({
-      canScroll: ({ source }) =>
-        source.data.instanceId === boardInstanceId.current &&
-        source.data.type === "board",
-    });
-  }, []);
-
-  useEffect(() => {
-    return monitorForElements({
-      canMonitor: ({ source }) =>
-        source.data.instanceId === boardInstanceId.current,
-      onDrop: ({ source, location }) => {
-        if (source.data.type !== "board") return;
-        if (!location.current.dropTargets.length) return;
-
-        const startIndex = boards.findIndex(
-          (b) => b.id === source.data.boardId
-        );
-        if (startIndex === -1) return;
-
-        if (location.current.dropTargets.length === 1) {
-          const destinationIndex = getReorderDestinationIndex({
-            startIndex,
-            indexOfTarget: boards.length - 1,
-            closestEdgeOfTarget: null,
-            axis: "vertical",
-          });
-          const reordered = reorder({
-            list: boards,
-            startIndex,
-            finishIndex: destinationIndex,
-          });
-          onChange(columnMap, reordered);
-          return;
-        }
-
-        if (location.current.dropTargets.length === 2) {
-          const [destinationRecord] = location.current.dropTargets;
-          const indexOfTarget = boards.findIndex(
-            (b) => b.id === destinationRecord.data.boardId
-          );
-          const closestEdgeOfTarget = extractClosestEdge(
-            destinationRecord.data
-          );
-          const destinationIndex = getReorderDestinationIndex({
-            startIndex,
-            indexOfTarget,
-            closestEdgeOfTarget,
-            axis: "vertical",
-          });
-          const reordered = reorder({
-            list: boards,
-            startIndex,
-            finishIndex: destinationIndex,
-          });
-          onChange(columnMap, reordered);
-        }
-      },
-    });
-  }, [boards, columnMap, onChange]);
-
-  // Handle moving columns between boards
-  useEffect(() => {
-    return monitorForElements({
-      canMonitor: ({ source }) => source.data.instanceId === instanceId.current,
-      onDrop: ({ source, location }) => {
-        if (source.data.type !== "column") return;
-        if (!location.current.dropTargets.length) return;
-
-        const columnId = source.data.columnId as string;
-
-        const startBoardIdx = boards.findIndex((b) =>
-          b.orderedColumnIds.includes(columnId)
-        );
-        if (startBoardIdx === -1) return;
-
-        const target = location.current.dropTargets[0];
-        const targetColumnId = target.data.columnId as string;
-        const destBoardIdx = boards.findIndex((b) =>
-          b.orderedColumnIds.includes(targetColumnId)
-        );
-        if (destBoardIdx === -1) return;
-
-        if (startBoardIdx === destBoardIdx) {
-          // same board - internal logic already handles
-          return;
-        }
-
-        const indexOfTarget = boards[destBoardIdx].orderedColumnIds.findIndex(
-          (id) => id === targetColumnId
-        );
-        const closestEdge: Edge | null = extractClosestEdge(target.data);
-        const insertIndex =
-          closestEdge === "right" ? indexOfTarget + 1 : indexOfTarget;
-
-        const updatedBoards = boards
-          .map((b, idx) => {
-            if (idx === startBoardIdx) {
-              return {
-                ...b,
-                orderedColumnIds: b.orderedColumnIds.filter(
-                  (id) => id !== columnId
-                ),
-              };
-            }
-            if (idx === destBoardIdx) {
-              const ids = Array.from(b.orderedColumnIds);
-              ids.splice(insertIndex, 0, columnId);
-              return { ...b, orderedColumnIds: ids };
-            }
-            return b;
-          })
-          .filter((b) => b.orderedColumnIds.length > 0);
-
-        onChange(columnMap, updatedBoards);
-      },
-    });
-  }, [boards, columnMap, onChange]);
+  useContainerDragDrop(
+    containerRef,
+    boards,
+    columnMap,
+    onChange,
+    boardInstanceId,
+    instanceId
+  );
 
   return (
     <Stack ref={containerRef}>
