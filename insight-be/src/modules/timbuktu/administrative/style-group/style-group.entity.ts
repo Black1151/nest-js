@@ -1,7 +1,8 @@
 import { Column, Entity, ManyToOne, OneToMany, RelationId, JoinColumn } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { AbstractBaseEntity } from 'src/common/base.entity';
-import { PageElementType, StyleEntity } from '../style/style.entity';
+import { StyleEntity } from '../style/style.entity';
+import { PageElementType } from '../style/page-element-type';
 import { StyleCollectionEntity } from '../style-collection/style-collection.entity';
 
 @ObjectType()

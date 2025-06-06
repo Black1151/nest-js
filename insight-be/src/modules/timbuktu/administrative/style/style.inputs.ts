@@ -1,5 +1,5 @@
 import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
-import { PageElementType } from './style.entity';
+import { PageElementType } from './page-element-type';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { HasRelationsInput } from 'src/common/base.inputs';
 
