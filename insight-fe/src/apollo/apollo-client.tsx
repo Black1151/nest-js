@@ -5,6 +5,7 @@ import {
   from,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
+import { Observable } from "zen-observable-ts";
 import { ensureRefresh } from "../refreshClient";
 
 const httpLink = new HttpLink({
@@ -18,7 +19,17 @@ const refreshLink = onError(({ graphQLErrors, networkError, forward, operation }
     graphQLErrors?.some(({ extensions }) => extensions?.code === "UNAUTHENTICATED");
 
   if (isAuthError) {
-    return ensureRefresh().then(() => forward(operation));
+    return new Observable(observer => {
+      ensureRefresh()
+        .then(() => {
+          forward(operation).subscribe({
+            next: value => observer.next(value),
+            error: err => observer.error(err),
+            complete: () => observer.complete(),
+          });
+        })
+        .catch(err => observer.error(err));
+    });
   }
 });
 
