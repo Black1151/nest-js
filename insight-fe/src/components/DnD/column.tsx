@@ -377,6 +377,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
                 transition="transform 0.2s"
                 _groupHover={{ transform: "translateY(0)" }}
                 _hover={{ transform: "translateY(0)" }}
+                _active={{ transform: "translateY(0)" }}
               >
                 {enableColumnReorder && (
                   <IconButton
