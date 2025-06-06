@@ -69,7 +69,6 @@ const idleStyles = { cursor: "grab" };
 const cardOverStyles = { bg: "blue.50" };
 const isDraggingStyles = { opacity: 0.4 };
 
-
 const scrollContainerStyles = {
   height: "100%",
   overflowY: "auto",
@@ -82,6 +81,7 @@ const cardListStyles = {
   boxSizing: "border-box",
   minHeight: "100%",
   px: 1,
+  pb: 6,
   overflowY: "auto",
 };
 
