@@ -16,10 +16,16 @@ export class CreateStyleInput extends HasRelationsInput {
 
   @Field(() => ID)
   collectionId: number;
+
+  @Field(() => ID, { nullable: true })
+  groupId?: number;
 }
 
 @InputType()
 export class UpdateStyleInput extends PartialType(CreateStyleInput) {
   @Field(() => ID)
   id: number;
+
+  @Field(() => ID, { nullable: true })
+  groupId?: number;
 }
