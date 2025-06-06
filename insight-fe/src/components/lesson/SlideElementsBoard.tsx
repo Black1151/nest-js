@@ -11,6 +11,9 @@ import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 import { ContentCard } from "../layout/Card";
 import ElementWrapper, { ElementWrapperStyles } from "./ElementWrapper";
+import {
+  defaultColumnWrapperStyles,
+} from "./defaultStyles";
 import { useCallback } from "react";
 import { X, Settings, Plus } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
@@ -97,21 +100,7 @@ export default function SlideElementsBoard({
         container: { border: "1px dashed gray", width: "100%" },
         header: { bg: color, color: "white", px: 2, py: 1 },
       },
-      wrapperStyles: {
-        bgColor: "#ffffff",
-        bgOpacity: 0,
-        gradientFrom: "",
-        gradientTo: "",
-        gradientDirection: 0,
-        dropShadow: "none",
-        paddingX: 0,
-        paddingY: 0,
-        marginX: 0,
-        marginY: 0,
-        borderColor: "#000000",
-        borderWidth: 0,
-        borderRadius: "none",
-      },
+      wrapperStyles: { ...defaultColumnWrapperStyles },
       items: [],
       spacing: 0,
     };
