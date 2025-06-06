@@ -51,8 +51,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
   const [styleItems, setStyleItems] = useState<SlideElementDnDItemProps[]>([]);
 
-  const [fetchStyles, { data: stylesData }] = useLazyQuery(
-    GET_STYLES_WITH_CONFIG
+  const [fetchStyles, { data: stylesData, refetch }] = useLazyQuery(
+    GET_STYLES_WITH_CONFIG,
+    { fetchPolicy: "network-only" }
   );
 
   const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
@@ -90,9 +91,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         selectedCollectionId={selectedCollectionId}
         onSelectCollection={setSelectedCollectionId}
         styleItems={styleItems}
-        onFetchStyles={(type) => {
+        onFetchStyles={async (type) => {
           if (selectedCollectionId === "") return;
-          fetchStyles({
+          await fetchStyles({
             variables: {
               collectionId: String(selectedCollectionId),
               element: type,
@@ -132,9 +133,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         closeLoad={() => setIsLoadStyleOpen(false)}
         styleCollections={styleCollections}
         selectedElement={editor.selectedElement}
-        onSave={({ name, collectionId }) => {
+        onSave={async ({ name, collectionId }) => {
           if (!editor.selectedElement) return;
-          createStyle({
+          await createStyle({
             variables: {
               data: {
                 name,
@@ -144,6 +145,18 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
               },
             },
           });
+
+          if (
+            selectedCollectionId !== "" &&
+            collectionId === selectedCollectionId
+          ) {
+            await fetchStyles({
+              variables: {
+                collectionId: String(selectedCollectionId),
+                element: editor.selectedElement.type,
+              },
+            });
+          }
         }}
         onAddCollection={(collection) =>
           setStyleCollections([...styleCollections, collection])
