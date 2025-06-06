@@ -132,6 +132,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
 
   const [state, setState] = useState<State>(idle);
   const [isDragging, setIsDragging] = useState(false);
+  const [showControls, setShowControls] = useState(false);
 
   const { instanceId, registerColumn } = useBoardContext();
 
@@ -350,19 +351,22 @@ function ColumnBase<TCard extends BaseCardDnD>({
             spacing={0}
             height="100%"
           >
-            <Box position="absolute" top={0} right={0} width={6} height={6} role="group" zIndex={1}>
+            <Box position="absolute" top={0} right={0} role="group" zIndex={1}>
               {enableColumnReorder && (
-                <Box
-                  opacity={0}
-                  transition="opacity 0.2s"
-                  pointerEvents="none"
-                  _groupHover={{ opacity: 1 }}
-                >
-                  <GripVertical size={12} />
-                </Box>
+                <IconButton
+                  ref={dragHandleRef}
+                  aria-label="Drag column"
+                  icon={<GripVertical size={12} />}
+                  size="xs"
+                  variant="ghost"
+                  cursor="grab"
+                  onClick={() => {
+                    onSelectColumn?.(columnId);
+                    setShowControls((v) => !v);
+                  }}
+                />
               )}
               <HStack
-                ref={dragHandleRef}
                 justify="flex-end"
                 bg="gray.100"
                 px={2}
@@ -373,21 +377,9 @@ function ColumnBase<TCard extends BaseCardDnD>({
                 position="absolute"
                 top={0}
                 right={0}
-                transform="translateY(-100%)"
+                transform={showControls ? "translateY(0)" : "translateY(-100%)"}
                 transition="transform 0.2s"
-                _groupHover={{ transform: "translateY(0)" }}
-                _hover={{ transform: "translateY(0)" }}
-                _active={{ transform: "translateY(0)" }}
               >
-                {enableColumnReorder && (
-                  <IconButton
-                    aria-label="Drag column"
-                    icon={<GripVertical size={12} />}
-                    size="xs"
-                    variant="ghost"
-                    cursor="grab"
-                  />
-                )}
                 {onSelectColumn && (
                   <IconButton
                     aria-label="Edit column styles"

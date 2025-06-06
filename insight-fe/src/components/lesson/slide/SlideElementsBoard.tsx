@@ -78,8 +78,9 @@ export default function SlideElementsBoard({
   /* ------------------------------------------------------------------ */
   const [columnIdToDelete, setColumnIdToDelete] = useState<string | null>(null);
   const boardRef = useRef<HTMLDivElement | null>(null);
-  const dragHandleRef = useRef<HTMLDivElement | null>(null);
+  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+  const [showControls, setShowControls] = useState(false);
 
   useBoardDragDrop(
     boardRef,
@@ -160,25 +161,20 @@ export default function SlideElementsBoard({
   // ------------------------------------------------------------------
   return (
     <Box ref={boardRef} position="relative" overflow="hidden">
-      <Box
-        position="absolute"
-        top={0}
-        left={0}
-        width={6}
-        height={6}
-        role="group"
-        zIndex={1}
-      >
-        <Box
-          opacity={0}
-          transition="opacity 0.2s"
-          pointerEvents="none"
-          _groupHover={{ opacity: 1 }}
-        >
-          <GripVertical size={12} />
-        </Box>
-        <HStack
+      <Box position="absolute" top={0} left={0} role="group" zIndex={1}>
+        <IconButton
           ref={dragHandleRef}
+          aria-label="Drag container"
+          icon={<GripVertical size={12} />}
+          size="xs"
+          variant="ghost"
+          cursor="grab"
+          onClick={() => {
+            onSelectBoard?.();
+            setShowControls((v) => !v);
+          }}
+        />
+        <HStack
           justify="flex-start"
           bg="gray.100"
           px={2}
@@ -189,19 +185,9 @@ export default function SlideElementsBoard({
           position="absolute"
           top={0}
           left={0}
-          transform="translateY(-100%)"
+          transform={showControls ? "translateY(0)" : "translateY(-100%)"}
           transition="transform 0.2s"
-          _groupHover={{ transform: "translateY(0)" }}
-          _hover={{ transform: "translateY(0)" }}
-          _active={{ transform: "translateY(0)" }}
         >
-          <IconButton
-            aria-label="Drag container"
-            icon={<GripVertical size={12} />}
-            size="xs"
-            variant="ghost"
-            cursor="grab"
-          />
           {onRemoveBoard && (
             <IconButton
               aria-label="Delete container"
