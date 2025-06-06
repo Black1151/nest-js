@@ -17,7 +17,7 @@ import {
   Stack,
   IconButton,
 } from "@chakra-ui/react";
-import { X, Settings } from "lucide-react";
+import { X, Settings, GripVertical } from "lucide-react";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import {
   attachClosestEdge,
@@ -127,7 +127,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
   const columnId = column.columnId;
   const columnRef = useRef<HTMLDivElement | null>(null);
   const columnInnerRef = useRef<HTMLDivElement | null>(null);
-  const headerRef = useRef<HTMLDivElement | null>(null);
+  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   const scrollableRef = useRef<HTMLDivElement | null>(null);
 
   const [state, setState] = useState<State>(idle);
@@ -202,10 +202,11 @@ function ColumnBase<TCard extends BaseCardDnD>({
 
     // If column reordering is enabled, make the column draggable.
     if (enableColumnReorder) {
+      invariant(dragHandleRef.current);
       disposables.push(
         draggable({
           element: columnRef.current,
-          dragHandle: columnRef.current,
+          dragHandle: dragHandleRef.current,
           getInitialData: () => ({ columnId, type: "column", instanceId }),
           onGenerateDragPreview: ({ nativeSetDragImage }) => {
             const isSafari =
@@ -350,13 +351,22 @@ function ColumnBase<TCard extends BaseCardDnD>({
             height="100%"
           >
             <HStack
-              ref={headerRef}
               position="absolute"
               top={1}
               right={1}
               spacing={1}
               zIndex={1}
             >
+              {enableColumnReorder && (
+                <IconButton
+                  ref={dragHandleRef}
+                  aria-label="Drag column"
+                  icon={<GripVertical size={12} />}
+                  size="xs"
+                  variant="ghost"
+                  cursor="grab"
+                />
+              )}
               {onSelectColumn && (
                 <IconButton
                   aria-label="Edit column styles"
