@@ -159,7 +159,7 @@ export default function SlideElementsBoard({
   /*  Render                                                            */
   /* ------------------------------------------------------------------ */
   return (
-    <Box ref={boardRef} position="relative">
+    <Box ref={boardRef} position="relative" role="group" overflow="hidden">
       <HStack
         ref={dragHandleRef}
         justify="flex-end"
@@ -169,6 +169,13 @@ export default function SlideElementsBoard({
         borderRadius="md"
         spacing={1}
         cursor="grab"
+        position="absolute"
+        top={0}
+        right={0}
+        transform="translateY(-100%)"
+        transition="transform 0.2s"
+        _groupHover={{ transform: "translateY(0)" }}
+        _hover={{ transform: "translateY(0)" }}
       >
         {onRemoveBoard && (
           <IconButton
