@@ -9,6 +9,7 @@ import {
   CREATE_STYLE,
   GET_STYLES_WITH_CONFIG_BY_GROUP,
   GET_STYLE_GROUPS,
+  GET_COLOR_PALETTES,
 } from "@/graphql/lesson";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -49,9 +50,15 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     id: number;
     name: string;
   }[]>([]);
+  const [colorPalettes, setColorPalettes] = useState<{
+    id: number;
+    name: string;
+    colors: string[];
+  }[]>([]);
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
     ""
   );
+  const [selectedPaletteId, setSelectedPaletteId] = useState<number | "">("");
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
   const [styleItems, setStyleItems] = useState<SlideElementDnDItemProps[]>([]);
@@ -72,6 +79,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     { fetchPolicy: "network-only" }
   );
   const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
+  const [fetchPalettes, { data: palettesData }] = useLazyQuery(GET_COLOR_PALETTES);
 
   const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
   const [createStyle] = useMutation(CREATE_STYLE);
@@ -87,6 +95,16 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       setStyleItems([]);
       setSelectedElementType(null);
       setSelectedGroupId("");
+      setColorPalettes([]);
+      setSelectedPaletteId("");
+    }
+  }, [selectedCollectionId]);
+
+  useEffect(() => {
+    if (selectedCollectionId !== "") {
+      fetchPalettes({
+        variables: { collectionId: String(selectedCollectionId) },
+      });
     }
   }, [selectedCollectionId]);
 
@@ -129,6 +147,14 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       setStyleItems([]);
     }
   }, [selectedCollectionId, selectedElementType, selectedGroupId]);
+
+  useEffect(() => {
+    if (palettesData?.getAllColorPalette) {
+      setColorPalettes(palettesData.getAllColorPalette);
+    } else {
+      setColorPalettes([]);
+    }
+  }, [palettesData]);
 
   useEffect(() => {
     if (stylesData?.getAllStyle) {
@@ -179,6 +205,8 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         handleDropElement={editor.handleDropElement}
         openSaveStyle={() => setIsSaveStyleOpen(true)}
         openLoadStyle={() => setIsLoadStyleOpen(true)}
+        colorPalettes={colorPalettes}
+        selectedPaletteId={selectedPaletteId}
       />
 
       <StyleModals

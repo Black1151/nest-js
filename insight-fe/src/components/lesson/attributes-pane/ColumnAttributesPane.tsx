@@ -10,11 +10,15 @@ import useStyleAttributes from "../hooks/useStyleAttributes";
 interface ColumnAttributesPaneProps {
   column: ColumnType<SlideElementDnDItemProps>;
   onChange: (updated: ColumnType<SlideElementDnDItemProps>) => void;
+  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  selectedPaletteId?: number | "";
 }
 
 export default function ColumnAttributesPane({
   column,
   onChange,
+  colorPalettes,
+  selectedPaletteId,
 }: ColumnAttributesPaneProps) {
   const styleAttrs = useStyleAttributes({
     wrapperStyles: column.wrapperStyles,
@@ -26,7 +30,11 @@ export default function ColumnAttributesPane({
 
   return (
     <Accordion allowMultiple>
-      <WrapperSettings attrs={styleAttrs} />
+      <WrapperSettings
+        attrs={styleAttrs}
+        colorPalettes={colorPalettes}
+        selectedPaletteId={selectedPaletteId}
+      />
     </Accordion>
   );
 }

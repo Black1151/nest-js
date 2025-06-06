@@ -29,6 +29,8 @@ interface TextAttributesProps {
   setLineHeight: (val: string) => void;
   textAlign: string;
   setTextAlign: (val: string) => void;
+  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  selectedPaletteId?: number | "";
 }
 
 export default function TextAttributes({
@@ -46,6 +48,8 @@ export default function TextAttributes({
   setLineHeight,
   textAlign,
   setTextAlign,
+  colorPalettes,
+  selectedPaletteId,
 }: TextAttributesProps) {
   return (
     <AccordionItem borderWidth="1px" borderColor="purple.300" borderRadius="md" mb={2}>
