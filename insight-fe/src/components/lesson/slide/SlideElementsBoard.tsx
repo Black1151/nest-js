@@ -99,7 +99,6 @@ export default function SlideElementsBoard({
       columnId: id,
       styles: {
         container: { border: "1px dashed gray", width: "100%" },
-        header: { bg: color, color: "white", px: 2, py: 1 },
       },
       wrapperStyles: { ...defaultColumnWrapperStyles },
       items: [],
