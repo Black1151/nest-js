@@ -12,7 +12,7 @@ import {
   Stack,
   Textarea,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useLessonFilters } from "@/hooks/useLessonFilters";
 import YearGroupDropdown from "@/components/dropdowns/YearGroupDropdown";
 import SubjectDropdown from "@/components/dropdowns/SubjectDropdown";
 import TopicDropdown from "@/components/dropdowns/TopicDropdown";
@@ -43,9 +43,14 @@ export default function SaveLessonModal({ isOpen, onClose, onSave, isSaving = fa
     mode: "onChange",
   });
 
-  const [yearGroupId, setYearGroupId] = useState<string | null>(null);
-  const [subjectId, setSubjectId] = useState<string | null>(null);
-  const [topicId, setTopicId] = useState<string | null>(null);
+  const {
+    yearGroupId,
+    subjectId,
+    topicId,
+    setYearGroupId,
+    setSubjectId,
+    setTopicId,
+  } = useLessonFilters();
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     await onSave({
@@ -57,8 +62,6 @@ export default function SaveLessonModal({ isOpen, onClose, onSave, isSaving = fa
     });
     reset();
     setYearGroupId(null);
-    setSubjectId(null);
-    setTopicId(null);
   };
 
   return (
@@ -86,11 +89,7 @@ export default function SaveLessonModal({ isOpen, onClose, onSave, isSaving = fa
           <FormLabel>Year Group</FormLabel>
           <YearGroupDropdown
             value={yearGroupId}
-            onChange={(id) => {
-              setYearGroupId(id);
-              setSubjectId(null);
-              setTopicId(null);
-            }}
+            onChange={(id) => setYearGroupId(id)}
           />
         </FormControl>
         <FormControl isRequired>
@@ -98,10 +97,7 @@ export default function SaveLessonModal({ isOpen, onClose, onSave, isSaving = fa
           <SubjectDropdown
             yearGroupId={yearGroupId}
             value={subjectId}
-            onChange={(id) => {
-              setSubjectId(id);
-              setTopicId(null);
-            }}
+            onChange={(id) => setSubjectId(id)}
           />
         </FormControl>
         <FormControl isRequired>

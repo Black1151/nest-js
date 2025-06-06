@@ -3,6 +3,7 @@
 import { BaseModal } from "../modals/BaseModal";
 import { Button, FormControl, FormLabel, HStack, Stack } from "@chakra-ui/react";
 import { useState } from "react";
+import { useLessonFilters } from "@/hooks/useLessonFilters";
 import YearGroupDropdown from "@/components/dropdowns/YearGroupDropdown";
 import SubjectDropdown from "@/components/dropdowns/SubjectDropdown";
 import TopicDropdown from "@/components/dropdowns/TopicDropdown";
@@ -21,9 +22,14 @@ export default function LoadLessonModal({
   onLoad,
   isLoading = false,
 }: LoadLessonModalProps) {
-  const [yearGroupId, setYearGroupId] = useState<string | null>(null);
-  const [subjectId, setSubjectId] = useState<string | null>(null);
-  const [topicId, setTopicId] = useState<string | null>(null);
+  const {
+    yearGroupId,
+    subjectId,
+    topicId,
+    setYearGroupId,
+    setSubjectId,
+    setTopicId,
+  } = useLessonFilters();
   const [lessonId, setLessonId] = useState<string | null>(null);
 
   return (
@@ -52,8 +58,6 @@ export default function LoadLessonModal({
             value={yearGroupId}
             onChange={(id) => {
               setYearGroupId(id);
-              setSubjectId(null);
-              setTopicId(null);
               setLessonId(null);
             }}
           />
@@ -65,7 +69,6 @@ export default function LoadLessonModal({
             value={subjectId}
             onChange={(id) => {
               setSubjectId(id);
-              setTopicId(null);
               setLessonId(null);
             }}
           />
