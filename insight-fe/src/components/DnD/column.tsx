@@ -69,12 +69,6 @@ const idleStyles = { cursor: "grab" };
 const cardOverStyles = { bg: "blue.50" };
 const isDraggingStyles = { opacity: 0.4 };
 
-const columnHeaderStyles = {
-  px: 2,
-  py: 1,
-  color: "gray.500",
-  userSelect: "none",
-};
 
 const scrollContainerStyles = {
   height: "100%",
@@ -147,7 +141,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
   useEffect(() => {
     invariant(columnRef.current);
     invariant(columnInnerRef.current);
-    invariant(headerRef.current);
     invariant(scrollableRef.current);
 
     const disposables = [
@@ -212,7 +205,7 @@ function ColumnBase<TCard extends BaseCardDnD>({
       disposables.push(
         draggable({
           element: columnRef.current,
-          dragHandle: headerRef.current,
+          dragHandle: columnRef.current,
           getInitialData: () => ({ columnId, type: "column", instanceId }),
           onGenerateDragPreview: ({ nativeSetDragImage }) => {
             const isSafari =
@@ -358,34 +351,30 @@ function ColumnBase<TCard extends BaseCardDnD>({
           >
             <HStack
               ref={headerRef}
-              justify="space-between"
-              align="center"
-              sx={{ ...columnHeaderStyles, ...(column.styles?.header ?? {}) }}
-              data-testid={`column-header-${columnId}`}
+              position="absolute"
+              top={1}
+              right={1}
+              spacing={1}
+              zIndex={1}
             >
-              <Heading as="span" size="xs">
-                {column.title}
-              </Heading>
-              <HStack spacing={1}>
-                {onSelectColumn && (
-                  <IconButton
-                    aria-label="Edit column styles"
-                    icon={<Settings size={12} />}
-                    size="xs"
-                    variant="ghost"
-                    onClick={() => onSelectColumn(columnId)}
-                  />
-                )}
-                {onRemoveColumn && (
-                  <IconButton
-                    aria-label="Remove column"
-                    icon={<X size={12} />}
-                    size="xs"
-                    variant="ghost"
-                    onClick={() => onRemoveColumn(columnId)}
-                  />
-                )}
-              </HStack>
+              {onSelectColumn && (
+                <IconButton
+                  aria-label="Edit column styles"
+                  icon={<Settings size={12} />}
+                  size="xs"
+                  variant="ghost"
+                  onClick={() => onSelectColumn(columnId)}
+                />
+              )}
+              {onRemoveColumn && (
+                <IconButton
+                  aria-label="Remove column"
+                  icon={<X size={12} />}
+                  size="xs"
+                  variant="ghost"
+                  onClick={() => onRemoveColumn(columnId)}
+                />
+              )}
             </HStack>
 
             <Box ref={scrollableRef} sx={scrollContainerStyles}>
