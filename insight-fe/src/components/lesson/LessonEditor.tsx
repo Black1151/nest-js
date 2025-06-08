@@ -82,7 +82,10 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
   const [fetchPalettes, { data: palettesData }] = useLazyQuery(GET_COLOR_PALETTES);
 
-  const { data: collectionsData } = useQuery(GET_STYLE_COLLECTIONS);
+  const {
+    data: collectionsData,
+    refetch: refetchCollections,
+  } = useQuery(GET_STYLE_COLLECTIONS);
   const [createStyle] = useMutation(CREATE_STYLE);
 
   useEffect(() => {
@@ -182,19 +185,22 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         selectedGroupId={selectedGroupId}
         onSelectGroup={setSelectedGroupId}
         styleItems={styleItems}
-        onAddCollection={(collection) =>
-          setStyleCollections([...styleCollections, collection])
-        }
-        onUpdateCollection={(collection) =>
+        onAddCollection={async (collection) => {
+          setStyleCollections([...styleCollections, collection]);
+          await refetchCollections();
+        }}
+        onUpdateCollection={async (collection) => {
           setStyleCollections((cols) =>
             cols.map((c) => (c.id === collection.id ? collection : c))
-          )
-        }
-        onDeleteCollection={(id) => {
+          );
+          await refetchCollections();
+        }}
+        onDeleteCollection={async (id) => {
           setStyleCollections((cols) => cols.filter((c) => c.id !== id));
           if (selectedCollectionId === id) {
             setSelectedCollectionId("");
           }
+          await refetchCollections();
         }}
       />
 
@@ -272,9 +278,10 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             });
           }
         }}
-        onAddCollection={(collection) =>
-          setStyleCollections([...styleCollections, collection])
-        }
+        onAddCollection={async (collection) => {
+          setStyleCollections([...styleCollections, collection]);
+          await refetchCollections();
+        }}
         onAddGroup={(group) => setStyleGroups([...styleGroups, group])}
         onAddPalette={(palette) => {
           setColorPalettes((p) => [...p, palette]);
