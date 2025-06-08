@@ -14,6 +14,7 @@ export default function AddStyleGroupModal({
   onClose,
 }: AddStyleGroupModalProps) {
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   return (
     <BaseModal
@@ -24,9 +25,16 @@ export default function AddStyleGroupModal({
         <HStack>
           <Button
             colorScheme="blue"
-            onClick={() => {
-              onSave(name);
-              setName("");
+            isLoading={loading}
+            onClick={async () => {
+              setLoading(true);
+              try {
+                await onSave(name);
+                setName("");
+                onClose();
+              } finally {
+                setLoading(false);
+              }
             }}
           >
             Save
