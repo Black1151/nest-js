@@ -202,6 +202,42 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           }
           await refetchCollections();
         }}
+        onAddGroup={async (group) => {
+          setStyleGroups([...styleGroups, group]);
+          if (selectedCollectionId !== "" && selectedElementType) {
+            await fetchGroups({
+              variables: {
+                collectionId: String(selectedCollectionId),
+                element: selectedElementType,
+              },
+            });
+          }
+        }}
+        onUpdateGroup={async (group) => {
+          setStyleGroups((gs) => gs.map((g) => (g.id === group.id ? group : g)));
+          if (selectedCollectionId !== "" && selectedElementType) {
+            await fetchGroups({
+              variables: {
+                collectionId: String(selectedCollectionId),
+                element: selectedElementType,
+              },
+            });
+          }
+        }}
+        onDeleteGroup={async (id) => {
+          setStyleGroups((gs) => gs.filter((g) => g.id !== id));
+          if (selectedCollectionId === id) {
+            setSelectedGroupId("");
+          }
+          if (selectedCollectionId !== "" && selectedElementType) {
+            await fetchGroups({
+              variables: {
+                collectionId: String(selectedCollectionId),
+                element: selectedElementType,
+              },
+            });
+          }
+        }}
       />
 
       <SlideCanvas
@@ -282,7 +318,17 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           setStyleCollections([...styleCollections, collection]);
           await refetchCollections();
         }}
-        onAddGroup={(group) => setStyleGroups([...styleGroups, group])}
+        onAddGroup={async (group) => {
+          setStyleGroups([...styleGroups, group]);
+          if (selectedCollectionId !== "" && selectedElementType) {
+            await fetchGroups({
+              variables: {
+                collectionId: String(selectedCollectionId),
+                element: selectedElementType,
+              },
+            });
+          }
+        }}
         onAddPalette={(palette) => {
           setColorPalettes((p) => [...p, palette]);
           fetchPalettes({
