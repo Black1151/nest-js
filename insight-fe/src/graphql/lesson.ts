@@ -53,6 +53,21 @@ export const CREATE_STYLE_COLLECTION = gql`
   }
 `;
 
+export const UPDATE_STYLE_COLLECTION = gql`
+  mutation UpdateStyleCollection($data: UpdateStyleCollectionInput!) {
+    updateStyleCollection(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
+export const DELETE_STYLE_COLLECTION = gql`
+  mutation DeleteStyleCollection($data: IdInput!) {
+    deleteStyleCollection(data: $data)
+  }
+`;
+
 export const GET_STYLES_WITH_CONFIG = gql`
   query GetStylesWithConfig($collectionId: String!, $element: String!) {
     getAllStyle(
