@@ -6,6 +6,7 @@ import { ApiPermissionMappingService } from './sub/api-permissions-mapping/api-p
 import { PermissionService } from './sub/permission/permission.service';
 import { PERMISSION_KEY_METADATA } from './decorators/resolver-permission-key.decorator';
 import { IS_PUBLIC_ROUTE_KEY } from 'src/decorators/public.decorator';
+import { IS_DISABLED_OPERATION_KEY } from 'src/common/decorators/disabled-operation.decorator';
 
 @Injectable()
 export class RbacBootstrapService implements OnModuleInit {
@@ -49,7 +50,12 @@ export class RbacBootstrapService implements OnModuleInit {
             [methodRef, currentProto.constructor],
           );
 
-          if (isPublic) continue;
+          const isDisabled = this.reflector.getAllAndOverride<boolean>(
+            IS_DISABLED_OPERATION_KEY,
+            [methodRef, currentProto.constructor],
+          );
+
+          if (isPublic || isDisabled) continue;
 
           const stableKey: string | undefined = Reflect.getMetadata(
             PERMISSION_KEY_METADATA,

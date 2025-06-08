@@ -1,5 +1,7 @@
 // src/common/decorators/mutation-if.decorator.ts
 import { Mutation } from '@nestjs/graphql';
+import { SetMetadata } from '@nestjs/common';
+import { IS_DISABLED_OPERATION_KEY } from './disabled-operation.decorator';
 
 /**
  * Usage:
@@ -20,5 +22,11 @@ export function MutationIf(
     target: any,
     propertyKey: string | symbol,
     descriptor: PropertyDescriptor,
-  ) => {};
+  ) => {
+    SetMetadata(IS_DISABLED_OPERATION_KEY, true)(
+      target,
+      propertyKey,
+      descriptor,
+    );
+  };
 }
