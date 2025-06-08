@@ -185,6 +185,17 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         onAddCollection={(collection) =>
           setStyleCollections([...styleCollections, collection])
         }
+        onUpdateCollection={(collection) =>
+          setStyleCollections((cols) =>
+            cols.map((c) => (c.id === collection.id ? collection : c))
+          )
+        }
+        onDeleteCollection={(id) => {
+          setStyleCollections((cols) => cols.filter((c) => c.id !== id));
+          if (selectedCollectionId === id) {
+            setSelectedCollectionId("");
+          }
+        }}
       />
 
       <SlideCanvas
