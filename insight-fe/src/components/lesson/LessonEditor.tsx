@@ -182,6 +182,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         selectedGroupId={selectedGroupId}
         onSelectGroup={setSelectedGroupId}
         styleItems={styleItems}
+        onAddCollection={(collection) =>
+          setStyleCollections([...styleCollections, collection])
+        }
       />
 
       <SlideCanvas
