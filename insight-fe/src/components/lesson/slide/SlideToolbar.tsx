@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack, VStack, Button, Select } from "@chakra-ui/react";
+import { Box, HStack, VStack, Button } from "@chakra-ui/react";
 import { useState, useMemo } from "react";
 import { useMutation } from "@apollo/client";
 import {
@@ -10,11 +10,23 @@ import {
 import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import AddStyleCollectionModal from "../modals/AddStyleCollectionModal";
+import AddStyleGroupModal from "../modals/AddStyleGroupModal";
 import {
   CREATE_STYLE_COLLECTION,
   UPDATE_STYLE_COLLECTION,
   DELETE_STYLE_COLLECTION,
+  CREATE_STYLE_GROUP,
+  UPDATE_STYLE_GROUP,
+  DELETE_STYLE_GROUP,
 } from "@/graphql/lesson";
+
+const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
+  text: "Text",
+  table: "Table",
+  image: "Image",
+  video: "Video",
+  quiz: "Quiz",
+};
 
 interface SlideToolbarProps {
   availableElements: { type: string; label: string }[];
@@ -30,6 +42,9 @@ interface SlideToolbarProps {
   onAddCollection: (collection: { id: number; name: string }) => void;
   onUpdateCollection?: (collection: { id: number; name: string }) => void;
   onDeleteCollection?: (id: number) => void;
+  onAddGroup: (group: { id: number; name: string }) => void;
+  onUpdateGroup?: (group: { id: number; name: string }) => void;
+  onDeleteGroup?: (id: number) => void;
 }
 
 export default function SlideToolbar({
@@ -46,15 +61,26 @@ export default function SlideToolbar({
   onAddCollection,
   onUpdateCollection,
   onDeleteCollection,
+  onAddGroup,
+  onUpdateGroup,
+  onDeleteGroup,
 }: SlideToolbarProps) {
   const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
   const [isEditCollectionOpen, setIsEditCollectionOpen] = useState(false);
   const [isDeleteCollectionOpen, setIsDeleteCollectionOpen] = useState(false);
+  const [isAddGroupOpen, setIsAddGroupOpen] = useState(false);
+  const [isEditGroupOpen, setIsEditGroupOpen] = useState(false);
+  const [isDeleteGroupOpen, setIsDeleteGroupOpen] = useState(false);
 
   const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
   const [updateCollection] = useMutation(UPDATE_STYLE_COLLECTION);
   const [deleteCollection, { loading: deleting }] = useMutation(
     DELETE_STYLE_COLLECTION,
+  );
+  const [createGroup] = useMutation(CREATE_STYLE_GROUP);
+  const [updateGroup] = useMutation(UPDATE_STYLE_GROUP);
+  const [deleteGroup, { loading: deletingGroup }] = useMutation(
+    DELETE_STYLE_GROUP,
   );
 
   const selectedCollection =
@@ -65,6 +91,14 @@ export default function SlideToolbar({
     () =>
       styleCollections.map((c) => ({ label: c.name, value: String(c.id) })),
     [styleCollections]
+  );
+  const selectedGroup =
+    selectedGroupId !== ""
+      ? styleGroups.find((g) => g.id === selectedGroupId)
+      : undefined;
+  const groupOptions = useMemo(
+    () => styleGroups.map((g) => ({ label: g.name, value: String(g.id) })),
+    [styleGroups]
   );
   return (
     <>
@@ -112,21 +146,22 @@ export default function SlideToolbar({
           ))}
         </HStack>
         {selectedElementType && (
-          <Select
-            placeholder="Select group"
+          <CrudDropdown
+            options={groupOptions}
             value={selectedGroupId}
             onChange={(e) =>
               onSelectGroup(
                 e.target.value === "" ? "" : parseInt(e.target.value, 10)
               )
             }
-          >
-            {styleGroups.map((g) => (
-              <option key={g.id} value={g.id}>
-                {g.name}
-              </option>
-            ))}
-          </Select>
+            onCreate={() => setIsAddGroupOpen(true)}
+            onUpdate={() => setIsEditGroupOpen(true)}
+            onDelete={() => setIsDeleteGroupOpen(true)}
+            isDisabled={selectedCollectionId === ""}
+            isCreateDisabled={selectedCollectionId === "" || !selectedElementType}
+            isUpdateDisabled={selectedGroupId === ""}
+            isDeleteDisabled={selectedGroupId === ""}
+          />
         )}
       </VStack>
       {styleItems.length > 0 && (
@@ -201,6 +236,75 @@ export default function SlideToolbar({
           setIsDeleteCollectionOpen(false);
         }}
         isLoading={deleting}
+      />
+
+      <AddStyleGroupModal
+        isOpen={isAddGroupOpen}
+        onClose={() => setIsAddGroupOpen(false)}
+        onSave={async (name) => {
+          if (selectedCollectionId === "" || !selectedElementType) return;
+          const { data } = await createGroup({
+            variables: {
+              data: {
+                name,
+                collectionId: selectedCollectionId,
+                element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
+              },
+            },
+          });
+          if (data?.createStyleGroup) {
+            onAddGroup({
+              id: data.createStyleGroup.id,
+              name: data.createStyleGroup.name,
+            });
+          }
+        }}
+      />
+
+      <AddStyleGroupModal
+        isOpen={isEditGroupOpen}
+        onClose={() => setIsEditGroupOpen(false)}
+        title="Update Style Group"
+        confirmLabel="Update"
+        initialName={selectedGroup?.name ?? ""}
+        onSave={async (name) => {
+          if (
+            selectedGroupId === "" ||
+            selectedCollectionId === "" ||
+            !selectedElementType
+          )
+            return;
+          const { data } = await updateGroup({
+            variables: {
+              data: {
+                id: selectedGroupId,
+                name,
+                collectionId: selectedCollectionId,
+                element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
+              },
+            },
+          });
+          if (data?.updateStyleGroup) {
+            onUpdateGroup?.({
+              id: selectedGroupId,
+              name: data.updateStyleGroup.name,
+            });
+          }
+        }}
+      />
+
+      <ConfirmationModal
+        isOpen={isDeleteGroupOpen}
+        onClose={() => setIsDeleteGroupOpen(false)}
+        action="delete group"
+        bodyText="Are you sure you want to delete this group?"
+        onConfirm={async () => {
+          if (selectedGroupId === "") return;
+          await deleteGroup({ variables: { data: { id: selectedGroupId } } });
+          onDeleteGroup?.(selectedGroupId);
+          setIsDeleteGroupOpen(false);
+        }}
+        isLoading={deletingGroup}
       />
     </>
   );

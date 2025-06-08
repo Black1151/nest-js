@@ -44,6 +44,21 @@ export const CREATE_STYLE_GROUP = gql`
   }
 `;
 
+export const UPDATE_STYLE_GROUP = gql`
+  mutation UpdateStyleGroup($data: UpdateStyleGroupInput!) {
+    updateStyleGroup(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
+export const DELETE_STYLE_GROUP = gql`
+  mutation DeleteStyleGroup($data: IdInput!) {
+    deleteStyleGroup(data: $data)
+  }
+`;
+
 export const CREATE_STYLE_COLLECTION = gql`
   mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {
     createStyleCollection(data: $data) {

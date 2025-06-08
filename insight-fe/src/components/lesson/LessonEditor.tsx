@@ -202,6 +202,13 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           }
           await refetchCollections();
         }}
+        onAddGroup={(group) => setStyleGroups([...styleGroups, group])}
+        onUpdateGroup={(group) =>
+          setStyleGroups((gs) => gs.map((g) => (g.id === group.id ? group : g)))
+        }
+        onDeleteGroup={(id) =>
+          setStyleGroups((gs) => gs.filter((g) => g.id !== id))
+        }
       />
 
       <SlideCanvas
