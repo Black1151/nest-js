@@ -214,6 +214,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         isAddPaletteDisabled={selectedCollectionId === ""}
         colorPalettes={colorPalettes}
         selectedPaletteId={selectedPaletteId}
+        onSelectPalette={setSelectedPaletteId}
       />
 
       <StyleModals
