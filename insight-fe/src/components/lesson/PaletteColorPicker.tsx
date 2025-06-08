@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack, Input } from "@chakra-ui/react";
+import { Box, HStack, Text } from "@chakra-ui/react";
 
 interface PaletteColorPickerProps {
   /** Currently selected color value */
@@ -16,7 +16,13 @@ export default function PaletteColorPicker({
   onChange,
   paletteColors = [],
 }: PaletteColorPickerProps) {
-  const showCustom = paletteColors.length === 0;
+  if (paletteColors.length === 0) {
+    return (
+      <Text fontSize="sm" color="gray.500">
+        No colors available
+      </Text>
+    );
+  }
 
   return (
     <HStack spacing={2} flexWrap="wrap">
@@ -33,17 +39,6 @@ export default function PaletteColorPicker({
           onClick={() => onChange(color)}
         />
       ))}
-      {showCustom && (
-        <Input
-          type="color"
-          w="40px"
-          h="40px"
-          p={0}
-          border="none"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      )}
     </HStack>
   );
 }
