@@ -44,6 +44,15 @@ export const CREATE_STYLE_GROUP = gql`
   }
 `;
 
+export const CREATE_STYLE_COLLECTION = gql`
+  mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {
+    createStyleCollection(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
 export const GET_STYLES_WITH_CONFIG = gql`
   query GetStylesWithConfig($collectionId: String!, $element: String!) {
     getAllStyle(

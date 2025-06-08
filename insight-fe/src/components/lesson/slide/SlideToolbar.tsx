@@ -1,10 +1,15 @@
 "use client";
 
-import { Box, HStack, VStack, Select, Button } from "@chakra-ui/react";
+import { Box, HStack, VStack, Button, Select } from "@chakra-ui/react";
+import { useState, useMemo } from "react";
+import { useMutation } from "@apollo/client";
 import {
   SlideElementDnDItemProps,
   SlideElementDnDItem,
 } from "@/components/DnD/cards/SlideElementDnDCard";
+import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
+import AddStyleCollectionModal from "../modals/AddStyleCollectionModal";
+import { CREATE_STYLE_COLLECTION } from "@/graphql/lesson";
 
 interface SlideToolbarProps {
   availableElements: { type: string; label: string }[];
@@ -17,6 +22,7 @@ interface SlideToolbarProps {
   selectedGroupId: number | "";
   onSelectGroup: (id: number | "") => void;
   styleItems: SlideElementDnDItemProps[];
+  onAddCollection: (collection: { id: number; name: string }) => void;
 }
 
 export default function SlideToolbar({
@@ -30,7 +36,15 @@ export default function SlideToolbar({
   selectedGroupId,
   onSelectGroup,
   styleItems,
+  onAddCollection,
 }: SlideToolbarProps) {
+  const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
+  const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
+  const collectionOptions = useMemo(
+    () =>
+      styleCollections.map((c) => ({ label: c.name, value: String(c.id) })),
+    [styleCollections]
+  );
   return (
     <>
       <Box p={4} borderWidth="1px" borderRadius="md">
@@ -51,21 +65,20 @@ export default function SlideToolbar({
         </HStack>
       </Box>
       <VStack mt={2} alignItems="flex-start">
-        <Select
-          placeholder="Select collection"
+        <CrudDropdown
+          options={collectionOptions}
           value={selectedCollectionId}
           onChange={(e) =>
             onSelectCollection(
               e.target.value === "" ? "" : parseInt(e.target.value, 10)
             )
           }
-        >
-          {styleCollections.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
+          onCreate={() => setIsAddCollectionOpen(true)}
+          onUpdate={() => {}}
+          onDelete={() => {}}
+          isUpdateDisabled
+          isDeleteDisabled
+        />
         <HStack>
           {availableElements.map((el) => (
             <Button
@@ -117,6 +130,22 @@ export default function SlideToolbar({
           ))}
         </HStack>
       )}
+      <AddStyleCollectionModal
+        isOpen={isAddCollectionOpen}
+        onClose={() => setIsAddCollectionOpen(false)}
+        onSave={async (name) => {
+          const { data } = await createCollection({
+            variables: { data: { name } },
+          });
+          if (data?.createStyleCollection) {
+            onAddCollection({
+              id: data.createStyleCollection.id,
+              name: data.createStyleCollection.name,
+            });
+            setIsAddCollectionOpen(false);
+          }
+        }}
+      />
     </>
   );
 }
