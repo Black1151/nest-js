@@ -52,7 +52,10 @@ export default function TextAttributes({
   colorPalettes,
   selectedPaletteId,
 }: TextAttributesProps) {
-  const paletteColors = colorPalettes?.find((p) => p.id === selectedPaletteId)?.colors ?? [];
+  const paletteColors =
+    colorPalettes?.find(
+      (p) => Number(p.id) === Number(selectedPaletteId)
+    )?.colors ?? [];
 
   return (
     <AccordionItem borderWidth="1px" borderColor="purple.300" borderRadius="md" mb={2}>

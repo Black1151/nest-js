@@ -61,7 +61,10 @@ export default function WrapperSettings({
     setSpacing,
   } = attrs;
 
-  const paletteColors = colorPalettes?.find((p) => p.id === selectedPaletteId)?.colors ?? [];
+  const paletteColors =
+    colorPalettes?.find(
+      (p) => Number(p.id) === Number(selectedPaletteId)
+    )?.colors ?? [];
 
   return (
     <>
