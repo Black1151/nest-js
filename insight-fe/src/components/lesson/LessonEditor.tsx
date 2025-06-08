@@ -211,6 +211,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             setIsPaletteOpen(true);
           }
         }}
+        isAddPaletteDisabled={selectedCollectionId === ""}
         colorPalettes={colorPalettes}
         selectedPaletteId={selectedPaletteId}
       />

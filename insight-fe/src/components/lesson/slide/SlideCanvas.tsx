@@ -33,6 +33,7 @@ interface SlideCanvasProps {
   openSaveStyle: () => void;
   openLoadStyle: () => void;
   openAddPalette: () => void;
+  isAddPaletteDisabled?: boolean;
   colorPalettes: { id: number; name: string; colors: string[] }[];
   selectedPaletteId: number | "";
 }
@@ -60,6 +61,7 @@ export default function SlideCanvas({
   openSaveStyle,
   openLoadStyle,
   openAddPalette,
+  isAddPaletteDisabled,
   colorPalettes,
   selectedPaletteId,
 }: SlideCanvasProps) {
@@ -114,7 +116,11 @@ export default function SlideCanvas({
                 <Button size="xs" onClick={openSaveStyle}>
                   Save Style
                 </Button>
-                <Button size="xs" onClick={openAddPalette}>
+                <Button
+                  size="xs"
+                  onClick={openAddPalette}
+                  isDisabled={isAddPaletteDisabled}
+                >
                   Add Palette
                 </Button>
               </HStack>
