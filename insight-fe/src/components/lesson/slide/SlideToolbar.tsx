@@ -163,7 +163,6 @@ export default function SlideToolbar({
               id: data.createStyleCollection.id,
               name: data.createStyleCollection.name,
             });
-            setIsAddCollectionOpen(false);
           }
         }}
       />
@@ -185,7 +184,6 @@ export default function SlideToolbar({
               name: data.updateStyleCollection.name,
             });
           }
-          setIsEditCollectionOpen(false);
         }}
       />
 

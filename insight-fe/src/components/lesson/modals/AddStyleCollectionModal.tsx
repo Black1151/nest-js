@@ -23,6 +23,7 @@ export default function AddStyleCollectionModal({
   confirmLabel = "Save",
 }: AddStyleCollectionModalProps) {
   const [name, setName] = useState(initialName);
+  const [loading, setLoading] = useState(false);
 
   // Reset name whenever the modal is opened or the initial value changes
   useEffect(() => {
@@ -40,10 +41,17 @@ export default function AddStyleCollectionModal({
         <HStack>
           <Button
             colorScheme="blue"
-            onClick={() => {
-              onSave(name);
-              if (initialName === "") {
-                setName("");
+            isLoading={loading}
+            onClick={async () => {
+              setLoading(true);
+              try {
+                await onSave(name);
+                if (initialName === "") {
+                  setName("");
+                }
+                onClose();
+              } finally {
+                setLoading(false);
               }
             }}
           >

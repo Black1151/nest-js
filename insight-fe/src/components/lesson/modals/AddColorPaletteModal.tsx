@@ -29,7 +29,7 @@ export default function AddColorPaletteModal({
   const [name, setName] = useState("");
   const [colors, setColors] = useState<string[]>(["#000000"]);
 
-  const [createPalette] = useMutation(CREATE_COLOR_PALETTE);
+  const [createPalette, { loading }] = useMutation(CREATE_COLOR_PALETTE);
 
   const handleColorChange = (idx: number, value: string) => {
     setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
@@ -49,6 +49,7 @@ export default function AddColorPaletteModal({
         <HStack>
           <Button
             colorScheme="blue"
+            isLoading={loading}
             onClick={async () => {
               const { data } = await createPalette({
                 variables: {
