@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button, HStack, Input } from "@chakra-ui/react";
 import { BaseModal } from "@/components/modals/BaseModal";
