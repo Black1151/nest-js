@@ -42,7 +42,9 @@ export default function AddStyleCollectionModal({
             colorScheme="blue"
             onClick={() => {
               onSave(name);
-              setName("");
+              if (initialName === "") {
+                setName("");
+              }
             }}
           >
             {confirmLabel}
