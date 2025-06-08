@@ -22,7 +22,7 @@ import { RelationIdsInput } from './base.inputs';
 //   ids: number[];
 // }
 
-interface FindAllOpts {
+export interface FindAllOpts {
   limit?: number;
   offset?: number;
   all?: boolean;
