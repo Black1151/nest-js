@@ -11,6 +11,7 @@ import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-p
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import AddStyleCollectionModal from "../modals/AddStyleCollectionModal";
 import AddStyleGroupModal from "../modals/AddStyleGroupModal";
+import ColorPaletteModal from "../modals/AddColorPaletteModal";
 import {
   CREATE_STYLE_COLLECTION,
   UPDATE_STYLE_COLLECTION,
@@ -18,6 +19,9 @@ import {
   CREATE_STYLE_GROUP,
   UPDATE_STYLE_GROUP,
   DELETE_STYLE_GROUP,
+  CREATE_COLOR_PALETTE,
+  UPDATE_COLOR_PALETTE,
+  DELETE_COLOR_PALETTE,
 } from "@/graphql/lesson";
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
@@ -32,8 +36,11 @@ interface SlideToolbarProps {
   availableElements: { type: string; label: string }[];
   styleCollections: { id: number; name: string }[];
   styleGroups: { id: number; name: string }[];
+  colorPalettes: { id: number; name: string; colors: string[] }[];
   selectedCollectionId: number | "";
   onSelectCollection: (id: number | "") => void;
+  selectedPaletteId: number | "";
+  onSelectPalette: (id: number | "") => void;
   selectedElementType: string | null;
   onSelectElement: (type: string) => void;
   selectedGroupId: number | "";
@@ -45,14 +52,20 @@ interface SlideToolbarProps {
   onAddGroup: (group: { id: number; name: string }) => void;
   onUpdateGroup?: (group: { id: number; name: string }) => void;
   onDeleteGroup?: (id: number) => void;
+  onAddPalette: (palette: { id: number; name: string; colors: string[] }) => void;
+  onUpdatePalette?: (palette: { id: number; name: string; colors: string[] }) => void;
+  onDeletePalette?: (id: number) => void;
 }
 
 export default function SlideToolbar({
   availableElements,
   styleCollections,
   styleGroups,
+  colorPalettes,
   selectedCollectionId,
   onSelectCollection,
+  selectedPaletteId,
+  onSelectPalette,
   selectedElementType,
   onSelectElement,
   selectedGroupId,
@@ -64,6 +77,9 @@ export default function SlideToolbar({
   onAddGroup,
   onUpdateGroup,
   onDeleteGroup,
+  onAddPalette,
+  onUpdatePalette,
+  onDeletePalette,
 }: SlideToolbarProps) {
   const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
   const [isEditCollectionOpen, setIsEditCollectionOpen] = useState(false);
@@ -71,6 +87,9 @@ export default function SlideToolbar({
   const [isAddGroupOpen, setIsAddGroupOpen] = useState(false);
   const [isEditGroupOpen, setIsEditGroupOpen] = useState(false);
   const [isDeleteGroupOpen, setIsDeleteGroupOpen] = useState(false);
+  const [isAddPaletteOpen, setIsAddPaletteOpen] = useState(false);
+  const [isEditPaletteOpen, setIsEditPaletteOpen] = useState(false);
+  const [isDeletePaletteOpen, setIsDeletePaletteOpen] = useState(false);
 
   const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
   const [updateCollection] = useMutation(UPDATE_STYLE_COLLECTION);
@@ -81,6 +100,11 @@ export default function SlideToolbar({
   const [updateGroup] = useMutation(UPDATE_STYLE_GROUP);
   const [deleteGroup, { loading: deletingGroup }] = useMutation(
     DELETE_STYLE_GROUP,
+  );
+  const [createPalette] = useMutation(CREATE_COLOR_PALETTE);
+  const [updatePalette] = useMutation(UPDATE_COLOR_PALETTE);
+  const [deletePalette, { loading: deletingPalette }] = useMutation(
+    DELETE_COLOR_PALETTE,
   );
 
   const selectedCollection =
@@ -99,6 +123,14 @@ export default function SlideToolbar({
   const groupOptions = useMemo(
     () => styleGroups.map((g) => ({ label: g.name, value: String(g.id) })),
     [styleGroups]
+  );
+  const selectedPalette =
+    selectedPaletteId !== ""
+      ? colorPalettes.find((p) => p.id === selectedPaletteId)
+      : undefined;
+  const paletteOptions = useMemo(
+    () => colorPalettes.map((p) => ({ label: p.name, value: String(p.id) })),
+    [colorPalettes]
   );
   return (
     <>
@@ -120,20 +152,38 @@ export default function SlideToolbar({
         </HStack>
       </Box>
       <VStack mt={2} alignItems="flex-start">
-        <CrudDropdown
-          options={collectionOptions}
-          value={selectedCollectionId}
-          onChange={(e) =>
-            onSelectCollection(
-              e.target.value === "" ? "" : parseInt(e.target.value, 10)
-            )
-          }
-          onCreate={() => setIsAddCollectionOpen(true)}
-          onUpdate={() => setIsEditCollectionOpen(true)}
-          onDelete={() => setIsDeleteCollectionOpen(true)}
-          isUpdateDisabled={selectedCollectionId === ""}
-          isDeleteDisabled={selectedCollectionId === ""}
-        />
+        <HStack w="full">
+          <CrudDropdown
+            options={collectionOptions}
+            value={selectedCollectionId}
+            onChange={(e) =>
+              onSelectCollection(
+                e.target.value === "" ? "" : parseInt(e.target.value, 10)
+              )
+            }
+            onCreate={() => setIsAddCollectionOpen(true)}
+            onUpdate={() => setIsEditCollectionOpen(true)}
+            onDelete={() => setIsDeleteCollectionOpen(true)}
+            isUpdateDisabled={selectedCollectionId === ""}
+            isDeleteDisabled={selectedCollectionId === ""}
+          />
+          <CrudDropdown
+            options={paletteOptions}
+            value={selectedPaletteId}
+            onChange={(e) =>
+              onSelectPalette(
+                e.target.value === "" ? "" : parseInt(e.target.value, 10)
+              )
+            }
+            onCreate={() => setIsAddPaletteOpen(true)}
+            onUpdate={() => setIsEditPaletteOpen(true)}
+            onDelete={() => setIsDeletePaletteOpen(true)}
+            isDisabled={selectedCollectionId === ""}
+            isCreateDisabled={selectedCollectionId === ""}
+            isUpdateDisabled={selectedPaletteId === ""}
+            isDeleteDisabled={selectedPaletteId === ""}
+          />
+        </HStack>
         <HStack>
           {availableElements.map((el) => (
             <Button
@@ -305,6 +355,43 @@ export default function SlideToolbar({
           setIsDeleteGroupOpen(false);
         }}
         isLoading={deletingGroup}
+      />
+
+      <ColorPaletteModal
+        isOpen={isAddPaletteOpen}
+        onClose={() => setIsAddPaletteOpen(false)}
+        collectionId={selectedCollectionId as number}
+        onSave={(palette) => {
+          onAddPalette(palette);
+        }}
+      />
+
+      <ColorPaletteModal
+        isOpen={isEditPaletteOpen}
+        onClose={() => setIsEditPaletteOpen(false)}
+        collectionId={selectedCollectionId as number}
+        paletteId={selectedPaletteId === "" ? undefined : selectedPaletteId}
+        initialName={selectedPalette?.name ?? ""}
+        initialColors={selectedPalette?.colors ?? []}
+        title="Update Color Palette"
+        confirmLabel="Update"
+        onSave={(palette) => {
+          onUpdatePalette?.(palette);
+        }}
+      />
+
+      <ConfirmationModal
+        isOpen={isDeletePaletteOpen}
+        onClose={() => setIsDeletePaletteOpen(false)}
+        action="delete palette"
+        bodyText="Are you sure you want to delete this palette?"
+        onConfirm={async () => {
+          if (selectedPaletteId === "") return;
+          await deletePalette({ variables: { data: { id: selectedPaletteId } } });
+          onDeletePalette?.(selectedPaletteId);
+          setIsDeletePaletteOpen(false);
+        }}
+        isLoading={deletingPalette}
       />
     </>
   );
