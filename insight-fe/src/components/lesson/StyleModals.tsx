@@ -2,7 +2,7 @@
 
 import LoadStyleModal from "./modals/LoadStyleModal";
 import SaveStyleModal from "./modals/SaveStyleModal";
-import AddColorPaletteModal from "./modals/AddColorPaletteModal";
+import ColorPaletteModal from "./modals/AddColorPaletteModal";
 
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -62,7 +62,7 @@ export default function StyleModals({
         onLoad={onLoad}
       />
       {selectedCollectionId !== "" && (
-        <AddColorPaletteModal
+        <ColorPaletteModal
           isOpen={isPaletteOpen}
           onClose={closePalette}
           collectionId={selectedCollectionId as number}
