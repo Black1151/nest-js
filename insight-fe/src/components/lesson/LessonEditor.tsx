@@ -1,7 +1,7 @@
 "use client";
 
 import { Box } from "@chakra-ui/react";
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 
 import {
@@ -10,11 +10,14 @@ import {
   GET_STYLES_WITH_CONFIG_BY_GROUP,
   GET_STYLE_GROUPS,
   GET_COLOR_PALETTES,
+  GET_THEMES,
 } from "@/graphql/lesson";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
 import SlideCanvas from "./slide/SlideCanvas";
 import StyleModals from "./StyleModals";
+import { availableFonts } from "@/theme/fonts";
+import { Slide } from "./slide/SlideSequencer";
 import {
   useLessonEditorState,
   LessonEditorHandle,
@@ -41,8 +44,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   _,
   ref
 ) {
-  const editor = useLessonEditorState(ref);
-
   const [styleCollections, setStyleCollections] = useState<
     { id: number; name: string }[]
   >([]);
@@ -55,10 +56,17 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     name: string;
     colors: string[];
   }[]>([]);
+  const [themes, setThemes] = useState<{
+    id: number;
+    name: string;
+    styleCollectionId: number;
+    defaultPaletteId: number;
+  }[]>([]);
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
     ""
   );
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | "">("");
+  const [selectedThemeId, setSelectedThemeId] = useState<number | "">("");
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -81,6 +89,30 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   );
   const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
   const [fetchPalettes, { data: palettesData }] = useLazyQuery(GET_COLOR_PALETTES);
+  const [fetchThemes, { data: themesData }] = useLazyQuery(GET_THEMES);
+
+  const selectedPalette =
+    selectedPaletteId !== ""
+      ? colorPalettes.find((p) => p.id === selectedPaletteId)
+      : undefined;
+
+  const editor = useLessonEditorState(undefined, {
+    defaultColor: selectedPalette?.colors[0] ?? "#000000",
+    defaultFontFamily: availableFonts[0].fontFamily,
+  });
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      getContent: () => ({ slides: editor.state.slides }),
+      setContent: (slides: Slide[]) => {
+        editor.setSlides(slides);
+        editor.selectSlide(slides[0]?.id ?? null);
+      },
+      getThemeId: () => selectedThemeId,
+    }),
+    [editor.state.slides, selectedThemeId, editor.setSlides, editor.selectSlide],
+  );
 
   const {
     data: collectionsData,
@@ -101,6 +133,8 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       setSelectedGroupId("");
       setColorPalettes([]);
       setSelectedPaletteId("");
+      setThemes([]);
+      setSelectedThemeId("");
     }
   }, [selectedCollectionId]);
 
@@ -109,6 +143,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       fetchPalettes({
         variables: { collectionId: String(selectedCollectionId) },
       });
+      fetchThemes({ variables: { collectionId: String(selectedCollectionId) } });
     }
   }, [selectedCollectionId]);
 
@@ -160,6 +195,23 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     }
   }, [palettesData]);
 
+  useEffect(() => {
+    if (themesData?.getAllTheme) {
+      setThemes(themesData.getAllTheme);
+    } else {
+      setThemes([]);
+    }
+  }, [themesData]);
+
+  useEffect(() => {
+    if (selectedThemeId !== "") {
+      const theme = themes.find((t) => t.id === selectedThemeId);
+      if (theme) {
+        setSelectedPaletteId(theme.defaultPaletteId);
+      }
+    }
+  }, [selectedThemeId, themes]);
+
   const handleUpdatePalette = async (palette: {
     id: number;
     name: string;
@@ -209,9 +261,12 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       <SlideToolbar
         availableElements={AVAILABLE_ELEMENTS}
         styleCollections={styleCollections}
+        themes={themes}
         styleGroups={styleGroups}
         selectedCollectionId={selectedCollectionId}
         onSelectCollection={setSelectedCollectionId}
+        selectedThemeId={selectedThemeId}
+        onSelectTheme={setSelectedThemeId}
         selectedElementType={selectedElementType}
         onSelectElement={setSelectedElementType}
         selectedGroupId={selectedGroupId}

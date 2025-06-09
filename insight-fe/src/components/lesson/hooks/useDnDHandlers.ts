@@ -6,9 +6,15 @@ import { availableFonts } from "@/theme/fonts";
 import { defaultColumnWrapperStyles } from "../defaultStyles";
 import type { LessonState, Action } from "./useLessonSelection";
 
+interface Options {
+  defaultColor: string;
+  defaultFontFamily: string;
+}
+
 export default function useDnDHandlers(
   state: LessonState,
-  dispatch: React.Dispatch<Action>
+  dispatch: React.Dispatch<Action>,
+  options: Options
 ) {
   const handleDropElement = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -46,9 +52,9 @@ export default function useDnDHandlers(
                   ? {
                       text: "Sample Text",
                       styles: {
-                        color: "#000000",
+                        color: options.defaultColor,
                         fontSize: "16px",
-                        fontFamily: availableFonts[0].fontFamily,
+                        fontFamily: options.defaultFontFamily,
                         fontWeight: "normal",
                         lineHeight: "1.2",
                         textAlign: "left",
@@ -103,7 +109,7 @@ export default function useDnDHandlers(
       });
       dispatch({ type: "setDropIndicator", indicator: null });
     },
-    [state.selectedSlideId, dispatch]
+    [state.selectedSlideId, dispatch, options.defaultColor, options.defaultFontFamily]
   );
 
   const handleDragOver = useCallback(

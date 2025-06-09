@@ -5,6 +5,7 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
+  JoinColumn,
   RelationId,
   OneToMany,
 } from 'typeorm';
@@ -19,6 +20,7 @@ import { SubjectEntity } from '../subject/subject.entity';
 import { EducatorProfileDto } from '../../user-profiles/educator-profile/dto/educator-profile.dto';
 import { MultipleChoiceQuestionEntity } from '../multiple-choice-question/multiple-choice-question.entity';
 import { QuizEntity } from '../quiz/quiz.entity';
+import { ThemeEntity } from '../theme/theme.entity';
 
 @ObjectType()
 @Entity('lessons')
@@ -34,6 +36,18 @@ export class LessonEntity extends AbstractBaseEntity {
   @Field(() => GraphQLJSONObject, { nullable: true })
   @Column({ type: 'jsonb', nullable: true })
   content?: Record<string, any>;
+
+  /* ---------- theme ---------- */
+
+  @Field(() => ThemeEntity, { nullable: true })
+  @ManyToOne(() => ThemeEntity, { nullable: true })
+  @JoinColumn({ name: 'theme_id' })
+  theme?: ThemeEntity;
+
+  @Field(() => ID, { nullable: true })
+  @Column({ name: 'theme_id', nullable: true })
+  @RelationId((lesson: LessonEntity) => lesson.theme)
+  themeId?: number;
 
   /* ---------- relationships ---------- */
 

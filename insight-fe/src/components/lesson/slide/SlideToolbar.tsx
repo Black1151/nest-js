@@ -37,8 +37,11 @@ interface SlideToolbarProps {
   styleCollections: { id: number; name: string }[];
   styleGroups: { id: number; name: string }[];
   colorPalettes: { id: number; name: string; colors: string[] }[];
+  themes: { id: number; name: string }[];
   selectedCollectionId: number | "";
   onSelectCollection: (id: number | "") => void;
+  selectedThemeId: number | "";
+  onSelectTheme: (id: number | "") => void;
   selectedPaletteId: number | "";
   onSelectPalette: (id: number | "") => void;
   selectedElementType: string | null;
@@ -60,10 +63,13 @@ interface SlideToolbarProps {
 export default function SlideToolbar({
   availableElements,
   styleCollections,
+  themes,
   styleGroups,
   colorPalettes,
   selectedCollectionId,
   onSelectCollection,
+  selectedThemeId,
+  onSelectTheme,
   selectedPaletteId,
   onSelectPalette,
   selectedElementType,
@@ -132,6 +138,12 @@ export default function SlideToolbar({
     () => colorPalettes.map((p) => ({ label: p.name, value: String(p.id) })),
     [colorPalettes]
   );
+  const selectedTheme =
+    selectedThemeId !== "" ? themes.find((t) => t.id === selectedThemeId) : undefined;
+  const themeOptions = useMemo(
+    () => themes.map((t) => ({ label: t.name, value: String(t.id) })),
+    [themes]
+  );
   return (
     <>
       <Box p={4} borderWidth="1px" borderRadius="md">
@@ -166,6 +178,16 @@ export default function SlideToolbar({
             onDelete={() => setIsDeleteCollectionOpen(true)}
             isUpdateDisabled={selectedCollectionId === ""}
             isDeleteDisabled={selectedCollectionId === ""}
+          />
+          <CrudDropdown
+            options={themeOptions}
+            value={selectedThemeId}
+            onChange={(e) =>
+              onSelectTheme(
+                e.target.value === "" ? "" : parseInt(e.target.value, 10)
+              )
+            }
+            isDisabled={selectedCollectionId === ""}
           />
           <CrudDropdown
             options={paletteOptions}

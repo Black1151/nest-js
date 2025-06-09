@@ -13,6 +13,9 @@ export class CreateLessonInput extends HasRelationsInput {
   @Field(() => GraphQLJSONObject, { nullable: true })
   content?: Record<string, any>;
 
+  @Field(() => ID, { nullable: true })
+  themeId?: number;
+
   @Field(() => [ID], { nullable: 'itemsAndList' })
   recommendedYearGroupIds?: number[];
 
