@@ -137,6 +137,7 @@ export const GET_LESSON = gql`
     getLesson(data: $data) {
       id
       title
+      themeId
       content
     }
   }

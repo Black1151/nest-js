@@ -7,6 +7,8 @@ import { Slide, createInitialBoard } from "../slide/SlideSequencer";
 export interface LessonEditorHandle {
   getContent: () => { slides: Slide[] };
   setContent: (slides: Slide[]) => void;
+  setTheme?: (theme: { id: number; styleCollectionId: number; defaultPaletteId: number }) => void;
+  getThemeId?: () => number | "";
 }
 
 export interface LessonState {
