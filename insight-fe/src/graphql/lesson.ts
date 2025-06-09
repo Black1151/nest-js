@@ -154,6 +154,16 @@ export const GET_COLOR_PALETTES = gql`
   }
 `;
 
+export const GET_COLOR_PALETTE = gql`
+  query GetColorPalette($id: String!) {
+    getColorPalette(data: { id: $id }) {
+      id
+      name
+      colors
+    }
+  }
+`;
+
 export const CREATE_COLOR_PALETTE = gql`
   mutation CreateColorPalette($data: CreateColorPaletteInput!) {
     createColorPalette(data: $data) {
