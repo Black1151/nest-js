@@ -10,8 +10,12 @@ import {
 } from "@chakra-ui/react";
 import { Plus, Trash2 } from "lucide-react";
 import { BaseModal } from "@/components/modals/BaseModal";
-import { useMutation } from "@apollo/client";
-import { CREATE_COLOR_PALETTE, UPDATE_COLOR_PALETTE } from "@/graphql/lesson";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  CREATE_COLOR_PALETTE,
+  UPDATE_COLOR_PALETTE,
+  GET_COLOR_PALETTE,
+} from "@/graphql/lesson";
 
 interface ColorPaletteModalProps {
   isOpen: boolean;
@@ -46,6 +50,12 @@ export default function ColorPaletteModal({
     initialColors.length > 0 ? initialColors : ["#000000"]
   );
 
+  const { data: paletteData } = useQuery(GET_COLOR_PALETTE, {
+    variables: { id: String(paletteId) },
+    skip: !paletteId || !isOpen,
+    fetchPolicy: "network-only",
+  });
+
   const [createPalette, { loading: creating }] = useMutation(CREATE_COLOR_PALETTE);
   const [updatePalette, { loading: updating }] = useMutation(UPDATE_COLOR_PALETTE);
 
@@ -53,11 +63,20 @@ export default function ColorPaletteModal({
 
   // Reset fields when the modal opens or initial values change
   useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) return;
+
+    if (paletteId && paletteData?.getColorPalette) {
+      setName(paletteData.getColorPalette.name);
+      setColors(
+        paletteData.getColorPalette.colors.length > 0
+          ? paletteData.getColorPalette.colors
+          : ["#000000"]
+      );
+    } else {
       setName(initialName);
       setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
     }
-  }, [isOpen, initialName, initialColors]);
+  }, [isOpen, initialName, initialColors, paletteId, paletteData]);
 
   const handleColorChange = (idx: number, value: string) => {
     setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
