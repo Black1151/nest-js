@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   HStack,
@@ -10,26 +10,54 @@ import {
 } from "@chakra-ui/react";
 import { Plus, Trash2 } from "lucide-react";
 import { BaseModal } from "@/components/modals/BaseModal";
-import { gql, useMutation } from "@apollo/client";
-import { CREATE_COLOR_PALETTE } from "@/graphql/lesson";
+import { useMutation } from "@apollo/client";
+import { CREATE_COLOR_PALETTE, UPDATE_COLOR_PALETTE } from "@/graphql/lesson";
 
-interface AddColorPaletteModalProps {
+interface ColorPaletteModalProps {
   isOpen: boolean;
   onClose: () => void;
   collectionId: number;
   onSave?: (palette: { id: number; name: string; colors: string[] }) => void;
+  /** Pre-populated palette name */
+  initialName?: string;
+  /** Pre-populated list of colors */
+  initialColors?: string[];
+  /** Existing palette id for updates */
+  paletteId?: number;
+  /** Modal title */
+  title?: string;
+  /** Confirmation button label */
+  confirmLabel?: string;
 }
 
-export default function AddColorPaletteModal({
+export default function ColorPaletteModal({
   isOpen,
   onClose,
   collectionId,
   onSave,
-}: AddColorPaletteModalProps) {
-  const [name, setName] = useState("");
-  const [colors, setColors] = useState<string[]>(["#000000"]);
+  initialName = "",
+  initialColors = ["#000000"],
+  paletteId,
+  title = "Add Color Palette",
+  confirmLabel = "Save",
+}: ColorPaletteModalProps) {
+  const [name, setName] = useState(initialName);
+  const [colors, setColors] = useState<string[]>(
+    initialColors.length > 0 ? initialColors : ["#000000"]
+  );
 
-  const [createPalette, { loading }] = useMutation(CREATE_COLOR_PALETTE);
+  const [createPalette, { loading: creating }] = useMutation(CREATE_COLOR_PALETTE);
+  const [updatePalette, { loading: updating }] = useMutation(UPDATE_COLOR_PALETTE);
+
+  const loading = creating || updating;
+
+  // Reset fields when the modal opens or initial values change
+  useEffect(() => {
+    if (isOpen) {
+      setName(initialName);
+      setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
+    }
+  }, [isOpen, initialName, initialColors]);
 
   const handleColorChange = (idx: number, value: string) => {
     setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
@@ -44,27 +72,38 @@ export default function AddColorPaletteModal({
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Color Palette"
+      title={title}
       footer={
         <HStack>
           <Button
             colorScheme="blue"
             isLoading={loading}
             onClick={async () => {
-              const { data } = await createPalette({
-                variables: {
-                  data: { name, colors, collectionId },
-                },
-              });
-              if (data?.createColorPalette) {
-                onSave?.(data.createColorPalette);
-                setName("");
-                setColors(["#000000"]);
+              if (paletteId) {
+                const { data } = await updatePalette({
+                  variables: {
+                    data: { id: paletteId, name, colors },
+                  },
+                });
+                if (data?.updateColorPalette) {
+                  onSave?.(data.updateColorPalette);
+                }
+              } else {
+                const { data } = await createPalette({
+                  variables: {
+                    data: { name, colors, collectionId },
+                  },
+                });
+                if (data?.createColorPalette) {
+                  onSave?.(data.createColorPalette);
+                  setName("");
+                  setColors(["#000000"]);
+                }
               }
               onClose();
             }}
           >
-            Save
+            {confirmLabel}
           </Button>
           <Button onClick={onClose}>Cancel</Button>
         </HStack>
