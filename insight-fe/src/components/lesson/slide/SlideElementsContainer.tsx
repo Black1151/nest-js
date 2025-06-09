@@ -25,9 +25,10 @@ export interface BoardRow {
 interface SlideElementsContainerProps {
   columnMap: ColumnMap<SlideElementDnDItemProps>;
   boards: BoardRow[];
+  spacing?: number;
   onChange: (
     columnMap: ColumnMap<SlideElementDnDItemProps>,
-    boards: BoardRow[]
+    boards: BoardRow[],
   ) => void;
   selectedElementId?: string | null;
   onSelectElement?: (id: string) => void;
@@ -50,6 +51,7 @@ const COLUMN_COLORS = [
 export default function SlideElementsContainer({
   columnMap,
   boards,
+  spacing = 0,
   onChange,
   selectedElementId,
   onSelectElement,
@@ -96,13 +98,13 @@ export default function SlideElementsContainer({
   const updateBoard = (
     boardId: string,
     map: ColumnMap<SlideElementDnDItemProps>,
-    ids: string[]
+    ids: string[],
   ) => {
     onChange(
       map,
       boards.map((b) =>
-        b.id === boardId ? { ...b, orderedColumnIds: ids } : b
-      )
+        b.id === boardId ? { ...b, orderedColumnIds: ids } : b,
+      ),
     );
   };
 
@@ -115,7 +117,7 @@ export default function SlideElementsContainer({
     }
     onChange(
       newMap,
-      boards.filter((b) => b.id !== boardId)
+      boards.filter((b) => b.id !== boardId),
     );
   };
 
@@ -124,7 +126,7 @@ export default function SlideElementsContainer({
     const board = boards.find((b) => b.id === boardId);
     if (!board) return;
     const hasContent = board.orderedColumnIds.some(
-      (id) => columnMap[id]?.items.length > 0
+      (id) => columnMap[id]?.items.length > 0,
     );
     if (hasContent) {
       setBoardIdToDelete(boardId);
@@ -146,11 +148,11 @@ export default function SlideElementsContainer({
     columnMap,
     onChange,
     boardInstanceId,
-    instanceId
+    instanceId,
   );
 
   return (
-    <Stack ref={containerRef} spacing={0}>
+    <Stack ref={containerRef} spacing={spacing}>
       <Button
         size="sm"
         colorScheme="teal"

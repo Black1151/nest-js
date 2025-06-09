@@ -21,6 +21,7 @@ import { useSlideDnD } from "@/hooks/useSlideDnD";
 import {
   defaultColumnWrapperStyles,
   defaultBoardWrapperStyles,
+  defaultSlideWrapperStyles,
 } from "../defaultStyles";
 import { ElementWrapperStyles } from "../elements/ElementWrapper";
 
@@ -33,6 +34,8 @@ export interface SlideBoard {
 export interface Slide {
   id: string;
   title: string;
+  wrapperStyles?: ElementWrapperStyles;
+  spacing?: number;
   columnMap: ColumnMap<SlideElementDnDItemProps>;
   boards: SlideBoard[];
 }
@@ -106,14 +109,14 @@ function SlideItem({
               input,
               element,
               allowedEdges: ["top", "bottom"],
-            }
+            },
           ),
         onDragEnter: (args) =>
           setClosestEdge(extractClosestEdge(args.self.data)),
         onDrag: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
         onDragLeave: () => setClosestEdge(null),
         onDrop: () => setClosestEdge(null),
-      })
+      }),
     );
   }, [instanceId, slide.id]);
 
@@ -161,6 +164,8 @@ export default function SlideSequencer({
         {
           id,
           title: `Slide ${s.length + 1}`,
+          wrapperStyles: { ...defaultSlideWrapperStyles },
+          spacing: 4,
           columnMap: initial.columnMap,
           boards: initial.boards,
         },

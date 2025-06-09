@@ -20,3 +20,8 @@ export const defaultBoardWrapperStyles: ElementWrapperStyles = {
   ...defaultColumnWrapperStyles,
   bgOpacity: 1,
 };
+
+export const defaultSlideWrapperStyles: ElementWrapperStyles = {
+  ...defaultColumnWrapperStyles,
+  bgOpacity: 1,
+};
