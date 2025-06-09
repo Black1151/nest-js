@@ -6,7 +6,7 @@ import LessonEditor from "@/components/lesson/LessonEditor";
 import LessonPreviewModal from "@/components/lesson/modals/LessonPreviewModal";
 import LoadLessonModal from "@/components/lesson/modals/LoadLessonModal";
 import { useMutation, useLazyQuery } from "@apollo/client";
-import { CREATE_LESSON, GET_LESSON } from "@/graphql/lesson";
+import { CREATE_LESSON, GET_LESSON, GET_THEME } from "@/graphql/lesson";
 import { LessonEditorHandle } from "@/components/lesson/hooks/useLessonEditorState";
 import { Slide } from "@/components/lesson/slide/SlideSequencer";
 import SaveLessonModal from "@/components/lesson/modals/SaveLessonModal";
@@ -23,6 +23,7 @@ export const LessonBuilderPageClient = () => {
   });
 
   const [fetchLesson, { loading: loadingLesson }] = useLazyQuery(GET_LESSON);
+  const [fetchTheme] = useLazyQuery(GET_THEME);
 
   const openPreview = () => {
     const slides = editorRef.current?.getContent().slides ?? [];
@@ -67,8 +68,22 @@ export const LessonBuilderPageClient = () => {
     const { data } = await fetchLesson({
       variables: { data: { id: Number(lessonId) } },
     });
-    const slides = data?.getLesson?.content?.slides ?? [];
+    const lesson = data?.getLesson;
+    const slides = lesson?.content?.slides ?? [];
     editorRef.current?.setContent(slides);
+
+    const themeId = lesson?.themeId;
+    if (themeId) {
+      const themeRes = await fetchTheme({ variables: { id: String(themeId) } });
+      const theme = themeRes.data?.getTheme;
+      if (theme) {
+        editorRef.current?.setTheme?.({
+          id: theme.id,
+          styleCollectionId: theme.styleCollectionId,
+          defaultPaletteId: theme.defaultPaletteId,
+        });
+      }
+    }
     setIsLoadOpen(false);
   };
 

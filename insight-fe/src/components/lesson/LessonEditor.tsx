@@ -110,6 +110,11 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         editor.selectSlide(slides[0]?.id ?? null);
       },
       getThemeId: () => selectedThemeId,
+      setTheme: (theme: { id: number; styleCollectionId: number; defaultPaletteId: number }) => {
+        setSelectedCollectionId(theme.styleCollectionId);
+        setSelectedThemeId(theme.id);
+        setSelectedPaletteId(theme.defaultPaletteId);
+      },
     }),
     [editor.state.slides, selectedThemeId, editor.setSlides, editor.selectSlide],
   );
