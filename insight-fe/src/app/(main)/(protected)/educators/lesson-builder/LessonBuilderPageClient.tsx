@@ -45,12 +45,14 @@ export const LessonBuilderPageClient = () => {
   }) => {
     if (!yearGroupId || !subjectId || !topicId) return;
     const content = editorRef.current?.getContent() ?? { slides: [] };
+    const themeId = editorRef.current?.getThemeId() ?? null;
     await createLesson({
       variables: {
         data: {
           title,
           description: description.length > 0 ? description : null,
           content,
+          themeId: themeId ? Number(themeId) : undefined,
           recommendedYearGroupIds: [Number(yearGroupId)],
           relationIds: [
             { relation: "subject", ids: [Number(subjectId)] },
