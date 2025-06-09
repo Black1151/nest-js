@@ -160,6 +160,27 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     }
   }, [palettesData]);
 
+  const handleUpdatePalette = async (palette: {
+    id: number;
+    name: string;
+    colors: string[];
+  }) => {
+    setColorPalettes((p) => p.map((pl) => (pl.id === palette.id ? palette : pl)));
+    await fetchPalettes({
+      variables: { collectionId: String(selectedCollectionId) },
+    });
+  };
+
+  const handleDeletePalette = async (id: number) => {
+    setColorPalettes((p) => p.filter((pl) => pl.id !== id));
+    if (selectedPaletteId === id) {
+      setSelectedPaletteId("");
+    }
+    await fetchPalettes({
+      variables: { collectionId: String(selectedCollectionId) },
+    });
+  };
+
   useEffect(() => {
     if (stylesData?.getAllStyle) {
       const items = stylesData.getAllStyle.map((s: any) => ({
@@ -238,6 +259,17 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             });
           }
         }}
+        colorPalettes={colorPalettes}
+        selectedPaletteId={selectedPaletteId}
+        onSelectPalette={setSelectedPaletteId}
+        onAddPalette={(palette) => {
+          setColorPalettes((p) => [...p, palette]);
+          fetchPalettes({
+            variables: { collectionId: String(selectedCollectionId) },
+          });
+        }}
+        onUpdatePalette={handleUpdatePalette}
+        onDeletePalette={handleDeletePalette}
       />
 
       <SlideCanvas
