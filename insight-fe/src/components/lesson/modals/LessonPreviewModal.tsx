@@ -30,7 +30,7 @@ export default function LessonPreviewModal({
             <Text mb={2} fontWeight="bold">
               {slide.title}
             </Text>
-            <SlidePreview columnMap={slide.columnMap} boards={slide.boards} />
+            <SlidePreview slide={slide} />
           </Box>
         ))}
       </Stack>

@@ -5,10 +5,11 @@ import { BoardRow } from "../SlideElementsContainer";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import type { LessonState, Action } from "./useLessonSelection";
+import type { Slide } from "../slide/SlideSequencer";
 
 export default function useBoardColumnHelpers(
   state: LessonState,
-  dispatch: React.Dispatch<Action>
+  dispatch: React.Dispatch<Action>,
 ) {
   const updateElement = useCallback(
     (updated: SlideElementDnDItemProps) => {
@@ -39,7 +40,7 @@ export default function useBoardColumnHelpers(
         },
       });
     },
-    [state.selectedSlideId, dispatch]
+    [state.selectedSlideId, dispatch],
   );
 
   const updateColumn = useCallback(
@@ -54,7 +55,7 @@ export default function useBoardColumnHelpers(
         }),
       });
     },
-    [state.selectedSlideId, dispatch]
+    [state.selectedSlideId, dispatch],
   );
 
   const updateBoard = useCallback(
@@ -67,7 +68,7 @@ export default function useBoardColumnHelpers(
         updater: () => updated,
       });
     },
-    [state.selectedSlideId, dispatch]
+    [state.selectedSlideId, dispatch],
   );
 
   const cloneElement = useCallback(() => {
@@ -80,7 +81,9 @@ export default function useBoardColumnHelpers(
         for (const board of slide.boards) {
           for (const colId of board.orderedColumnIds) {
             const col = newMap[colId];
-            const idx = col.items.findIndex((i) => i.id === state.selectedElementId);
+            const idx = col.items.findIndex(
+              (i) => i.id === state.selectedElementId,
+            );
             if (idx !== -1) {
               const orig = col.items[idx];
               const copy = { ...orig, id: crypto.randomUUID() };
@@ -111,7 +114,9 @@ export default function useBoardColumnHelpers(
         for (const board of slide.boards) {
           for (const colId of board.orderedColumnIds) {
             const col = newMap[colId];
-            const idx = col.items.findIndex((i) => i.id === state.selectedElementId);
+            const idx = col.items.findIndex(
+              (i) => i.id === state.selectedElementId,
+            );
             if (idx !== -1) {
               newMap[colId] = {
                 ...col,
@@ -136,5 +141,13 @@ export default function useBoardColumnHelpers(
     updateBoard,
     cloneElement,
     deleteElement,
+    updateSlide: (updater: (slide: Slide) => Slide) => {
+      if (!state.selectedSlideId) return;
+      dispatch({
+        type: "updateSlide",
+        slideId: state.selectedSlideId,
+        updater,
+      });
+    },
   };
 }

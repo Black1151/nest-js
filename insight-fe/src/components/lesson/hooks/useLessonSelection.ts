@@ -3,6 +3,7 @@
 import { useCallback, useReducer, useMemo, useImperativeHandle } from "react";
 import { BoardRow } from "../slide/SlideElementsContainer";
 import { Slide, createInitialBoard } from "../slide/SlideSequencer";
+import { defaultSlideWrapperStyles } from "../defaultStyles";
 
 export interface LessonEditorHandle {
   getContent: () => { slides: Slide[] };
@@ -80,7 +81,7 @@ function reducer(state: LessonState, action: Action): LessonState {
       return {
         ...state,
         slides: state.slides.map((s) =>
-          s.id === action.slideId ? action.updater(s) : s
+          s.id === action.slideId ? action.updater(s) : s,
         ),
       };
     case "updateBoard":
@@ -91,10 +92,10 @@ function reducer(state: LessonState, action: Action): LessonState {
             ? {
                 ...s,
                 boards: s.boards.map((b) =>
-                  b.id === action.boardId ? action.updater(b) : b
+                  b.id === action.boardId ? action.updater(b) : b,
                 ),
               }
-            : s
+            : s,
         ),
       };
     default:
@@ -106,6 +107,8 @@ export function useLessonSelection(ref?: React.Ref<LessonEditorHandle>) {
   const initialSlide = {
     id: crypto.randomUUID(),
     title: "Slide 1",
+    wrapperStyles: { ...defaultSlideWrapperStyles },
+    spacing: 4,
     ...createInitialBoard(),
   };
   const [state, dispatch] = useReducer(reducer, {
@@ -126,35 +129,35 @@ export function useLessonSelection(ref?: React.Ref<LessonEditorHandle>) {
         dispatch({ type: "selectSlide", id: slides[0]?.id ?? null });
       },
     }),
-    [state.slides, dispatch]
+    [state.slides, dispatch],
   );
 
   const setSlides = useCallback(
     (updater: React.SetStateAction<Slide[]>) =>
       dispatch({ type: "setSlides", updater }),
-    [dispatch]
+    [dispatch],
   );
 
   const selectSlide = useCallback(
     (id: string | null) => dispatch({ type: "selectSlide", id }),
-    [dispatch]
+    [dispatch],
   );
   const selectElement = useCallback(
     (id: string | null) => dispatch({ type: "selectElement", id }),
-    [dispatch]
+    [dispatch],
   );
   const selectColumn = useCallback(
     (id: string | null) => dispatch({ type: "selectColumn", id }),
-    [dispatch]
+    [dispatch],
   );
   const selectBoard = useCallback(
     (id: string | null) => dispatch({ type: "selectBoard", id }),
-    [dispatch]
+    [dispatch],
   );
 
   const selectedSlide = useMemo(
     () => state.slides.find((s) => s.id === state.selectedSlideId) || null,
-    [state.slides, state.selectedSlideId]
+    [state.slides, state.selectedSlideId],
   );
 
   const selectedElement = useMemo(() => {

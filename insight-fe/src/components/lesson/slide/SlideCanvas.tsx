@@ -1,14 +1,24 @@
 "use client";
 
-import { Flex, Grid, Box, Text, HStack, Button, Select } from "@chakra-ui/react";
+import {
+  Flex,
+  Grid,
+  Box,
+  Text,
+  HStack,
+  Button,
+  Select,
+} from "@chakra-ui/react";
 
 import BoardAttributesPane from "../attributes-pane/BoardAttributesPane";
+import SlideAttributesPane from "../attributes-pane/SlideAttributesPane";
 import { ColumnType } from "@/components/DnD/types";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import ColumnAttributesPane from "../attributes-pane/ColumnAttributesPane";
 import ElementAttributesPane from "../attributes-pane/ElementAttributesPane";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import SlideSequencer, { Slide } from "./SlideSequencer";
+import ElementWrapper from "../elements/ElementWrapper";
 
 interface SlideCanvasProps {
   slides: Slide[];
@@ -28,6 +38,7 @@ interface SlideCanvasProps {
   deleteElement: () => void;
   updateColumn: (col: ColumnType<SlideElementDnDItemProps>) => void;
   updateBoard: (board: BoardRow) => void;
+  updateSlide: (updater: (slide: Slide) => Slide) => void;
   handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   handleDropElement: (e: React.DragEvent<HTMLDivElement>) => void;
   openSaveStyle: () => void;
@@ -57,6 +68,7 @@ export default function SlideCanvas({
   deleteElement,
   updateColumn,
   updateBoard,
+  updateSlide,
   handleDragOver,
   handleDropElement,
   openSaveStyle,
@@ -87,26 +99,25 @@ export default function SlideCanvas({
             onDrop={handleDropElement}
           >
             <Text mb={2}>Slide Elements</Text>
-            <SlideElementsContainer
-              columnMap={selectedSlide.columnMap}
-              boards={selectedSlide.boards}
-              onChange={(columnMap, boards) =>
-                setSlides((s) =>
-                  s.map((sl) =>
-                    sl.id === selectedSlideId
-                      ? { ...sl, columnMap, boards }
-                      : sl
-                  )
-                )
-              }
-              selectedElementId={selectedElement ? selectedElement.id : null}
-              onSelectElement={(id) => selectElement(id)}
-              dropIndicator={dropIndicator}
-              selectedColumnId={selectedColumn ? selectedColumn.columnId : null}
-              onSelectColumn={(id) => selectColumn(id)}
-              selectedBoardId={selectedBoard ? selectedBoard.id : null}
-              onSelectBoard={(id) => selectBoard(id)}
-            />
+            <ElementWrapper styles={selectedSlide.wrapperStyles}>
+              <SlideElementsContainer
+                columnMap={selectedSlide.columnMap}
+                boards={selectedSlide.boards}
+                spacing={selectedSlide.spacing}
+                onChange={(columnMap, boards) =>
+                  updateSlide((sl) => ({ ...sl, columnMap, boards }))
+                }
+                selectedElementId={selectedElement ? selectedElement.id : null}
+                onSelectElement={(id) => selectElement(id)}
+                dropIndicator={dropIndicator}
+                selectedColumnId={
+                  selectedColumn ? selectedColumn.columnId : null
+                }
+                onSelectColumn={(id) => selectColumn(id)}
+                selectedBoardId={selectedBoard ? selectedBoard.id : null}
+                onSelectBoard={(id) => selectBoard(id)}
+              />
+            </ElementWrapper>
           </Box>
           <Box p={4} borderWidth="1px" borderRadius="md" minW="200px">
             <HStack justify="space-between" mb={2}>
@@ -124,7 +135,7 @@ export default function SlideCanvas({
                   value={selectedPaletteId}
                   onChange={(e) =>
                     onSelectPalette(
-                      e.target.value === "" ? "" : parseInt(e.target.value, 10)
+                      e.target.value === "" ? "" : parseInt(e.target.value, 10),
                     )
                   }
                   maxW="120px"
@@ -166,6 +177,14 @@ export default function SlideCanvas({
               <BoardAttributesPane
                 board={selectedBoard}
                 onChange={updateBoard}
+                colorPalettes={colorPalettes}
+                selectedPaletteId={selectedPaletteId}
+              />
+            )}
+            {!selectedElement && !selectedColumn && !selectedBoard && (
+              <SlideAttributesPane
+                slide={selectedSlide}
+                onChange={(s) => updateSlide(() => s)}
                 colorPalettes={colorPalettes}
                 selectedPaletteId={selectedPaletteId}
               />
