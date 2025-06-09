@@ -324,15 +324,8 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         handleDropElement={editor.handleDropElement}
         openSaveStyle={() => setIsSaveStyleOpen(true)}
         openLoadStyle={() => setIsLoadStyleOpen(true)}
-        openAddPalette={() => {
-          if (selectedCollectionId !== "") {
-            setIsPaletteOpen(true);
-          }
-        }}
-        isAddPaletteDisabled={selectedCollectionId === ""}
         colorPalettes={colorPalettes}
         selectedPaletteId={selectedPaletteId}
-        onSelectPalette={setSelectedPaletteId}
       />
 
       <StyleModals
