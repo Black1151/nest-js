@@ -105,7 +105,11 @@ export default function ColorPaletteModal({
                   },
                 });
                 if (data?.updateColorPalette) {
-                  onSave?.(data.updateColorPalette);
+                  onSave?.({
+                    id: Number(data.updateColorPalette.id),
+                    name: data.updateColorPalette.name,
+                    colors: data.updateColorPalette.colors,
+                  });
                 }
               } else {
                 const { data } = await createPalette({
@@ -114,7 +118,11 @@ export default function ColorPaletteModal({
                   },
                 });
                 if (data?.createColorPalette) {
-                  onSave?.(data.createColorPalette);
+                  onSave?.({
+                    id: Number(data.createColorPalette.id),
+                    name: data.createColorPalette.name,
+                    colors: data.createColorPalette.colors,
+                  });
                   setName("");
                   setColors(["#000000"]);
                 }
