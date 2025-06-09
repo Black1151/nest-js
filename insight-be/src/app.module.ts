@@ -52,6 +52,8 @@ import { StyleCollectionEntity } from './modules/timbuktu/administrative/style-c
 import { StyleEntity } from './modules/timbuktu/administrative/style/style.entity';
 import { StyleGroupEntity } from './modules/timbuktu/administrative/style-group/style-group.entity';
 import { ColorPaletteEntity } from './modules/timbuktu/administrative/color-palette/color-palette.entity';
+import { ThemeModule } from './modules/timbuktu/administrative/theme/theme.module';
+import { ThemeEntity } from './modules/timbuktu/administrative/theme/theme.entity';
 
 @Module({
   imports: [
@@ -95,6 +97,7 @@ import { ColorPaletteEntity } from './modules/timbuktu/administrative/color-pale
         StyleEntity,
         StyleGroupEntity,
         ColorPaletteEntity,
+        ThemeEntity,
       ],
       synchronize: true,
     }),
@@ -118,6 +121,7 @@ import { ColorPaletteEntity } from './modules/timbuktu/administrative/color-pale
     StyleModule,
     StyleGroupModule,
     ColorPaletteModule,
+    ThemeModule,
     ClassModule,
     LessonModule,
     QuizModule,
