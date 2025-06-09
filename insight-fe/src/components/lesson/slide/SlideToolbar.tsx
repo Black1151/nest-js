@@ -245,7 +245,7 @@ export default function SlideToolbar({
           });
           if (data?.createStyleCollection) {
             onAddCollection({
-              id: data.createStyleCollection.id,
+              id: Number(data.createStyleCollection.id),
               name: data.createStyleCollection.name,
             });
           }
@@ -304,7 +304,7 @@ export default function SlideToolbar({
           });
           if (data?.createStyleGroup) {
             onAddGroup({
-              id: data.createStyleGroup.id,
+              id: Number(data.createStyleGroup.id),
               name: data.createStyleGroup.name,
             });
           }
