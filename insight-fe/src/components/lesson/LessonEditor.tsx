@@ -171,6 +171,17 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     });
   };
 
+  const handleAddPalette = async (palette: {
+    id: number;
+    name: string;
+    colors: string[];
+  }) => {
+    setColorPalettes((p) => [...p, palette]);
+    await fetchPalettes({
+      variables: { collectionId: String(selectedCollectionId) },
+    });
+  };
+
   const handleDeletePalette = async (id: number) => {
     setColorPalettes((p) => p.filter((pl) => pl.id !== id));
     if (selectedPaletteId === id) {
@@ -262,12 +273,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         colorPalettes={colorPalettes}
         selectedPaletteId={selectedPaletteId}
         onSelectPalette={setSelectedPaletteId}
-        onAddPalette={(palette) => {
-          setColorPalettes((p) => [...p, palette]);
-          fetchPalettes({
-            variables: { collectionId: String(selectedCollectionId) },
-          });
-        }}
+        onAddPalette={handleAddPalette}
         onUpdatePalette={handleUpdatePalette}
         onDeletePalette={handleDeletePalette}
       />
@@ -361,12 +367,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             });
           }
         }}
-        onAddPalette={(palette) => {
-          setColorPalettes((p) => [...p, palette]);
-          fetchPalettes({
-            variables: { collectionId: String(selectedCollectionId) },
-          });
-        }}
+        onAddPalette={handleAddPalette}
         onLoad={(styleId) => {
           if (!editor.selectedElement) return;
           console.log("load style", { styleId });
