@@ -189,3 +189,58 @@ export const DELETE_COLOR_PALETTE = gql`
     deleteColorPalette(data: $data)
   }
 `;
+
+export const GET_THEMES = gql`
+  query GetThemes($collectionId: String!) {
+    getAllTheme(
+      data: {
+        all: true
+        filters: [{ column: "styleCollectionId", value: $collectionId }]
+      }
+    ) {
+      id
+      name
+      styleCollectionId
+      defaultPaletteId
+    }
+  }
+`;
+
+export const GET_THEME = gql`
+  query GetTheme($id: String!) {
+    getTheme(data: { id: $id }) {
+      id
+      name
+      styleCollectionId
+      defaultPaletteId
+    }
+  }
+`;
+
+export const CREATE_THEME = gql`
+  mutation CreateTheme($data: CreateThemeInput!) {
+    createTheme(data: $data) {
+      id
+      name
+      styleCollectionId
+      defaultPaletteId
+    }
+  }
+`;
+
+export const UPDATE_THEME = gql`
+  mutation UpdateTheme($data: UpdateThemeInput!) {
+    updateTheme(data: $data) {
+      id
+      name
+      styleCollectionId
+      defaultPaletteId
+    }
+  }
+`;
+
+export const DELETE_THEME = gql`
+  mutation DeleteTheme($data: IdInput!) {
+    deleteTheme(data: $data)
+  }
+`;
