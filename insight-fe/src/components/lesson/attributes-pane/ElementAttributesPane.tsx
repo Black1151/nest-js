@@ -10,6 +10,7 @@ import AnimationSettings from "../attributes/AnimationSettings";
 import ImageAttributes from "../attributes/ImageAttributes";
 import TextAttributes from "../attributes/TextAttributes";
 import VideoAttributes from "../attributes/VideoAttributes";
+import TableAttributes from "../attributes/TableAttributes";
 import WrapperSettings from "../attributes/WrapperSettings";
 import useStyleAttributes from "../hooks/useStyleAttributes";
 
@@ -51,6 +52,15 @@ export default function ElementAttributesPane({
   const [description, setDescription] = useState(element.description || "");
   const [questions, setQuestions] = useState(
     element.questions || ([] as SlideElementDnDItemProps["questions"])
+  );
+  const [table, setTable] = useState(
+    element.table || {
+      rows: 2,
+      cols: 2,
+      cells: Array.from({ length: 2 }, () =>
+        Array.from({ length: 2 }, () => ({ text: "", styles: { color: "#000000" } }))
+      ),
+    }
   );
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
   const styleAttrs = useStyleAttributes({
@@ -111,6 +121,15 @@ export default function ElementAttributesPane({
     setTitle(element.title || "");
     setDescription(element.description || "");
     setQuestions(element.questions || []);
+    setTable(
+      element.table || {
+        rows: 2,
+        cols: 2,
+        cells: Array.from({ length: 2 }, () =>
+          Array.from({ length: 2 }, () => ({ text: "", styles: { color: "#000000" } }))
+        ),
+      }
+    );
     setAnimationEnabled(!!element.animation);
     setAnimationDirection(element.animation?.direction || "left");
     setAnimationDelay(element.animation?.delay ?? 0);
@@ -165,6 +184,9 @@ export default function ElementAttributesPane({
       updated.description = description;
       updated.questions = questions;
     }
+    if (element.type === "table") {
+      updated.table = table;
+    }
     onChange(updated);
   }, [
     color,
@@ -179,6 +201,7 @@ export default function ElementAttributesPane({
     title,
     description,
     questions,
+    table,
     bgColor,
     bgOpacity,
     gradientFrom,
@@ -239,6 +262,14 @@ export default function ElementAttributesPane({
         )}
         {element.type === "video" && (
           <VideoAttributes url={url} setUrl={setUrl} />
+        )}
+        {element.type === "table" && (
+          <TableAttributes
+            table={table}
+            setTable={setTable}
+            colorPalettes={colorPalettes}
+            selectedPaletteId={selectedPaletteId}
+          />
         )}
         {element.type === "quiz" && (
           <QuizAttributes

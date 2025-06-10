@@ -1,13 +1,25 @@
 import ElementWrapper, {
   ElementWrapperStyles,
 } from "@/components/lesson/elements/ElementWrapper";
-import { Box, Text, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Box, Text, Table, Tbody, Tr, Td } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 export interface ElementAnimation {
   type: "flyInFade";
   direction: "left" | "right" | "top" | "bottom";
   delay: number;
+}
+
+export interface TableCell {
+  text: string;
+  styles?: {
+    color?: string;
+    fontSize?: string;
+    fontFamily?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    textAlign?: string;
+  };
 }
 
 export interface SlideElementDnDItemProps {
@@ -42,6 +54,14 @@ export interface SlideElementDnDItemProps {
     options: string[];
     correctAnswer: string;
   }[];
+  /**
+   * Table configuration when type is "table"
+   */
+  table?: {
+    rows: number;
+    cols: number;
+    cells: TableCell[][];
+  };
   styles?: {
     color?: string;
     fontSize?: string;
@@ -129,17 +149,25 @@ export const SlideElementDnDItem = ({
     content = (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Table size="sm">
-          <Thead>
-            <Tr>
-              <Th>Header 1</Th>
-              <Th>Header 2</Th>
-            </Tr>
-          </Thead>
           <Tbody>
-            <Tr>
-              <Td>Cell</Td>
-              <Td>Cell</Td>
-            </Tr>
+            {item.table?.cells.map((row, rIdx) => (
+              <Tr key={rIdx}>
+                {row.map((cell, cIdx) => (
+                  <Td key={cIdx} p={1}>
+                    <Text
+                      color={cell.styles?.color}
+                      fontSize={cell.styles?.fontSize}
+                      fontFamily={cell.styles?.fontFamily}
+                      fontWeight={cell.styles?.fontWeight}
+                      lineHeight={cell.styles?.lineHeight}
+                      textAlign={cell.styles?.textAlign as any}
+                    >
+                      {cell.text}
+                    </Text>
+                  </Td>
+                ))}
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </ElementWrapper>

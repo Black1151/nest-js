@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box, Text, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Box, Text, Table, Tbody, Tr, Td } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
@@ -66,17 +66,25 @@ export default function SlideElementRenderer({
     content = (
       <ElementWrapper styles={item.wrapperStyles} data-testid="table-element">
         <Table size="sm">
-          <Thead>
-            <Tr>
-              <Th>Header 1</Th>
-              <Th>Header 2</Th>
-            </Tr>
-          </Thead>
           <Tbody>
-            <Tr>
-              <Td>Cell</Td>
-              <Td>Cell</Td>
-            </Tr>
+            {item.table?.cells.map((row, rIdx) => (
+              <Tr key={rIdx}>
+                {row.map((cell, cIdx) => (
+                  <Td key={cIdx} p={1}>
+                    <Text
+                      color={cell.styles?.color}
+                      fontSize={cell.styles?.fontSize}
+                      fontFamily={cell.styles?.fontFamily}
+                      fontWeight={cell.styles?.fontWeight}
+                      lineHeight={cell.styles?.lineHeight}
+                      textAlign={cell.styles?.textAlign as any}
+                    >
+                      {cell.text}
+                    </Text>
+                  </Td>
+                ))}
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </ElementWrapper>
