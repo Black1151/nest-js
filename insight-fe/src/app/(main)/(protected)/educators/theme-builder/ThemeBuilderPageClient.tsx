@@ -187,25 +187,6 @@ export default function ThemeBuilderPageClient() {
             isDeleteDisabled={selectedCollectionId === ""}
           />
         </FormControl>
-        <FormControl flex={1} isDisabled={selectedCollectionId === ""}>
-          <FormLabel>Default Palette</FormLabel>
-          <CrudDropdown
-            options={paletteOptions}
-            value={selectedPaletteId}
-            onChange={(e) =>
-              setSelectedPaletteId(
-                e.target.value === "" ? "" : parseInt(e.target.value, 10),
-              )
-            }
-            onCreate={() => setIsAddPaletteOpen(true)}
-            onUpdate={() => setIsEditPaletteOpen(true)}
-            onDelete={() => setIsDeletePaletteOpen(true)}
-            isDisabled={selectedCollectionId === ""}
-            isCreateDisabled={selectedCollectionId === ""}
-            isUpdateDisabled={selectedPaletteId === ""}
-            isDeleteDisabled={selectedPaletteId === ""}
-          />
-        </FormControl>
       </HStack>
 
       <Accordion allowMultiple>
