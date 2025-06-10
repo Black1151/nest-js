@@ -61,11 +61,31 @@ export default function useDnDHandlers(
                       },
                     }
                   : type === "image"
-                  ? { src: "https://via.placeholder.com/150" }
+                    ? { src: "https://via.placeholder.com/150" }
                   : type === "video"
-                  ? { url: "" }
+                    ? { url: "" }
                   : type === "quiz"
-                  ? { title: "Untitled Quiz", description: "", questions: [] }
+                    ? { title: "Untitled Quiz", description: "", questions: [] }
+                  : type === "table"
+                    ? {
+                        table: {
+                          rows: 2,
+                          cols: 2,
+                          cells: Array.from({ length: 2 }, () =>
+                            Array.from({ length: 2 }, () => ({
+                              text: "Cell",
+                              styles: {
+                                color: options.defaultColor,
+                                fontSize: "14px",
+                                fontFamily: options.defaultFontFamily,
+                                fontWeight: "normal",
+                                lineHeight: "1.2",
+                                textAlign: "left",
+                              },
+                            }))
+                          ),
+                        },
+                      }
                   : {}),
                 wrapperStyles: { ...defaultColumnWrapperStyles },
                 animation: undefined,
