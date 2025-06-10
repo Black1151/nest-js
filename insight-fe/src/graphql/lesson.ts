@@ -10,7 +10,7 @@ export const GET_STYLE_COLLECTIONS = gql`
 `;
 
 export const GET_STYLE_GROUPS = gql`
-  query GetStyleGroups($collectionId: String!, $element: String!) {
+  query GetStyleGroups($collectionId: String!, $element: PageElementType!) {
     getAllStyleGroup(
       data: {
         all: true
@@ -84,7 +84,7 @@ export const DELETE_STYLE_COLLECTION = gql`
 `;
 
 export const GET_STYLES_WITH_CONFIG = gql`
-  query GetStylesWithConfig($collectionId: String!, $element: String!) {
+  query GetStylesWithConfig($collectionId: String!, $element: PageElementType!) {
     getAllStyle(
       data: {
         all: true
@@ -104,7 +104,7 @@ export const GET_STYLES_WITH_CONFIG = gql`
 export const GET_STYLES_WITH_CONFIG_BY_GROUP = gql`
   query GetStylesWithConfigByGroup(
     $collectionId: String!
-    $element: String!
+    $element: PageElementType!
     $groupId: String!
   ) {
     getAllStyle(

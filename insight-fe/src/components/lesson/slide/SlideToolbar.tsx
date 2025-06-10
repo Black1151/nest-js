@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack, VStack, Button } from "@chakra-ui/react";
+import { Box, HStack, VStack, Button, IconButton } from "@chakra-ui/react";
 import { useState, useMemo } from "react";
 import { useMutation } from "@apollo/client";
 import {
@@ -8,6 +8,7 @@ import {
   SlideElementDnDItem,
 } from "@/components/DnD/cards/SlideElementDnDCard";
 import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
+import { Plus, Edit2, Trash2 } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import AddStyleCollectionModal from "../modals/AddStyleCollectionModal";
 import AddStyleGroupModal from "../modals/AddStyleGroupModal";
@@ -218,22 +219,40 @@ export default function SlideToolbar({
           ))}
         </HStack>
         {selectedElementType && (
-          <CrudDropdown
-            options={groupOptions}
-            value={selectedGroupId}
-            onChange={(e) =>
-              onSelectGroup(
-                e.target.value === "" ? "" : parseInt(e.target.value, 10)
-              )
-            }
-            onCreate={() => setIsAddGroupOpen(true)}
-            onUpdate={() => setIsEditGroupOpen(true)}
-            onDelete={() => setIsDeleteGroupOpen(true)}
-            isDisabled={selectedCollectionId === ""}
-            isCreateDisabled={selectedCollectionId === "" || !selectedElementType}
-            isUpdateDisabled={selectedGroupId === ""}
-            isDeleteDisabled={selectedGroupId === ""}
-          />
+          <HStack flexWrap="wrap" w="full">
+            {styleGroups.map((g) => (
+              <Button
+                key={g.id}
+                size="sm"
+                variant={selectedGroupId === g.id ? "solid" : "outline"}
+                colorScheme={selectedGroupId === g.id ? "blue" : undefined}
+                onClick={() => onSelectGroup(g.id)}
+              >
+                {g.name}
+              </Button>
+            ))}
+            <IconButton
+              aria-label="Create group"
+              icon={<Plus size={16} />}
+              size="sm"
+              onClick={() => setIsAddGroupOpen(true)}
+              isDisabled={selectedCollectionId === "" || !selectedElementType}
+            />
+            <IconButton
+              aria-label="Edit group"
+              icon={<Edit2 size={16} />}
+              size="sm"
+              onClick={() => setIsEditGroupOpen(true)}
+              isDisabled={selectedGroupId === ""}
+            />
+            <IconButton
+              aria-label="Delete group"
+              icon={<Trash2 size={16} />}
+              size="sm"
+              onClick={() => setIsDeleteGroupOpen(true)}
+              isDisabled={selectedGroupId === ""}
+            />
+          </HStack>
         )}
       </VStack>
       {styleItems.length > 0 && (
