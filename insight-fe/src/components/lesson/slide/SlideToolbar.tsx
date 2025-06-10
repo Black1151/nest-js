@@ -380,6 +380,7 @@ export default function SlideToolbar({
       />
 
       <ColorPaletteModal
+        key="add-palette"
         isOpen={isAddPaletteOpen}
         onClose={() => setIsAddPaletteOpen(false)}
         collectionId={selectedCollectionId as number}
@@ -389,6 +390,7 @@ export default function SlideToolbar({
       />
 
       <ColorPaletteModal
+        key={`edit-palette-${selectedPaletteId}`}
         isOpen={isEditPaletteOpen}
         onClose={() => setIsEditPaletteOpen(false)}
         collectionId={selectedCollectionId as number}
