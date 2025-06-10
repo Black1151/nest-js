@@ -33,8 +33,8 @@ export default function TableAttributes({
   colorPalettes,
   selectedPaletteId,
 }: TableAttributesProps) {
-  const [rows, setRows] = useState(table.rows);
-  const [cols, setCols] = useState(table.cols);
+  const [rows, setRows] = useState<number | undefined>(table.rows);
+  const [cols, setCols] = useState<number | undefined>(table.cols);
   const [cells, setCells] = useState<TableCell[][]>(table.cells);
 
   useEffect(() => {
@@ -45,6 +45,7 @@ export default function TableAttributes({
 
   // adjust cell matrix when rows/cols change
   useEffect(() => {
+    if (rows === undefined || cols === undefined) return;
     setCells((prev) => {
       const newRows = Array.from({ length: rows }, (_, r) =>
         Array.from({ length: cols }, (_, c) => prev[r]?.[c] || { text: "", styles: { color: "#000000" } })
@@ -54,6 +55,7 @@ export default function TableAttributes({
   }, [rows, cols]);
 
   useEffect(() => {
+    if (rows === undefined || cols === undefined) return;
     setTable({ rows, cols, cells });
   }, [rows, cols, cells, setTable]);
 
@@ -87,8 +89,11 @@ export default function TableAttributes({
               type="number"
               w="60px"
               min={1}
-              value={rows}
-              onChange={(e) => setRows(Math.max(1, parseInt(e.target.value) || 1))}
+              value={rows ?? ""}
+              onChange={(e) => {
+                const val = parseInt(e.target.value);
+                setRows(Number.isNaN(val) ? undefined : Math.max(1, val));
+              }}
             />
           </FormControl>
           <FormControl display="flex" alignItems="center">
@@ -100,8 +105,11 @@ export default function TableAttributes({
               type="number"
               w="60px"
               min={1}
-              value={cols}
-              onChange={(e) => setCols(Math.max(1, parseInt(e.target.value) || 1))}
+              value={cols ?? ""}
+              onChange={(e) => {
+                const val = parseInt(e.target.value);
+                setCols(Number.isNaN(val) ? undefined : Math.max(1, val));
+              }}
             />
           </FormControl>
           <SimpleGrid columns={cols} spacing={2}>
