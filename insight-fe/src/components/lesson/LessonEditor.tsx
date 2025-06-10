@@ -80,7 +80,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     GET_STYLES_WITH_CONFIG_BY_GROUP,
     { fetchPolicy: "network-only" }
   );
-  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
+  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS, {
+    fetchPolicy: "network-only",
+  });
   const [fetchPalettes, { data: palettesData }] = useLazyQuery(GET_COLOR_PALETTES);
   const [fetchThemes, { data: themesData }] = useLazyQuery(GET_THEMES);
 
