@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Button,
-  Flex,
   FormControl,
   FormLabel,
   Heading,
   Input,
-  Select,
   Stack,
   Text,
   Accordion,
@@ -23,6 +21,7 @@ import {
 } from "@/graphql/lesson";
 import SaveStyleModal from "@/components/lesson/modals/SaveStyleModal";
 import AddColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModal";
+import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
 import { availableFonts } from "@/theme/fonts";
 import WrapperSettings from "@/components/lesson/attributes/WrapperSettings";
 import TextAttributes from "@/components/lesson/attributes/TextAttributes";
@@ -31,21 +30,35 @@ import ElementWrapper from "@/components/lesson/elements/ElementWrapper";
 
 export default function ThemeBuilderPageClient() {
   const [themeName, setThemeName] = useState("");
-  const [styleCollections, setStyleCollections] = useState<{
-    id: number;
-    name: string;
-  }[]>([]);
+  const [styleCollections, setStyleCollections] = useState<
+    {
+      id: number;
+      name: string;
+    }[]
+  >([]);
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
-    ""
+    "",
   );
-  const [colorPalettes, setColorPalettes] = useState<{
-    id: number;
-    name: string;
-    colors: string[];
-  }[]>([]);
+  const [colorPalettes, setColorPalettes] = useState<
+    {
+      id: number;
+      name: string;
+      colors: string[];
+    }[]
+  >([]);
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | "">("");
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
   const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false);
+
+  const collectionOptions = useMemo(
+    () => styleCollections.map((c) => ({ label: c.name, value: String(c.id) })),
+    [styleCollections],
+  );
+
+  const paletteOptions = useMemo(
+    () => colorPalettes.map((p) => ({ label: p.name, value: String(p.id) })),
+    [colorPalettes],
+  );
 
   const wrapperAttrs = useStyleAttributes({ deps: [] });
 
@@ -57,9 +70,11 @@ export default function ThemeBuilderPageClient() {
   const [lineHeight, setLineHeight] = useState("normal");
   const [textAlign, setTextAlign] = useState("left");
 
-  const { data: collectionsData, refetch: refetchCollections } =
-    useQuery(GET_STYLE_COLLECTIONS);
-  const [fetchPalettes, { data: palettesData }] = useLazyQuery(GET_COLOR_PALETTES);
+  const { data: collectionsData, refetch: refetchCollections } = useQuery(
+    GET_STYLE_COLLECTIONS,
+  );
+  const [fetchPalettes, { data: palettesData }] =
+    useLazyQuery(GET_COLOR_PALETTES);
   const [createTheme, { loading: saving }] = useMutation(CREATE_THEME, {
     onCompleted: () => {
       setThemeName("");
@@ -74,7 +89,9 @@ export default function ThemeBuilderPageClient() {
 
   useEffect(() => {
     if (selectedCollectionId !== "") {
-      fetchPalettes({ variables: { collectionId: String(selectedCollectionId) } });
+      fetchPalettes({
+        variables: { collectionId: String(selectedCollectionId) },
+      });
     } else {
       setColorPalettes([]);
       setSelectedPaletteId("");
@@ -108,54 +125,47 @@ export default function ThemeBuilderPageClient() {
       <Heading size="md">Theme Builder</Heading>
       <FormControl>
         <FormLabel>Theme Name</FormLabel>
-        <Input value={themeName} onChange={(e) => setThemeName(e.target.value)} />
+        <Input
+          value={themeName}
+          onChange={(e) => setThemeName(e.target.value)}
+        />
       </FormControl>
       <FormControl>
         <FormLabel>Style Collection</FormLabel>
-        <Select
-          placeholder="Select collection"
+        <CrudDropdown
+          options={collectionOptions}
           value={selectedCollectionId}
           onChange={(e) =>
             setSelectedCollectionId(
-              e.target.value === "" ? "" : parseInt(e.target.value)
+              e.target.value === "" ? "" : parseInt(e.target.value, 10),
             )
           }
-        >
-          {styleCollections.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
+          onCreate={() => setIsCollectionModalOpen(true)}
+          onUpdate={() => {}}
+          onDelete={() => {}}
+          isUpdateDisabled
+          isDeleteDisabled
+        />
       </FormControl>
-      <Button onClick={() => setIsCollectionModalOpen(true)} size="sm">
-        Add Collection
-      </Button>
       <FormControl isDisabled={selectedCollectionId === ""}>
         <FormLabel>Default Palette</FormLabel>
-        <Select
-          placeholder="Select palette"
+        <CrudDropdown
+          options={paletteOptions}
           value={selectedPaletteId}
           onChange={(e) =>
             setSelectedPaletteId(
-              e.target.value === "" ? "" : parseInt(e.target.value)
+              e.target.value === "" ? "" : parseInt(e.target.value, 10),
             )
           }
-        >
-          {colorPalettes.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </Select>
+          onCreate={() => setIsPaletteModalOpen(true)}
+          onUpdate={() => {}}
+          onDelete={() => {}}
+          isDisabled={selectedCollectionId === ""}
+          isCreateDisabled={selectedCollectionId === ""}
+          isUpdateDisabled
+          isDeleteDisabled
+        />
       </FormControl>
-      <Button
-        onClick={() => setIsPaletteModalOpen(true)}
-        size="sm"
-        isDisabled={selectedCollectionId === ""}
-      >
-        Add Palette
-      </Button>
 
       <Accordion allowMultiple>
         <WrapperSettings
@@ -252,4 +262,3 @@ export default function ThemeBuilderPageClient() {
     </Stack>
   );
 }
-
