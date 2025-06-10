@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Grid, Box, Text, HStack, Button, Select } from "@chakra-ui/react";
+  import { Flex, Grid, Box, Text, HStack, Button } from "@chakra-ui/react";
 
 import BoardAttributesPane from "../attributes-pane/BoardAttributesPane";
 import { ColumnType } from "@/components/DnD/types";
@@ -32,12 +32,9 @@ interface SlideCanvasProps {
   handleDropElement: (e: React.DragEvent<HTMLDivElement>) => void;
   openSaveStyle: () => void;
   openLoadStyle: () => void;
-  openAddPalette: () => void;
-  isAddPaletteDisabled?: boolean;
   colorPalettes: { id: number; name: string; colors: string[] }[];
   selectedPaletteId: number | "";
-  onSelectPalette: (id: number | "") => void;
-}
+} 
 
 export default function SlideCanvas({
   slides,
@@ -61,11 +58,8 @@ export default function SlideCanvas({
   handleDropElement,
   openSaveStyle,
   openLoadStyle,
-  openAddPalette,
-  isAddPaletteDisabled,
   colorPalettes,
   selectedPaletteId,
-  onSelectPalette,
 }: SlideCanvasProps) {
   return (
     <Flex gap={6} alignItems="flex-start">
@@ -118,30 +112,7 @@ export default function SlideCanvas({
                 <Button size="xs" onClick={openSaveStyle}>
                   Save Style
                 </Button>
-                <Select
-                  size="xs"
-                  placeholder="Select Palette"
-                  value={selectedPaletteId}
-                  onChange={(e) =>
-                    onSelectPalette(
-                      e.target.value === "" ? "" : parseInt(e.target.value, 10)
-                    )
-                  }
-                  maxW="120px"
-                >
-                  {colorPalettes.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </Select>
-                <Button
-                  size="xs"
-                  onClick={openAddPalette}
-                  isDisabled={isAddPaletteDisabled}
-                >
-                  Add Palette
-                </Button>
+
               </HStack>
             </HStack>
             {selectedElement && (

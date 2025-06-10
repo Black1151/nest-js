@@ -127,7 +127,12 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
 
   useEffect(() => {
     if (collectionsData?.getAllStyleCollection) {
-      setStyleCollections(collectionsData.getAllStyleCollection);
+      setStyleCollections(
+        collectionsData.getAllStyleCollection.map((c: any) => ({
+          id: Number(c.id),
+          name: c.name,
+        }))
+      );
     }
   }, [collectionsData]);
 
@@ -168,7 +173,12 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
 
   useEffect(() => {
     if (groupsData?.getAllStyleGroup) {
-      setStyleGroups(groupsData.getAllStyleGroup);
+      setStyleGroups(
+        groupsData.getAllStyleGroup.map((g: any) => ({
+          id: Number(g.id),
+          name: g.name,
+        }))
+      );
     } else {
       setStyleGroups([]);
     }
@@ -194,7 +204,13 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
 
   useEffect(() => {
     if (palettesData?.getAllColorPalette) {
-      setColorPalettes(palettesData.getAllColorPalette);
+      setColorPalettes(
+        palettesData.getAllColorPalette.map((p: any) => ({
+          id: Number(p.id),
+          name: p.name,
+          colors: p.colors,
+        }))
+      );
     } else {
       setColorPalettes([]);
     }
@@ -222,7 +238,12 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     name: string;
     colors: string[];
   }) => {
-    setColorPalettes((p) => p.map((pl) => (pl.id === palette.id ? palette : pl)));
+    const normalized = {
+      id: Number(palette.id),
+      name: palette.name,
+      colors: palette.colors,
+    };
+    setColorPalettes((p) => p.map((pl) => (pl.id === normalized.id ? normalized : pl)));
     await fetchPalettes({
       variables: { collectionId: String(selectedCollectionId) },
     });
@@ -233,7 +254,10 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     name: string;
     colors: string[];
   }) => {
-    setColorPalettes((p) => [...p, palette]);
+    setColorPalettes((p) => [
+      ...p,
+      { id: Number(palette.id), name: palette.name, colors: palette.colors },
+    ]);
     await fetchPalettes({
       variables: { collectionId: String(selectedCollectionId) },
     });
@@ -360,15 +384,8 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         handleDropElement={editor.handleDropElement}
         openSaveStyle={() => setIsSaveStyleOpen(true)}
         openLoadStyle={() => setIsLoadStyleOpen(true)}
-        openAddPalette={() => {
-          if (selectedCollectionId !== "") {
-            setIsPaletteOpen(true);
-          }
-        }}
-        isAddPaletteDisabled={selectedCollectionId === ""}
         colorPalettes={colorPalettes}
         selectedPaletteId={selectedPaletteId}
-        onSelectPalette={setSelectedPaletteId}
       />
 
       <StyleModals
