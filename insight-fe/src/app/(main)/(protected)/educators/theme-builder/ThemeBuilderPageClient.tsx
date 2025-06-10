@@ -350,6 +350,7 @@ export default function ThemeBuilderPageClient() {
 
       {isEditPaletteOpen && (
         <AddColorPaletteModal
+          key={selectedPaletteId || "edit"}
           isOpen={isEditPaletteOpen}
           onClose={() => setIsEditPaletteOpen(false)}
           collectionId={selectedCollectionId as number}
