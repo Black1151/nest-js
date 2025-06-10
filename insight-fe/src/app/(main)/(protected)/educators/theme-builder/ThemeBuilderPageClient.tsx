@@ -12,6 +12,7 @@ import {
   Select,
   Stack,
   Text,
+  Accordion,
 } from "@chakra-ui/react";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 
@@ -156,29 +157,31 @@ export default function ThemeBuilderPageClient() {
         Add Palette
       </Button>
 
-      <WrapperSettings
-        attrs={wrapperAttrs}
-        colorPalettes={colorPalettes}
-        selectedPaletteId={selectedPaletteId}
-      />
-      <TextAttributes
-        text={text}
-        setText={setText}
-        color={color}
-        setColor={setColor}
-        fontSize={fontSize}
-        setFontSize={setFontSize}
-        fontFamily={fontFamily}
-        setFontFamily={setFontFamily}
-        fontWeight={fontWeight}
-        setFontWeight={setFontWeight}
-        lineHeight={lineHeight}
-        setLineHeight={setLineHeight}
-        textAlign={textAlign}
-        setTextAlign={setTextAlign}
-        colorPalettes={colorPalettes}
-        selectedPaletteId={selectedPaletteId}
-      />
+      <Accordion allowMultiple>
+        <WrapperSettings
+          attrs={wrapperAttrs}
+          colorPalettes={colorPalettes}
+          selectedPaletteId={selectedPaletteId}
+        />
+        <TextAttributes
+          text={text}
+          setText={setText}
+          color={color}
+          setColor={setColor}
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          fontFamily={fontFamily}
+          setFontFamily={setFontFamily}
+          fontWeight={fontWeight}
+          setFontWeight={setFontWeight}
+          lineHeight={lineHeight}
+          setLineHeight={setLineHeight}
+          textAlign={textAlign}
+          setTextAlign={setTextAlign}
+          colorPalettes={colorPalettes}
+          selectedPaletteId={selectedPaletteId}
+        />
+      </Accordion>
 
       <Box>
         <Text mb={2}>Preview</Text>
