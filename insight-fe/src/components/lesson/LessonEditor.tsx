@@ -162,7 +162,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       fetchGroups({
         variables: {
           collectionId: String(selectedCollectionId),
-          element: selectedElementType,
+          element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
         },
       });
     } else {
@@ -193,7 +193,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       fetchStyles({
         variables: {
           collectionId: String(selectedCollectionId),
-          element: selectedElementType,
+          element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
           groupId: String(selectedGroupId),
         },
       });
@@ -324,7 +324,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             await fetchGroups({
               variables: {
                 collectionId: String(selectedCollectionId),
-                element: selectedElementType,
+                element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
               },
             });
           }
@@ -335,7 +335,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             await fetchGroups({
               variables: {
                 collectionId: String(selectedCollectionId),
-                element: selectedElementType,
+                element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
               },
             });
           }
@@ -349,7 +349,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             await fetchGroups({
               variables: {
                 collectionId: String(selectedCollectionId),
-                element: selectedElementType,
+                element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
               },
             });
           }
@@ -423,7 +423,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             await fetchStyles({
               variables: {
                 collectionId: String(selectedCollectionId),
-                element: selectedElementType,
+                element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
                 groupId: String(selectedGroupId),
               },
             });
@@ -439,7 +439,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             await fetchGroups({
               variables: {
                 collectionId: String(selectedCollectionId),
-                element: selectedElementType,
+                element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
               },
             });
           }
