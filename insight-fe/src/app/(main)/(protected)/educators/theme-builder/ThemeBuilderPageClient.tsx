@@ -348,14 +348,16 @@ export default function ThemeBuilderPageClient() {
         />
       )}
 
-      {isEditPaletteOpen && selectedPalette && (
+      {isEditPaletteOpen && (
         <AddColorPaletteModal
           isOpen={isEditPaletteOpen}
           onClose={() => setIsEditPaletteOpen(false)}
           collectionId={selectedCollectionId as number}
-          paletteId={selectedPaletteId as number}
-          initialName={selectedPalette.name}
-          initialColors={selectedPalette.colors}
+          paletteId={
+            selectedPaletteId === "" ? undefined : (selectedPaletteId as number)
+          }
+          initialName={selectedPalette?.name ?? ""}
+          initialColors={selectedPalette?.colors ?? []}
           title="Update Color Palette"
           confirmLabel="Update"
           onSave={(palette) => {
