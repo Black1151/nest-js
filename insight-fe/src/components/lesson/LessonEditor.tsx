@@ -76,13 +76,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   );
   const [selectedGroupId, setSelectedGroupId] = useState<number | "">("");
 
-  // Sync toolbar element type with the currently selected element on the canvas
-  useEffect(() => {
-    if (editor.selectedElement && selectedCollectionId !== "") {
-      setSelectedElementType(editor.selectedElement.type);
-    }
-  }, [editor.selectedElement, selectedCollectionId]);
-
   const [fetchStyles, { data: stylesData }] = useLazyQuery(
     GET_STYLES_WITH_CONFIG_BY_GROUP,
     { fetchPolicy: "network-only" }
@@ -100,6 +93,13 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     defaultColor: selectedPalette?.colors[0] ?? "#000000",
     defaultFontFamily: availableFonts[0].fontFamily,
   });
+
+  // Sync toolbar element type with the currently selected element on the canvas
+  useEffect(() => {
+    if (editor.selectedElement && selectedCollectionId !== "") {
+      setSelectedElementType(editor.selectedElement.type);
+    }
+  }, [editor.selectedElement, selectedCollectionId]);
 
   useImperativeHandle(
     ref,
