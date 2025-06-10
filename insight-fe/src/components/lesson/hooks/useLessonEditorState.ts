@@ -6,7 +6,7 @@ import useBoardColumnHelpers from "./useBoardColumnHelpers";
 import useDnDHandlers from "./useDnDHandlers";
 import { availableFonts } from "@/theme/fonts";
 
-export { LessonEditorHandle } from "./useLessonSelection";
+export type { LessonEditorHandle } from "./useLessonSelection";
 
 export function useLessonEditorState(
   ref?: React.Ref<LessonEditorHandle>,
