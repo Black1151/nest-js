@@ -16,5 +16,5 @@ export class SlideInput {
 @ObjectType('LessonSlide')
 export class SlideDto extends SlideInput {
   @Field(() => [ColumnDto])
-  override columns: ColumnDto[];
+  declare override columns: ColumnDto[];
 }

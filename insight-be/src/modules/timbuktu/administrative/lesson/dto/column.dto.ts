@@ -23,5 +23,5 @@ export class ColumnInput {
 @ObjectType('LessonColumn')
 export class ColumnDto extends ColumnInput {
   @Field(() => [ElementDto])
-  override items: ElementDto[];
+  declare override items: ElementDto[];
 }
