@@ -47,6 +47,7 @@ import TableAttributes from "@/components/lesson/attributes/TableAttributes";
 import useStyleAttributes from "@/components/lesson/hooks/useStyleAttributes";
 import SlideElementRenderer from "@/components/lesson/slide/SlideElementRenderer";
 import { Plus, Trash2 } from "lucide-react";
+import { tokenColor } from "@/theme/helpers";
 
 const AVAILABLE_ELEMENTS = [
   { type: "text", label: "Text" },
@@ -217,11 +218,20 @@ export default function ThemeBuilderPageClient() {
   }, [groupsData]);
 
   const tokens = useMemo(
-    () => ({ colors: Object.fromEntries(foundationColors.map((c) => [c.name, c.value])) }),
-    [foundationColors],
+    () => ({
+      foundationTokens: {
+        colors: Object.fromEntries(foundationColors.map((c) => [c.name, c.value])),
+      },
+      semanticTokens: {
+        colors: Object.fromEntries(
+          semanticColors.map((c) => [c.name, `colors.${c.ref}`]),
+        ),
+      },
+    }),
+    [foundationColors, semanticColors],
   );
 
-  const previewStyles = {
+  const configStyles = {
     bgColor: wrapperAttrs.bgColor,
     bgOpacity: wrapperAttrs.bgOpacity,
     gradientFrom: wrapperAttrs.gradientFrom,
@@ -237,7 +247,16 @@ export default function ThemeBuilderPageClient() {
     borderRadius: wrapperAttrs.borderRadius,
   };
 
-  const previewElement = useMemo(
+  const previewStyles = {
+    ...configStyles,
+    bgColor: tokenColor(tokens, wrapperAttrs.bgColor) ?? wrapperAttrs.bgColor,
+    gradientFrom: tokenColor(tokens, wrapperAttrs.gradientFrom) ??
+      wrapperAttrs.gradientFrom,
+    gradientTo: tokenColor(tokens, wrapperAttrs.gradientTo) ?? wrapperAttrs.gradientTo,
+    borderColor: tokenColor(tokens, wrapperAttrs.borderColor) ?? wrapperAttrs.borderColor,
+  };
+
+  const configElement = useMemo(
     () => ({
       id: "preview",
       type: selectedElementType,
@@ -245,7 +264,7 @@ export default function ThemeBuilderPageClient() {
       src,
       url,
       table,
-      wrapperStyles: previewStyles,
+      wrapperStyles: configStyles,
       styleOverrides: {
         colorToken,
         fontSize,
@@ -261,7 +280,7 @@ export default function ThemeBuilderPageClient() {
       src,
       url,
       table,
-      previewStyles,
+      configStyles,
       colorToken,
       fontSize,
       fontFamily,
@@ -269,6 +288,14 @@ export default function ThemeBuilderPageClient() {
       lineHeight,
       textAlign,
     ],
+  );
+
+  const previewElement = useMemo(
+    () => ({
+      ...configElement,
+      wrapperStyles: previewStyles,
+    }),
+    [configElement, previewStyles],
   );
 
   return (
@@ -735,7 +762,7 @@ export default function ThemeBuilderPageClient() {
                   collectionId: selectedCollectionId as number,
                   groupId: groupId ?? undefined,
                   element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
-                  config: previewElement,
+                  config: configElement,
                 },
               },
             });
