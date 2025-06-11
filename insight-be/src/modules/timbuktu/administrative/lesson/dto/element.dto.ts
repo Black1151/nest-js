@@ -3,6 +3,7 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import { PageElementType } from '../../style/page-element-type';
 
 @InputType('LessonElementInput')
+@ObjectType('LessonElement')
 export class ElementInput {
   @Field()
   id: string;
@@ -47,5 +48,4 @@ export class ElementInput {
   animation?: Record<string, any>;
 }
 
-@ObjectType('LessonElement')
-export class ElementDto extends ElementInput {}
+export { ElementInput as ElementDto };
