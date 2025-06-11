@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { ThemeEntity } from '../theme/theme.entity';
+import { validateStyleOverrides } from '../../../../validators/theme/style-overrides.validator';
 import { BaseService } from 'src/common/base.service';
 import { LessonEntity } from './lesson.entity';
 import { CreateLessonInput, UpdateLessonInput } from './lesson.inputs';
@@ -14,6 +16,8 @@ export class LessonService extends BaseService<
   constructor(
     @InjectRepository(LessonEntity)
     lessonRepository: Repository<LessonEntity>,
+    @InjectRepository(ThemeEntity)
+    private readonly themeRepository: Repository<ThemeEntity>,
     @InjectDataSource() dataSource: DataSource,
   ) {
     super(lessonRepository, dataSource);
@@ -21,12 +25,23 @@ export class LessonService extends BaseService<
 
   async create(data: CreateLessonInput): Promise<LessonEntity> {
     const { themeId, relationIds = [], ...rest } = data as any;
+    const theme = await this.themeRepository.findOneOrFail({ where: { id: themeId } });
+    validateStyleOverrides(rest.content, Object.keys(theme.semanticTokens?.colors ?? {}));
     const relations = [...relationIds, { relation: 'theme', ids: [themeId] }];
     return super.create({ ...rest, relationIds: relations } as any);
   }
 
   async update(data: UpdateLessonInput): Promise<LessonEntity> {
     const { themeId, relationIds = [], ...rest } = data as any;
+    let themeIdToUse = themeId;
+    if (!themeIdToUse) {
+      const existing = await this.repo.findOneOrFail({ where: { id: data.id } });
+      themeIdToUse = existing.themeId;
+    }
+    if (rest.content) {
+      const theme = await this.themeRepository.findOneOrFail({ where: { id: themeIdToUse } });
+      validateStyleOverrides(rest.content, Object.keys(theme.semanticTokens?.colors ?? {}));
+    }
     const relations = [
       ...relationIds,
       ...(themeId ? [{ relation: 'theme', ids: [themeId] }] : []),
