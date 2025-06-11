@@ -37,15 +37,16 @@ interface SaveStyleModalProps {
    * Available style collections. Each entry contains an id and name so that the
    * selected id can be sent to the backend style module.
    */
-  collections: { id: number; name: string }[];
+  collections?: { id: number; name: string }[];
+  collectionId?: number;
   /** Currently selected element type for filtering groups */
   elementType: string | null;
   /** Groups available for the selected collection/element */
   groups: { id: number; name: string }[];
   /** Callback when the user adds a new collection */
-  onAddCollection: (collection: { id: number; name: string }) => void;
+  onAddCollection?: (collection: { id: number; name: string }) => void;
   /** Callback when user creates a new group */
-  onAddGroup: (group: { id: number; name: string }) => void;
+  onAddGroup?: (group: { id: number; name: string }) => void;
   /** Callback executed when user submits the form */
   onSave: (data: {
     name: string;
@@ -58,6 +59,7 @@ export default function SaveStyleModal({
   isOpen,
   onClose,
   collections,
+  collectionId,
   elementType,
   groups,
   onAddCollection,
@@ -67,14 +69,16 @@ export default function SaveStyleModal({
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isAddGroupOpen, setIsAddGroupOpen] = useState(false);
   const [name, setName] = useState("");
-  const [collectionId, setCollectionId] = useState<number | "">("");
+  const [collectionIdState, setCollectionIdState] = useState<number | "">(
+    collectionId ?? "",
+  );
   const [groupId, setGroupId] = useState<number | "">("");
   const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
   const [createGroup] = useMutation(CREATE_STYLE_GROUP);
 
   useEffect(() => {
     setGroupId("");
-  }, [collectionId, elementType]);
+  }, [collectionIdState, elementType]);
 
   return (
     <>
@@ -84,25 +88,27 @@ export default function SaveStyleModal({
             <FormLabel>Style Name</FormLabel>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </FormControl>
-          <FormControl>
-            <FormLabel>Collection</FormLabel>
-            <Select
-              placeholder="Select collection"
-              value={collectionId}
-              onChange={(e) =>
-                setCollectionId(
-                  e.target.value === "" ? "" : parseInt(e.target.value)
-                )
-              }
-            >
-              {collections.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl isDisabled={collectionId === "" || !elementType}>
+          {collections && (
+            <FormControl>
+              <FormLabel>Collection</FormLabel>
+              <Select
+                placeholder="Select collection"
+                value={collectionIdState}
+                onChange={(e) =>
+                  setCollectionIdState(
+                    e.target.value === "" ? "" : parseInt(e.target.value)
+                  )
+                }
+              >
+                {collections.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          <FormControl isDisabled={(collections ? collectionIdState === "" : false) || !elementType}>
             <FormLabel>Group</FormLabel>
             <Select
               placeholder="Select group"
@@ -120,22 +126,26 @@ export default function SaveStyleModal({
               ))}
             </Select>
           </FormControl>
-          <Button onClick={() => setIsAddOpen(true)}>Add Collection</Button>
-          <Button onClick={() => setIsAddGroupOpen(true)} isDisabled={collectionId === "" || !elementType}>
-            Add Group
-          </Button>
+          {onAddCollection && (
+            <Button onClick={() => setIsAddOpen(true)}>Add Collection</Button>
+          )}
+          {onAddGroup && (
+            <Button onClick={() => setIsAddGroupOpen(true)} isDisabled={(collections ? collectionIdState === "" : false) || !elementType}>
+              Add Group
+            </Button>
+          )}
           <Button
             colorScheme="blue"
-            isDisabled={!name || collectionId === ""}
+            isDisabled={!name || (collections ? collectionIdState === "" : false)}
             onClick={() => {
-              if (collectionId !== "") {
+              if (!collections || collectionIdState !== "") {
                 onSave({
                   name,
-                  collectionId,
+                  collectionId: collections ? Number(collectionIdState) : (collectionId as number),
                   groupId: groupId === "" ? null : groupId,
                 });
                 setName("");
-                setCollectionId("");
+                if (collections) setCollectionIdState("");
                 setGroupId("");
                 onClose();
               }
@@ -145,45 +155,49 @@ export default function SaveStyleModal({
           </Button>
         </Stack>
       </BaseModal>
-      <AddStyleCollectionModal
-        isOpen={isAddOpen}
-        onClose={() => setIsAddOpen(false)}
-        onSave={async (name) => {
-          const { data } = await createCollection({
-            variables: { data: { name } },
-          });
-          if (data?.createStyleCollection) {
-            onAddCollection({
-              id: data.createStyleCollection.id,
-              name: data.createStyleCollection.name,
+      {onAddCollection && (
+        <AddStyleCollectionModal
+          isOpen={isAddOpen}
+          onClose={() => setIsAddOpen(false)}
+          onSave={async (name) => {
+            const { data } = await createCollection({
+              variables: { data: { name } },
             });
-          }
-          setIsAddOpen(false);
-        }}
-      />
-      <AddStyleGroupModal
-        isOpen={isAddGroupOpen}
-        onClose={() => setIsAddGroupOpen(false)}
-        onSave={async (name) => {
-          if (collectionId === "" || !elementType) return;
-          const { data } = await createGroup({
-            variables: {
-              data: {
-                name,
-                collectionId,
-                element: ELEMENT_TYPE_TO_ENUM[elementType],
+            if (data?.createStyleCollection) {
+              onAddCollection({
+                id: data.createStyleCollection.id,
+                name: data.createStyleCollection.name,
+              });
+            }
+            setIsAddOpen(false);
+          }}
+        />
+      )}
+      {onAddGroup && (
+        <AddStyleGroupModal
+          isOpen={isAddGroupOpen}
+          onClose={() => setIsAddGroupOpen(false)}
+          onSave={async (name) => {
+            if ((collections ? collectionIdState === "" : false) || !elementType) return;
+            const { data } = await createGroup({
+              variables: {
+                data: {
+                  name,
+                  collectionId: collections ? Number(collectionIdState) : (collectionId as number),
+                  element: ELEMENT_TYPE_TO_ENUM[elementType],
+                },
               },
-            },
-          });
-          if (data?.createStyleGroup) {
-            onAddGroup({
-              id: data.createStyleGroup.id,
-              name: data.createStyleGroup.name,
             });
-          }
-          setIsAddGroupOpen(false);
-        }}
-      />
+            if (data?.createStyleGroup) {
+              onAddGroup({
+                id: data.createStyleGroup.id,
+                name: data.createStyleGroup.name,
+              });
+            }
+            setIsAddGroupOpen(false);
+          }}
+        />
+      )}
     </>
   );
 }

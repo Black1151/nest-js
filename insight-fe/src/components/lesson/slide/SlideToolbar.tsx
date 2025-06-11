@@ -15,7 +15,6 @@ interface SlideToolbarProps {
   availableElements: { type: string; label: string }[];
   styleGroups: { id: number; name: string }[];
   selectedCollectionId: number | "";
-  onSelectCollection: (id: number | "") => void;
   selectedThemeId: number | "";
   onSelectTheme: (id: number | "") => void;
   selectedPaletteId: number | "";
@@ -31,7 +30,6 @@ export default function SlideToolbar({
   availableElements,
   styleGroups,
   selectedCollectionId,
-  onSelectCollection,
   selectedThemeId,
   onSelectTheme,
   selectedPaletteId,
@@ -71,7 +69,6 @@ export default function SlideToolbar({
           <ThemeDropdown
             value={selectedThemeId === "" ? null : String(selectedThemeId)}
             onChange={(id) => onSelectTheme(id === null ? "" : parseInt(id, 10))}
-            isDisabled={selectedCollectionId === ""}
           />
           <ColorPaletteDropdown
             collectionId={
