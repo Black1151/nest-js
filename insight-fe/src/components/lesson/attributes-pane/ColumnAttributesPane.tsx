@@ -6,12 +6,12 @@ import { ColumnType } from "@/components/DnD/types";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import WrapperSettings from "../attributes/WrapperSettings";
 import useStyleAttributes from "../hooks/useStyleAttributes";
-import { SemanticTokens } from "@/theme/helpers";
+import { SemanticTokens, ThemeTokens } from "@/theme/helpers";
 
 interface ColumnAttributesPaneProps {
   column: ColumnType<SlideElementDnDItemProps>;
   onChange: (updated: ColumnType<SlideElementDnDItemProps>) => void;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
 }
 
 export default function ColumnAttributesPane({

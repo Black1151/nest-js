@@ -35,7 +35,6 @@ export default function LessonPreviewModal({
   });
 
   const theme = themeData?.getTheme;
-  const tokens: SemanticTokens | undefined = theme?.semanticTokens;
   const variants: ComponentVariant[] | undefined = theme?.componentVariants;
 
   const foundation = theme ? { ...(theme.foundationTokens as any) } : undefined;
@@ -72,7 +71,7 @@ export default function LessonPreviewModal({
             <SlidePreview
               columnMap={slide.columnMap}
               boards={slide.boards}
-              tokens={tokens}
+              tokens={chakraTheme}
               variants={variants}
             />
           </Box>

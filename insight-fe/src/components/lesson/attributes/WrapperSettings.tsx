@@ -16,11 +16,11 @@ import {
 } from "@chakra-ui/react";
 import type useStyleAttributes from "../hooks/useStyleAttributes";
 import PaletteColorPicker from "../PaletteColorPicker";
-import { SemanticTokens, tokenColor } from "@/theme/helpers";
+import { SemanticTokens, ThemeTokens, tokenColor } from "@/theme/helpers";
 
 interface WrapperSettingsProps {
   attrs: ReturnType<typeof useStyleAttributes>;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
 }
 
 export default function WrapperSettings({ attrs, tokens }: WrapperSettingsProps) {
@@ -57,7 +57,11 @@ export default function WrapperSettings({ attrs, tokens }: WrapperSettingsProps)
     setSpacing,
   } = attrs;
 
-  const tokenKeys = tokens ? Object.keys(tokens.colors ?? {}) : [];
+  const tokenKeys = tokens
+    ? 'semanticTokens' in tokens
+      ? Object.keys(tokens.semanticTokens?.colors ?? {})
+      : Object.keys((tokens as any).colors ?? {})
+    : [];
 
   return (
     <>

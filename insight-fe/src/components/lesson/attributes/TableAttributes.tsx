@@ -15,7 +15,7 @@ import {
 import { useEffect, useState, useRef } from "react";
 import PaletteColorPicker from "../PaletteColorPicker";
 import { TableCell } from "@/components/DnD/cards/SlideElementDnDCard";
-import { SemanticTokens, tokenColor } from "@/theme/helpers";
+import { SemanticTokens, ThemeTokens, tokenColor } from "@/theme/helpers";
 
 interface TableAttributesProps {
   table: {
@@ -24,7 +24,7 @@ interface TableAttributesProps {
     cells: TableCell[][];
   };
   setTable: (table: { rows: number; cols: number; cells: TableCell[][] }) => void;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
 }
 
 export default function TableAttributes({
@@ -88,7 +88,11 @@ export default function TableAttributes({
     });
   };
 
-  const tokenKeys = tokens ? Object.keys(tokens.colors ?? {}) : [];
+  const tokenKeys = tokens
+    ? 'semanticTokens' in tokens
+      ? Object.keys(tokens.semanticTokens?.colors ?? {})
+      : Object.keys((tokens as any).colors ?? {})
+    : [];
 
   const updateCell = (r: number, c: number, cell: TableCell) => {
     updateTableCells((prev) => {
