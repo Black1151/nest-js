@@ -12,7 +12,7 @@ import {
   Stack,
   SimpleGrid,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import PaletteColorPicker from "../PaletteColorPicker";
 import { TableCell } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -36,8 +36,12 @@ export default function TableAttributes({
   const [rows, setRows] = useState(table.rows);
   const [cols, setCols] = useState(table.cols);
   const [cells, setCells] = useState<TableCell[][]>(table.cells);
+  const rowsRef = useRef(table.rows);
+  const colsRef = useRef(table.cols);
 
   useEffect(() => {
+    rowsRef.current = table.rows;
+    colsRef.current = table.cols;
     setRows(table.rows);
     setCols(table.cols);
     setCells(table.cells);
@@ -57,20 +61,22 @@ export default function TableAttributes({
 
   const handleRowsChange = (value: number) => {
     const r = Math.max(1, value);
+    rowsRef.current = r;
     setRows(r);
     setCells((prev) => {
-      const newCells = adjustMatrix(prev, r, cols);
-      setTable({ rows: r, cols, cells: newCells });
+      const newCells = adjustMatrix(prev, r, colsRef.current);
+      setTable({ rows: r, cols: colsRef.current, cells: newCells });
       return newCells;
     });
   };
 
   const handleColsChange = (value: number) => {
     const c = Math.max(1, value);
+    colsRef.current = c;
     setCols(c);
     setCells((prev) => {
-      const newCells = adjustMatrix(prev, rows, c);
-      setTable({ rows, cols: c, cells: newCells });
+      const newCells = adjustMatrix(prev, rowsRef.current, c);
+      setTable({ rows: rowsRef.current, cols: c, cells: newCells });
       return newCells;
     });
   };
@@ -78,7 +84,7 @@ export default function TableAttributes({
   const updateTableCells = (updater: (cells: TableCell[][]) => TableCell[][]) => {
     setCells((prev) => {
       const next = updater(prev);
-      setTable({ rows, cols, cells: next });
+      setTable({ rows: rowsRef.current, cols: colsRef.current, cells: next });
       return next;
     });
   };
