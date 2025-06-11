@@ -9,7 +9,7 @@ import ColumnAttributesPane from "../attributes-pane/ColumnAttributesPane";
 import ElementAttributesPane from "../attributes-pane/ElementAttributesPane";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import SlideSequencer, { Slide } from "./SlideSequencer";
-import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
+import { ComponentVariant, SemanticTokens, ThemeTokens } from "@/theme/helpers";
 
 interface SlideCanvasProps {
   slides: Slide[];
@@ -33,7 +33,7 @@ interface SlideCanvasProps {
   handleDropElement: (e: React.DragEvent<HTMLDivElement>) => void;
   openSaveStyle: () => void;
   openLoadStyle: () => void;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
   variants?: ComponentVariant[];
 }
 

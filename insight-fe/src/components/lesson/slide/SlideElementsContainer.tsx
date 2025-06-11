@@ -13,7 +13,7 @@ import {
   defaultColumnWrapperStyles,
   defaultBoardWrapperStyles,
 } from "../defaultStyles";
-import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
+import { ComponentVariant, SemanticTokens, ThemeTokens } from "@/theme/helpers";
 import { ElementWrapperStyles } from "../elements/ElementWrapper";
 
 export interface BoardRow {
@@ -37,7 +37,7 @@ interface SlideElementsContainerProps {
   onSelectColumn?: (id: string) => void;
   selectedBoardId?: string | null;
   onSelectBoard?: (id: string) => void;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
   variants?: ComponentVariant[];
 }
 

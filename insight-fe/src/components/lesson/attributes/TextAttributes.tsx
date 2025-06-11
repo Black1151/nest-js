@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { availableFonts } from "@/theme/fonts";
 import PaletteColorPicker from "../PaletteColorPicker";
-import { SemanticTokens, tokenColor, ComponentVariant } from "@/theme/helpers";
+import { SemanticTokens, ThemeTokens, tokenColor, ComponentVariant } from "@/theme/helpers";
 
 interface TextAttributesProps {
   text: string;
@@ -31,7 +31,7 @@ interface TextAttributesProps {
   setLineHeight: (val: string) => void;
   textAlign: string;
   setTextAlign: (val: string) => void;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
   variants?: ComponentVariant[];
 }
 
@@ -52,7 +52,11 @@ export default function TextAttributes({
   setTextAlign,
   tokens,
 }: TextAttributesProps) {
-  const tokenKeys = tokens ? Object.keys(tokens.colors ?? {}) : [];
+  const tokenKeys = tokens
+    ? 'semanticTokens' in tokens
+      ? Object.keys(tokens.semanticTokens?.colors ?? {})
+      : Object.keys((tokens as any).colors ?? {})
+    : [];
 
   return (
     <AccordionItem borderWidth="1px" borderColor="purple.300" borderRadius="md" mb={2}>

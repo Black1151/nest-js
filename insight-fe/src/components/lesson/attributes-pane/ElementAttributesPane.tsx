@@ -13,14 +13,14 @@ import VideoAttributes from "../attributes/VideoAttributes";
 import TableAttributes from "../attributes/TableAttributes";
 import WrapperSettings from "../attributes/WrapperSettings";
 import useStyleAttributes from "../hooks/useStyleAttributes";
-import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
+import { ComponentVariant, SemanticTokens, ThemeTokens } from "@/theme/helpers";
 
 interface ElementAttributesPaneProps {
   element: SlideElementDnDItemProps;
   onChange: (updated: SlideElementDnDItemProps) => void;
   onClone?: () => void;
   onDelete?: () => void;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
   variants?: ComponentVariant[];
 }
 

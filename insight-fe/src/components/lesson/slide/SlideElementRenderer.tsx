@@ -10,11 +10,11 @@ import ImageElement from "../elements/ImageElement";
 import QuizElement from "../elements/QuizElement";
 import VideoElement from "../elements/VideoElement";
 
-import { ComponentVariant, SemanticTokens, resolveVariant, tokenColor } from "@/theme/helpers";
+import { ComponentVariant, SemanticTokens, ThemeTokens, resolveVariant, tokenColor } from "@/theme/helpers";
 
 interface SlideElementRendererProps {
   item: SlideElementDnDItemProps;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
   variants?: ComponentVariant[];
 }
 

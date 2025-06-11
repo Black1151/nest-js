@@ -434,7 +434,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             handleDropElement={editor.handleDropElement}
             openSaveStyle={() => setIsSaveStyleOpen(true)}
             openLoadStyle={() => setIsLoadStyleOpen(true)}
-            tokens={selectedTheme?.semanticTokens}
+            tokens={chakraTheme}
             variants={selectedTheme?.componentVariants}
           />
 
