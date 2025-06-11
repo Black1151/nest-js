@@ -48,4 +48,8 @@ export class ColorPaletteService extends BaseService<
     ];
     return super.findAll({ ...rest, filters: finalFilters });
   }
+
+  async findOne(id: number, relations?: string[]): Promise<ColorPaletteEntity> {
+    return super.findOne(id, relations);
+  }
 }
