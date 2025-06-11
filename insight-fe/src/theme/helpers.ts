@@ -1,6 +1,8 @@
 export interface ComponentVariant {
   id: number;
   baseComponent: string;
+  /** Human readable name for screen readers */
+  accessibleName?: string;
   props: Record<string, any>;
 }
 
