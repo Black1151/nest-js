@@ -36,14 +36,16 @@ Styled elements let you reuse consistent formatting across lessons. The Theme
 Builder provides an interface for defining these styles against your theme's
 tokens.
 
-1. Select the **element type** you want to style (text, table, image, etc.) from
-   the element dropdown.
-2. Use the attribute fields to apply design tokens&mdash;for example choose a
-   semantic color token for text or background values.
-3. Click **Save Element Style** and pick a **style group** in which to store the
-   style.
+1. **Drag an element onto the canvas** from the element list. Arrange or resize
+   it however you like to preview how several items might look together.
+2. With the element selected, **modify its attributes in the sidebar**. Use the
+   attribute fields to apply design tokens&mdash;for example choose a semantic
+   color token for text or background values.
+3. Once you are satisfied, click **Save Element Style** and pick a **style
+   group** in which to store the style.
 
 Saving styles under a group ties them to your theme. When the theme's tokens are
 updated, every lesson using a style from that group automatically receives the
-new design.
+new design. The canvas is for experimentation only&mdash;the Theme Builder does
+not save complete slide layouts.
 
