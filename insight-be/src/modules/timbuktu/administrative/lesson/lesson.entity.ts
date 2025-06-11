@@ -39,15 +39,19 @@ export class LessonEntity extends AbstractBaseEntity {
 
   /* ---------- theme ---------- */
 
-  @Field(() => ThemeEntity, { nullable: true })
-  @ManyToOne(() => ThemeEntity, { nullable: true })
+  @Field(() => ThemeEntity)
+  @ManyToOne(() => ThemeEntity, { nullable: false })
   @JoinColumn({ name: 'theme_id' })
-  theme?: ThemeEntity;
+  theme!: ThemeEntity;
 
-  @Field(() => ID, { nullable: true })
-  @Column({ name: 'theme_id', nullable: true })
+  @Field(() => ID)
+  @Column({ name: 'theme_id' })
   @RelationId((lesson: LessonEntity) => lesson.theme)
-  themeId?: number;
+  themeId!: number;
+
+  @Field(() => Date, { nullable: true })
+  @Column({ name: 'last_theme_upgrade', type: 'timestamptz', nullable: true })
+  lastThemeUpgrade?: Date;
 
   /* ---------- relationships ---------- */
 
