@@ -21,6 +21,8 @@ import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import {
   GET_STYLE_COLLECTIONS,
   GET_COLOR_PALETTES,
+  GET_STYLE_GROUPS,
+  CREATE_STYLE,
   CREATE_THEME,
   CREATE_STYLE_COLLECTION,
   UPDATE_STYLE_COLLECTION,
@@ -30,6 +32,7 @@ import {
   DELETE_COLOR_PALETTE,
   CREATE_COMPONENT_VARIANT,
 } from "@/graphql/lesson";
+import { PageElementType } from "@/__generated__/schema-types";
 import SaveStyleModal from "@/components/lesson/modals/SaveStyleModal";
 import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollectionModal";
 import AddColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModal";
@@ -51,6 +54,13 @@ const AVAILABLE_ELEMENTS = [
   { type: "image", label: "Image" },
   { type: "video", label: "Video" },
 ];
+
+const ELEMENT_TYPE_TO_ENUM: Record<string, PageElementType> = {
+  text: PageElementType.Text,
+  table: PageElementType.Table,
+  image: PageElementType.Image,
+  video: PageElementType.Video,
+};
 
 export default function ThemeBuilderPageClient() {
   const [themeName, setThemeName] = useState("");
@@ -134,12 +144,18 @@ export default function ThemeBuilderPageClient() {
   const [variants, setVariants] = useState<
     { name: string; base: string; accessible: string; props: string }[]
   >([]);
+  const [styleGroups, setStyleGroups] = useState<{
+    id: number;
+    name: string;
+  }[]>([]);
+  const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
 
   const { data: collectionsData, refetch: refetchCollections } = useQuery(
     GET_STYLE_COLLECTIONS,
   );
   const [fetchPalettes, { data: palettesData }] =
     useLazyQuery(GET_COLOR_PALETTES);
+  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
   const [createTheme, { loading: saving }] = useMutation(CREATE_THEME, {
     onCompleted: () => {
       setThemeName("");
@@ -155,6 +171,7 @@ export default function ThemeBuilderPageClient() {
   const [deletePalette, { loading: deletingPalette }] = useMutation(
     DELETE_COLOR_PALETTE,
   );
+  const [createStyle] = useMutation(CREATE_STYLE);
   const [createVariant] = useMutation(CREATE_COMPONENT_VARIANT);
 
   useEffect(() => {
@@ -179,6 +196,25 @@ export default function ThemeBuilderPageClient() {
       setColorPalettes(palettesData.getAllColorPalette);
     }
   }, [palettesData]);
+
+  useEffect(() => {
+    if (selectedCollectionId !== "" && selectedElementType) {
+      fetchGroups({
+        variables: {
+          collectionId: String(selectedCollectionId),
+          element: selectedElementType,
+        },
+      });
+    } else {
+      setStyleGroups([]);
+    }
+  }, [selectedCollectionId, selectedElementType]);
+
+  useEffect(() => {
+    if (groupsData?.getAllStyleGroup) {
+      setStyleGroups(groupsData.getAllStyleGroup);
+    }
+  }, [groupsData]);
 
   const tokens = useMemo(
     () => ({ colors: Object.fromEntries(foundationColors.map((c) => [c.name, c.value])) }),
@@ -506,6 +542,14 @@ export default function ThemeBuilderPageClient() {
 
       <Button
         colorScheme="blue"
+        isDisabled={selectedCollectionId === ""}
+        onClick={() => setIsSaveStyleOpen(true)}
+      >
+        Save Element Style
+      </Button>
+
+      <Button
+        colorScheme="blue"
         isDisabled={
           !themeName || selectedCollectionId === "" || selectedPaletteId === ""
         }
@@ -671,6 +715,40 @@ export default function ThemeBuilderPageClient() {
             setIsDeletePaletteOpen(false);
           }}
           isLoading={deletingPalette}
+        />
+      )}
+
+      {isSaveStyleOpen && (
+        <SaveStyleModal
+          isOpen={isSaveStyleOpen}
+          onClose={() => setIsSaveStyleOpen(false)}
+          collectionId={selectedCollectionId as number}
+          elementType={selectedElementType}
+          groups={styleGroups}
+          onAddGroup={(g) => setStyleGroups((arr) => [...arr, g])}
+          onSave={async ({ name, groupId }) => {
+            if (selectedCollectionId === "") return;
+            await createStyle({
+              variables: {
+                data: {
+                  name,
+                  collectionId: selectedCollectionId as number,
+                  groupId: groupId ?? undefined,
+                  element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
+                  config: previewElement,
+                },
+              },
+            });
+            // refresh groups in case a new one was added
+            if (selectedCollectionId !== "" && selectedElementType) {
+              fetchGroups({
+                variables: {
+                  collectionId: String(selectedCollectionId),
+                  element: selectedElementType,
+                },
+              });
+            }
+          }}
         />
       )}
     </Stack>
