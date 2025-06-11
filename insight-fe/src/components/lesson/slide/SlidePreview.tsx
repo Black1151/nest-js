@@ -7,13 +7,21 @@ import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnD
 import SlideElementRenderer from "./SlideElementRenderer";
 import { BoardRow } from "./SlideElementsContainer";
 import ElementWrapper from "../elements/ElementWrapper";
+import { ColorPalette, ComponentVariant } from "@/theme/helpers";
 
 interface SlidePreviewProps {
   columnMap: ColumnMap<SlideElementDnDItemProps>;
   boards: BoardRow[];
+  palette?: ColorPalette;
+  variants?: ComponentVariant[];
 }
 
-export default function SlidePreview({ columnMap, boards }: SlidePreviewProps) {
+export default function SlidePreview({
+  columnMap,
+  boards,
+  palette,
+  variants,
+}: SlidePreviewProps) {
   return (
     <Stack gap={4}>
       {boards.map((board) => (
@@ -39,7 +47,11 @@ export default function SlidePreview({ columnMap, boards }: SlidePreviewProps) {
                   <Stack gap={column.spacing ?? 2}>
                     {column.items.map((item) => (
                       <Box key={item.id} mb={2} data-card-id={item.id}>
-                        <SlideElementRenderer item={item} />
+                        <SlideElementRenderer
+                          item={item}
+                          palette={palette}
+                          variants={variants}
+                        />
                       </Box>
                     ))}
                   </Stack>
