@@ -35,3 +35,12 @@ export class FindAllThemeInput extends FindAllInput {
   @Field(() => ID, { nullable: true })
   styleCollectionId?: number;
 }
+
+@InputType()
+export class UpgradeThemeVersionInput {
+  @Field(() => ID)
+  id: number;
+
+  @Field()
+  version: number;
+}
