@@ -30,3 +30,20 @@ Lessons reference a theme which in turn references a default color palette.  The
 4. Use the `createTheme` mutation to store the theme with its `styleCollection` and palette.
 5. When a new theme version is available call `upgradeLessonTheme` or `upgradeThemeVersion` to apply the latest tokens to existing lessons.
 
+## Creating Styled Elements in the Theme Builder
+
+Styled elements let you reuse consistent formatting across lessons. The Theme
+Builder provides an interface for defining these styles against your theme's
+tokens.
+
+1. Select the **element type** you want to style (text, table, image, etc.) from
+   the element dropdown.
+2. Use the attribute fields to apply design tokens&mdash;for example choose a
+   semantic color token for text or background values.
+3. Click **Save Element Style** and pick a **style group** in which to store the
+   style.
+
+Saving styles under a group ties them to your theme. When the theme's tokens are
+updated, every lesson using a style from that group automatically receives the
+new design.
+
