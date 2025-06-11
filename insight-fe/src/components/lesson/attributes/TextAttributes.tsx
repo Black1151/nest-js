@@ -81,7 +81,7 @@ export default function TextAttributes({
             <PaletteColorPicker
               value={tokenKeys.indexOf(colorToken)}
               onChange={(idx) => setColorToken(tokenKeys[idx])}
-              paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
+              paletteColors={tokenKeys.map((k) => tokenColor(tokens, k) || "")}
             />
           </FormControl>
           <FormControl display="flex" alignItems="center">

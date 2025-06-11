@@ -104,7 +104,7 @@ export default function WrapperSettings({ attrs, tokens }: WrapperSettingsProps)
                     setBgColor(tokenKeys[idx]);
                     setBgOpacity(1);
                   }}
-                  paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
+                  paletteColors={tokenKeys.map((k) => tokenColor(tokens, k) || "")}
                 />
               </FormControl>
             )}
@@ -115,7 +115,7 @@ export default function WrapperSettings({ attrs, tokens }: WrapperSettingsProps)
                   <PaletteColorPicker
                     value={tokenKeys.indexOf(gradientFrom)}
                     onChange={(idx) => setGradientFrom(tokenKeys[idx])}
-                    paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
+                    paletteColors={tokenKeys.map((k) => tokenColor(tokens, k) || "")}
                   />
                 </FormControl>
                 <FormControl display="flex" alignItems="center">
@@ -123,7 +123,7 @@ export default function WrapperSettings({ attrs, tokens }: WrapperSettingsProps)
                   <PaletteColorPicker
                     value={tokenKeys.indexOf(gradientTo)}
                     onChange={(idx) => setGradientTo(tokenKeys[idx])}
-                    paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
+                    paletteColors={tokenKeys.map((k) => tokenColor(tokens, k) || "")}
                   />
                 </FormControl>
                 <FormControl display="flex" alignItems="center">
@@ -260,7 +260,7 @@ export default function WrapperSettings({ attrs, tokens }: WrapperSettingsProps)
               <PaletteColorPicker
                 value={tokenKeys.indexOf(borderColor)}
                 onChange={(idx) => setBorderColor(tokenKeys[idx])}
-                paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
+                paletteColors={tokenKeys.map((k) => tokenColor(tokens, k) || "")}
               />
             </FormControl>
             <FormControl display="flex" alignItems="center">

@@ -57,18 +57,38 @@ function resolvePath(obj: any, path: string): any {
   return cur;
 }
 
-export function tokenColor(tokens: ThemeTokens | undefined, path: string | undefined): string | undefined {
+export function tokenColor(
+  tokens: ThemeTokens | undefined,
+  path: string | undefined,
+): string | undefined {
   if (!tokens || !path) return undefined;
 
-  const semRoot = 'semanticTokens' in tokens ? tokens.semanticTokens : tokens;
-  const semValue = resolvePath(semRoot, path);
-  if (typeof semValue !== 'string') return undefined;
-  if (semValue.startsWith('#')) return semValue;
+  if (path.startsWith('#')) return path;
 
-  const foundationPath = semValue.startsWith('colors.') ? semValue.slice(7) : semValue;
+  const semRoot = 'semanticTokens' in tokens ? tokens.semanticTokens : tokens;
+  const trySemantic =
+    resolvePath(semRoot, path) ??
+    resolvePath(semRoot, path.startsWith('colors.') ? path.slice(7) : `colors.${path}`);
+
   const foundationRoot =
     ('colors' in tokens ? (tokens as any).colors : undefined) ??
     (tokens as any).foundationTokens?.colors;
-  const color = resolvePath(foundationRoot, foundationPath);
-  return typeof color === 'string' ? color : semValue;
+
+  if (typeof trySemantic === 'string') {
+    if (trySemantic.startsWith('#')) return trySemantic;
+
+    const foundationPath = trySemantic.startsWith('colors.')
+      ? trySemantic.slice(7)
+      : trySemantic;
+    const color =
+      resolvePath(foundationRoot, foundationPath) ??
+      resolvePath(foundationRoot, `colors.${foundationPath}`);
+    return typeof color === 'string' ? color : trySemantic;
+  }
+
+  const foundationPath = path.startsWith('colors.') ? path.slice(7) : path;
+  const color =
+    resolvePath(foundationRoot, foundationPath) ??
+    resolvePath(foundationRoot, `colors.${foundationPath}`);
+  return typeof color === 'string' ? color : undefined;
 }
