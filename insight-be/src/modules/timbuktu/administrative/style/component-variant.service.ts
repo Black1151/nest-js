@@ -36,4 +36,8 @@ export class ComponentVariantService extends BaseService<
     ];
     return super.update({ ...rest, relationIds: relations } as any);
   }
+
+  async findOne(id: number, relations?: string[]): Promise<ComponentVariantEntity> {
+    return super.findOne(id, relations);
+  }
 }

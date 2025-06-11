@@ -7,6 +7,7 @@ import {
   FindAllColorPaletteInput,
 } from './color-palette.inputs';
 import { RbacPermissionKey } from 'src/modules/rbac/decorators/resolver-permission-key.decorator';
+import { IdInput } from 'src/common/base.inputs';
 import { ColorPaletteService } from './color-palette.service';
 
 const BaseColorPaletteResolver = createBaseResolver<
@@ -16,13 +17,24 @@ const BaseColorPaletteResolver = createBaseResolver<
 >(ColorPaletteEntity, CreateColorPaletteInput, UpdateColorPaletteInput, {
   queryName: 'ColorPalette',
   stableKeyPrefix: 'colorPalette',
-  enabledOperations: ['findAll', 'findOne', 'create', 'update', 'remove'],
+  enabledOperations: ['findAll', 'create', 'update', 'remove'],
 });
 
 @Resolver(() => ColorPaletteEntity)
 export class ColorPaletteResolver extends BaseColorPaletteResolver {
   constructor(private readonly paletteService: ColorPaletteService) {
     super(paletteService);
+  }
+
+  @Query(() => ColorPaletteEntity, {
+    name: 'getColorPalette',
+    description: 'Returns one ColorPalette',
+  })
+  @RbacPermissionKey('colorPalette.getColorPalette')
+  async findOne(
+    @Args('data', { type: () => IdInput }) data: IdInput,
+  ): Promise<ColorPaletteEntity> {
+    return this.paletteService.findOne(data.id);
   }
 
   @Query(() => [ColorPaletteEntity], {
