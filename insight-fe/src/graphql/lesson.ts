@@ -293,3 +293,35 @@ export const GET_COMPONENT_VARIANT = gql`
     }
   }
 `;
+
+export const CREATE_COMPONENT_VARIANT = gql`
+  mutation CreateComponentVariant($data: CreateComponentVariantInput!) {
+    createComponentVariant(data: $data) {
+      id
+      name
+      baseComponent
+      props
+      accessibleName
+      themeId
+    }
+  }
+`;
+
+export const UPDATE_COMPONENT_VARIANT = gql`
+  mutation UpdateComponentVariant($data: UpdateComponentVariantInput!) {
+    updateComponentVariant(data: $data) {
+      id
+      name
+      baseComponent
+      props
+      accessibleName
+      themeId
+    }
+  }
+`;
+
+export const DELETE_COMPONENT_VARIANT = gql`
+  mutation DeleteComponentVariant($data: IdInput!) {
+    deleteComponentVariant(data: $data)
+  }
+`;
