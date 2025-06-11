@@ -12,8 +12,8 @@ export interface ElementAnimation {
 
 export interface TableCell {
   text: string;
-  styles?: {
-    colorIndex?: number;
+  styleOverrides?: {
+    colorToken?: string;
     fontSize?: string;
     fontFamily?: string;
     fontWeight?: string;
@@ -66,8 +66,8 @@ export interface SlideElementDnDItemProps {
     cols: number;
     cells: TableCell[][];
   };
-  styles?: {
-    colorIndex?: number;
+  styleOverrides?: {
+    colorToken?: string;
     fontSize?: string;
     fontFamily?: string;
     fontWeight?: string;
@@ -138,11 +138,11 @@ export const SlideElementDnDItem = ({
     content = (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Text
-          fontSize={item.styles?.fontSize}
-          fontFamily={item.styles?.fontFamily}
-          fontWeight={item.styles?.fontWeight}
-          lineHeight={item.styles?.lineHeight}
-          textAlign={item.styles?.textAlign as any}
+          fontSize={item.styleOverrides?.fontSize}
+          fontFamily={item.styleOverrides?.fontFamily}
+          fontWeight={item.styleOverrides?.fontWeight}
+          lineHeight={item.styleOverrides?.lineHeight}
+          textAlign={item.styleOverrides?.textAlign as any}
         >
           {item.text || "Sample Text"}
         </Text>
@@ -158,11 +158,11 @@ export const SlideElementDnDItem = ({
                 {row.map((cell, cIdx) => (
                   <Td key={cIdx} p={1}>
                     <Text
-                      fontSize={cell.styles?.fontSize}
-                      fontFamily={cell.styles?.fontFamily}
-                      fontWeight={cell.styles?.fontWeight}
-                      lineHeight={cell.styles?.lineHeight}
-                      textAlign={cell.styles?.textAlign as any}
+                      fontSize={cell.styleOverrides?.fontSize}
+                      fontFamily={cell.styleOverrides?.fontFamily}
+                      fontWeight={cell.styleOverrides?.fontWeight}
+                      lineHeight={cell.styleOverrides?.lineHeight}
+                      textAlign={cell.styleOverrides?.textAlign as any}
                     >
                       {cell.text}
                     </Text>

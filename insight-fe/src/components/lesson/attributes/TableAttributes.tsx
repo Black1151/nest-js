@@ -54,7 +54,7 @@ export default function TableAttributes({
     Array.from({ length: newRows }, (_, r) =>
       Array.from(
         { length: newCols },
-        (_, c) => prev[r]?.[c] || { text: "", styles: { colorToken: "" } }
+        (_, c) => prev[r]?.[c] || { text: "", styleOverrides: { colorToken: "" } }
       )
     );
 
@@ -151,11 +151,14 @@ export default function TableAttributes({
                     }
                   />
                   <PaletteColorPicker
-                    value={tokenKeys.indexOf(cell.styles?.colorToken ?? "")}
+                    value={tokenKeys.indexOf(cell.styleOverrides?.colorToken ?? "")}
                     onChange={(idx) =>
                       updateCell(rIdx, cIdx, {
                         ...cell,
-                        styles: { ...cell.styles, colorToken: tokenKeys[idx] },
+                        styleOverrides: {
+                          ...cell.styleOverrides,
+                          colorToken: tokenKeys[idx],
+                        },
                       })
                     }
                     paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
