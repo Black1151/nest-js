@@ -55,7 +55,7 @@ export default function TableAttributes({
     Array.from({ length: newRows }, (_, r) =>
       Array.from(
         { length: newCols },
-        (_, c) => prev[r]?.[c] || { text: "", styles: { color: "#000000" } }
+        (_, c) => prev[r]?.[c] || { text: "", styles: { colorIndex: 0 } }
       )
     );
 
@@ -153,11 +153,11 @@ export default function TableAttributes({
                     }
                   />
                   <PaletteColorPicker
-                    value={cell.styles?.color || "#000000"}
-                    onChange={(color) =>
+                    value={cell.styles?.colorIndex ?? 0}
+                    onChange={(idx) =>
                       updateCell(rIdx, cIdx, {
                         ...cell,
-                        styles: { ...cell.styles, color },
+                        styles: { ...cell.styles, colorIndex: idx },
                       })
                     }
                     paletteColors={paletteColors}

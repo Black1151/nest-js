@@ -13,7 +13,7 @@ export interface ElementAnimation {
 export interface TableCell {
   text: string;
   styles?: {
-    color?: string;
+    colorIndex?: number;
     fontSize?: string;
     fontFamily?: string;
     fontWeight?: string;
@@ -24,6 +24,8 @@ export interface TableCell {
 
 export interface SlideElementDnDItemProps {
   id: string;
+  /** Style reference id when the element originates from the style library */
+  styleId?: number;
   type: string;
   /**
    * Text content for text elements
@@ -63,7 +65,7 @@ export interface SlideElementDnDItemProps {
     cells: TableCell[][];
   };
   styles?: {
-    color?: string;
+    colorIndex?: number;
     fontSize?: string;
     fontFamily?: string;
     fontWeight?: string;
@@ -134,7 +136,6 @@ export const SlideElementDnDItem = ({
     content = (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>
         <Text
-          color={item.styles?.color}
           fontSize={item.styles?.fontSize}
           fontFamily={item.styles?.fontFamily}
           fontWeight={item.styles?.fontWeight}
@@ -155,7 +156,6 @@ export const SlideElementDnDItem = ({
                 {row.map((cell, cIdx) => (
                   <Td key={cIdx} p={1}>
                     <Text
-                      color={cell.styles?.color}
                       fontSize={cell.styles?.fontSize}
                       fontFamily={cell.styles?.fontFamily}
                       fontWeight={cell.styles?.fontWeight}

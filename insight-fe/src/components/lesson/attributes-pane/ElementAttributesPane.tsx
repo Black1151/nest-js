@@ -31,7 +31,9 @@ export default function ElementAttributesPane({
   colorPalettes,
   selectedPaletteId,
 }: ElementAttributesPaneProps) {
-  const [color, setColor] = useState(element.styles?.color || "#000000");
+  const [colorIndex, setColorIndex] = useState(
+    element.styles?.colorIndex ?? 0
+  );
   const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
   const [fontFamily, setFontFamily] = useState(
     element.styles?.fontFamily || availableFonts[0].fontFamily
@@ -58,7 +60,7 @@ export default function ElementAttributesPane({
       rows: 2,
       cols: 2,
       cells: Array.from({ length: 2 }, () =>
-        Array.from({ length: 2 }, () => ({ text: "", styles: { color: "#000000" } }))
+        Array.from({ length: 2 }, () => ({ text: "", styles: { colorIndex: 0 } }))
       ),
     }
   );
@@ -109,7 +111,7 @@ export default function ElementAttributesPane({
   // using id/type avoids resets when the parent simply updates
   // the same element instance with new references
   useEffect(() => {
-    setColor(element.styles?.color || "#000000");
+    setColorIndex(element.styles?.colorIndex ?? 0);
     setFontSize(element.styles?.fontSize || "16px");
     setFontFamily(element.styles?.fontFamily || availableFonts[0].fontFamily);
     setFontWeight(element.styles?.fontWeight || "normal");
@@ -126,7 +128,7 @@ export default function ElementAttributesPane({
         rows: 2,
         cols: 2,
         cells: Array.from({ length: 2 }, () =>
-          Array.from({ length: 2 }, () => ({ text: "", styles: { color: "#000000" } }))
+          Array.from({ length: 2 }, () => ({ text: "", styles: { colorIndex: 0 } }))
         ),
       }
     );
@@ -165,7 +167,7 @@ export default function ElementAttributesPane({
       updated.text = text;
       updated.styles = {
         ...element.styles,
-        color,
+        colorIndex,
         fontSize,
         fontFamily,
         fontWeight,
@@ -189,8 +191,8 @@ export default function ElementAttributesPane({
     }
     onChange(updated);
   }, [
-    color,
-    fontSize,
+        colorIndex,
+        fontSize,
     fontFamily,
     fontWeight,
     lineHeight,
@@ -241,8 +243,8 @@ export default function ElementAttributesPane({
           <TextAttributes
             text={text}
             setText={setText}
-            color={color}
-            setColor={setColor}
+            colorIndex={colorIndex}
+            setColorIndex={setColorIndex}
             fontSize={fontSize}
             setFontSize={setFontSize}
             fontFamily={fontFamily}

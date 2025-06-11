@@ -44,7 +44,7 @@ export default function useDnDHandlers(
         slideId: state.selectedSlideId,
         updater: (s) => {
           const newEl: SlideElementDnDItemProps = config
-            ? { ...config, id: crypto.randomUUID() }
+            ? { ...config, id: crypto.randomUUID(), styleId: config.styleId }
             : {
                 id: crypto.randomUUID(),
                 type,
@@ -52,7 +52,7 @@ export default function useDnDHandlers(
                   ? {
                       text: "Sample Text",
                       styles: {
-                        color: options.defaultColor,
+                        colorIndex: 0,
                         fontSize: "16px",
                         fontFamily: options.defaultFontFamily,
                         fontWeight: "normal",
@@ -75,7 +75,7 @@ export default function useDnDHandlers(
                             Array.from({ length: 2 }, () => ({
                               text: "Cell",
                               styles: {
-                                color: options.defaultColor,
+                                colorIndex: 0,
                                 fontSize: "14px",
                                 fontFamily: options.defaultFontFamily,
                                 fontWeight: "normal",
@@ -129,7 +129,7 @@ export default function useDnDHandlers(
       });
       dispatch({ type: "setDropIndicator", indicator: null });
     },
-    [state.selectedSlideId, dispatch, options.defaultColor, options.defaultFontFamily]
+    [state.selectedSlideId, dispatch, options.defaultFontFamily]
   );
 
   const handleDragOver = useCallback(

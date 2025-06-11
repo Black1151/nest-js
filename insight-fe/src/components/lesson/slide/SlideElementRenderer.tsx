@@ -51,7 +51,6 @@ export default function SlideElementRenderer({
     content = (
       <ElementWrapper styles={item.wrapperStyles} data-testid="text-element">
         <Text
-          color={item.styles?.color}
           fontSize={item.styles?.fontSize}
           fontFamily={item.styles?.fontFamily}
           fontWeight={item.styles?.fontWeight}
@@ -72,7 +71,6 @@ export default function SlideElementRenderer({
                 {row.map((cell, cIdx) => (
                   <Td key={cIdx} p={1}>
                     <Text
-                      color={cell.styles?.color}
                       fontSize={cell.styles?.fontSize}
                       fontFamily={cell.styles?.fontFamily}
                       fontWeight={cell.styles?.fontWeight}

@@ -18,8 +18,8 @@ import PaletteColorPicker from "../PaletteColorPicker";
 interface TextAttributesProps {
   text: string;
   setText: (val: string) => void;
-  color: string;
-  setColor: (val: string) => void;
+  colorIndex: number;
+  setColorIndex: (val: number) => void;
   fontSize: string;
   setFontSize: (val: string) => void;
   fontFamily: string;
@@ -37,8 +37,8 @@ interface TextAttributesProps {
 export default function TextAttributes({
   text,
   setText,
-  color,
-  setColor,
+  colorIndex,
+  setColorIndex,
   fontSize,
   setFontSize,
   fontFamily,
@@ -78,8 +78,8 @@ export default function TextAttributes({
               Color
             </FormLabel>
             <PaletteColorPicker
-              value={color}
-              onChange={setColor}
+              value={colorIndex}
+              onChange={setColorIndex}
               paletteColors={paletteColors}
             />
           </FormControl>

@@ -278,6 +278,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       const items = stylesData.getAllStyle.map((s: any) => ({
         ...(s.config as SlideElementDnDItemProps),
         id: crypto.randomUUID(),
+        styleId: Number(s.id),
       }));
       setStyleItems(items);
     } else {
