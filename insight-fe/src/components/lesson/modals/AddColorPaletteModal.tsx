@@ -49,6 +49,7 @@ export default function ColorPaletteModal({
   const [colors, setColors] = useState<string[]>(
     initialColors.length > 0 ? initialColors : ["#000000"]
   );
+  const [initialized, setInitialized] = useState(false);
 
   const { data: paletteData } = useQuery(GET_COLOR_PALETTE, {
     variables: { id: String(paletteId) },
@@ -62,11 +63,17 @@ export default function ColorPaletteModal({
 
   const loading = creating || updating;
 
-  // Reset fields when the modal opens or initial values change
+  // Initialize fields when the modal opens
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setInitialized(false);
+      return;
+    }
 
-    if (paletteId && palette) {
+    if (initialized) return;
+
+    if (paletteId) {
+      if (!palette) return; // wait for palette data
       setName(palette.name);
       setColors(
         palette.colors.length > 0 ? palette.colors : ["#000000"]
@@ -75,16 +82,24 @@ export default function ColorPaletteModal({
       setName(initialName);
       setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
     }
-  }, [isOpen, paletteId, palette, initialName, initialColors]);
+
+    setInitialized(true);
+  }, [isOpen, paletteId, palette, initialName, initialColors, initialized]);
 
   const handleColorChange = (idx: number, value: string) => {
     setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
+    setInitialized(true);
   };
 
-  const addColor = () => setColors((cols) => [...cols, "#000000"]);
+  const addColor = () => {
+    setColors((cols) => [...cols, "#000000"]);
+    setInitialized(true);
+  };
 
-  const removeColor = (idx: number) =>
+  const removeColor = (idx: number) => {
     setColors((cols) => cols.filter((_, i) => i !== idx));
+    setInitialized(true);
+  };
 
   return (
     <BaseModal
@@ -139,7 +154,10 @@ export default function ColorPaletteModal({
         <Input
           placeholder="Palette name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            setInitialized(true);
+          }}
         />
         {colors.map((color, idx) => (
           <HStack key={idx}>
