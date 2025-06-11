@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import { SlideDto } from './dto/slide.dto';
 
 import { AbstractBaseEntity } from 'src/common/base.entity';
 import { EducatorProfileEntity } from '../../user-profiles/educator-profile/educator-profile.entity';
@@ -33,9 +34,9 @@ export class LessonEntity extends AbstractBaseEntity {
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @Field(() => GraphQLJSONObject, { nullable: true })
+  @Field(() => [SlideDto], { nullable: true })
   @Column({ type: 'jsonb', nullable: true })
-  content?: Record<string, any>;
+  content?: SlideDto[];
 
   /* ---------- theme ---------- */
 
