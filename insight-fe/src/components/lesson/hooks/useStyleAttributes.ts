@@ -24,7 +24,9 @@ export default function useStyleAttributes({
   onChange,
   defaultBgOpacity = 0,
 }: UseStyleAttributesOptions) {
-  const [bgColor, setBgColor] = useState(wrapperStyles?.bgColor || "#ffffff");
+  const [bgColor, setBgColor] = useState(
+    wrapperStyles?.bgColor || "surface.card"
+  );
   const [bgOpacity, setBgOpacity] = useState(
     wrapperStyles?.bgOpacity ?? defaultBgOpacity
   );
@@ -46,7 +48,7 @@ export default function useStyleAttributes({
   const [marginX, setMarginX] = useState(wrapperStyles?.marginX ?? 0);
   const [marginY, setMarginY] = useState(wrapperStyles?.marginY ?? 0);
   const [borderColor, setBorderColor] = useState(
-    wrapperStyles?.borderColor || "#000000"
+    wrapperStyles?.borderColor || "border.default"
   );
   const [borderWidth, setBorderWidth] = useState(
     wrapperStyles?.borderWidth ?? 0
@@ -58,7 +60,7 @@ export default function useStyleAttributes({
 
   // Reset when dependencies change (new item selected)
   useEffect(() => {
-    setBgColor(wrapperStyles?.bgColor || "#ffffff");
+    setBgColor(wrapperStyles?.bgColor || "surface.card");
     setBgOpacity(wrapperStyles?.bgOpacity ?? defaultBgOpacity);
     setGradientFrom(wrapperStyles?.gradientFrom || "");
     setGradientTo(wrapperStyles?.gradientTo || "");
@@ -73,7 +75,7 @@ export default function useStyleAttributes({
     setPaddingY(wrapperStyles?.paddingY ?? 0);
     setMarginX(wrapperStyles?.marginX ?? 0);
     setMarginY(wrapperStyles?.marginY ?? 0);
-    setBorderColor(wrapperStyles?.borderColor || "#000000");
+    setBorderColor(wrapperStyles?.borderColor || "border.default");
     setBorderWidth(wrapperStyles?.borderWidth ?? 0);
     setBorderRadius(wrapperStyles?.borderRadius || "none");
     setSpacing(initialSpacing);
