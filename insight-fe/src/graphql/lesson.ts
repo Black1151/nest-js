@@ -325,3 +325,12 @@ export const DELETE_COMPONENT_VARIANT = gql`
     deleteComponentVariant(data: $data)
   }
 `;
+
+export const UPGRADE_LESSON_THEME = gql`
+  mutation UpgradeLessonTheme($data: UpgradeLessonThemeInput!) {
+    upgradeLessonTheme(data: $data) {
+      id
+      themeVersion
+    }
+  }
+`;
