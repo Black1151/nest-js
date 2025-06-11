@@ -203,6 +203,16 @@ export const GET_THEMES = gql`
       name
       styleCollectionId
       defaultPaletteId
+      foundationTokens
+      semanticTokens
+      componentVariants {
+        id
+        name
+        baseComponent
+        props
+        accessibleName
+        themeId
+      }
     }
   }
 `;
@@ -214,6 +224,16 @@ export const GET_THEME = gql`
       name
       styleCollectionId
       defaultPaletteId
+      foundationTokens
+      semanticTokens
+      componentVariants {
+        id
+        name
+        baseComponent
+        props
+        accessibleName
+        themeId
+      }
     }
   }
 `;
