@@ -14,7 +14,6 @@ import {
   Stack,
   HStack,
   Text,
-  Accordion,
 } from "@chakra-ui/react";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 
@@ -38,23 +37,8 @@ import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollecti
 import AddColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
-import { availableFonts } from "@/theme/fonts";
-import WrapperSettings from "@/components/lesson/attributes/WrapperSettings";
-import TextAttributes from "@/components/lesson/attributes/TextAttributes";
-import ImageAttributes from "@/components/lesson/attributes/ImageAttributes";
-import VideoAttributes from "@/components/lesson/attributes/VideoAttributes";
-import TableAttributes from "@/components/lesson/attributes/TableAttributes";
-import useStyleAttributes from "@/components/lesson/hooks/useStyleAttributes";
-import SlideElementRenderer from "@/components/lesson/slide/SlideElementRenderer";
 import { Plus, Trash2 } from "lucide-react";
-import { tokenColor } from "@/theme/helpers";
-
-const AVAILABLE_ELEMENTS = [
-  { type: "text", label: "Text" },
-  { type: "table", label: "Table" },
-  { type: "image", label: "Image" },
-  { type: "video", label: "Video" },
-];
+import ThemeCanvas from "@/components/theme/ThemeCanvas";
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, PageElementType> = {
   text: PageElementType.Text,
@@ -115,26 +99,7 @@ export default function ThemeBuilderPageClient() {
     [colorPalettes, selectedPaletteId],
   );
 
-  const wrapperAttrs = useStyleAttributes({ deps: [] });
-
   const [selectedElementType, setSelectedElementType] = useState<string>("text");
-
-  const [text, setText] = useState("Sample Text");
-  const [colorToken, setColorToken] = useState("primary");
-  const [fontSize, setFontSize] = useState("16px");
-  const [fontFamily, setFontFamily] = useState(availableFonts[0].fontFamily);
-  const [fontWeight, setFontWeight] = useState("normal");
-  const [lineHeight, setLineHeight] = useState("normal");
-  const [textAlign, setTextAlign] = useState("left");
-  const [src, setSrc] = useState("");
-  const [url, setUrl] = useState("");
-  const [table, setTable] = useState({
-    rows: 2,
-    cols: 2,
-    cells: Array.from({ length: 2 }, () =>
-      Array.from({ length: 2 }, () => ({ text: "", styleOverrides: { colorToken: "" } }))
-    ),
-  });
 
   const [foundationColors, setFoundationColors] = useState<
     { name: string; value: string }[]
@@ -149,7 +114,6 @@ export default function ThemeBuilderPageClient() {
     id: number;
     name: string;
   }[]>([]);
-  const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
 
   const { data: collectionsData, refetch: refetchCollections } = useQuery(
     GET_STYLE_COLLECTIONS,
@@ -231,72 +195,6 @@ export default function ThemeBuilderPageClient() {
     [foundationColors, semanticColors],
   );
 
-  const configStyles = {
-    bgColor: wrapperAttrs.bgColor,
-    bgOpacity: wrapperAttrs.bgOpacity,
-    gradientFrom: wrapperAttrs.gradientFrom,
-    gradientTo: wrapperAttrs.gradientTo,
-    gradientDirection: wrapperAttrs.gradientDirection,
-    dropShadow: wrapperAttrs.shadow,
-    paddingX: wrapperAttrs.paddingX,
-    paddingY: wrapperAttrs.paddingY,
-    marginX: wrapperAttrs.marginX,
-    marginY: wrapperAttrs.marginY,
-    borderColor: wrapperAttrs.borderColor,
-    borderWidth: wrapperAttrs.borderWidth,
-    borderRadius: wrapperAttrs.borderRadius,
-  };
-
-  const previewStyles = {
-    ...configStyles,
-    bgColor: tokenColor(tokens, wrapperAttrs.bgColor) ?? wrapperAttrs.bgColor,
-    gradientFrom: tokenColor(tokens, wrapperAttrs.gradientFrom) ??
-      wrapperAttrs.gradientFrom,
-    gradientTo: tokenColor(tokens, wrapperAttrs.gradientTo) ?? wrapperAttrs.gradientTo,
-    borderColor: tokenColor(tokens, wrapperAttrs.borderColor) ?? wrapperAttrs.borderColor,
-  };
-
-  const configElement = useMemo(
-    () => ({
-      id: "preview",
-      type: selectedElementType,
-      text,
-      src,
-      url,
-      table,
-      wrapperStyles: configStyles,
-      styleOverrides: {
-        colorToken,
-        fontSize,
-        fontFamily,
-        fontWeight,
-        lineHeight,
-        textAlign,
-      },
-    }),
-    [
-      selectedElementType,
-      text,
-      src,
-      url,
-      table,
-      configStyles,
-      colorToken,
-      fontSize,
-      fontFamily,
-      fontWeight,
-      lineHeight,
-      textAlign,
-    ],
-  );
-
-  const previewElement = useMemo(
-    () => ({
-      ...configElement,
-      wrapperStyles: previewStyles,
-    }),
-    [configElement, previewStyles],
-  );
 
   return (
     <Stack spacing={4}>
@@ -328,50 +226,36 @@ export default function ThemeBuilderPageClient() {
         </FormControl>
       </HStack>
 
-      <HStack>
-        {AVAILABLE_ELEMENTS.map((el) => (
-          <Button
-            key={el.type}
-            size="sm"
-            variant={selectedElementType === el.type ? "solid" : "outline"}
-            onClick={() => setSelectedElementType(el.type)}
-          >
-            {el.label}
-          </Button>
-        ))}
-      </HStack>
-
-      <Accordion allowMultiple>
-        <WrapperSettings attrs={wrapperAttrs} tokens={tokens} />
-        {selectedElementType === "text" && (
-          <TextAttributes
-            text={text}
-            setText={setText}
-            colorToken={colorToken}
-            setColorToken={setColorToken}
-            fontSize={fontSize}
-            setFontSize={setFontSize}
-            fontFamily={fontFamily}
-            setFontFamily={setFontFamily}
-            fontWeight={fontWeight}
-            setFontWeight={setFontWeight}
-            lineHeight={lineHeight}
-            setLineHeight={setLineHeight}
-            textAlign={textAlign}
-            setTextAlign={setTextAlign}
-            tokens={tokens}
-          />
-        )}
-        {selectedElementType === "image" && (
-          <ImageAttributes src={src} setSrc={setSrc} />
-        )}
-        {selectedElementType === "video" && (
-          <VideoAttributes url={url} setUrl={setUrl} />
-        )}
-        {selectedElementType === "table" && (
-          <TableAttributes table={table} setTable={setTable} tokens={tokens} />
-        )}
-      </Accordion>
+      <ThemeCanvas
+        styleGroups={styleGroups}
+        collectionId={
+          selectedCollectionId === "" ? undefined : (selectedCollectionId as number)
+        }
+        onSaveStyle={async ({ name, groupId }) => {
+          if (selectedCollectionId === "") return;
+          await createStyle({
+            variables: {
+              data: {
+                name,
+                collectionId: selectedCollectionId as number,
+                groupId: groupId ?? undefined,
+                element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
+              },
+            },
+          });
+          if (selectedCollectionId !== "" && selectedElementType) {
+            fetchGroups({
+              variables: {
+                collectionId: String(selectedCollectionId),
+                element: selectedElementType,
+              },
+            });
+          }
+        }}
+        onSelectedElementChange={(el) => {
+          setSelectedElementType(el?.type ?? "text");
+        }}
+      />
 
       <Box>
         <Text fontWeight="bold" mb={2}>
@@ -562,18 +446,6 @@ export default function ThemeBuilderPageClient() {
         </Button>
       </Box>
 
-      <Box>
-        <Text mb={2}>Preview</Text>
-        <SlideElementRenderer item={previewElement as any} tokens={tokens} />
-      </Box>
-
-      <Button
-        colorScheme="blue"
-        isDisabled={selectedCollectionId === ""}
-        onClick={() => setIsSaveStyleOpen(true)}
-      >
-        Save Element Style
-      </Button>
 
       <Button
         colorScheme="blue"
@@ -745,39 +617,6 @@ export default function ThemeBuilderPageClient() {
         />
       )}
 
-      {isSaveStyleOpen && (
-        <SaveStyleModal
-          isOpen={isSaveStyleOpen}
-          onClose={() => setIsSaveStyleOpen(false)}
-          collectionId={selectedCollectionId as number}
-          elementType={selectedElementType}
-          groups={styleGroups}
-          onAddGroup={(g) => setStyleGroups((arr) => [...arr, g])}
-          onSave={async ({ name, groupId }) => {
-            if (selectedCollectionId === "") return;
-            await createStyle({
-              variables: {
-                data: {
-                  name,
-                  collectionId: selectedCollectionId as number,
-                  groupId: groupId ?? undefined,
-                  element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
-                  config: configElement,
-                },
-              },
-            });
-            // refresh groups in case a new one was added
-            if (selectedCollectionId !== "" && selectedElementType) {
-              fetchGroups({
-                variables: {
-                  collectionId: String(selectedCollectionId),
-                  element: selectedElementType,
-                },
-              });
-            }
-          }}
-        />
-      )}
     </Stack>
   );
 }
