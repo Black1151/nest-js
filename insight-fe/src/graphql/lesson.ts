@@ -245,3 +245,31 @@ export const DELETE_THEME = gql`
     deleteTheme(data: $data)
   }
 `;
+
+export const GET_COMPONENT_VARIANTS = gql`
+  query GetComponentVariants($themeId: String!) {
+    getAllComponentVariant(
+      data: { all: true, filters: [{ column: "themeId", value: $themeId }] }
+    ) {
+      id
+      name
+      baseComponent
+      props
+      accessibleName
+      themeId
+    }
+  }
+`;
+
+export const GET_COMPONENT_VARIANT = gql`
+  query GetComponentVariant($id: String!) {
+    getComponentVariant(data: { id: $id }) {
+      id
+      name
+      baseComponent
+      props
+      accessibleName
+      themeId
+    }
+  }
+`;

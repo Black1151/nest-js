@@ -26,6 +26,8 @@ export interface SlideElementDnDItemProps {
   id: string;
   /** Style reference id when the element originates from the style library */
   styleId?: number;
+  /** Component variant identifier */
+  variantId?: number;
   type: string;
   /**
    * Text content for text elements

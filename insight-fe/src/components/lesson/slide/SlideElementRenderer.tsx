@@ -10,12 +10,18 @@ import ImageElement from "../elements/ImageElement";
 import QuizElement from "../elements/QuizElement";
 import VideoElement from "../elements/VideoElement";
 
+import { ComponentVariant, ColorPalette, resolveVariant, paletteColor } from "@/theme/helpers";
+
 interface SlideElementRendererProps {
   item: SlideElementDnDItemProps;
+  palette?: ColorPalette;
+  variants?: ComponentVariant[];
 }
 
 export default function SlideElementRenderer({
   item,
+  palette,
+  variants,
 }: SlideElementRendererProps) {
   const MotionBox = motion(Box);
   const animationProps = item.animation
@@ -56,6 +62,8 @@ export default function SlideElementRenderer({
           fontWeight={item.styles?.fontWeight}
           lineHeight={item.styles?.lineHeight}
           textAlign={item.styles?.textAlign as any}
+          color={paletteColor(palette, item.styles?.colorIndex ?? 0)}
+          {...(resolveVariant(variants, item.variantId)?.props ?? {})}
         >
           {item.text || "Sample Text"}
         </Text>
@@ -76,6 +84,7 @@ export default function SlideElementRenderer({
                       fontWeight={cell.styles?.fontWeight}
                       lineHeight={cell.styles?.lineHeight}
                       textAlign={cell.styles?.textAlign as any}
+                      color={paletteColor(palette, cell.styles?.colorIndex ?? 0)}
                     >
                       {cell.text}
                     </Text>
