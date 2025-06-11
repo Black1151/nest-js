@@ -7,19 +7,19 @@ import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnD
 import SlideElementRenderer from "./SlideElementRenderer";
 import { BoardRow } from "./SlideElementsContainer";
 import ElementWrapper from "../elements/ElementWrapper";
-import { ColorPalette, ComponentVariant } from "@/theme/helpers";
+import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
 
 interface SlidePreviewProps {
   columnMap: ColumnMap<SlideElementDnDItemProps>;
   boards: BoardRow[];
-  palette?: ColorPalette;
+  tokens?: SemanticTokens;
   variants?: ComponentVariant[];
 }
 
 export default function SlidePreview({
   columnMap,
   boards,
-  palette,
+  tokens,
   variants,
 }: SlidePreviewProps) {
   return (
@@ -49,7 +49,7 @@ export default function SlidePreview({
                       <Box key={item.id} mb={2} data-card-id={item.id}>
                         <SlideElementRenderer
                           item={item}
-                          palette={palette}
+                          tokens={tokens}
                           variants={variants}
                         />
                       </Box>

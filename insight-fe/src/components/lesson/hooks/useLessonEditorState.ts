@@ -10,12 +10,12 @@ export type { LessonEditorHandle } from "./useLessonSelection";
 
 export function useLessonEditorState(
   ref?: React.Ref<LessonEditorHandle>,
-  options?: { defaultColor: string; defaultFontFamily: string }
+  options?: { defaultColorToken: string; defaultFontFamily: string }
 ) {
   const selection = useLessonSelection(ref);
   const boardHelpers = useBoardColumnHelpers(selection.state, selection.dispatch);
   const dndHandlers = useDnDHandlers(selection.state, selection.dispatch, {
-    defaultColor: options?.defaultColor ?? "#000000",
+    defaultColorToken: options?.defaultColorToken ?? "",
     defaultFontFamily: options?.defaultFontFamily ?? availableFonts[0].fontFamily,
   });
 

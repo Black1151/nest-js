@@ -6,19 +6,18 @@ import { ColumnType } from "@/components/DnD/types";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import WrapperSettings from "../attributes/WrapperSettings";
 import useStyleAttributes from "../hooks/useStyleAttributes";
+import { SemanticTokens } from "@/theme/helpers";
 
 interface ColumnAttributesPaneProps {
   column: ColumnType<SlideElementDnDItemProps>;
   onChange: (updated: ColumnType<SlideElementDnDItemProps>) => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
-  selectedPaletteId?: number | "";
+  tokens?: SemanticTokens;
 }
 
 export default function ColumnAttributesPane({
   column,
   onChange,
-  colorPalettes,
-  selectedPaletteId,
+  tokens,
 }: ColumnAttributesPaneProps) {
   const styleAttrs = useStyleAttributes({
     wrapperStyles: column.wrapperStyles,
@@ -30,11 +29,7 @@ export default function ColumnAttributesPane({
 
   return (
     <Accordion allowMultiple>
-      <WrapperSettings
-        attrs={styleAttrs}
-        colorPalettes={colorPalettes}
-        selectedPaletteId={selectedPaletteId}
-      />
+      <WrapperSettings attrs={styleAttrs} tokens={tokens} />
     </Accordion>
   );
 }

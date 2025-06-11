@@ -4,19 +4,18 @@ import { Accordion } from "@chakra-ui/react";
 import useStyleAttributes from "../hooks/useStyleAttributes";
 import WrapperSettings from "../attributes/WrapperSettings";
 import { BoardRow } from "../slide/SlideElementsContainer";
+import { SemanticTokens } from "@/theme/helpers";
 
 interface BoardAttributesPaneProps {
   board: BoardRow;
   onChange: (updated: BoardRow) => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
-  selectedPaletteId?: number | "";
+  tokens?: SemanticTokens;
 }
 
 export default function BoardAttributesPane({
   board,
   onChange,
-  colorPalettes,
-  selectedPaletteId,
+  tokens,
 }: BoardAttributesPaneProps) {
   const styleAttrs = useStyleAttributes({
     wrapperStyles: board.wrapperStyles,
@@ -29,11 +28,7 @@ export default function BoardAttributesPane({
 
   return (
     <Accordion allowMultiple>
-      <WrapperSettings
-        attrs={styleAttrs}
-        colorPalettes={colorPalettes}
-        selectedPaletteId={selectedPaletteId}
-      />
+      <WrapperSettings attrs={styleAttrs} tokens={tokens} />
     </Accordion>
   );
 }

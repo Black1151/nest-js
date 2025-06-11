@@ -5,18 +5,13 @@ import { BaseModal } from "../../modals/BaseModal";
 import SlidePreview from "../slide/SlidePreview";
 import { Slide } from "../slide/SlideSequencer";
 import { useQuery } from "@apollo/client";
-import {
-  GET_COLOR_PALETTE,
-  GET_COMPONENT_VARIANTS,
-  GET_THEME,
-} from "@/graphql/lesson";
-import { ColorPalette, ComponentVariant } from "@/theme/helpers";
+import { GET_THEME } from "@/graphql/lesson";
+import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
 
 interface LessonPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   slides: Slide[];
-  paletteId?: number;
   themeId?: number;
 }
 
@@ -24,7 +19,6 @@ export default function LessonPreviewModal({
   isOpen,
   onClose,
   slides,
-  paletteId,
   themeId,
 }: LessonPreviewModalProps) {
   const { data: themeData } = useQuery(GET_THEME, {
@@ -32,20 +26,9 @@ export default function LessonPreviewModal({
     skip: !themeId || !isOpen,
   });
 
-  const paletteIdToUse = paletteId ?? themeData?.getTheme?.defaultPaletteId;
-
-  const { data: paletteData } = useQuery(GET_COLOR_PALETTE, {
-    variables: { id: String(paletteIdToUse) },
-    skip: !paletteIdToUse || !isOpen,
-  });
-
-  const { data: variantData } = useQuery(GET_COMPONENT_VARIANTS, {
-    variables: { themeId: String(themeId) },
-    skip: !themeId || !isOpen,
-  });
-
-  const palette: ColorPalette | undefined = paletteData?.getColorPalette;
-  const variants: ComponentVariant[] | undefined = variantData?.getAllComponentVariant;
+  const theme = themeData?.getTheme;
+  const tokens: SemanticTokens | undefined = theme?.semanticTokens;
+  const variants: ComponentVariant[] | undefined = theme?.componentVariants;
 
   return (
     <BaseModal
@@ -64,7 +47,7 @@ export default function LessonPreviewModal({
             <SlidePreview
               columnMap={slide.columnMap}
               boards={slide.boards}
-              palette={palette}
+              tokens={tokens}
               variants={variants}
             />
           </Box>

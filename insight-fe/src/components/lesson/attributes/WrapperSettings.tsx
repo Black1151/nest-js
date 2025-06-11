@@ -16,18 +16,14 @@ import {
 } from "@chakra-ui/react";
 import type useStyleAttributes from "../hooks/useStyleAttributes";
 import PaletteColorPicker from "../PaletteColorPicker";
+import { SemanticTokens, tokenColor } from "@/theme/helpers";
 
 interface WrapperSettingsProps {
   attrs: ReturnType<typeof useStyleAttributes>;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
-  selectedPaletteId?: number | "";
+  tokens?: SemanticTokens;
 }
 
-export default function WrapperSettings({
-  attrs,
-  colorPalettes,
-  selectedPaletteId,
-}: WrapperSettingsProps) {
+export default function WrapperSettings({ attrs, tokens }: WrapperSettingsProps) {
   const {
     bgColor,
     setBgColor,
@@ -61,10 +57,7 @@ export default function WrapperSettings({
     setSpacing,
   } = attrs;
 
-  const paletteColors =
-    colorPalettes?.find(
-      (p) => Number(p.id) === Number(selectedPaletteId)
-    )?.colors ?? [];
+  const tokenKeys = tokens ? Object.keys(tokens.colors ?? {}) : [];
 
   return (
     <>
@@ -102,12 +95,12 @@ export default function WrapperSettings({
               <FormControl display="flex" alignItems="center">
                 <FormLabel mb="0" fontSize="sm" w="40%">Color</FormLabel>
                 <PaletteColorPicker
-                  value={paletteColors.indexOf(bgColor)}
+                  value={tokenKeys.indexOf(bgColor)}
                   onChange={(idx) => {
-                    setBgColor(paletteColors[idx]);
+                    setBgColor(tokenKeys[idx]);
                     setBgOpacity(1);
                   }}
-                  paletteColors={paletteColors}
+                  paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
                 />
               </FormControl>
             )}
@@ -116,17 +109,17 @@ export default function WrapperSettings({
                 <FormControl display="flex" alignItems="center">
                   <FormLabel mb="0" fontSize="sm" w="40%">Grad. From</FormLabel>
                   <PaletteColorPicker
-                    value={paletteColors.indexOf(gradientFrom)}
-                    onChange={(idx) => setGradientFrom(paletteColors[idx])}
-                    paletteColors={paletteColors}
+                    value={tokenKeys.indexOf(gradientFrom)}
+                    onChange={(idx) => setGradientFrom(tokenKeys[idx])}
+                    paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
                   />
                 </FormControl>
                 <FormControl display="flex" alignItems="center">
                   <FormLabel mb="0" fontSize="sm" w="40%">Grad. To</FormLabel>
                   <PaletteColorPicker
-                    value={paletteColors.indexOf(gradientTo)}
-                    onChange={(idx) => setGradientTo(paletteColors[idx])}
-                    paletteColors={paletteColors}
+                    value={tokenKeys.indexOf(gradientTo)}
+                    onChange={(idx) => setGradientTo(tokenKeys[idx])}
+                    paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
                   />
                 </FormControl>
                 <FormControl display="flex" alignItems="center">
@@ -261,9 +254,9 @@ export default function WrapperSettings({
                 Color
               </FormLabel>
               <PaletteColorPicker
-                value={paletteColors.indexOf(borderColor)}
-                onChange={(idx) => setBorderColor(paletteColors[idx])}
-                paletteColors={paletteColors}
+                value={tokenKeys.indexOf(borderColor)}
+                onChange={(idx) => setBorderColor(tokenKeys[idx])}
+                paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
               />
             </FormControl>
             <FormControl display="flex" alignItems="center">

@@ -23,6 +23,8 @@ import {
   LessonEditorHandle,
 } from "./hooks/useLessonEditorState";
 import SlideToolbar from "./slide/SlideToolbar";
+import { extendTheme, ChakraProvider } from "@chakra-ui/react";
+import baseTheme from "@/theme/theme";
 
 const AVAILABLE_ELEMENTS = [
   { type: "text", label: "Text" },
@@ -67,6 +69,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   );
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | "">("");
   const [selectedThemeId, setSelectedThemeId] = useState<number | "">("");
+  const [chakraTheme, setChakraTheme] = useState(() => extendTheme(baseTheme));
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -88,9 +91,12 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     selectedPaletteId !== ""
       ? colorPalettes.find((p) => p.id === selectedPaletteId)
       : undefined;
+  const selectedTheme =
+    selectedThemeId !== "" ? themes.find((t) => t.id === selectedThemeId) : undefined;
 
+  const firstTokenKey = Object.keys(selectedTheme?.semanticTokens?.colors ?? {})[0] ?? "";
   const editor = useLessonEditorState(undefined, {
-    defaultColor: selectedPalette?.colors[0] ?? "#000000",
+    defaultColorToken: firstTokenKey,
     defaultFontFamily: availableFonts[0].fontFamily,
   });
 
@@ -236,6 +242,12 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       const theme = themes.find((t) => t.id === selectedThemeId);
       if (theme) {
         setSelectedPaletteId(theme.defaultPaletteId);
+        setChakraTheme(
+          extendTheme(baseTheme, {
+            ...theme.foundationTokens,
+            semanticTokens: theme.semanticTokens,
+          })
+        );
       }
     }
   }, [selectedThemeId, themes]);
@@ -375,7 +387,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           Please select a theme to start editing.
         </Box>
       ) : (
-        <>
+        <ChakraProvider theme={chakraTheme}>
           <SlideCanvas
             slides={editor.state.slides}
             setSlides={editor.setSlides as any}
@@ -398,8 +410,8 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             handleDropElement={editor.handleDropElement}
             openSaveStyle={() => setIsSaveStyleOpen(true)}
             openLoadStyle={() => setIsLoadStyleOpen(true)}
-            colorPalettes={colorPalettes}
-            selectedPaletteId={selectedPaletteId}
+            tokens={selectedTheme?.semanticTokens}
+            variants={selectedTheme?.componentVariants}
           />
 
           <StyleModals
@@ -464,7 +476,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           console.log("load style", { styleId });
         }}
       />
-        </>
+        </ChakraProvider>
       )}
     </Box>
   );

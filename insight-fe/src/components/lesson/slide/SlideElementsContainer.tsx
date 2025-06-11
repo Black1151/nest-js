@@ -13,6 +13,7 @@ import {
   defaultColumnWrapperStyles,
   defaultBoardWrapperStyles,
 } from "../defaultStyles";
+import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
 import { ElementWrapperStyles } from "../elements/ElementWrapper";
 
 export interface BoardRow {
@@ -36,6 +37,8 @@ interface SlideElementsContainerProps {
   onSelectColumn?: (id: string) => void;
   selectedBoardId?: string | null;
   onSelectBoard?: (id: string) => void;
+  tokens?: SemanticTokens;
+  variants?: ComponentVariant[];
 }
 
 const COLUMN_COLORS = [
@@ -58,6 +61,8 @@ export default function SlideElementsContainer({
   onSelectColumn,
   selectedBoardId,
   onSelectBoard,
+  tokens,
+  variants,
 }: SlideElementsContainerProps) {
   const instanceId = useRef(Symbol("slide-container"));
   const boardInstanceId = useRef(Symbol("board-container"));
