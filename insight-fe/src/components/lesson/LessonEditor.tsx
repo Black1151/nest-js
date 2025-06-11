@@ -2,16 +2,15 @@
 
 import { Box } from "@chakra-ui/react";
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 
 import {
-  GET_STYLE_COLLECTIONS,
   CREATE_STYLE,
   GET_STYLES_WITH_CONFIG_BY_GROUP,
   GET_STYLE_GROUPS,
   GET_COLOR_PALETTES,
   GET_COLOR_PALETTE,
-  GET_THEMES,
+  GET_THEME,
 } from "@/graphql/lesson";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -47,9 +46,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   _,
   ref
 ) {
-  const [styleCollections, setStyleCollections] = useState<
-    { id: number; name: string }[]
-  >([]);
   const [styleGroups, setStyleGroups] = useState<{
     id: number;
     name: string;
@@ -59,12 +55,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     name: string;
     colors: string[];
   }[]>([]);
-  const [themes, setThemes] = useState<{
-    id: number;
-    name: string;
-    styleCollectionId: number;
-    defaultPaletteId: number;
-  }[]>([]);
+  const [theme, setThemeState] = useState<any | null>(null);
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
     ""
   );
@@ -73,7 +64,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [chakraTheme, setChakraTheme] = useState(() => extendTheme(baseTheme));
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [isLoadStyleOpen, setIsLoadStyleOpen] = useState(false);
-  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [styleItems, setStyleItems] = useState<SlideElementDnDItemProps[]>([]);
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null
@@ -86,15 +76,14 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   );
   const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
   const [fetchPalettes, { data: palettesData }] = useLazyQuery(GET_COLOR_PALETTES);
-  const [fetchThemes, { data: themesData }] = useLazyQuery(GET_THEMES);
+  const [fetchTheme, { data: themeData }] = useLazyQuery(GET_THEME);
   const [fetchPalette, { data: paletteData }] = useLazyQuery(GET_COLOR_PALETTE);
 
   const selectedPalette =
     selectedPaletteId !== ""
       ? colorPalettes.find((p) => p.id === selectedPaletteId)
       : undefined;
-  const selectedTheme =
-    selectedThemeId !== "" ? themes.find((t) => t.id === selectedThemeId) : undefined;
+  const selectedTheme = theme;
 
   const firstTokenKey = Object.keys(selectedTheme?.semanticTokens?.colors ?? {})[0] ?? "";
   const editor = useLessonEditorState(undefined, {
@@ -119,10 +108,11 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       },
       getThemeId: () => selectedThemeId,
       getPaletteId: () => selectedPaletteId,
-      setTheme: (theme: { id: number; styleCollectionId: number; defaultPaletteId: number }) => {
-        setSelectedCollectionId(theme.styleCollectionId);
-        setSelectedThemeId(theme.id);
-        setSelectedPaletteId(theme.defaultPaletteId);
+      setTheme: (t: { id: number; styleCollectionId: number; defaultPaletteId: number; foundationTokens?: any; semanticTokens?: any; componentVariants?: any[] }) => {
+        setSelectedCollectionId(t.styleCollectionId);
+        setSelectedThemeId(t.id);
+        setSelectedPaletteId(t.defaultPaletteId);
+        setThemeState(t);
       },
     }),
     [
@@ -134,22 +124,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     ],
   );
 
-  const {
-    data: collectionsData,
-    refetch: refetchCollections,
-  } = useQuery(GET_STYLE_COLLECTIONS);
   const [createStyle] = useMutation(CREATE_STYLE);
-
-  useEffect(() => {
-    if (collectionsData?.getAllStyleCollection) {
-      setStyleCollections(
-        collectionsData.getAllStyleCollection.map((c: any) => ({
-          id: Number(c.id),
-          name: c.name,
-        }))
-      );
-    }
-  }, [collectionsData]);
 
   useEffect(() => {
     if (selectedCollectionId === "") {
@@ -158,7 +133,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       setSelectedGroupId("");
       setColorPalettes([]);
       setSelectedPaletteId("");
-      setThemes([]);
       setSelectedThemeId("");
     }
   }, [selectedCollectionId]);
@@ -168,7 +142,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       fetchPalettes({
         variables: { collectionId: String(selectedCollectionId) },
       });
-      fetchThemes({ variables: { collectionId: String(selectedCollectionId) } });
     }
   }, [selectedCollectionId]);
 
@@ -232,21 +205,23 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   }, [palettesData]);
 
   useEffect(() => {
-    if (themesData?.getAllTheme) {
-      setThemes(themesData.getAllTheme);
+    if (selectedThemeId !== "") {
+      fetchTheme({ variables: { id: String(selectedThemeId) } });
     } else {
-      setThemes([]);
+      setThemeState(null);
+      setSelectedCollectionId("");
+      setSelectedPaletteId("");
     }
-  }, [themesData]);
+  }, [selectedThemeId]);
 
   useEffect(() => {
-    if (selectedThemeId !== "") {
-      const theme = themes.find((t) => t.id === selectedThemeId);
-      if (theme) {
-        setSelectedPaletteId(theme.defaultPaletteId);
-      }
+    if (themeData?.getTheme) {
+      const t = themeData.getTheme;
+      setThemeState(t);
+      setSelectedCollectionId(t.styleCollectionId);
+      setSelectedPaletteId(t.defaultPaletteId);
     }
-  }, [selectedThemeId, themes]);
+  }, [themeData]);
 
   useEffect(() => {
     if (selectedPaletteId !== "") {
@@ -255,9 +230,9 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   }, [selectedPaletteId]);
 
   useEffect(() => {
-    if (!selectedTheme) return;
+    if (!theme) return;
     const foundation = JSON.parse(
-      JSON.stringify(selectedTheme.foundationTokens || {}),
+      JSON.stringify(theme.foundationTokens || {}),
     );
     if (foundation.colors && paletteData?.getColorPalette?.colors) {
       const keys = Object.keys(foundation.colors);
@@ -271,50 +246,11 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     setChakraTheme(
       extendTheme(baseTheme, {
         ...foundation,
-        semanticTokens: selectedTheme.semanticTokens,
+        semanticTokens: theme.semanticTokens,
       }),
     );
-  }, [selectedTheme, paletteData]);
+  }, [theme, paletteData]);
 
-  const handleUpdatePalette = async (palette: {
-    id: number;
-    name: string;
-    colors: string[];
-  }) => {
-    const normalized = {
-      id: Number(palette.id),
-      name: palette.name,
-      colors: palette.colors,
-    };
-    setColorPalettes((p) => p.map((pl) => (pl.id === normalized.id ? normalized : pl)));
-    await fetchPalettes({
-      variables: { collectionId: String(selectedCollectionId) },
-    });
-  };
-
-  const handleAddPalette = async (palette: {
-    id: number;
-    name: string;
-    colors: string[];
-  }) => {
-    setColorPalettes((p) => [
-      ...p,
-      { id: Number(palette.id), name: palette.name, colors: palette.colors },
-    ]);
-    await fetchPalettes({
-      variables: { collectionId: String(selectedCollectionId) },
-    });
-  };
-
-  const handleDeletePalette = async (id: number) => {
-    setColorPalettes((p) => p.filter((pl) => pl.id !== id));
-    if (selectedPaletteId === id) {
-      setSelectedPaletteId("");
-    }
-    await fetchPalettes({
-      variables: { collectionId: String(selectedCollectionId) },
-    });
-  };
 
   useEffect(() => {
     if (stylesData?.getAllStyle) {
@@ -334,8 +270,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       <SlideToolbar
         availableElements={AVAILABLE_ELEMENTS}
         styleGroups={styleGroups}
-        selectedCollectionId={selectedCollectionId}
-        onSelectCollection={setSelectedCollectionId}
         selectedThemeId={selectedThemeId}
         onSelectTheme={setSelectedThemeId}
         selectedPaletteId={selectedPaletteId}
@@ -382,15 +316,13 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           <StyleModals
             isSaveOpen={isSaveStyleOpen}
             isLoadOpen={isLoadStyleOpen}
-            isPaletteOpen={isPaletteOpen}
             closeSave={() => setIsSaveStyleOpen(false)}
             closeLoad={() => setIsLoadStyleOpen(false)}
-            closePalette={() => setIsPaletteOpen(false)}
-            styleCollections={styleCollections}
             styleGroups={styleGroups}
             selectedCollectionId={selectedCollectionId}
             selectedElement={editor.selectedElement}
-            onSave={async ({ name, collectionId, groupId }) => {
+            onSave={async ({ name, groupId }) => {
+              const collectionId = selectedCollectionId as number;
               if (!editor.selectedElement) return;
               await createStyle({
                 variables: {
@@ -420,22 +352,6 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             });
           }
         }}
-        onAddCollection={async (collection) => {
-          setStyleCollections([...styleCollections, collection]);
-          await refetchCollections();
-        }}
-        onAddGroup={async (group) => {
-          setStyleGroups([...styleGroups, group]);
-          if (selectedCollectionId !== "" && selectedElementType) {
-            await fetchGroups({
-              variables: {
-                collectionId: String(selectedCollectionId),
-                element: selectedElementType,
-              },
-            });
-          }
-        }}
-        onAddPalette={handleAddPalette}
         onLoad={(styleId) => {
           if (!editor.selectedElement) return;
           console.log("load style", { styleId });
