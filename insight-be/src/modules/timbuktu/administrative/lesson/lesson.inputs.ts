@@ -1,6 +1,6 @@
 import { PartialType, InputType, Field, ID } from '@nestjs/graphql';
-import { GraphQLJSONObject } from 'graphql-type-json';
 import { HasRelationsInput } from 'src/common/base.inputs';
+import { SlideInput } from './dto/slide.dto';
 
 @InputType()
 export class CreateLessonInput extends HasRelationsInput {
@@ -10,8 +10,8 @@ export class CreateLessonInput extends HasRelationsInput {
   @Field({ nullable: true })
   description?: string;
 
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  content?: Record<string, any>;
+  @Field(() => [SlideInput], { nullable: true })
+  content?: SlideInput[];
 
   @Field(() => ID)
   themeId: number;
