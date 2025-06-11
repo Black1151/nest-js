@@ -35,6 +35,6 @@ export class LessonResolver extends BaseLessonResolver {
   async upgradeLessonTheme(
     @Args('data', { type: () => UpgradeLessonThemeInput }) data: UpgradeLessonThemeInput,
   ): Promise<LessonEntity> {
-    return this.lessonService.upgradeThemeVersion(data.lessonId, data.version);
+    return this.lessonService.upgradeThemeVersion(data.lessonId);
   }
 }

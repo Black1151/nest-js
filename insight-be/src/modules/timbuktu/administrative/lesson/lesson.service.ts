@@ -28,7 +28,11 @@ export class LessonService extends BaseService<
     const theme = await this.themeRepository.findOneOrFail({ where: { id: themeId } });
     validateStyleOverrides(rest.content, Object.keys(theme.semanticTokens?.colors ?? {}));
     const relations = [...relationIds, { relation: 'theme', ids: [themeId] }];
-    return super.create({ ...rest, relationIds: relations } as any);
+    return super.create({
+      ...rest,
+      themeVersion: theme.version,
+      relationIds: relations,
+    } as any);
   }
 
   async update(data: UpdateLessonInput): Promise<LessonEntity> {
@@ -38,33 +42,29 @@ export class LessonService extends BaseService<
       const existing = await this.repo.findOneOrFail({ where: { id: data.id } });
       themeIdToUse = existing.themeId;
     }
+    const theme = await this.themeRepository.findOneOrFail({ where: { id: themeIdToUse } });
     if (rest.content) {
-      const theme = await this.themeRepository.findOneOrFail({ where: { id: themeIdToUse } });
       validateStyleOverrides(rest.content, Object.keys(theme.semanticTokens?.colors ?? {}));
     }
     const relations = [
       ...relationIds,
       ...(themeId ? [{ relation: 'theme', ids: [themeId] }] : []),
     ];
-    return super.update({ ...rest, relationIds: relations } as any);
+    return super.update({
+      ...rest,
+      themeVersion: theme.version,
+      relationIds: relations,
+    } as any);
   }
 
-  async upgradeThemeVersion(
-    lessonId: number,
-    version: number,
-  ): Promise<LessonEntity> {
+  async upgradeThemeVersion(lessonId: number): Promise<LessonEntity> {
     return this.dataSource.transaction(async (manager) => {
       const lessonRepo = manager.getRepository(LessonEntity);
       const themeRepo = manager.getRepository(ThemeEntity);
 
       const lesson = await lessonRepo.findOneOrFail({ where: { id: lessonId } });
       const theme = await themeRepo.findOneOrFail({ where: { id: lesson.themeId } });
-
-      if (theme.version < version) {
-        theme.version = version;
-        await themeRepo.save(theme);
-      }
-
+      lesson.themeVersion = theme.version;
       lesson.lastThemeUpgrade = new Date();
       await lessonRepo.save(lesson);
 

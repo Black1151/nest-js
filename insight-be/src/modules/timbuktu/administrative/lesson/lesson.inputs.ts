@@ -16,6 +16,9 @@ export class CreateLessonInput extends HasRelationsInput {
   @Field(() => ID)
   themeId: number;
 
+  @Field({ nullable: true })
+  themeVersion?: number;
+
   @Field(() => [ID], { nullable: 'itemsAndList' })
   recommendedYearGroupIds?: number[];
 
@@ -33,7 +36,4 @@ export class UpdateLessonInput extends PartialType(CreateLessonInput) {
 export class UpgradeLessonThemeInput {
   @Field(() => ID)
   lessonId: number;
-
-  @Field()
-  version: number;
 }
