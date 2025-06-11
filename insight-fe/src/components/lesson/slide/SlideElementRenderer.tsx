@@ -57,12 +57,12 @@ export default function SlideElementRenderer({
     content = (
       <ElementWrapper styles={item.wrapperStyles} data-testid="text-element">
         <Text
-          fontSize={item.styles?.fontSize}
-          fontFamily={item.styles?.fontFamily}
-          fontWeight={item.styles?.fontWeight}
-          lineHeight={item.styles?.lineHeight}
-          textAlign={item.styles?.textAlign as any}
-          color={tokenColor(tokens, item.styles?.colorToken)}
+          fontSize={item.styleOverrides?.fontSize}
+          fontFamily={item.styleOverrides?.fontFamily}
+          fontWeight={item.styleOverrides?.fontWeight}
+          lineHeight={item.styleOverrides?.lineHeight}
+          textAlign={item.styleOverrides?.textAlign as any}
+          color={tokenColor(tokens, item.styleOverrides?.colorToken)}
           {...(resolveVariant(variants, item.variantId)?.props ?? {})}
         >
           {item.text || "Sample Text"}
@@ -79,12 +79,12 @@ export default function SlideElementRenderer({
                 {row.map((cell, cIdx) => (
                   <Td key={cIdx} p={1}>
                     <Text
-                      fontSize={cell.styles?.fontSize}
-                      fontFamily={cell.styles?.fontFamily}
-                      fontWeight={cell.styles?.fontWeight}
-                      lineHeight={cell.styles?.lineHeight}
-                      textAlign={cell.styles?.textAlign as any}
-                      color={tokenColor(tokens, cell.styles?.colorToken)}
+                      fontSize={cell.styleOverrides?.fontSize}
+                      fontFamily={cell.styleOverrides?.fontFamily}
+                      fontWeight={cell.styleOverrides?.fontWeight}
+                      lineHeight={cell.styleOverrides?.lineHeight}
+                      textAlign={cell.styleOverrides?.textAlign as any}
+                      color={tokenColor(tokens, cell.styleOverrides?.colorToken)}
                     >
                       {cell.text}
                     </Text>

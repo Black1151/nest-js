@@ -3,6 +3,7 @@
 import { Flex, Button } from "@chakra-ui/react";
 import { useState, useRef } from "react";
 import LessonEditor from "@/components/lesson/LessonEditor";
+import { migrateSlides } from "@/components/lesson/utils/migrateContent";
 import LessonPreviewModal from "@/components/lesson/modals/LessonPreviewModal";
 import LoadLessonModal from "@/components/lesson/modals/LoadLessonModal";
 import { useMutation, useLazyQuery } from "@apollo/client";
@@ -74,21 +75,25 @@ export const LessonBuilderPageClient = () => {
       variables: { data: { id: Number(lessonId) } },
     });
     const lesson = data?.getLesson;
-    const slides = lesson?.content?.slides ?? [];
-    editorRef.current?.setContent(slides);
-
     const themeId = lesson?.themeId;
+    let slides = lesson?.content?.slides ?? [];
+
     if (themeId) {
       const themeRes = await fetchTheme({ variables: { id: String(themeId) } });
       const theme = themeRes.data?.getTheme;
       if (theme) {
+        slides = migrateSlides(slides, theme.semanticTokens);
         editorRef.current?.setTheme?.({
           id: theme.id,
           styleCollectionId: theme.styleCollectionId,
           defaultPaletteId: theme.defaultPaletteId,
         });
       }
+    } else {
+      slides = migrateSlides(slides);
     }
+
+    editorRef.current?.setContent(slides);
     setIsLoadOpen(false);
   };
 

@@ -33,20 +33,22 @@ export default function ElementAttributesPane({
   variants,
 }: ElementAttributesPaneProps) {
   const [colorToken, setColorToken] = useState(
-    element.styles?.colorToken ?? ""
+    element.styleOverrides?.colorToken ?? ""
   );
-  const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
+  const [fontSize, setFontSize] = useState(
+    element.styleOverrides?.fontSize || "16px"
+  );
   const [fontFamily, setFontFamily] = useState(
-    element.styles?.fontFamily || availableFonts[0].fontFamily
+    element.styleOverrides?.fontFamily || availableFonts[0].fontFamily
   );
   const [fontWeight, setFontWeight] = useState(
-    element.styles?.fontWeight || "normal"
+    element.styleOverrides?.fontWeight || "normal"
   );
   const [lineHeight, setLineHeight] = useState(
-    element.styles?.lineHeight || "1.2"
+    element.styleOverrides?.lineHeight || "1.2"
   );
   const [textAlign, setTextAlign] = useState(
-    element.styles?.textAlign || "left"
+    element.styleOverrides?.textAlign || "left"
   );
   const [text, setText] = useState(element.text || "");
   const [src, setSrc] = useState(element.src || "");
@@ -61,7 +63,7 @@ export default function ElementAttributesPane({
       rows: 2,
       cols: 2,
       cells: Array.from({ length: 2 }, () =>
-        Array.from({ length: 2 }, () => ({ text: "", styles: { colorToken: "" } }))
+        Array.from({ length: 2 }, () => ({ text: "", styleOverrides: { colorToken: "" } }))
       ),
     }
   );
@@ -112,12 +114,14 @@ export default function ElementAttributesPane({
   // using id/type avoids resets when the parent simply updates
   // the same element instance with new references
   useEffect(() => {
-    setColorToken(element.styles?.colorToken ?? "");
-    setFontSize(element.styles?.fontSize || "16px");
-    setFontFamily(element.styles?.fontFamily || availableFonts[0].fontFamily);
-    setFontWeight(element.styles?.fontWeight || "normal");
-    setLineHeight(element.styles?.lineHeight || "1.2");
-    setTextAlign(element.styles?.textAlign || "left");
+    setColorToken(element.styleOverrides?.colorToken ?? "");
+    setFontSize(element.styleOverrides?.fontSize || "16px");
+    setFontFamily(
+      element.styleOverrides?.fontFamily || availableFonts[0].fontFamily
+    );
+    setFontWeight(element.styleOverrides?.fontWeight || "normal");
+    setLineHeight(element.styleOverrides?.lineHeight || "1.2");
+    setTextAlign(element.styleOverrides?.textAlign || "left");
     setText(element.text || "");
     setSrc(element.src || "");
     setUrl(element.url || "");
@@ -129,7 +133,7 @@ export default function ElementAttributesPane({
         rows: 2,
         cols: 2,
         cells: Array.from({ length: 2 }, () =>
-          Array.from({ length: 2 }, () => ({ text: "", styles: { colorToken: "" } }))
+          Array.from({ length: 2 }, () => ({ text: "", styleOverrides: { colorToken: "" } }))
         ),
       }
     );
@@ -166,8 +170,8 @@ export default function ElementAttributesPane({
     };
     if (element.type === "text") {
       updated.text = text;
-      updated.styles = {
-        ...element.styles,
+      updated.styleOverrides = {
+        ...element.styleOverrides,
         colorToken,
         fontSize,
         fontFamily,

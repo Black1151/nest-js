@@ -51,7 +51,7 @@ export default function useDnDHandlers(
                 ...(type === "text"
                   ? {
                       text: "Sample Text",
-                      styles: {
+                      styleOverrides: {
                         colorToken: options.defaultColorToken,
                         fontSize: "16px",
                         fontFamily: options.defaultFontFamily,
@@ -74,7 +74,7 @@ export default function useDnDHandlers(
                           cells: Array.from({ length: 2 }, () =>
                             Array.from({ length: 2 }, () => ({
                               text: "Cell",
-                              styles: {
+                              styleOverrides: {
                                 colorToken: options.defaultColorToken,
                                 fontSize: "14px",
                                 fontFamily: options.defaultFontFamily,
