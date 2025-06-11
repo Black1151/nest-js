@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { validateSemanticTokenContrast } from '../../../../validators/theme/semantic-contrast.validator';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { BaseService } from 'src/common/base.service';
@@ -20,6 +21,7 @@ export class ThemeService extends BaseService<
 
   async create(data: CreateThemeInput): Promise<ThemeEntity> {
     const { styleCollectionId, defaultPaletteId, relationIds = [], ...rest } = data;
+    validateSemanticTokenContrast(rest.foundationTokens, rest.semanticTokens);
     const relations = [
       ...relationIds,
       { relation: 'styleCollection', ids: [styleCollectionId] },
@@ -44,6 +46,9 @@ export class ThemeService extends BaseService<
         ? [{ relation: 'defaultPalette', ids: [defaultPaletteId] }]
         : []),
     ];
+    if (rest.foundationTokens && rest.semanticTokens) {
+      validateSemanticTokenContrast(rest.foundationTokens, rest.semanticTokens);
+    }
     return super.update({ ...rest, relationIds: relations } as any);
   }
 }
