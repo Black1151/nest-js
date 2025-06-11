@@ -9,6 +9,7 @@ export interface LessonEditorHandle {
   setContent: (slides: Slide[]) => void;
   setTheme?: (theme: { id: number; styleCollectionId: number; defaultPaletteId: number }) => void;
   getThemeId?: () => number | "";
+  getPaletteId?: () => number | "";
 }
 
 export interface LessonState {

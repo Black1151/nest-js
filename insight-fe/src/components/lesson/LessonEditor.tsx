@@ -110,13 +110,20 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         editor.selectSlide(slides[0]?.id ?? null);
       },
       getThemeId: () => selectedThemeId,
+      getPaletteId: () => selectedPaletteId,
       setTheme: (theme: { id: number; styleCollectionId: number; defaultPaletteId: number }) => {
         setSelectedCollectionId(theme.styleCollectionId);
         setSelectedThemeId(theme.id);
         setSelectedPaletteId(theme.defaultPaletteId);
       },
     }),
-    [editor.state.slides, selectedThemeId, editor.setSlides, editor.selectSlide],
+    [
+      editor.state.slides,
+      selectedThemeId,
+      selectedPaletteId,
+      editor.setSlides,
+      editor.selectSlide,
+    ],
   );
 
   const {
@@ -363,56 +370,62 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         onDeletePalette={handleDeletePalette}
       />
 
-      <SlideCanvas
-        slides={editor.state.slides}
-        setSlides={editor.setSlides as any}
-        selectedSlideId={editor.state.selectedSlideId}
-        selectSlide={(id) => editor.selectSlide(id)}
-        selectedSlide={editor.selectedSlide}
-        selectedElement={editor.selectedElement}
-        selectedColumn={editor.selectedColumn}
-        selectedBoard={editor.selectedBoard}
-        dropIndicator={editor.state.dropIndicator}
-        selectElement={(id) => editor.selectElement(id)}
-        selectColumn={(id) => editor.selectColumn(id)}
-        selectBoard={(id) => editor.selectBoard(id)}
-        updateElement={editor.updateElement}
-        cloneElement={editor.cloneElement}
-        deleteElement={editor.deleteElement}
-        updateColumn={editor.updateColumn}
-        updateBoard={editor.updateBoard}
-        handleDragOver={editor.handleDragOver}
-        handleDropElement={editor.handleDropElement}
-        openSaveStyle={() => setIsSaveStyleOpen(true)}
-        openLoadStyle={() => setIsLoadStyleOpen(true)}
-        colorPalettes={colorPalettes}
-        selectedPaletteId={selectedPaletteId}
-      />
+      {selectedThemeId === "" ? (
+        <Box p={4} mt={4} borderWidth="1px" borderRadius="md">
+          Please select a theme to start editing.
+        </Box>
+      ) : (
+        <>
+          <SlideCanvas
+            slides={editor.state.slides}
+            setSlides={editor.setSlides as any}
+            selectedSlideId={editor.state.selectedSlideId}
+            selectSlide={(id) => editor.selectSlide(id)}
+            selectedSlide={editor.selectedSlide}
+            selectedElement={editor.selectedElement}
+            selectedColumn={editor.selectedColumn}
+            selectedBoard={editor.selectedBoard}
+            dropIndicator={editor.state.dropIndicator}
+            selectElement={(id) => editor.selectElement(id)}
+            selectColumn={(id) => editor.selectColumn(id)}
+            selectBoard={(id) => editor.selectBoard(id)}
+            updateElement={editor.updateElement}
+            cloneElement={editor.cloneElement}
+            deleteElement={editor.deleteElement}
+            updateColumn={editor.updateColumn}
+            updateBoard={editor.updateBoard}
+            handleDragOver={editor.handleDragOver}
+            handleDropElement={editor.handleDropElement}
+            openSaveStyle={() => setIsSaveStyleOpen(true)}
+            openLoadStyle={() => setIsLoadStyleOpen(true)}
+            colorPalettes={colorPalettes}
+            selectedPaletteId={selectedPaletteId}
+          />
 
-      <StyleModals
-        isSaveOpen={isSaveStyleOpen}
-        isLoadOpen={isLoadStyleOpen}
-        isPaletteOpen={isPaletteOpen}
-        closeSave={() => setIsSaveStyleOpen(false)}
-        closeLoad={() => setIsLoadStyleOpen(false)}
-        closePalette={() => setIsPaletteOpen(false)}
-        styleCollections={styleCollections}
-        styleGroups={styleGroups}
-        selectedCollectionId={selectedCollectionId}
-        selectedElement={editor.selectedElement}
-        onSave={async ({ name, collectionId, groupId }) => {
-          if (!editor.selectedElement) return;
-          await createStyle({
-            variables: {
-              data: {
-                name,
-                collectionId,
-                groupId: groupId ?? undefined,
-                element: ELEMENT_TYPE_TO_ENUM[editor.selectedElement.type],
-                config: editor.selectedElement,
-              },
-            },
-          });
+          <StyleModals
+            isSaveOpen={isSaveStyleOpen}
+            isLoadOpen={isLoadStyleOpen}
+            isPaletteOpen={isPaletteOpen}
+            closeSave={() => setIsSaveStyleOpen(false)}
+            closeLoad={() => setIsLoadStyleOpen(false)}
+            closePalette={() => setIsPaletteOpen(false)}
+            styleCollections={styleCollections}
+            styleGroups={styleGroups}
+            selectedCollectionId={selectedCollectionId}
+            selectedElement={editor.selectedElement}
+            onSave={async ({ name, collectionId, groupId }) => {
+              if (!editor.selectedElement) return;
+              await createStyle({
+                variables: {
+                  data: {
+                    name,
+                    collectionId,
+                    groupId: groupId ?? undefined,
+                    element: ELEMENT_TYPE_TO_ENUM[editor.selectedElement.type],
+                    config: editor.selectedElement,
+                  },
+                },
+              });
 
           if (
             selectedCollectionId !== "" &&
@@ -451,6 +464,8 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
           console.log("load style", { styleId });
         }}
       />
+        </>
+      )}
     </Box>
   );
 });
