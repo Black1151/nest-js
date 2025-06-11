@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+For details on how the design system works see [docs/theming.md](docs/theming.md).
+
 ## Getting Started
 
 First, run the development server:
