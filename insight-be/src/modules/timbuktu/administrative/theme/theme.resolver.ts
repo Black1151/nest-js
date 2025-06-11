@@ -35,7 +35,10 @@ export class ThemeResolver extends BaseThemeResolver {
     super(themeService);
   }
 
-  @Query(() => ThemeEntity, { name: 'getTheme', description: 'Returns one Theme' })
+  @Query(() => ThemeEntity, {
+    name: 'getTheme',
+    description: 'Returns one Theme',
+  })
   @RbacPermissionKey('theme.getTheme')
   async findOne(
     @Args('data', { type: () => IdInput }) data: IdInput,
@@ -69,8 +72,10 @@ export class ThemeResolver extends BaseThemeResolver {
     name: 'upgradeThemeVersion',
     description: 'Upgrade a theme to a specific version',
   })
+  @RbacPermissionKey('theme.upgradeThemeVersion')
   async upgradeThemeVersion(
-    @Args('data', { type: () => UpgradeThemeVersionInput }) data: UpgradeThemeVersionInput,
+    @Args('data', { type: () => UpgradeThemeVersionInput })
+    data: UpgradeThemeVersionInput,
   ): Promise<ThemeEntity> {
     return this.themeService.upgradeVersion(data.id, data.version);
   }
