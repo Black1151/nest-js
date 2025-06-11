@@ -165,7 +165,7 @@ export default function TableAttributes({
                         },
                       })
                     }
-                    paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
+                    paletteColors={tokenKeys.map((k) => tokenColor(tokens, k) || "")}
                   />
                 </Stack>
               ))
