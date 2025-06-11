@@ -4,12 +4,15 @@ import React, { ChangeEvent, useMemo, useState } from "react";
 import CrudDropdown from "../CrudDropdown";
 
 import { gql, useQuery, useMutation } from "@apollo/client";
+import { HStack, IconButton, useToast } from "@chakra-ui/react";
+import { RefreshCcw } from "lucide-react";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
 import { BaseModal } from "@/components/modals/BaseModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import CreateLessonForm from "./forms/CreateLessonForm";
 import UpdateLessonForm from "./forms/UpdateLessonForm";
+import { UPGRADE_LESSON_THEME } from "@/graphql/lesson";
 
 /* -------------------------------------------------------------------------- */
 /* GraphQL document                                                           */
@@ -47,6 +50,8 @@ export function LessonDropdown({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+  const toast = useToast();
 
   /* -------- fetch -------- */
   const { data, loading, refetch } = useQuery(GET_LESSONS_FOR_TOPIC, {
@@ -65,6 +70,22 @@ export function LessonDropdown({
     },
   });
 
+  const [upgradeLessonTheme, { loading: upgrading }] = useMutation(
+    UPGRADE_LESSON_THEME,
+    {
+      onCompleted: () => {
+        toast({
+          status: "success",
+          title: "Lesson upgraded",
+          duration: 3000,
+          isClosable: true,
+        });
+        setIsUpgradeOpen(false);
+        refetch();
+      },
+    },
+  );
+
   const lessons = topicId !== null ? data?.getTopic?.lessons ?? [] : [];
 
   /* -------- options -------- */
@@ -82,21 +103,30 @@ export function LessonDropdown({
   /* -------- render -------- */
   return (
     <>
-      <CrudDropdown
-        options={options}
-        value={value ?? ""}
-        isLoading={loading}
-        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-          onChange(e.target.value || null)
-        }
-        onCreate={() => setIsCreateOpen(true)}
-        onUpdate={() => setIsUpdateOpen(true)}
-        onDelete={() => setIsDeleteOpen(true)}
-        isCreateDisabled={topicId === null}
-        isUpdateDisabled={!value}
-        isDeleteDisabled={!value}
-        isDisabled={topicId === null}
-      />
+      <HStack>
+        <CrudDropdown
+          options={options}
+          value={value ?? ""}
+          isLoading={loading}
+          onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+            onChange(e.target.value || null)
+          }
+          onCreate={() => setIsCreateOpen(true)}
+          onUpdate={() => setIsUpdateOpen(true)}
+          onDelete={() => setIsDeleteOpen(true)}
+          isCreateDisabled={topicId === null}
+          isUpdateDisabled={!value}
+          isDeleteDisabled={!value}
+          isDisabled={topicId === null}
+        />
+        <IconButton
+          aria-label="Upgrade lesson theme"
+          icon={<RefreshCcw size={16} />}
+          onClick={() => setIsUpgradeOpen(true)}
+          isDisabled={!value}
+          colorScheme="purple"
+        />
+      </HStack>
 
       <BaseModal
         isOpen={isCreateOpen}
@@ -139,6 +169,19 @@ export function LessonDropdown({
           }
         }}
         isLoading={deleting}
+      />
+
+      <ConfirmationModal
+        isOpen={isUpgradeOpen}
+        onClose={() => setIsUpgradeOpen(false)}
+        action="upgrade lesson"
+        bodyText="Upgrade lesson theme to latest version?"
+        onConfirm={() => {
+          if (value) {
+            upgradeLessonTheme({ variables: { data: { lessonId: Number(value) } } });
+          }
+        }}
+        isLoading={upgrading}
       />
     </>
   );
