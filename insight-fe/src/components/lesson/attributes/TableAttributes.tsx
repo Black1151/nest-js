@@ -12,7 +12,7 @@ import {
   Stack,
   SimpleGrid,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import PaletteColorPicker from "../PaletteColorPicker";
 import { TableCell } from "@/components/DnD/cards/SlideElementDnDCard";
 
@@ -36,32 +36,64 @@ export default function TableAttributes({
   const [rows, setRows] = useState(table.rows);
   const [cols, setCols] = useState(table.cols);
   const [cells, setCells] = useState<TableCell[][]>(table.cells);
+  const rowsRef = useRef(table.rows);
+  const colsRef = useRef(table.cols);
 
   useEffect(() => {
+    rowsRef.current = table.rows;
+    colsRef.current = table.cols;
     setRows(table.rows);
     setCols(table.cols);
     setCells(table.cells);
   }, [table.rows, table.cols, table.cells]);
 
-  // adjust cell matrix when rows/cols change
-  useEffect(() => {
-    setCells((prev) => {
-      const newRows = Array.from({ length: rows }, (_, r) =>
-        Array.from({ length: cols }, (_, c) => prev[r]?.[c] || { text: "", styles: { color: "#000000" } })
-      );
-      return newRows;
-    });
-  }, [rows, cols]);
+  const adjustMatrix = (
+    prev: TableCell[][],
+    newRows: number,
+    newCols: number
+  ): TableCell[][] =>
+    Array.from({ length: newRows }, (_, r) =>
+      Array.from(
+        { length: newCols },
+        (_, c) => prev[r]?.[c] || { text: "", styles: { color: "#000000" } }
+      )
+    );
 
-  useEffect(() => {
-    setTable({ rows, cols, cells });
-  }, [rows, cols, cells, setTable]);
+  const handleRowsChange = (value: number) => {
+    const r = Math.max(1, value);
+    rowsRef.current = r;
+    setRows(r);
+    setCells((prev) => {
+      const newCells = adjustMatrix(prev, r, colsRef.current);
+      setTable({ rows: r, cols: colsRef.current, cells: newCells });
+      return newCells;
+    });
+  };
+
+  const handleColsChange = (value: number) => {
+    const c = Math.max(1, value);
+    colsRef.current = c;
+    setCols(c);
+    setCells((prev) => {
+      const newCells = adjustMatrix(prev, rowsRef.current, c);
+      setTable({ rows: rowsRef.current, cols: c, cells: newCells });
+      return newCells;
+    });
+  };
+
+  const updateTableCells = (updater: (cells: TableCell[][]) => TableCell[][]) => {
+    setCells((prev) => {
+      const next = updater(prev);
+      setTable({ rows: rowsRef.current, cols: colsRef.current, cells: next });
+      return next;
+    });
+  };
 
   const paletteColors =
     colorPalettes?.find((p) => Number(p.id) === Number(selectedPaletteId))?.colors ?? [];
 
   const updateCell = (r: number, c: number, cell: TableCell) => {
-    setCells((prev) => {
+    updateTableCells((prev) => {
       const next = prev.map((row) => row.slice());
       next[r][c] = cell;
       return next;
@@ -88,7 +120,9 @@ export default function TableAttributes({
               w="60px"
               min={1}
               value={rows}
-              onChange={(e) => setRows(Math.max(1, parseInt(e.target.value) || 1))}
+              onChange={(e) =>
+                handleRowsChange(Math.max(1, parseInt(e.target.value) || 1))
+              }
             />
           </FormControl>
           <FormControl display="flex" alignItems="center">
@@ -101,7 +135,9 @@ export default function TableAttributes({
               w="60px"
               min={1}
               value={cols}
-              onChange={(e) => setCols(Math.max(1, parseInt(e.target.value) || 1))}
+              onChange={(e) =>
+                handleColsChange(Math.max(1, parseInt(e.target.value) || 1))
+              }
             />
           </FormControl>
           <SimpleGrid columns={cols} spacing={2}>
