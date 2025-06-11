@@ -14,12 +14,13 @@ import {
 } from "@chakra-ui/react";
 import { availableFonts } from "@/theme/fonts";
 import PaletteColorPicker from "../PaletteColorPicker";
+import { SemanticTokens, tokenColor, ComponentVariant } from "@/theme/helpers";
 
 interface TextAttributesProps {
   text: string;
   setText: (val: string) => void;
-  colorIndex: number;
-  setColorIndex: (val: number) => void;
+  colorToken: string;
+  setColorToken: (val: string) => void;
   fontSize: string;
   setFontSize: (val: string) => void;
   fontFamily: string;
@@ -30,15 +31,15 @@ interface TextAttributesProps {
   setLineHeight: (val: string) => void;
   textAlign: string;
   setTextAlign: (val: string) => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
-  selectedPaletteId?: number | "";
+  tokens?: SemanticTokens;
+  variants?: ComponentVariant[];
 }
 
 export default function TextAttributes({
   text,
   setText,
-  colorIndex,
-  setColorIndex,
+  colorToken,
+  setColorToken,
   fontSize,
   setFontSize,
   fontFamily,
@@ -49,13 +50,9 @@ export default function TextAttributes({
   setLineHeight,
   textAlign,
   setTextAlign,
-  colorPalettes,
-  selectedPaletteId,
+  tokens,
 }: TextAttributesProps) {
-  const paletteColors =
-    colorPalettes?.find(
-      (p) => Number(p.id) === Number(selectedPaletteId)
-    )?.colors ?? [];
+  const tokenKeys = tokens ? Object.keys(tokens.colors ?? {}) : [];
 
   return (
     <AccordionItem borderWidth="1px" borderColor="purple.300" borderRadius="md" mb={2}>
@@ -78,9 +75,9 @@ export default function TextAttributes({
               Color
             </FormLabel>
             <PaletteColorPicker
-              value={colorIndex}
-              onChange={setColorIndex}
-              paletteColors={paletteColors}
+              value={tokenKeys.indexOf(colorToken)}
+              onChange={(idx) => setColorToken(tokenKeys[idx])}
+              paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
             />
           </FormControl>
           <FormControl display="flex" alignItems="center">

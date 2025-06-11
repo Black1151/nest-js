@@ -15,6 +15,7 @@ import {
 import { useEffect, useState, useRef } from "react";
 import PaletteColorPicker from "../PaletteColorPicker";
 import { TableCell } from "@/components/DnD/cards/SlideElementDnDCard";
+import { SemanticTokens, tokenColor } from "@/theme/helpers";
 
 interface TableAttributesProps {
   table: {
@@ -23,15 +24,13 @@ interface TableAttributesProps {
     cells: TableCell[][];
   };
   setTable: (table: { rows: number; cols: number; cells: TableCell[][] }) => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
-  selectedPaletteId?: number | "";
+  tokens?: SemanticTokens;
 }
 
 export default function TableAttributes({
   table,
   setTable,
-  colorPalettes,
-  selectedPaletteId,
+  tokens,
 }: TableAttributesProps) {
   const [rows, setRows] = useState(table.rows);
   const [cols, setCols] = useState(table.cols);
@@ -55,7 +54,7 @@ export default function TableAttributes({
     Array.from({ length: newRows }, (_, r) =>
       Array.from(
         { length: newCols },
-        (_, c) => prev[r]?.[c] || { text: "", styles: { colorIndex: 0 } }
+        (_, c) => prev[r]?.[c] || { text: "", styles: { colorToken: "" } }
       )
     );
 
@@ -89,8 +88,7 @@ export default function TableAttributes({
     });
   };
 
-  const paletteColors =
-    colorPalettes?.find((p) => Number(p.id) === Number(selectedPaletteId))?.colors ?? [];
+  const tokenKeys = tokens ? Object.keys(tokens.colors ?? {}) : [];
 
   const updateCell = (r: number, c: number, cell: TableCell) => {
     updateTableCells((prev) => {
@@ -153,14 +151,14 @@ export default function TableAttributes({
                     }
                   />
                   <PaletteColorPicker
-                    value={cell.styles?.colorIndex ?? 0}
+                    value={tokenKeys.indexOf(cell.styles?.colorToken ?? "")}
                     onChange={(idx) =>
                       updateCell(rIdx, cIdx, {
                         ...cell,
-                        styles: { ...cell.styles, colorIndex: idx },
+                        styles: { ...cell.styles, colorToken: tokenKeys[idx] },
                       })
                     }
-                    paletteColors={paletteColors}
+                    paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
                   />
                 </Stack>
               ))

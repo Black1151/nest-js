@@ -9,6 +9,7 @@ import ColumnAttributesPane from "../attributes-pane/ColumnAttributesPane";
 import ElementAttributesPane from "../attributes-pane/ElementAttributesPane";
 import SlideElementsContainer, { BoardRow } from "./SlideElementsContainer";
 import SlideSequencer, { Slide } from "./SlideSequencer";
+import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
 
 interface SlideCanvasProps {
   slides: Slide[];
@@ -32,9 +33,9 @@ interface SlideCanvasProps {
   handleDropElement: (e: React.DragEvent<HTMLDivElement>) => void;
   openSaveStyle: () => void;
   openLoadStyle: () => void;
-  colorPalettes: { id: number; name: string; colors: string[] }[];
-  selectedPaletteId: number | "";
-} 
+  tokens?: SemanticTokens;
+  variants?: ComponentVariant[];
+}
 
 export default function SlideCanvas({
   slides,
@@ -58,8 +59,8 @@ export default function SlideCanvas({
   handleDropElement,
   openSaveStyle,
   openLoadStyle,
-  colorPalettes,
-  selectedPaletteId,
+  tokens,
+  variants,
 }: SlideCanvasProps) {
   return (
     <Flex gap={6} alignItems="flex-start">
@@ -100,6 +101,8 @@ export default function SlideCanvas({
               onSelectColumn={(id) => selectColumn(id)}
               selectedBoardId={selectedBoard ? selectedBoard.id : null}
               onSelectBoard={(id) => selectBoard(id)}
+              tokens={tokens}
+              variants={variants}
             />
           </Box>
           <Box p={4} borderWidth="1px" borderRadius="md" minW="200px">
@@ -121,24 +124,22 @@ export default function SlideCanvas({
                 onChange={updateElement}
                 onClone={cloneElement}
                 onDelete={deleteElement}
-                colorPalettes={colorPalettes}
-                selectedPaletteId={selectedPaletteId}
+                tokens={tokens}
+                variants={variants}
               />
             )}
             {selectedColumn && (
               <ColumnAttributesPane
                 column={selectedColumn}
                 onChange={updateColumn}
-                colorPalettes={colorPalettes}
-                selectedPaletteId={selectedPaletteId}
+                tokens={tokens}
               />
             )}
             {selectedBoard && (
               <BoardAttributesPane
                 board={selectedBoard}
                 onChange={updateBoard}
-                colorPalettes={colorPalettes}
-                selectedPaletteId={selectedPaletteId}
+                tokens={tokens}
               />
             )}
           </Box>

@@ -13,14 +13,15 @@ import VideoAttributes from "../attributes/VideoAttributes";
 import TableAttributes from "../attributes/TableAttributes";
 import WrapperSettings from "../attributes/WrapperSettings";
 import useStyleAttributes from "../hooks/useStyleAttributes";
+import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
 
 interface ElementAttributesPaneProps {
   element: SlideElementDnDItemProps;
   onChange: (updated: SlideElementDnDItemProps) => void;
   onClone?: () => void;
   onDelete?: () => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
-  selectedPaletteId?: number | "";
+  tokens?: SemanticTokens;
+  variants?: ComponentVariant[];
 }
 
 export default function ElementAttributesPane({
@@ -28,11 +29,11 @@ export default function ElementAttributesPane({
   onChange,
   onClone,
   onDelete,
-  colorPalettes,
-  selectedPaletteId,
+  tokens,
+  variants,
 }: ElementAttributesPaneProps) {
-  const [colorIndex, setColorIndex] = useState(
-    element.styles?.colorIndex ?? 0
+  const [colorToken, setColorToken] = useState(
+    element.styles?.colorToken ?? ""
   );
   const [fontSize, setFontSize] = useState(element.styles?.fontSize || "16px");
   const [fontFamily, setFontFamily] = useState(
@@ -60,7 +61,7 @@ export default function ElementAttributesPane({
       rows: 2,
       cols: 2,
       cells: Array.from({ length: 2 }, () =>
-        Array.from({ length: 2 }, () => ({ text: "", styles: { colorIndex: 0 } }))
+        Array.from({ length: 2 }, () => ({ text: "", styles: { colorToken: "" } }))
       ),
     }
   );
@@ -111,7 +112,7 @@ export default function ElementAttributesPane({
   // using id/type avoids resets when the parent simply updates
   // the same element instance with new references
   useEffect(() => {
-    setColorIndex(element.styles?.colorIndex ?? 0);
+    setColorToken(element.styles?.colorToken ?? "");
     setFontSize(element.styles?.fontSize || "16px");
     setFontFamily(element.styles?.fontFamily || availableFonts[0].fontFamily);
     setFontWeight(element.styles?.fontWeight || "normal");
@@ -128,7 +129,7 @@ export default function ElementAttributesPane({
         rows: 2,
         cols: 2,
         cells: Array.from({ length: 2 }, () =>
-          Array.from({ length: 2 }, () => ({ text: "", styles: { colorIndex: 0 } }))
+          Array.from({ length: 2 }, () => ({ text: "", styles: { colorToken: "" } }))
         ),
       }
     );
@@ -167,7 +168,7 @@ export default function ElementAttributesPane({
       updated.text = text;
       updated.styles = {
         ...element.styles,
-        colorIndex,
+        colorToken,
         fontSize,
         fontFamily,
         fontWeight,
@@ -191,7 +192,7 @@ export default function ElementAttributesPane({
     }
     onChange(updated);
   }, [
-        colorIndex,
+        colorToken,
         fontSize,
     fontFamily,
     fontWeight,
@@ -226,11 +227,7 @@ export default function ElementAttributesPane({
   return (
     <>
       <Accordion allowMultiple>
-        <WrapperSettings
-          attrs={styleAttrs}
-          colorPalettes={colorPalettes}
-          selectedPaletteId={selectedPaletteId}
-        />
+        <WrapperSettings attrs={styleAttrs} tokens={tokens} />
         <AnimationSettings
           enabled={animationEnabled}
           setEnabled={setAnimationEnabled}
@@ -243,8 +240,8 @@ export default function ElementAttributesPane({
           <TextAttributes
             text={text}
             setText={setText}
-            colorIndex={colorIndex}
-            setColorIndex={setColorIndex}
+            colorToken={colorToken}
+            setColorToken={setColorToken}
             fontSize={fontSize}
             setFontSize={setFontSize}
             fontFamily={fontFamily}
@@ -255,8 +252,8 @@ export default function ElementAttributesPane({
             setLineHeight={setLineHeight}
             textAlign={textAlign}
             setTextAlign={setTextAlign}
-            colorPalettes={colorPalettes}
-            selectedPaletteId={selectedPaletteId}
+            tokens={tokens}
+            variants={variants}
           />
         )}
         {element.type === "image" && (
@@ -269,8 +266,7 @@ export default function ElementAttributesPane({
           <TableAttributes
             table={table}
             setTable={setTable}
-            colorPalettes={colorPalettes}
-            selectedPaletteId={selectedPaletteId}
+            tokens={tokens}
           />
         )}
         {element.type === "quiz" && (

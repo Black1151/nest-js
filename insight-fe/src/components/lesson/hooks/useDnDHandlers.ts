@@ -7,7 +7,7 @@ import { defaultColumnWrapperStyles } from "../defaultStyles";
 import type { LessonState, Action } from "./useLessonSelection";
 
 interface Options {
-  defaultColor: string;
+  defaultColorToken: string;
   defaultFontFamily: string;
 }
 
@@ -52,7 +52,7 @@ export default function useDnDHandlers(
                   ? {
                       text: "Sample Text",
                       styles: {
-                        colorIndex: 0,
+                        colorToken: options.defaultColorToken,
                         fontSize: "16px",
                         fontFamily: options.defaultFontFamily,
                         fontWeight: "normal",
@@ -75,7 +75,7 @@ export default function useDnDHandlers(
                             Array.from({ length: 2 }, () => ({
                               text: "Cell",
                               styles: {
-                                colorIndex: 0,
+                                colorToken: options.defaultColorToken,
                                 fontSize: "14px",
                                 fontFamily: options.defaultFontFamily,
                                 fontWeight: "normal",

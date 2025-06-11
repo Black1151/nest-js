@@ -25,3 +25,14 @@ export function paletteColor(
   if (!palette) return undefined;
   return palette.colors[index];
 }
+
+export type SemanticTokens = Record<string, Record<string, string>>;
+
+export function tokenColor(
+  tokens: SemanticTokens | undefined,
+  path: string | undefined,
+): string | undefined {
+  if (!tokens || !path) return undefined;
+  const [category, key] = path.split(".");
+  return tokens[category]?.[key];
+}
