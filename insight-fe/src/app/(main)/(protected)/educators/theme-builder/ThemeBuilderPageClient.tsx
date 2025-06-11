@@ -38,9 +38,19 @@ import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-p
 import { availableFonts } from "@/theme/fonts";
 import WrapperSettings from "@/components/lesson/attributes/WrapperSettings";
 import TextAttributes from "@/components/lesson/attributes/TextAttributes";
+import ImageAttributes from "@/components/lesson/attributes/ImageAttributes";
+import VideoAttributes from "@/components/lesson/attributes/VideoAttributes";
+import TableAttributes from "@/components/lesson/attributes/TableAttributes";
 import useStyleAttributes from "@/components/lesson/hooks/useStyleAttributes";
-import ElementWrapper from "@/components/lesson/elements/ElementWrapper";
+import SlideElementRenderer from "@/components/lesson/slide/SlideElementRenderer";
 import { Plus, Trash2 } from "lucide-react";
+
+const AVAILABLE_ELEMENTS = [
+  { type: "text", label: "Text" },
+  { type: "table", label: "Table" },
+  { type: "image", label: "Image" },
+  { type: "video", label: "Video" },
+];
 
 export default function ThemeBuilderPageClient() {
   const [themeName, setThemeName] = useState("");
@@ -96,13 +106,24 @@ export default function ThemeBuilderPageClient() {
 
   const wrapperAttrs = useStyleAttributes({ deps: [] });
 
+  const [selectedElementType, setSelectedElementType] = useState<string>("text");
+
   const [text, setText] = useState("Sample Text");
-  const [color, setColor] = useState("#000000");
+  const [colorToken, setColorToken] = useState("primary");
   const [fontSize, setFontSize] = useState("16px");
   const [fontFamily, setFontFamily] = useState(availableFonts[0].fontFamily);
   const [fontWeight, setFontWeight] = useState("normal");
   const [lineHeight, setLineHeight] = useState("normal");
   const [textAlign, setTextAlign] = useState("left");
+  const [src, setSrc] = useState("");
+  const [url, setUrl] = useState("");
+  const [table, setTable] = useState({
+    rows: 2,
+    cols: 2,
+    cells: Array.from({ length: 2 }, () =>
+      Array.from({ length: 2 }, () => ({ text: "", styleOverrides: { colorToken: "" } }))
+    ),
+  });
 
   const [foundationColors, setFoundationColors] = useState<
     { name: string; value: string }[]
@@ -159,6 +180,11 @@ export default function ThemeBuilderPageClient() {
     }
   }, [palettesData]);
 
+  const tokens = useMemo(
+    () => ({ colors: Object.fromEntries(foundationColors.map((c) => [c.name, c.value])) }),
+    [foundationColors],
+  );
+
   const previewStyles = {
     bgColor: wrapperAttrs.bgColor,
     bgOpacity: wrapperAttrs.bgOpacity,
@@ -174,6 +200,40 @@ export default function ThemeBuilderPageClient() {
     borderWidth: wrapperAttrs.borderWidth,
     borderRadius: wrapperAttrs.borderRadius,
   };
+
+  const previewElement = useMemo(
+    () => ({
+      id: "preview",
+      type: selectedElementType,
+      text,
+      src,
+      url,
+      table,
+      wrapperStyles: previewStyles,
+      styleOverrides: {
+        colorToken,
+        fontSize,
+        fontFamily,
+        fontWeight,
+        lineHeight,
+        textAlign,
+      },
+    }),
+    [
+      selectedElementType,
+      text,
+      src,
+      url,
+      table,
+      previewStyles,
+      colorToken,
+      fontSize,
+      fontFamily,
+      fontWeight,
+      lineHeight,
+      textAlign,
+    ],
+  );
 
   return (
     <Stack spacing={4}>
@@ -205,30 +265,49 @@ export default function ThemeBuilderPageClient() {
         </FormControl>
       </HStack>
 
+      <HStack>
+        {AVAILABLE_ELEMENTS.map((el) => (
+          <Button
+            key={el.type}
+            size="sm"
+            variant={selectedElementType === el.type ? "solid" : "outline"}
+            onClick={() => setSelectedElementType(el.type)}
+          >
+            {el.label}
+          </Button>
+        ))}
+      </HStack>
+
       <Accordion allowMultiple>
-        <WrapperSettings
-          attrs={wrapperAttrs}
-          colorPalettes={colorPalettes}
-          selectedPaletteId={selectedPaletteId}
-        />
-        <TextAttributes
-          text={text}
-          setText={setText}
-          color={color}
-          setColor={setColor}
-          fontSize={fontSize}
-          setFontSize={setFontSize}
-          fontFamily={fontFamily}
-          setFontFamily={setFontFamily}
-          fontWeight={fontWeight}
-          setFontWeight={setFontWeight}
-          lineHeight={lineHeight}
-          setLineHeight={setLineHeight}
-          textAlign={textAlign}
-          setTextAlign={setTextAlign}
-          colorPalettes={colorPalettes}
-          selectedPaletteId={selectedPaletteId}
-        />
+        <WrapperSettings attrs={wrapperAttrs} tokens={tokens} />
+        {selectedElementType === "text" && (
+          <TextAttributes
+            text={text}
+            setText={setText}
+            colorToken={colorToken}
+            setColorToken={setColorToken}
+            fontSize={fontSize}
+            setFontSize={setFontSize}
+            fontFamily={fontFamily}
+            setFontFamily={setFontFamily}
+            fontWeight={fontWeight}
+            setFontWeight={setFontWeight}
+            lineHeight={lineHeight}
+            setLineHeight={setLineHeight}
+            textAlign={textAlign}
+            setTextAlign={setTextAlign}
+            tokens={tokens}
+          />
+        )}
+        {selectedElementType === "image" && (
+          <ImageAttributes src={src} setSrc={setSrc} />
+        )}
+        {selectedElementType === "video" && (
+          <VideoAttributes url={url} setUrl={setUrl} />
+        )}
+        {selectedElementType === "table" && (
+          <TableAttributes table={table} setTable={setTable} tokens={tokens} />
+        )}
       </Accordion>
 
       <Box>
@@ -422,18 +501,7 @@ export default function ThemeBuilderPageClient() {
 
       <Box>
         <Text mb={2}>Preview</Text>
-        <ElementWrapper styles={previewStyles}>
-          <Text
-            color={color}
-            fontSize={fontSize}
-            fontFamily={fontFamily}
-            fontWeight={fontWeight}
-            lineHeight={lineHeight}
-            textAlign={textAlign as any}
-          >
-            {text}
-          </Text>
-        </ElementWrapper>
+        <SlideElementRenderer item={previewElement as any} tokens={tokens} />
       </Box>
 
       <Button
