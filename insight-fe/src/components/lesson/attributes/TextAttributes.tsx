@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { availableFonts } from "@/theme/fonts";
 import PaletteColorPicker from "../PaletteColorPicker";
-import { SemanticTokens, tokenColor, ComponentVariant } from "@/theme/helpers";
+import { SemanticTokens, ThemeTokens, tokenColor, ComponentVariant } from "@/theme/helpers";
 
 interface TextAttributesProps {
   text: string;
@@ -31,7 +31,7 @@ interface TextAttributesProps {
   setLineHeight: (val: string) => void;
   textAlign: string;
   setTextAlign: (val: string) => void;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
   variants?: ComponentVariant[];
 }
 
@@ -52,7 +52,11 @@ export default function TextAttributes({
   setTextAlign,
   tokens,
 }: TextAttributesProps) {
-  const tokenKeys = tokens ? Object.keys(tokens.colors ?? {}) : [];
+  const tokenKeys = tokens
+    ? 'semanticTokens' in tokens
+      ? Object.keys(tokens.semanticTokens?.colors ?? {})
+      : Object.keys((tokens as any).colors ?? {})
+    : [];
 
   return (
     <AccordionItem borderWidth="1px" borderColor="purple.300" borderRadius="md" mb={2}>
@@ -77,20 +81,24 @@ export default function TextAttributes({
             <PaletteColorPicker
               value={tokenKeys.indexOf(colorToken)}
               onChange={(idx) => setColorToken(tokenKeys[idx])}
-              paletteColors={tokenKeys.map((k) => tokenColor(tokens, `colors.${k}`) || "")}
+              paletteColors={tokenKeys.map((k) => tokenColor(tokens, k) || "")}
             />
           </FormControl>
           <FormControl display="flex" alignItems="center">
             <FormLabel mb="0" fontSize="sm" w="40%">
               Size
             </FormLabel>
-            <Input
+            <Select
               size="sm"
-              type="number"
-              w="60px"
-              value={parseInt(fontSize)}
-              onChange={(e) => setFontSize(e.target.value + "px")}
-            />
+              value={fontSize}
+              onChange={(e) => setFontSize(e.target.value)}
+            >
+              {['12px','14px','16px','18px','20px','24px','28px','32px'].map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </Select>
           </FormControl>
           <FormControl display="flex" alignItems="center">
             <FormLabel mb="0" fontSize="sm" w="40%">
@@ -128,13 +136,17 @@ export default function TextAttributes({
             <FormLabel mb="0" fontSize="sm" w="40%">
               Line Height
             </FormLabel>
-            <Input
+            <Select
               size="sm"
-              type="number"
-              w="60px"
-              value={parseFloat(lineHeight)}
+              value={lineHeight}
               onChange={(e) => setLineHeight(e.target.value)}
-            />
+            >
+              {['1','1.2','1.4','1.6','1.8'].map((lh) => (
+                <option key={lh} value={lh}>
+                  {lh}
+                </option>
+              ))}
+            </Select>
           </FormControl>
           <FormControl display="flex" alignItems="center">
             <FormLabel mb="0" fontSize="sm" w="40%">

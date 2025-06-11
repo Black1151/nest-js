@@ -4,12 +4,12 @@ import { Accordion } from "@chakra-ui/react";
 import useStyleAttributes from "../hooks/useStyleAttributes";
 import WrapperSettings from "../attributes/WrapperSettings";
 import { BoardRow } from "../slide/SlideElementsContainer";
-import { SemanticTokens } from "@/theme/helpers";
+import { SemanticTokens, ThemeTokens } from "@/theme/helpers";
 
 interface BoardAttributesPaneProps {
   board: BoardRow;
   onChange: (updated: BoardRow) => void;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
 }
 
 export default function BoardAttributesPane({

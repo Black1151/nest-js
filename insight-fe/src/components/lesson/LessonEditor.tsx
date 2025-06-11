@@ -10,6 +10,7 @@ import {
   GET_STYLES_WITH_CONFIG_BY_GROUP,
   GET_STYLE_GROUPS,
   GET_COLOR_PALETTES,
+  GET_COLOR_PALETTE,
   GET_THEMES,
 } from "@/graphql/lesson";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
@@ -86,6 +87,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
   const [fetchPalettes, { data: palettesData }] = useLazyQuery(GET_COLOR_PALETTES);
   const [fetchThemes, { data: themesData }] = useLazyQuery(GET_THEMES);
+  const [fetchPalette, { data: paletteData }] = useLazyQuery(GET_COLOR_PALETTE);
 
   const selectedPalette =
     selectedPaletteId !== ""
@@ -242,15 +244,37 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       const theme = themes.find((t) => t.id === selectedThemeId);
       if (theme) {
         setSelectedPaletteId(theme.defaultPaletteId);
-        setChakraTheme(
-          extendTheme(baseTheme, {
-            ...theme.foundationTokens,
-            semanticTokens: theme.semanticTokens,
-          })
-        );
       }
     }
   }, [selectedThemeId, themes]);
+
+  useEffect(() => {
+    if (selectedPaletteId !== "") {
+      fetchPalette({ variables: { id: String(selectedPaletteId) } });
+    }
+  }, [selectedPaletteId]);
+
+  useEffect(() => {
+    if (!selectedTheme) return;
+    const foundation = JSON.parse(
+      JSON.stringify(selectedTheme.foundationTokens || {}),
+    );
+    if (foundation.colors && paletteData?.getColorPalette?.colors) {
+      const keys = Object.keys(foundation.colors);
+      const merged: Record<string, string> = {};
+      keys.forEach((key, idx) => {
+        merged[key] =
+          paletteData.getColorPalette.colors[idx] ?? foundation.colors[key];
+      });
+      foundation.colors = merged;
+    }
+    setChakraTheme(
+      extendTheme(baseTheme, {
+        ...foundation,
+        semanticTokens: selectedTheme.semanticTokens,
+      }),
+    );
+  }, [selectedTheme, paletteData]);
 
   const handleUpdatePalette = async (palette: {
     id: number;
@@ -410,7 +434,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             handleDropElement={editor.handleDropElement}
             openSaveStyle={() => setIsSaveStyleOpen(true)}
             openLoadStyle={() => setIsLoadStyleOpen(true)}
-            tokens={selectedTheme?.semanticTokens}
+            tokens={chakraTheme}
             variants={selectedTheme?.componentVariants}
           />
 

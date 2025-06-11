@@ -18,6 +18,7 @@ export const LessonBuilderPageClient = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewSlides, setPreviewSlides] = useState<Slide[]>([]);
   const [previewThemeId, setPreviewThemeId] = useState<number | undefined>();
+  const [previewPaletteId, setPreviewPaletteId] = useState<number | undefined>();
   const editorRef = useRef<LessonEditorHandle>(null);
 
   const [createLesson, { loading: saving }] = useMutation(CREATE_LESSON, {
@@ -32,6 +33,8 @@ export const LessonBuilderPageClient = () => {
     setPreviewSlides(slides);
     const themeId = editorRef.current?.getThemeId();
     setPreviewThemeId(themeId === "" ? undefined : (themeId as number));
+    const paletteId = editorRef.current?.getPaletteId?.();
+    setPreviewPaletteId(paletteId === "" ? undefined : (paletteId as number));
     setIsPreviewOpen(true);
   };
 
@@ -130,6 +133,7 @@ export const LessonBuilderPageClient = () => {
           onClose={() => setIsPreviewOpen(false)}
           slides={previewSlides}
           themeId={previewThemeId}
+          paletteId={previewPaletteId}
         />
       )}
     </Flex>

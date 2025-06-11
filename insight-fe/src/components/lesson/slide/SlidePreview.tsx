@@ -7,12 +7,12 @@ import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnD
 import SlideElementRenderer from "./SlideElementRenderer";
 import { BoardRow } from "./SlideElementsContainer";
 import ElementWrapper from "../elements/ElementWrapper";
-import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
+import { ComponentVariant, SemanticTokens, ThemeTokens } from "@/theme/helpers";
 
 interface SlidePreviewProps {
   columnMap: ColumnMap<SlideElementDnDItemProps>;
   boards: BoardRow[];
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
   variants?: ComponentVariant[];
 }
 

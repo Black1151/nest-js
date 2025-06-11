@@ -10,11 +10,11 @@ import ImageElement from "../elements/ImageElement";
 import QuizElement from "../elements/QuizElement";
 import VideoElement from "../elements/VideoElement";
 
-import { ComponentVariant, SemanticTokens, resolveVariant, tokenColor } from "@/theme/helpers";
+import { ComponentVariant, SemanticTokens, ThemeTokens, resolveVariant, tokenColor } from "@/theme/helpers";
 
 interface SlideElementRendererProps {
   item: SlideElementDnDItemProps;
-  tokens?: SemanticTokens;
+  tokens?: ThemeTokens;
   variants?: ComponentVariant[];
 }
 
@@ -24,6 +24,10 @@ export default function SlideElementRenderer({
   variants,
 }: SlideElementRendererProps) {
   const MotionBox = motion(Box);
+  const variant = resolveVariant(variants, item.variantId);
+  const ariaProps = variant?.accessibleName
+    ? { "aria-label": variant.accessibleName }
+    : {};
   const animationProps = item.animation
     ? {
         initial: {
@@ -98,7 +102,11 @@ export default function SlideElementRenderer({
     );
   } else if (item.type === "image") {
     content = (
-      <ImageElement src={item.src || ""} wrapperStyles={item.wrapperStyles} />
+      <ImageElement
+        src={item.src || ""}
+        alt={variant?.accessibleName}
+        wrapperStyles={item.wrapperStyles}
+      />
     );
   } else if (item.type === "video") {
     content = (
@@ -115,5 +123,9 @@ export default function SlideElementRenderer({
     );
   }
 
-  return <MotionBox {...animationProps}>{content}</MotionBox>;
+  return (
+    <MotionBox {...animationProps} {...ariaProps}>
+      {content}
+    </MotionBox>
+  );
 }

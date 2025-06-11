@@ -50,6 +50,10 @@ export class LessonEntity extends AbstractBaseEntity {
   @RelationId((lesson: LessonEntity) => lesson.theme)
   themeId!: number;
 
+  @Field()
+  @Column({ name: 'theme_version', default: 1 })
+  themeVersion!: number;
+
   @Field(() => Date, { nullable: true })
   @Column({ name: 'last_theme_upgrade', type: 'timestamptz', nullable: true })
   lastThemeUpgrade?: Date;
