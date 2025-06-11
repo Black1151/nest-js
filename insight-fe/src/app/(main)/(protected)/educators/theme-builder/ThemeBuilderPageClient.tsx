@@ -25,10 +25,15 @@ import {
   CREATE_COLOR_PALETTE,
   UPDATE_COLOR_PALETTE,
   DELETE_COLOR_PALETTE,
+  GET_STYLE_GROUPS,
+  CREATE_STYLE_GROUP,
+  UPDATE_STYLE_GROUP,
+  DELETE_STYLE_GROUP,
 } from "@/graphql/lesson";
 import SaveStyleModal from "@/components/lesson/modals/SaveStyleModal";
 import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollectionModal";
 import AddColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModal";
+import AddStyleGroupModal from "@/components/lesson/modals/AddStyleGroupModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
 import { availableFonts } from "@/theme/fonts";
@@ -36,6 +41,8 @@ import WrapperSettings from "@/components/lesson/attributes/WrapperSettings";
 import TextAttributes from "@/components/lesson/attributes/TextAttributes";
 import useStyleAttributes from "@/components/lesson/hooks/useStyleAttributes";
 import ElementWrapper from "@/components/lesson/elements/ElementWrapper";
+
+const DEFAULT_ELEMENT = "Text";
 
 export default function ThemeBuilderPageClient() {
   const [themeName, setThemeName] = useState("");
@@ -62,6 +69,11 @@ export default function ThemeBuilderPageClient() {
   const [isAddPaletteOpen, setIsAddPaletteOpen] = useState(false);
   const [isEditPaletteOpen, setIsEditPaletteOpen] = useState(false);
   const [isDeletePaletteOpen, setIsDeletePaletteOpen] = useState(false);
+  const [styleGroups, setStyleGroups] = useState<{ id: number; name: string }[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<number | "">("");
+  const [isAddGroupOpen, setIsAddGroupOpen] = useState(false);
+  const [isEditGroupOpen, setIsEditGroupOpen] = useState(false);
+  const [isDeleteGroupOpen, setIsDeleteGroupOpen] = useState(false);
 
   const collectionOptions = useMemo(
     () => styleCollections.map((c) => ({ label: c.name, value: String(c.id) })),
@@ -72,6 +84,10 @@ export default function ThemeBuilderPageClient() {
     () => colorPalettes.map((p) => ({ label: p.name, value: String(p.id) })),
     [colorPalettes],
   );
+  const groupOptions = useMemo(
+    () => styleGroups.map((g) => ({ label: g.name, value: String(g.id) })),
+    [styleGroups],
+  );
 
   const selectedCollection = useMemo(
     () =>
@@ -79,6 +95,13 @@ export default function ThemeBuilderPageClient() {
         ? undefined
         : styleCollections.find((c) => c.id === selectedCollectionId),
     [styleCollections, selectedCollectionId],
+  );
+  const selectedGroup = useMemo(
+    () =>
+      selectedGroupId === ""
+        ? undefined
+        : styleGroups.find((g) => g.id === selectedGroupId),
+    [styleGroups, selectedGroupId],
   );
 
   const selectedPalette = useMemo(
@@ -104,6 +127,7 @@ export default function ThemeBuilderPageClient() {
   );
   const [fetchPalettes, { data: palettesData }] =
     useLazyQuery(GET_COLOR_PALETTES);
+  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
   const [createTheme, { loading: saving }] = useMutation(CREATE_THEME, {
     onCompleted: () => {
       setThemeName("");
@@ -119,6 +143,11 @@ export default function ThemeBuilderPageClient() {
   const [deletePalette, { loading: deletingPalette }] = useMutation(
     DELETE_COLOR_PALETTE,
   );
+  const [createGroup] = useMutation(CREATE_STYLE_GROUP);
+  const [updateGroup] = useMutation(UPDATE_STYLE_GROUP);
+  const [deleteGroup, { loading: deletingGroup }] = useMutation(
+    DELETE_STYLE_GROUP,
+  );
 
   useEffect(() => {
     if (collectionsData?.getAllStyleCollection) {
@@ -131,9 +160,17 @@ export default function ThemeBuilderPageClient() {
       fetchPalettes({
         variables: { collectionId: String(selectedCollectionId) },
       });
+      fetchGroups({
+        variables: {
+          collectionId: String(selectedCollectionId),
+          element: DEFAULT_ELEMENT,
+        },
+      });
     } else {
       setColorPalettes([]);
       setSelectedPaletteId("");
+      setStyleGroups([]);
+      setSelectedGroupId("");
     }
   }, [selectedCollectionId]);
 
@@ -142,6 +179,12 @@ export default function ThemeBuilderPageClient() {
       setColorPalettes(palettesData.getAllColorPalette);
     }
   }, [palettesData]);
+
+  useEffect(() => {
+    if (groupsData?.getAllStyleGroup) {
+      setStyleGroups(groupsData.getAllStyleGroup);
+    }
+  }, [groupsData]);
 
   const previewStyles = {
     bgColor: wrapperAttrs.bgColor,
@@ -203,6 +246,25 @@ export default function ThemeBuilderPageClient() {
             isDisabled={selectedCollectionId === ""}
             isUpdateDisabled={selectedPaletteId === ""}
             isDeleteDisabled={selectedPaletteId === ""}
+          />
+        </FormControl>
+        <FormControl flex={1}>
+          <FormLabel>Group</FormLabel>
+          <CrudDropdown
+            options={groupOptions}
+            value={selectedGroupId}
+            onChange={(e) =>
+              setSelectedGroupId(
+                e.target.value === "" ? "" : parseInt(e.target.value, 10),
+              )
+            }
+            onCreate={() => setIsAddGroupOpen(true)}
+            onUpdate={() => setIsEditGroupOpen(true)}
+            onDelete={() => setIsDeleteGroupOpen(true)}
+            isDisabled={selectedCollectionId === ""}
+            isCreateDisabled={selectedCollectionId === ""}
+            isUpdateDisabled={selectedGroupId === ""}
+            isDeleteDisabled={selectedGroupId === ""}
           />
         </FormControl>
       </HStack>
@@ -385,6 +447,81 @@ export default function ThemeBuilderPageClient() {
             setIsDeletePaletteOpen(false);
           }}
           isLoading={deletingPalette}
+        />
+      )}
+
+      {isAddGroupOpen && (
+        <AddStyleGroupModal
+          isOpen={isAddGroupOpen}
+          onClose={() => setIsAddGroupOpen(false)}
+          onSave={async (name) => {
+            if (selectedCollectionId === "") return;
+            const { data } = await createGroup({
+              variables: {
+                data: {
+                  name,
+                  collectionId: selectedCollectionId,
+                  element: DEFAULT_ELEMENT,
+                },
+              },
+            });
+            if (data?.createStyleGroup) {
+              setStyleGroups((gs) => [
+                ...gs,
+                { id: Number(data.createStyleGroup.id), name: data.createStyleGroup.name },
+              ]);
+              setSelectedGroupId(Number(data.createStyleGroup.id));
+            }
+          }}
+        />
+      )}
+
+      {isEditGroupOpen && selectedGroup && (
+        <AddStyleGroupModal
+          isOpen={isEditGroupOpen}
+          onClose={() => setIsEditGroupOpen(false)}
+          title="Update Style Group"
+          confirmLabel="Update"
+          initialName={selectedGroup.name}
+          onSave={async (name) => {
+            if (selectedGroupId === "" || selectedCollectionId === "") return;
+            const { data } = await updateGroup({
+              variables: {
+                data: {
+                  id: selectedGroupId,
+                  name,
+                  collectionId: selectedCollectionId,
+                  element: DEFAULT_ELEMENT,
+                },
+              },
+            });
+            if (data?.updateStyleGroup) {
+              setStyleGroups((gs) =>
+                gs.map((g) =>
+                  g.id === selectedGroupId
+                    ? { id: selectedGroupId as number, name: data.updateStyleGroup.name }
+                    : g,
+                ),
+              );
+            }
+          }}
+        />
+      )}
+
+      {isDeleteGroupOpen && (
+        <ConfirmationModal
+          isOpen={isDeleteGroupOpen}
+          onClose={() => setIsDeleteGroupOpen(false)}
+          action="delete group"
+          bodyText="Are you sure you want to delete this group?"
+          onConfirm={async () => {
+            if (selectedGroupId === "") return;
+            await deleteGroup({ variables: { data: { id: selectedGroupId } } });
+            setStyleGroups((gs) => gs.filter((g) => g.id !== selectedGroupId));
+            setSelectedGroupId("");
+            setIsDeleteGroupOpen(false);
+          }}
+          isLoading={deletingGroup}
         />
       )}
     </Stack>
