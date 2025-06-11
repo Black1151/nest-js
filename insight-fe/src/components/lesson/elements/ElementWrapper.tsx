@@ -36,7 +36,11 @@ export default function ElementWrapper({ styles, children, ...props }: ElementWr
   const background = styles?.gradientFrom && styles?.gradientTo
     ? `linear-gradient(${styles.gradientDirection ?? 0}deg, ${styles.gradientFrom}, ${styles.gradientTo})`
     : styles?.bgColor
-    ? hexToRgba(styles.bgColor, styles.bgOpacity ?? 0)
+    ? styles.bgColor.startsWith('#')
+      ? hexToRgba(styles.bgColor, styles.bgOpacity ?? 0)
+      : `rgba(var(--chakra-colors-${styles.bgColor.replace(/\./g, '-')}), ${
+          styles.bgOpacity ?? 0
+        })`
     : undefined;
 
   return (
