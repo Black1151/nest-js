@@ -333,77 +333,18 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     <Box>
       <SlideToolbar
         availableElements={AVAILABLE_ELEMENTS}
-        styleCollections={styleCollections}
-        themes={themes}
         styleGroups={styleGroups}
         selectedCollectionId={selectedCollectionId}
         onSelectCollection={setSelectedCollectionId}
         selectedThemeId={selectedThemeId}
         onSelectTheme={setSelectedThemeId}
+        selectedPaletteId={selectedPaletteId}
+        onSelectPalette={setSelectedPaletteId}
         selectedElementType={selectedElementType}
         onSelectElement={setSelectedElementType}
         selectedGroupId={selectedGroupId}
         onSelectGroup={setSelectedGroupId}
         styleItems={styleItems}
-        onAddCollection={async (collection) => {
-          setStyleCollections([...styleCollections, collection]);
-          await refetchCollections();
-        }}
-        onUpdateCollection={async (collection) => {
-          setStyleCollections((cols) =>
-            cols.map((c) => (c.id === collection.id ? collection : c))
-          );
-          await refetchCollections();
-        }}
-        onDeleteCollection={async (id) => {
-          setStyleCollections((cols) => cols.filter((c) => c.id !== id));
-          if (selectedCollectionId === id) {
-            setSelectedCollectionId("");
-          }
-          await refetchCollections();
-        }}
-        onAddGroup={async (group) => {
-          setStyleGroups([...styleGroups, group]);
-          if (selectedCollectionId !== "" && selectedElementType) {
-            await fetchGroups({
-              variables: {
-                collectionId: String(selectedCollectionId),
-                element: selectedElementType,
-              },
-            });
-          }
-        }}
-        onUpdateGroup={async (group) => {
-          setStyleGroups((gs) => gs.map((g) => (g.id === group.id ? group : g)));
-          if (selectedCollectionId !== "" && selectedElementType) {
-            await fetchGroups({
-              variables: {
-                collectionId: String(selectedCollectionId),
-                element: selectedElementType,
-              },
-            });
-          }
-        }}
-        onDeleteGroup={async (id) => {
-          setStyleGroups((gs) => gs.filter((g) => g.id !== id));
-          if (selectedCollectionId === id) {
-            setSelectedGroupId("");
-          }
-          if (selectedCollectionId !== "" && selectedElementType) {
-            await fetchGroups({
-              variables: {
-                collectionId: String(selectedCollectionId),
-                element: selectedElementType,
-              },
-            });
-          }
-        }}
-        colorPalettes={colorPalettes}
-        selectedPaletteId={selectedPaletteId}
-        onSelectPalette={setSelectedPaletteId}
-        onAddPalette={handleAddPalette}
-        onUpdatePalette={handleUpdatePalette}
-        onDeletePalette={handleDeletePalette}
       />
 
       {selectedThemeId === "" ? (
