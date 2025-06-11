@@ -1,6 +1,6 @@
 import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { HasRelationsInput } from 'src/common/base.inputs';
+import { HasRelationsInput, FindAllInput } from 'src/common/base.inputs';
 
 @InputType()
 export class CreateThemeInput extends HasRelationsInput {
@@ -28,4 +28,10 @@ export class CreateThemeInput extends HasRelationsInput {
 export class UpdateThemeInput extends PartialType(CreateThemeInput) {
   @Field(() => ID)
   id: number;
+}
+
+@InputType()
+export class FindAllThemeInput extends FindAllInput {
+  @Field(() => ID, { nullable: true })
+  styleCollectionId?: number;
 }

@@ -1,7 +1,13 @@
-import { Resolver } from '@nestjs/graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { createBaseResolver } from 'src/common/base.resolver';
 import { ThemeEntity } from './theme.entity';
-import { CreateThemeInput, UpdateThemeInput } from './theme.inputs';
+import {
+  CreateThemeInput,
+  UpdateThemeInput,
+  FindAllThemeInput,
+} from './theme.inputs';
+import { IdInput } from 'src/common/base.inputs';
+import { RbacPermissionKey } from 'src/modules/rbac/decorators/resolver-permission-key.decorator';
 import { ThemeService } from './theme.service';
 
 const BaseThemeResolver = createBaseResolver<
@@ -26,5 +32,35 @@ const BaseThemeResolver = createBaseResolver<
 export class ThemeResolver extends BaseThemeResolver {
   constructor(private readonly themeService: ThemeService) {
     super(themeService);
+  }
+
+  @Query(() => ThemeEntity, { name: 'getTheme', description: 'Returns one Theme' })
+  @RbacPermissionKey('theme.getTheme')
+  async findOne(
+    @Args('data', { type: () => IdInput }) data: IdInput,
+  ): Promise<ThemeEntity> {
+    return this.themeService.findOne(data.id, ['componentVariants']);
+  }
+
+  @Query(() => [ThemeEntity], {
+    name: 'getAllTheme',
+    description: 'Returns all Theme (optionally filtered)',
+  })
+  @RbacPermissionKey('theme.getAllTheme')
+  async findAll(
+    @Args('data', { type: () => FindAllThemeInput }) data: FindAllThemeInput,
+  ): Promise<ThemeEntity[]> {
+    const { styleCollectionId, filters = [], ...rest } = data;
+    const finalFilters = [
+      ...filters,
+      ...(styleCollectionId
+        ? [{ column: 'styleCollectionId', value: styleCollectionId }]
+        : []),
+    ];
+    return this.themeService.findAll({
+      ...rest,
+      filters: finalFilters,
+      relations: ['componentVariants'],
+    });
   }
 }
