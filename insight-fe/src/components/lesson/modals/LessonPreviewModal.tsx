@@ -31,11 +31,13 @@ export default function LessonPreviewModal({
   );
 
   const current = aspectOptions.find((o) => o.value === ratio) ?? aspectOptions[0];
+  const modalWidth = `${current.width + 32}px`;
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      size="6xl"
+      size="full"
+      contentProps={{ maxW: modalWidth }}
       title="Lesson Preview"
     >
       <Stack spacing={6} py={2}>

@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalProps as ChakraModalProps,
+  ModalContentProps,
 } from "@chakra-ui/react";
 
 interface BaseModalProps
@@ -15,6 +16,8 @@ interface BaseModalProps
   title?: string;
   showCloseButton?: boolean;
   footer?: React.ReactNode;
+  /** Additional props forwarded to ModalContent */
+  contentProps?: ModalContentProps;
   children: React.ReactNode;
 }
 
@@ -25,12 +28,13 @@ export const BaseModal: React.FC<BaseModalProps> = ({
   title,
   showCloseButton = true,
   footer,
+  contentProps,
   children,
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={size} isCentered>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent {...contentProps}>
         {title && <ModalHeader>{title}</ModalHeader>}
         {showCloseButton && <ModalCloseButton />}
         <ModalBody>{children}</ModalBody>
