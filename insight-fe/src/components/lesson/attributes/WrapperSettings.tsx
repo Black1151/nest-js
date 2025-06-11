@@ -102,9 +102,9 @@ export default function WrapperSettings({
               <FormControl display="flex" alignItems="center">
                 <FormLabel mb="0" fontSize="sm" w="40%">Color</FormLabel>
                 <PaletteColorPicker
-                  value={bgColor}
-                  onChange={(val) => {
-                    setBgColor(val);
+                  value={paletteColors.indexOf(bgColor)}
+                  onChange={(idx) => {
+                    setBgColor(paletteColors[idx]);
                     setBgOpacity(1);
                   }}
                   paletteColors={paletteColors}
@@ -116,16 +116,16 @@ export default function WrapperSettings({
                 <FormControl display="flex" alignItems="center">
                   <FormLabel mb="0" fontSize="sm" w="40%">Grad. From</FormLabel>
                   <PaletteColorPicker
-                    value={gradientFrom}
-                    onChange={setGradientFrom}
+                    value={paletteColors.indexOf(gradientFrom)}
+                    onChange={(idx) => setGradientFrom(paletteColors[idx])}
                     paletteColors={paletteColors}
                   />
                 </FormControl>
                 <FormControl display="flex" alignItems="center">
                   <FormLabel mb="0" fontSize="sm" w="40%">Grad. To</FormLabel>
                   <PaletteColorPicker
-                    value={gradientTo}
-                    onChange={setGradientTo}
+                    value={paletteColors.indexOf(gradientTo)}
+                    onChange={(idx) => setGradientTo(paletteColors[idx])}
                     paletteColors={paletteColors}
                   />
                 </FormControl>
@@ -261,8 +261,8 @@ export default function WrapperSettings({
                 Color
               </FormLabel>
               <PaletteColorPicker
-                value={borderColor}
-                onChange={setBorderColor}
+                value={paletteColors.indexOf(borderColor)}
+                onChange={(idx) => setBorderColor(paletteColors[idx])}
                 paletteColors={paletteColors}
               />
             </FormControl>
