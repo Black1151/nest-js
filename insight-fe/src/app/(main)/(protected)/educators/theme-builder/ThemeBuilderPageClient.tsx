@@ -8,6 +8,9 @@ import {
   FormLabel,
   Heading,
   Input,
+  Select,
+  Textarea,
+  IconButton,
   Stack,
   HStack,
   Text,
@@ -25,6 +28,7 @@ import {
   CREATE_COLOR_PALETTE,
   UPDATE_COLOR_PALETTE,
   DELETE_COLOR_PALETTE,
+  CREATE_COMPONENT_VARIANT,
 } from "@/graphql/lesson";
 import SaveStyleModal from "@/components/lesson/modals/SaveStyleModal";
 import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollectionModal";
@@ -36,6 +40,7 @@ import WrapperSettings from "@/components/lesson/attributes/WrapperSettings";
 import TextAttributes from "@/components/lesson/attributes/TextAttributes";
 import useStyleAttributes from "@/components/lesson/hooks/useStyleAttributes";
 import ElementWrapper from "@/components/lesson/elements/ElementWrapper";
+import { Plus, Trash2 } from "lucide-react";
 
 export default function ThemeBuilderPageClient() {
   const [themeName, setThemeName] = useState("");
@@ -99,6 +104,16 @@ export default function ThemeBuilderPageClient() {
   const [lineHeight, setLineHeight] = useState("normal");
   const [textAlign, setTextAlign] = useState("left");
 
+  const [foundationColors, setFoundationColors] = useState<
+    { name: string; value: string }[]
+  >([{ name: "primary", value: "#000000" }]);
+  const [semanticColors, setSemanticColors] = useState<
+    { name: string; ref: string }[]
+  >([]);
+  const [variants, setVariants] = useState<
+    { name: string; base: string; accessible: string; props: string }[]
+  >([]);
+
   const { data: collectionsData, refetch: refetchCollections } = useQuery(
     GET_STYLE_COLLECTIONS,
   );
@@ -119,6 +134,7 @@ export default function ThemeBuilderPageClient() {
   const [deletePalette, { loading: deletingPalette }] = useMutation(
     DELETE_COLOR_PALETTE,
   );
+  const [createVariant] = useMutation(CREATE_COMPONENT_VARIANT);
 
   useEffect(() => {
     if (collectionsData?.getAllStyleCollection) {
@@ -216,6 +232,195 @@ export default function ThemeBuilderPageClient() {
       </Accordion>
 
       <Box>
+        <Text fontWeight="bold" mb={2}>
+          Foundation Colors
+        </Text>
+        {foundationColors.map((c, idx) => (
+          <HStack key={idx} mb={2} align="center">
+            <Input
+              placeholder="token name"
+              value={c.name}
+              onChange={(e) =>
+                setFoundationColors((arr) =>
+                  arr.map((it, i) =>
+                    i === idx ? { ...it, name: e.target.value } : it,
+                  ),
+                )
+              }
+            />
+            <Input
+              type="color"
+              w="40px"
+              h="40px"
+              p={0}
+              value={c.value}
+              onChange={(e) =>
+                setFoundationColors((arr) =>
+                  arr.map((it, i) =>
+                    i === idx ? { ...it, value: e.target.value } : it,
+                  ),
+                )
+              }
+            />
+            <IconButton
+              aria-label="remove"
+              size="sm"
+              icon={<Trash2 size={16} />}
+              onClick={() =>
+                setFoundationColors((arr) => arr.filter((_, i) => i !== idx))
+              }
+            />
+          </HStack>
+        ))}
+        <Button
+          leftIcon={<Plus size={16} />}
+          size="sm"
+          onClick={() =>
+            setFoundationColors((arr) => [
+              ...arr,
+              { name: "", value: "#000000" },
+            ])
+          }
+        >
+          Add Color Token
+        </Button>
+      </Box>
+
+      <Box>
+        <Text fontWeight="bold" mt={4} mb={2}>
+          Semantic Colors
+        </Text>
+        {semanticColors.map((c, idx) => (
+          <HStack key={idx} mb={2} align="center">
+            <Input
+              placeholder="semantic name"
+              value={c.name}
+              onChange={(e) =>
+                setSemanticColors((arr) =>
+                  arr.map((it, i) =>
+                    i === idx ? { ...it, name: e.target.value } : it,
+                  ),
+                )
+              }
+            />
+            <Select
+              placeholder="Foundation token"
+              value={c.ref}
+              onChange={(e) =>
+                setSemanticColors((arr) =>
+                  arr.map((it, i) =>
+                    i === idx ? { ...it, ref: e.target.value } : it,
+                  ),
+                )
+              }
+            >
+              {foundationColors.map((fc) => (
+                <option key={fc.name} value={fc.name}>
+                  {fc.name}
+                </option>
+              ))}
+            </Select>
+            <IconButton
+              aria-label="remove"
+              size="sm"
+              icon={<Trash2 size={16} />}
+              onClick={() =>
+                setSemanticColors((arr) => arr.filter((_, i) => i !== idx))
+              }
+            />
+          </HStack>
+        ))}
+        <Button
+          leftIcon={<Plus size={16} />}
+          size="sm"
+          onClick={() =>
+            setSemanticColors((arr) => [
+              ...arr,
+              { name: "", ref: foundationColors[0]?.name || "" },
+            ])
+          }
+        >
+          Add Semantic Token
+        </Button>
+      </Box>
+
+      <Box>
+        <Text fontWeight="bold" mt={4} mb={2}>
+          Component Variants
+        </Text>
+        {variants.map((v, idx) => (
+          <Box key={idx} borderWidth="1px" borderRadius="md" p={2} mb={2}>
+            <HStack mb={2}>
+              <Input
+                placeholder="Variant name"
+                value={v.name}
+                onChange={(e) =>
+                  setVariants((arr) =>
+                    arr.map((it, i) =>
+                      i === idx ? { ...it, name: e.target.value } : it,
+                    ),
+                  )
+                }
+              />
+              <Input
+                placeholder="Base component"
+                value={v.base}
+                onChange={(e) =>
+                  setVariants((arr) =>
+                    arr.map((it, i) =>
+                      i === idx ? { ...it, base: e.target.value } : it,
+                    ),
+                  )
+                }
+              />
+            </HStack>
+            <Input
+              mb={2}
+              placeholder="Accessible name"
+              value={v.accessible}
+              onChange={(e) =>
+                setVariants((arr) =>
+                  arr.map((it, i) =>
+                    i === idx ? { ...it, accessible: e.target.value } : it,
+                  ),
+                )
+              }
+            />
+            <Textarea
+              mb={2}
+              placeholder="Props JSON"
+              value={v.props}
+              onChange={(e) =>
+                setVariants((arr) =>
+                  arr.map((it, i) =>
+                    i === idx ? { ...it, props: e.target.value } : it,
+                  ),
+                )
+              }
+            />
+            <IconButton
+              aria-label="remove"
+              size="sm"
+              icon={<Trash2 size={16} />}
+              onClick={() => setVariants((arr) => arr.filter((_, i) => i !== idx))}
+            />
+          </Box>
+        ))}
+        <Button
+          leftIcon={<Plus size={16} />}
+          size="sm"
+          onClick={() =>
+            setVariants((arr) => [
+              ...arr,
+              { name: "", base: "", accessible: "", props: "{}" },
+            ])
+          }
+        >
+          Add Variant
+        </Button>
+      </Box>
+
+      <Box>
         <Text mb={2}>Preview</Text>
         <ElementWrapper styles={previewStyles}>
           <Text
@@ -239,15 +444,46 @@ export default function ThemeBuilderPageClient() {
         isLoading={saving}
         onClick={async () => {
           if (selectedCollectionId === "" || selectedPaletteId === "") return;
-          await createTheme({
+          const fTokens: Record<string, any> = { colors: {} };
+          foundationColors.forEach((c) => {
+            if (c.name) (fTokens.colors as any)[c.name] = c.value;
+          });
+          const sTokens: Record<string, any> = { colors: {} };
+          semanticColors.forEach((c) => {
+            if (c.name && c.ref)
+              (sTokens.colors as any)[c.name] = `colors.${c.ref}`;
+          });
+          const { data } = await createTheme({
             variables: {
               data: {
                 name: themeName,
                 styleCollectionId: Number(selectedCollectionId),
                 defaultPaletteId: Number(selectedPaletteId),
+                foundationTokens: fTokens,
+                semanticTokens: sTokens,
               },
             },
           });
+          const themeId = data?.createTheme.id;
+          if (themeId) {
+            for (const v of variants) {
+              try {
+                await createVariant({
+                  variables: {
+                    data: {
+                      name: v.name,
+                      baseComponent: v.base,
+                      props: JSON.parse(v.props || "{}"),
+                      accessibleName: v.accessible,
+                      themeId: Number(themeId),
+                    },
+                  },
+                });
+              } catch (e) {
+                console.error(e);
+              }
+            }
+          }
         }}
       >
         Save Theme
