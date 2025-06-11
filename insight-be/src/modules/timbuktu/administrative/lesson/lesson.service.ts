@@ -18,4 +18,19 @@ export class LessonService extends BaseService<
   ) {
     super(lessonRepository, dataSource);
   }
+
+  async create(data: CreateLessonInput): Promise<LessonEntity> {
+    const { themeId, relationIds = [], ...rest } = data as any;
+    const relations = [...relationIds, { relation: 'theme', ids: [themeId] }];
+    return super.create({ ...rest, relationIds: relations } as any);
+  }
+
+  async update(data: UpdateLessonInput): Promise<LessonEntity> {
+    const { themeId, relationIds = [], ...rest } = data as any;
+    const relations = [
+      ...relationIds,
+      ...(themeId ? [{ relation: 'theme', ids: [themeId] }] : []),
+    ];
+    return super.update({ ...rest, relationIds: relations } as any);
+  }
 }
