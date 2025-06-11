@@ -55,6 +55,7 @@ export default function ColorPaletteModal({
     skip: !paletteId || !isOpen,
     fetchPolicy: "network-only",
   });
+  const palette = paletteData?.getColorPalette;
 
   const [createPalette, { loading: creating }] = useMutation(CREATE_COLOR_PALETTE);
   const [updatePalette, { loading: updating }] = useMutation(UPDATE_COLOR_PALETTE);
@@ -65,18 +66,16 @@ export default function ColorPaletteModal({
   useEffect(() => {
     if (!isOpen) return;
 
-    if (paletteId && paletteData?.getColorPalette) {
-      setName(paletteData.getColorPalette.name);
+    if (paletteId && palette) {
+      setName(palette.name);
       setColors(
-        paletteData.getColorPalette.colors.length > 0
-          ? paletteData.getColorPalette.colors
-          : ["#000000"]
+        palette.colors.length > 0 ? palette.colors : ["#000000"]
       );
     } else {
       setName(initialName);
       setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
     }
-  }, [isOpen, initialName, initialColors, paletteId, paletteData]);
+  }, [isOpen, paletteId, palette, initialName, initialColors]);
 
   const handleColorChange = (idx: number, value: string) => {
     setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
