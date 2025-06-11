@@ -5,12 +5,20 @@ export const AllTypesProps: Record<string,any> = {
 		pagination:"PaginationInput"
 	},
 	CreateAssignmentInput:{
-		dueDate:"DateTime"
+		dueDate:"DateTime",
+		relationIds:"RelationIdsInput"
 	},
 	CreateAssignmentSubmissionInput:{
 		submittedAt:"DateTime"
 	},
 	CreateClassInput:{
+		relationIds:"RelationIdsInput"
+	},
+	CreateColorPaletteInput:{
+		relationIds:"RelationIdsInput"
+	},
+	CreateComponentVariantInput:{
+		props:"JSONObject",
 		relationIds:"RelationIdsInput"
 	},
 	CreateEducatorProfileInput:{
@@ -20,7 +28,10 @@ export const AllTypesProps: Record<string,any> = {
 
 	},
 	CreateLessonInput:{
-		content:"JSONObject",
+		content:"LessonSlideInput",
+		relationIds:"RelationIdsInput"
+	},
+	CreateMultipleChoiceQuestionInput:{
 		relationIds:"RelationIdsInput"
 	},
 	CreatePermissionGroupInput:{
@@ -29,14 +40,34 @@ export const AllTypesProps: Record<string,any> = {
 	CreatePermissionInput:{
 
 	},
+	CreateQuizInput:{
+		relationIds:"RelationIdsInput"
+	},
 	CreateRoleInput:{
 
 	},
 	CreateStudentProfileInput:{
 
 	},
+	CreateStyleCollectionInput:{
+
+	},
+	CreateStyleGroupInput:{
+		element:"PageElementType",
+		relationIds:"RelationIdsInput"
+	},
+	CreateStyleInput:{
+		config:"JSONObject",
+		element:"PageElementType",
+		relationIds:"RelationIdsInput"
+	},
 	CreateSubjectInput:{
 		relationIds:"RelationIdsInput"
+	},
+	CreateThemeInput:{
+		foundationTokens:"JSONObject",
+		relationIds:"RelationIdsInput",
+		semanticTokens:"JSONObject"
 	},
 	CreateTopicInput:{
 		relationIds:"RelationIdsInput"
@@ -56,7 +87,13 @@ export const AllTypesProps: Record<string,any> = {
 	FilterInput:{
 
 	},
+	FindAllColorPaletteInput:{
+		filters:"FilterInput"
+	},
 	FindAllInput:{
+		filters:"FilterInput"
+	},
+	FindAllThemeInput:{
 		filters:"FilterInput"
 	},
 	FindOneByInput:{
@@ -69,6 +106,21 @@ export const AllTypesProps: Record<string,any> = {
 
 	},
 	JSONObject: `scalar.JSONObject` as const,
+	LessonColumnInput:{
+		items:"LessonElementInput",
+		wrapperStyles:"JSONObject"
+	},
+	LessonElementInput:{
+		animation:"JSONObject",
+		questions:"JSONObject",
+		styleOverrides:"JSONObject",
+		table:"JSONObject",
+		type:"PageElementType",
+		wrapperStyles:"JSONObject"
+	},
+	LessonSlideInput:{
+		columns:"LessonColumnInput"
+	},
 	LoginRequest:{
 
 	},
@@ -82,6 +134,12 @@ export const AllTypesProps: Record<string,any> = {
 		createClass:{
 			data:"CreateClassInput"
 		},
+		createColorPalette:{
+			data:"CreateColorPaletteInput"
+		},
+		createComponentVariant:{
+			data:"CreateComponentVariantInput"
+		},
 		createEducatorProfile:{
 			data:"CreateEducatorProfileInput"
 		},
@@ -91,11 +149,17 @@ export const AllTypesProps: Record<string,any> = {
 		createLesson:{
 			data:"CreateLessonInput"
 		},
+		createMultipleChoiceQuestion:{
+			data:"CreateMultipleChoiceQuestionInput"
+		},
 		createPermission:{
 			data:"CreatePermissionInput"
 		},
 		createPermissionGroup:{
 			data:"CreatePermissionGroupInput"
+		},
+		createQuiz:{
+			data:"CreateQuizInput"
 		},
 		createRole:{
 			data:"CreateRoleInput"
@@ -103,8 +167,20 @@ export const AllTypesProps: Record<string,any> = {
 		createStudentProfile:{
 			data:"CreateStudentProfileInput"
 		},
+		createStyle:{
+			data:"CreateStyleInput"
+		},
+		createStyleCollection:{
+			data:"CreateStyleCollectionInput"
+		},
+		createStyleGroup:{
+			data:"CreateStyleGroupInput"
+		},
 		createSubject:{
 			data:"CreateSubjectInput"
+		},
+		createTheme:{
+			data:"CreateThemeInput"
 		},
 		createTopic:{
 			data:"CreateTopicInput"
@@ -127,6 +203,12 @@ export const AllTypesProps: Record<string,any> = {
 		deleteClass:{
 			data:"IdInput"
 		},
+		deleteColorPalette:{
+			data:"IdInput"
+		},
+		deleteComponentVariant:{
+			data:"IdInput"
+		},
 		deleteEducatorProfile:{
 			data:"IdInput"
 		},
@@ -136,10 +218,16 @@ export const AllTypesProps: Record<string,any> = {
 		deleteLesson:{
 			data:"IdInput"
 		},
+		deleteMultipleChoiceQuestion:{
+			data:"IdInput"
+		},
 		deletePermission:{
 			data:"IdInput"
 		},
 		deletePermissionGroup:{
+			data:"IdInput"
+		},
+		deleteQuiz:{
 			data:"IdInput"
 		},
 		deleteRole:{
@@ -148,7 +236,19 @@ export const AllTypesProps: Record<string,any> = {
 		deleteStudentProfile:{
 			data:"IdInput"
 		},
+		deleteStyle:{
+			data:"IdInput"
+		},
+		deleteStyleCollection:{
+			data:"IdInput"
+		},
+		deleteStyleGroup:{
+			data:"IdInput"
+		},
 		deleteSubject:{
+			data:"IdInput"
+		},
+		deleteTheme:{
 			data:"IdInput"
 		},
 		deleteTopic:{
@@ -178,6 +278,12 @@ export const AllTypesProps: Record<string,any> = {
 		updateClass:{
 			data:"UpdateClassInput"
 		},
+		updateColorPalette:{
+			data:"UpdateColorPaletteInput"
+		},
+		updateComponentVariant:{
+			data:"UpdateComponentVariantInput"
+		},
 		updateEducatorProfile:{
 			data:"UpdateEducatorProfileInput"
 		},
@@ -186,6 +292,9 @@ export const AllTypesProps: Record<string,any> = {
 		},
 		updateLesson:{
 			data:"UpdateLessonInput"
+		},
+		updateMultipleChoiceQuestion:{
+			data:"UpdateMultipleChoiceQuestionInput"
 		},
 		updatePermission:{
 			data:"UpdatePermissionInput"
@@ -199,14 +308,29 @@ export const AllTypesProps: Record<string,any> = {
 		updatePermissionGroupsForRole:{
 			data:"SubmitIdArrayByIdRequestDto"
 		},
+		updateQuiz:{
+			data:"UpdateQuizInput"
+		},
 		updateRole:{
 			data:"UpdateRoleInput"
 		},
 		updateStudentProfile:{
 			data:"UpdateStudentProfileInput"
 		},
+		updateStyle:{
+			data:"UpdateStyleInput"
+		},
+		updateStyleCollection:{
+			data:"UpdateStyleCollectionInput"
+		},
+		updateStyleGroup:{
+			data:"UpdateStyleGroupInput"
+		},
 		updateSubject:{
 			data:"UpdateSubjectInput"
+		},
+		updateTheme:{
+			data:"UpdateThemeInput"
 		},
 		updateTopic:{
 			data:"UpdateTopicInput"
@@ -219,8 +343,15 @@ export const AllTypesProps: Record<string,any> = {
 		},
 		updateYearGroup:{
 			data:"UpdateYearGroupInput"
+		},
+		upgradeLessonTheme:{
+			data:"UpgradeLessonThemeInput"
+		},
+		upgradeThemeVersion:{
+			data:"UpgradeThemeVersionInput"
 		}
 	},
+	PageElementType: "enum" as const,
 	PaginatedGetAllRequestDto:{
 
 	},
@@ -243,6 +374,12 @@ export const AllTypesProps: Record<string,any> = {
 		getAllClass:{
 			data:"FindAllInput"
 		},
+		getAllColorPalette:{
+			data:"FindAllColorPaletteInput"
+		},
+		getAllComponentVariant:{
+			data:"FindAllInput"
+		},
 		getAllEducatorProfile:{
 			data:"FindAllInput"
 		},
@@ -252,10 +389,16 @@ export const AllTypesProps: Record<string,any> = {
 		getAllLesson:{
 			data:"FindAllInput"
 		},
+		getAllMultipleChoiceQuestion:{
+			data:"FindAllInput"
+		},
 		getAllPermission:{
 			data:"FindAllInput"
 		},
 		getAllPermissionGroup:{
+			data:"FindAllInput"
+		},
+		getAllQuiz:{
 			data:"FindAllInput"
 		},
 		getAllRole:{
@@ -264,8 +407,20 @@ export const AllTypesProps: Record<string,any> = {
 		getAllStudentProfile:{
 			data:"FindAllInput"
 		},
+		getAllStyle:{
+			data:"FindAllInput"
+		},
+		getAllStyleCollection:{
+			data:"FindAllInput"
+		},
+		getAllStyleGroup:{
+			data:"FindAllInput"
+		},
 		getAllSubject:{
 			data:"FindAllInput"
+		},
+		getAllTheme:{
+			data:"FindAllThemeInput"
 		},
 		getAllTopic:{
 			data:"FindAllInput"
@@ -294,6 +449,15 @@ export const AllTypesProps: Record<string,any> = {
 		getClassBy:{
 			data:"FindOneByInput"
 		},
+		getColorPalette:{
+			data:"IdInput"
+		},
+		getComponentVariant:{
+			data:"IdInput"
+		},
+		getComponentVariantBy:{
+			data:"FindOneByInput"
+		},
 		getEducatorProfile:{
 			data:"IdInput"
 		},
@@ -310,6 +474,12 @@ export const AllTypesProps: Record<string,any> = {
 			data:"IdInput"
 		},
 		getLessonBy:{
+			data:"FindOneByInput"
+		},
+		getMultipleChoiceQuestion:{
+			data:"IdInput"
+		},
+		getMultipleChoiceQuestionBy:{
 			data:"FindOneByInput"
 		},
 		getPermission:{
@@ -330,6 +500,12 @@ export const AllTypesProps: Record<string,any> = {
 		getPermissionsForGroup:{
 			data:"IdRequestDto"
 		},
+		getQuiz:{
+			data:"IdInput"
+		},
+		getQuizBy:{
+			data:"FindOneByInput"
+		},
 		getRole:{
 			data:"IdInput"
 		},
@@ -345,10 +521,34 @@ export const AllTypesProps: Record<string,any> = {
 		getStudentProfileBy:{
 			data:"FindOneByInput"
 		},
+		getStyle:{
+			data:"IdInput"
+		},
+		getStyleBy:{
+			data:"FindOneByInput"
+		},
+		getStyleCollection:{
+			data:"IdInput"
+		},
+		getStyleCollectionBy:{
+			data:"FindOneByInput"
+		},
+		getStyleGroup:{
+			data:"IdInput"
+		},
+		getStyleGroupBy:{
+			data:"FindOneByInput"
+		},
 		getSubject:{
 			data:"IdInput"
 		},
 		getSubjectBy:{
+			data:"FindOneByInput"
+		},
+		getTheme:{
+			data:"IdInput"
+		},
+		getThemeBy:{
 			data:"FindOneByInput"
 		},
 		getTopic:{
@@ -378,6 +578,9 @@ export const AllTypesProps: Record<string,any> = {
 		searchClass:{
 			data:"SearchInput"
 		},
+		searchComponentVariant:{
+			data:"SearchInput"
+		},
 		searchEducatorProfile:{
 			data:"SearchInput"
 		},
@@ -387,10 +590,16 @@ export const AllTypesProps: Record<string,any> = {
 		searchLesson:{
 			data:"SearchInput"
 		},
+		searchMultipleChoiceQuestion:{
+			data:"SearchInput"
+		},
 		searchPermission:{
 			data:"SearchInput"
 		},
 		searchPermissionGroup:{
+			data:"SearchInput"
+		},
+		searchQuiz:{
 			data:"SearchInput"
 		},
 		searchRole:{
@@ -399,7 +608,19 @@ export const AllTypesProps: Record<string,any> = {
 		searchStudentProfile:{
 			data:"SearchInput"
 		},
+		searchStyle:{
+			data:"SearchInput"
+		},
+		searchStyleCollection:{
+			data:"SearchInput"
+		},
+		searchStyleGroup:{
+			data:"SearchInput"
+		},
 		searchSubject:{
+			data:"SearchInput"
+		},
+		searchTheme:{
 			data:"SearchInput"
 		},
 		searchTopic:{
@@ -428,12 +649,20 @@ export const AllTypesProps: Record<string,any> = {
 		pagination:"PaginationInput"
 	},
 	UpdateAssignmentInput:{
-		dueDate:"DateTime"
+		dueDate:"DateTime",
+		relationIds:"RelationIdsInput"
 	},
 	UpdateAssignmentSubmissionInput:{
 		submittedAt:"DateTime"
 	},
 	UpdateClassInput:{
+		relationIds:"RelationIdsInput"
+	},
+	UpdateColorPaletteInput:{
+		relationIds:"RelationIdsInput"
+	},
+	UpdateComponentVariantInput:{
+		props:"JSONObject",
 		relationIds:"RelationIdsInput"
 	},
 	UpdateEducatorProfileInput:{
@@ -443,7 +672,10 @@ export const AllTypesProps: Record<string,any> = {
 
 	},
 	UpdateLessonInput:{
-		content:"JSONObject",
+		content:"LessonSlideInput",
+		relationIds:"RelationIdsInput"
+	},
+	UpdateMultipleChoiceQuestionInput:{
 		relationIds:"RelationIdsInput"
 	},
 	UpdatePermissionGroupInput:{
@@ -452,14 +684,34 @@ export const AllTypesProps: Record<string,any> = {
 	UpdatePermissionInput:{
 
 	},
+	UpdateQuizInput:{
+		relationIds:"RelationIdsInput"
+	},
 	UpdateRoleInput:{
 
 	},
 	UpdateStudentProfileInput:{
 
 	},
+	UpdateStyleCollectionInput:{
+
+	},
+	UpdateStyleGroupInput:{
+		element:"PageElementType",
+		relationIds:"RelationIdsInput"
+	},
+	UpdateStyleInput:{
+		config:"JSONObject",
+		element:"PageElementType",
+		relationIds:"RelationIdsInput"
+	},
 	UpdateSubjectInput:{
 		relationIds:"RelationIdsInput"
+	},
+	UpdateThemeInput:{
+		foundationTokens:"JSONObject",
+		relationIds:"RelationIdsInput",
+		semanticTokens:"JSONObject"
 	},
 	UpdateTopicInput:{
 		relationIds:"RelationIdsInput"
@@ -475,6 +727,12 @@ export const AllTypesProps: Record<string,any> = {
 	UpdateYearGroupInput:{
 		year:"ValidYear"
 	},
+	UpgradeLessonThemeInput:{
+
+	},
+	UpgradeThemeVersionInput:{
+
+	},
 	UserPermissionsInput:{
 
 	},
@@ -489,9 +747,11 @@ export const ReturnTypes: Record<string,any> = {
 		createdAt:"DateTime",
 		description:"String",
 		dueDate:"DateTime",
+		educators:"EducatorProfileDto",
 		id:"ID",
-		lesson:"LessonEntity",
-		title:"String",
+		lessons:"LessonEntity",
+		name:"String",
+		students:"StudentProfileDto",
 		updatedAt:"DateTime"
 	},
 	AssignmentSubmissionEntity:{
@@ -519,6 +779,26 @@ export const ReturnTypes: Record<string,any> = {
 		updatedAt:"DateTime",
 		yearGroup:"YearGroupEntity"
 	},
+	ColorPaletteEntity:{
+		collection:"StyleCollectionEntity",
+		collectionId:"ID",
+		colors:"String",
+		createdAt:"DateTime",
+		id:"ID",
+		name:"String",
+		updatedAt:"DateTime"
+	},
+	ComponentVariantEntity:{
+		accessibleName:"String",
+		baseComponent:"String",
+		createdAt:"DateTime",
+		id:"ID",
+		name:"String",
+		props:"JSONObject",
+		theme:"ThemeEntity",
+		themeId:"ID",
+		updatedAt:"DateTime"
+	},
 	DateTime: `scalar.DateTime` as const,
 	EducatorProfileDto:{
 		createdAt:"DateTime",
@@ -536,35 +816,81 @@ export const ReturnTypes: Record<string,any> = {
 		updatedAt:"DateTime",
 		yearGroups:"YearGroupEntity"
 	},
+	LessonColumn:{
+		items:"LessonElement"
+	},
+	LessonElement:{
+		animation:"JSONObject",
+		description:"String",
+		id:"String",
+		questions:"JSONObject",
+		src:"String",
+		styleId:"ID",
+		styleOverrides:"JSONObject",
+		table:"JSONObject",
+		text:"String",
+		title:"String",
+		type:"PageElementType",
+		url:"String",
+		variantId:"ID",
+		wrapperStyles:"JSONObject"
+	},
 	LessonEntity:{
-		content:"JSONObject",
+		content:"LessonSlide",
 		createdAt:"DateTime",
 		createdBy:"EducatorProfileDto",
 		createdById:"ID",
 		description:"String",
 		id:"ID",
+		lastThemeUpgrade:"DateTime",
+		multipleChoiceQuestions:"MultipleChoiceQuestionEntity",
+		quizzes:"QuizEntity",
 		recommendedYearGroups:"YearGroupEntity",
+		subject:"SubjectEntity",
+		theme:"ThemeEntity",
+		themeId:"ID",
 		title:"String",
 		topic:"TopicEntity",
 		updatedAt:"DateTime"
+	},
+	LessonSlide:{
+		columns:"LessonColumn"
 	},
 	LoginResponse:{
 		accessToken:"String",
 		refreshToken:"String",
 		userDetails:"UserDetails"
 	},
+	MultipleChoiceQuestionEntity:{
+		correctAnswer:"String",
+		createdAt:"DateTime",
+		id:"ID",
+		lesson:"LessonEntity",
+		options:"String",
+		quiz:"QuizEntity",
+		text:"String",
+		updatedAt:"DateTime"
+	},
 	Mutation:{
 		createAssignment:"AssignmentEntity",
 		createAssignmentSubmission:"AssignmentSubmissionEntity",
 		createClass:"ClassEntity",
+		createColorPalette:"ColorPaletteEntity",
+		createComponentVariant:"ComponentVariantEntity",
 		createEducatorProfile:"EducatorProfileDto",
 		createKeyStage:"KeyStageEntity",
 		createLesson:"LessonEntity",
+		createMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
 		createPermission:"Permission",
 		createPermissionGroup:"PermissionGroup",
+		createQuiz:"QuizEntity",
 		createRole:"Role",
 		createStudentProfile:"StudentProfileDto",
+		createStyle:"StyleEntity",
+		createStyleCollection:"StyleCollectionEntity",
+		createStyleGroup:"StyleGroupEntity",
 		createSubject:"SubjectEntity",
+		createTheme:"ThemeEntity",
 		createTopic:"TopicEntity",
 		createUser:"User",
 		createUserWithProfile:"User",
@@ -572,14 +898,22 @@ export const ReturnTypes: Record<string,any> = {
 		deleteAssignment:"Boolean",
 		deleteAssignmentSubmission:"Boolean",
 		deleteClass:"Boolean",
+		deleteColorPalette:"Boolean",
+		deleteComponentVariant:"Boolean",
 		deleteEducatorProfile:"Boolean",
 		deleteKeyStage:"Boolean",
 		deleteLesson:"Boolean",
+		deleteMultipleChoiceQuestion:"Boolean",
 		deletePermission:"Boolean",
 		deletePermissionGroup:"Boolean",
+		deleteQuiz:"Boolean",
 		deleteRole:"Boolean",
 		deleteStudentProfile:"Boolean",
+		deleteStyle:"Boolean",
+		deleteStyleCollection:"Boolean",
+		deleteStyleGroup:"Boolean",
 		deleteSubject:"Boolean",
+		deleteTheme:"Boolean",
 		deleteTopic:"Boolean",
 		deleteYearGroup:"Boolean",
 		logUserInWithEmailAndPassword:"AuthTokens",
@@ -589,20 +923,30 @@ export const ReturnTypes: Record<string,any> = {
 		updateAssignment:"AssignmentEntity",
 		updateAssignmentSubmission:"AssignmentSubmissionEntity",
 		updateClass:"ClassEntity",
+		updateColorPalette:"ColorPaletteEntity",
+		updateComponentVariant:"ComponentVariantEntity",
 		updateEducatorProfile:"EducatorProfileDto",
 		updateKeyStage:"KeyStageEntity",
 		updateLesson:"LessonEntity",
+		updateMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
 		updatePermission:"Permission",
 		updatePermissionGroup:"PermissionGroup",
 		updatePermissionGroupPermissionsFromArray:"PermissionGroup",
 		updatePermissionGroupsForRole:"Role",
+		updateQuiz:"QuizEntity",
 		updateRole:"Role",
 		updateStudentProfile:"StudentProfileDto",
+		updateStyle:"StyleEntity",
+		updateStyleCollection:"StyleCollectionEntity",
+		updateStyleGroup:"StyleGroupEntity",
 		updateSubject:"SubjectEntity",
+		updateTheme:"ThemeEntity",
 		updateTopic:"TopicEntity",
 		updateUserByPublicId:"User",
 		updateUserRolesFromArray:"User",
-		updateYearGroup:"YearGroupEntity"
+		updateYearGroup:"YearGroupEntity",
+		upgradeLessonTheme:"LessonEntity",
+		upgradeThemeVersion:"ThemeEntity"
 	},
 	PageInfo:{
 		hasNextPage:"Boolean",
@@ -641,14 +985,22 @@ export const ReturnTypes: Record<string,any> = {
 		getAllAssignment:"AssignmentEntity",
 		getAllAssignmentSubmission:"AssignmentSubmissionEntity",
 		getAllClass:"ClassEntity",
+		getAllColorPalette:"ColorPaletteEntity",
+		getAllComponentVariant:"ComponentVariantEntity",
 		getAllEducatorProfile:"EducatorProfileDto",
 		getAllKeyStage:"KeyStageEntity",
 		getAllLesson:"LessonEntity",
+		getAllMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
 		getAllPermission:"Permission",
 		getAllPermissionGroup:"PermissionGroup",
+		getAllQuiz:"QuizEntity",
 		getAllRole:"Role",
 		getAllStudentProfile:"StudentProfileDto",
+		getAllStyle:"StyleEntity",
+		getAllStyleCollection:"StyleCollectionEntity",
+		getAllStyleGroup:"StyleGroupEntity",
 		getAllSubject:"SubjectEntity",
+		getAllTheme:"ThemeEntity",
 		getAllTopic:"TopicEntity",
 		getAllUsers:"User",
 		getAllYearGroup:"YearGroupEntity",
@@ -658,25 +1010,40 @@ export const ReturnTypes: Record<string,any> = {
 		getAssignmentSubmissionBy:"AssignmentSubmissionEntity",
 		getClass:"ClassEntity",
 		getClassBy:"ClassEntity",
+		getColorPalette:"ColorPaletteEntity",
+		getComponentVariant:"ComponentVariantEntity",
+		getComponentVariantBy:"ComponentVariantEntity",
 		getEducatorProfile:"EducatorProfileDto",
 		getEducatorProfileBy:"EducatorProfileDto",
 		getKeyStage:"KeyStageEntity",
 		getKeyStageBy:"KeyStageEntity",
 		getLesson:"LessonEntity",
 		getLessonBy:"LessonEntity",
+		getMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
+		getMultipleChoiceQuestionBy:"MultipleChoiceQuestionEntity",
 		getPermission:"Permission",
 		getPermissionBy:"Permission",
 		getPermissionGroup:"PermissionGroup",
 		getPermissionGroupBy:"PermissionGroup",
 		getPermissionGroupsForRole:"PermissionGroup",
 		getPermissionsForGroup:"Permission",
+		getQuiz:"QuizEntity",
+		getQuizBy:"QuizEntity",
 		getRole:"Role",
 		getRoleBy:"Role",
 		getRolesForUser:"Role",
 		getStudentProfile:"StudentProfileDto",
 		getStudentProfileBy:"StudentProfileDto",
+		getStyle:"StyleEntity",
+		getStyleBy:"StyleEntity",
+		getStyleCollection:"StyleCollectionEntity",
+		getStyleCollectionBy:"StyleCollectionEntity",
+		getStyleGroup:"StyleGroupEntity",
+		getStyleGroupBy:"StyleGroupEntity",
 		getSubject:"SubjectEntity",
 		getSubjectBy:"SubjectEntity",
+		getTheme:"ThemeEntity",
+		getThemeBy:"ThemeEntity",
 		getTopic:"TopicEntity",
 		getTopicBy:"TopicEntity",
 		getUserByPublicId:"User",
@@ -686,18 +1053,34 @@ export const ReturnTypes: Record<string,any> = {
 		searchAssignment:"AssignmentEntity",
 		searchAssignmentSubmission:"AssignmentSubmissionEntity",
 		searchClass:"ClassEntity",
+		searchComponentVariant:"ComponentVariantEntity",
 		searchEducatorProfile:"EducatorProfileDto",
 		searchKeyStage:"KeyStageEntity",
 		searchLesson:"LessonEntity",
+		searchMultipleChoiceQuestion:"MultipleChoiceQuestionEntity",
 		searchPermission:"Permission",
 		searchPermissionGroup:"PermissionGroup",
+		searchQuiz:"QuizEntity",
 		searchRole:"Role",
 		searchStudentProfile:"StudentProfileDto",
+		searchStyle:"StyleEntity",
+		searchStyleCollection:"StyleCollectionEntity",
+		searchStyleGroup:"StyleGroupEntity",
 		searchSubject:"SubjectEntity",
+		searchTheme:"ThemeEntity",
 		searchTopic:"TopicEntity",
 		searchUsers:"User",
 		searchYearGroup:"YearGroupEntity",
 		topicsByYearAndSubject:"TopicEntity"
+	},
+	QuizEntity:{
+		createdAt:"DateTime",
+		description:"String",
+		id:"ID",
+		lesson:"LessonEntity",
+		multipleChoiceQuestions:"MultipleChoiceQuestionEntity",
+		title:"String",
+		updatedAt:"DateTime"
 	},
 	Role:{
 		createdAt:"DateTime",
@@ -725,13 +1108,59 @@ export const ReturnTypes: Record<string,any> = {
 		studentId:"Float",
 		updatedAt:"DateTime"
 	},
+	StyleCollectionEntity:{
+		colorPalettes:"ColorPaletteEntity",
+		createdAt:"DateTime",
+		id:"ID",
+		name:"String",
+		styleGroups:"StyleGroupEntity",
+		styles:"StyleEntity",
+		updatedAt:"DateTime"
+	},
+	StyleEntity:{
+		collection:"StyleCollectionEntity",
+		collectionId:"ID",
+		config:"JSONObject",
+		createdAt:"DateTime",
+		element:"PageElementType",
+		group:"StyleGroupEntity",
+		groupId:"ID",
+		id:"ID",
+		name:"String",
+		updatedAt:"DateTime"
+	},
+	StyleGroupEntity:{
+		collection:"StyleCollectionEntity",
+		collectionId:"ID",
+		createdAt:"DateTime",
+		element:"PageElementType",
+		id:"ID",
+		name:"String",
+		styles:"StyleEntity",
+		updatedAt:"DateTime"
+	},
 	SubjectEntity:{
 		createdAt:"DateTime",
 		id:"ID",
+		lessons:"LessonEntity",
 		name:"String",
 		topics:"TopicEntity",
 		updatedAt:"DateTime",
 		yearGroups:"YearGroupEntity"
+	},
+	ThemeEntity:{
+		componentVariants:"ComponentVariantEntity",
+		createdAt:"DateTime",
+		defaultPalette:"ColorPaletteEntity",
+		defaultPaletteId:"ID",
+		foundationTokens:"JSONObject",
+		id:"ID",
+		name:"String",
+		semanticTokens:"JSONObject",
+		styleCollection:"StyleCollectionEntity",
+		styleCollectionId:"ID",
+		updatedAt:"DateTime",
+		version:"Float"
 	},
 	TopicEntity:{
 		createdAt:"DateTime",

@@ -908,9 +908,11 @@ export type ValueTypes = {
 	createdAt?:boolean | `@${string}`,
 	description?:boolean | `@${string}`,
 	dueDate?:boolean | `@${string}`,
+	educators?:ValueTypes["EducatorProfileDto"],
 	id?:boolean | `@${string}`,
-	lesson?:ValueTypes["LessonEntity"],
-	title?:boolean | `@${string}`,
+	lessons?:ValueTypes["LessonEntity"],
+	name?:boolean | `@${string}`,
+	students?:ValueTypes["StudentProfileDto"],
 	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
@@ -949,12 +951,35 @@ export type ValueTypes = {
 	yearGroup?:ValueTypes["YearGroupEntity"],
 		__typename?: boolean | `@${string}`
 }>;
+	["ColorPaletteEntity"]: AliasType<{
+	collection?:ValueTypes["StyleCollectionEntity"],
+	collectionId?:boolean | `@${string}`,
+	colors?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["ComponentVariantEntity"]: AliasType<{
+	accessibleName?:boolean | `@${string}`,
+	baseComponent?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	props?:boolean | `@${string}`,
+	theme?:ValueTypes["ThemeEntity"],
+	themeId?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["CreateAssignmentInput"]: {
 	classId: ValueTypes["ID"] | Variable<any, string>,
 	description?: string | undefined | null | Variable<any, string>,
 	dueDate?: ValueTypes["DateTime"] | undefined | null | Variable<any, string>,
-	lessonId: ValueTypes["ID"] | Variable<any, string>,
-	title: string | Variable<any, string>
+	name: string | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
 };
 	["CreateAssignmentSubmissionInput"]: {
 	assignmentId: ValueTypes["ID"] | Variable<any, string>,
@@ -969,6 +994,22 @@ export type ValueTypes = {
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
 };
+	["CreateColorPaletteInput"]: {
+	collectionId: ValueTypes["ID"] | Variable<any, string>,
+	colors: Array<string> | Variable<any, string>,
+	name: string | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
+	["CreateComponentVariantInput"]: {
+	accessibleName: string | Variable<any, string>,
+	baseComponent: string | Variable<any, string>,
+	name: string | Variable<any, string>,
+	props: ValueTypes["JSONObject"] | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	themeId: ValueTypes["ID"] | Variable<any, string>
+};
 	["CreateEducatorProfileInput"]: {
 	staffId: number | Variable<any, string>
 };
@@ -977,13 +1018,23 @@ export type ValueTypes = {
 	name: string | Variable<any, string>
 };
 	["CreateLessonInput"]: {
-	content?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	content?: Array<ValueTypes["LessonSlideInput"]> | undefined | null | Variable<any, string>,
 	createdByEducatorId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
 	description?: string | undefined | null | Variable<any, string>,
 	recommendedYearGroupIds?: Array<ValueTypes["ID"] | undefined | null> | undefined | null | Variable<any, string>,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	themeId: ValueTypes["ID"] | Variable<any, string>,
 	title: string | Variable<any, string>
+};
+	["CreateMultipleChoiceQuestionInput"]: {
+	correctAnswer: string | Variable<any, string>,
+	lessonId: ValueTypes["ID"] | Variable<any, string>,
+	options: Array<string> | Variable<any, string>,
+	quizId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	text: string | Variable<any, string>
 };
 	["CreatePermissionGroupInput"]: {
 	description: string | Variable<any, string>,
@@ -993,6 +1044,13 @@ export type ValueTypes = {
 	description?: string | undefined | null | Variable<any, string>,
 	name: string | Variable<any, string>
 };
+	["CreateQuizInput"]: {
+	description?: string | undefined | null | Variable<any, string>,
+	lessonId: ValueTypes["ID"] | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	title: string | Variable<any, string>
+};
 	["CreateRoleInput"]: {
 	description?: string | undefined | null | Variable<any, string>,
 	name: string | Variable<any, string>
@@ -1001,10 +1059,39 @@ export type ValueTypes = {
 	schoolYear: number | Variable<any, string>,
 	studentId: number | Variable<any, string>
 };
+	["CreateStyleCollectionInput"]: {
+	name: string | Variable<any, string>
+};
+	["CreateStyleGroupInput"]: {
+	collectionId: ValueTypes["ID"] | Variable<any, string>,
+	element: ValueTypes["PageElementType"] | Variable<any, string>,
+	name: string | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
+	["CreateStyleInput"]: {
+	collectionId: ValueTypes["ID"] | Variable<any, string>,
+	config: ValueTypes["JSONObject"] | Variable<any, string>,
+	element: ValueTypes["PageElementType"] | Variable<any, string>,
+	groupId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	name: string | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
 	["CreateSubjectInput"]: {
 	name: string | Variable<any, string>,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
+	["CreateThemeInput"]: {
+	defaultPaletteId: ValueTypes["ID"] | Variable<any, string>,
+	foundationTokens: ValueTypes["JSONObject"] | Variable<any, string>,
+	name: string | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	semanticTokens: ValueTypes["JSONObject"] | Variable<any, string>,
+	styleCollectionId: ValueTypes["ID"] | Variable<any, string>,
+	version: number | Variable<any, string>
 };
 	["CreateTopicInput"]: {
 	name: string | Variable<any, string>,
@@ -1062,6 +1149,19 @@ export type ValueTypes = {
 	/** Exact value the column must equal */
 	value: string | Variable<any, string>
 };
+	["FindAllColorPaletteInput"]: {
+	/** Set to true to return all records, ignoring pagination values */
+	all?: boolean | undefined | null | Variable<any, string>,
+	collectionId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	/** Column/value pairs to filter by (records must satisfy **all** filters) */
+	filters?: Array<ValueTypes["FilterInput"]> | undefined | null | Variable<any, string>,
+	/** Maximum number of records to return */
+	limit?: number | undefined | null | Variable<any, string>,
+	/** Number of records to skip */
+	offset?: number | undefined | null | Variable<any, string>,
+	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+	relations?: Array<string> | undefined | null | Variable<any, string>
+};
 	["FindAllInput"]: {
 	/** Set to true to return all records, ignoring pagination values */
 	all?: boolean | undefined | null | Variable<any, string>,
@@ -1073,6 +1173,19 @@ export type ValueTypes = {
 	offset?: number | undefined | null | Variable<any, string>,
 	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
 	relations?: Array<string> | undefined | null | Variable<any, string>
+};
+	["FindAllThemeInput"]: {
+	/** Set to true to return all records, ignoring pagination values */
+	all?: boolean | undefined | null | Variable<any, string>,
+	/** Column/value pairs to filter by (records must satisfy **all** filters) */
+	filters?: Array<ValueTypes["FilterInput"]> | undefined | null | Variable<any, string>,
+	/** Maximum number of records to return */
+	limit?: number | undefined | null | Variable<any, string>,
+	/** Number of records to skip */
+	offset?: number | undefined | null | Variable<any, string>,
+	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+	relations?: Array<string> | undefined | null | Variable<any, string>,
+	styleCollectionId?: ValueTypes["ID"] | undefined | null | Variable<any, string>
 };
 	["FindOneByInput"]: {
 	column: string | Variable<any, string>,
@@ -1100,19 +1213,78 @@ export type ValueTypes = {
 	yearGroups?:ValueTypes["YearGroupEntity"],
 		__typename?: boolean | `@${string}`
 }>;
+	["LessonColumn"]: AliasType<{
+	items?:ValueTypes["LessonElement"],
+		__typename?: boolean | `@${string}`
+}>;
+	["LessonColumnInput"]: {
+	columnId: string | Variable<any, string>,
+	items: Array<ValueTypes["LessonElementInput"]> | Variable<any, string>,
+	spacing?: number | undefined | null | Variable<any, string>,
+	title?: string | undefined | null | Variable<any, string>,
+	wrapperStyles?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>
+};
+	["LessonElement"]: AliasType<{
+	animation?:boolean | `@${string}`,
+	description?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	questions?:boolean | `@${string}`,
+	src?:boolean | `@${string}`,
+	styleId?:boolean | `@${string}`,
+	styleOverrides?:boolean | `@${string}`,
+	table?:boolean | `@${string}`,
+	text?:boolean | `@${string}`,
+	title?:boolean | `@${string}`,
+	type?:boolean | `@${string}`,
+	url?:boolean | `@${string}`,
+	variantId?:boolean | `@${string}`,
+	wrapperStyles?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["LessonElementInput"]: {
+	animation?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	description?: string | undefined | null | Variable<any, string>,
+	id: string | Variable<any, string>,
+	questions?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	src?: string | undefined | null | Variable<any, string>,
+	styleId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	styleOverrides?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	table?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	text?: string | undefined | null | Variable<any, string>,
+	title?: string | undefined | null | Variable<any, string>,
+	type: ValueTypes["PageElementType"] | Variable<any, string>,
+	url?: string | undefined | null | Variable<any, string>,
+	variantId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	wrapperStyles?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>
+};
 	["LessonEntity"]: AliasType<{
-	content?:boolean | `@${string}`,
+	content?:ValueTypes["LessonSlide"],
 	createdAt?:boolean | `@${string}`,
 	createdBy?:ValueTypes["EducatorProfileDto"],
 	createdById?:boolean | `@${string}`,
 	description?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
+	lastThemeUpgrade?:boolean | `@${string}`,
+	multipleChoiceQuestions?:ValueTypes["MultipleChoiceQuestionEntity"],
+	quizzes?:ValueTypes["QuizEntity"],
 	recommendedYearGroups?:ValueTypes["YearGroupEntity"],
+	subject?:ValueTypes["SubjectEntity"],
+	theme?:ValueTypes["ThemeEntity"],
+	themeId?:boolean | `@${string}`,
 	title?:boolean | `@${string}`,
 	topic?:ValueTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
+	["LessonSlide"]: AliasType<{
+	columns?:ValueTypes["LessonColumn"],
+		__typename?: boolean | `@${string}`
+}>;
+	["LessonSlideInput"]: {
+	columns: Array<ValueTypes["LessonColumnInput"]> | Variable<any, string>,
+	id: string | Variable<any, string>,
+	title: string | Variable<any, string>
+};
 	["LoginRequest"]: {
 	email: string | Variable<any, string>,
 	password: string | Variable<any, string>
@@ -1123,18 +1295,37 @@ export type ValueTypes = {
 	userDetails?:ValueTypes["UserDetails"],
 		__typename?: boolean | `@${string}`
 }>;
+	["MultipleChoiceQuestionEntity"]: AliasType<{
+	correctAnswer?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	lesson?:ValueTypes["LessonEntity"],
+	options?:boolean | `@${string}`,
+	quiz?:ValueTypes["QuizEntity"],
+	text?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["Mutation"]: AliasType<{
 createAssignment?: [{	data: ValueTypes["CreateAssignmentInput"] | Variable<any, string>},ValueTypes["AssignmentEntity"]],
 createAssignmentSubmission?: [{	data: ValueTypes["CreateAssignmentSubmissionInput"] | Variable<any, string>},ValueTypes["AssignmentSubmissionEntity"]],
 createClass?: [{	data: ValueTypes["CreateClassInput"] | Variable<any, string>},ValueTypes["ClassEntity"]],
+createColorPalette?: [{	data: ValueTypes["CreateColorPaletteInput"] | Variable<any, string>},ValueTypes["ColorPaletteEntity"]],
+createComponentVariant?: [{	data: ValueTypes["CreateComponentVariantInput"] | Variable<any, string>},ValueTypes["ComponentVariantEntity"]],
 createEducatorProfile?: [{	data: ValueTypes["CreateEducatorProfileInput"] | Variable<any, string>},ValueTypes["EducatorProfileDto"]],
 createKeyStage?: [{	data: ValueTypes["CreateKeyStageInput"] | Variable<any, string>},ValueTypes["KeyStageEntity"]],
 createLesson?: [{	data: ValueTypes["CreateLessonInput"] | Variable<any, string>},ValueTypes["LessonEntity"]],
+createMultipleChoiceQuestion?: [{	data: ValueTypes["CreateMultipleChoiceQuestionInput"] | Variable<any, string>},ValueTypes["MultipleChoiceQuestionEntity"]],
 createPermission?: [{	data: ValueTypes["CreatePermissionInput"] | Variable<any, string>},ValueTypes["Permission"]],
 createPermissionGroup?: [{	data: ValueTypes["CreatePermissionGroupInput"] | Variable<any, string>},ValueTypes["PermissionGroup"]],
+createQuiz?: [{	data: ValueTypes["CreateQuizInput"] | Variable<any, string>},ValueTypes["QuizEntity"]],
 createRole?: [{	data: ValueTypes["CreateRoleInput"] | Variable<any, string>},ValueTypes["Role"]],
 createStudentProfile?: [{	data: ValueTypes["CreateStudentProfileInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
+createStyle?: [{	data: ValueTypes["CreateStyleInput"] | Variable<any, string>},ValueTypes["StyleEntity"]],
+createStyleCollection?: [{	data: ValueTypes["CreateStyleCollectionInput"] | Variable<any, string>},ValueTypes["StyleCollectionEntity"]],
+createStyleGroup?: [{	data: ValueTypes["CreateStyleGroupInput"] | Variable<any, string>},ValueTypes["StyleGroupEntity"]],
 createSubject?: [{	data: ValueTypes["CreateSubjectInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+createTheme?: [{	data: ValueTypes["CreateThemeInput"] | Variable<any, string>},ValueTypes["ThemeEntity"]],
 createTopic?: [{	data: ValueTypes["CreateTopicInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 createUser?: [{	data: ValueTypes["CreateUserRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 createUserWithProfile?: [{	data: ValueTypes["CreateUserWithProfileInput"] | Variable<any, string>},ValueTypes["User"]],
@@ -1142,14 +1333,22 @@ createYearGroup?: [{	data: ValueTypes["CreateYearGroupInput"] | Variable<any, st
 deleteAssignment?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteAssignmentSubmission?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteClass?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteColorPalette?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteComponentVariant?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteEducatorProfile?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteKeyStage?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteLesson?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteMultipleChoiceQuestion?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deletePermission?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deletePermissionGroup?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteQuiz?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteRole?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteStudentProfile?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteStyle?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteStyleCollection?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteStyleGroup?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteSubject?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteTheme?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteTopic?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 deleteYearGroup?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},boolean | `@${string}`],
 logUserInWithEmailAndPassword?: [{	data: ValueTypes["LoginRequest"] | Variable<any, string>},ValueTypes["AuthTokens"]],
@@ -1159,22 +1358,33 @@ removeUserByPublicId?: [{	data: ValueTypes["PublicIdRequestDto"] | Variable<any,
 updateAssignment?: [{	data: ValueTypes["UpdateAssignmentInput"] | Variable<any, string>},ValueTypes["AssignmentEntity"]],
 updateAssignmentSubmission?: [{	data: ValueTypes["UpdateAssignmentSubmissionInput"] | Variable<any, string>},ValueTypes["AssignmentSubmissionEntity"]],
 updateClass?: [{	data: ValueTypes["UpdateClassInput"] | Variable<any, string>},ValueTypes["ClassEntity"]],
+updateColorPalette?: [{	data: ValueTypes["UpdateColorPaletteInput"] | Variable<any, string>},ValueTypes["ColorPaletteEntity"]],
+updateComponentVariant?: [{	data: ValueTypes["UpdateComponentVariantInput"] | Variable<any, string>},ValueTypes["ComponentVariantEntity"]],
 updateEducatorProfile?: [{	data: ValueTypes["UpdateEducatorProfileInput"] | Variable<any, string>},ValueTypes["EducatorProfileDto"]],
 updateKeyStage?: [{	data: ValueTypes["UpdateKeyStageInput"] | Variable<any, string>},ValueTypes["KeyStageEntity"]],
 updateLesson?: [{	data: ValueTypes["UpdateLessonInput"] | Variable<any, string>},ValueTypes["LessonEntity"]],
+updateMultipleChoiceQuestion?: [{	data: ValueTypes["UpdateMultipleChoiceQuestionInput"] | Variable<any, string>},ValueTypes["MultipleChoiceQuestionEntity"]],
 updatePermission?: [{	data: ValueTypes["UpdatePermissionInput"] | Variable<any, string>},ValueTypes["Permission"]],
 updatePermissionGroup?: [{	data: ValueTypes["UpdatePermissionGroupInput"] | Variable<any, string>},ValueTypes["PermissionGroup"]],
 updatePermissionGroupPermissionsFromArray?: [{	data: ValueTypes["SubmitIdArrayByIdRequestDto"] | Variable<any, string>},ValueTypes["PermissionGroup"]],
 updatePermissionGroupsForRole?: [{	data: ValueTypes["SubmitIdArrayByIdRequestDto"] | Variable<any, string>},ValueTypes["Role"]],
+updateQuiz?: [{	data: ValueTypes["UpdateQuizInput"] | Variable<any, string>},ValueTypes["QuizEntity"]],
 updateRole?: [{	data: ValueTypes["UpdateRoleInput"] | Variable<any, string>},ValueTypes["Role"]],
 updateStudentProfile?: [{	data: ValueTypes["UpdateStudentProfileInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
+updateStyle?: [{	data: ValueTypes["UpdateStyleInput"] | Variable<any, string>},ValueTypes["StyleEntity"]],
+updateStyleCollection?: [{	data: ValueTypes["UpdateStyleCollectionInput"] | Variable<any, string>},ValueTypes["StyleCollectionEntity"]],
+updateStyleGroup?: [{	data: ValueTypes["UpdateStyleGroupInput"] | Variable<any, string>},ValueTypes["StyleGroupEntity"]],
 updateSubject?: [{	data: ValueTypes["UpdateSubjectInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+updateTheme?: [{	data: ValueTypes["UpdateThemeInput"] | Variable<any, string>},ValueTypes["ThemeEntity"]],
 updateTopic?: [{	data: ValueTypes["UpdateTopicInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 updateUserByPublicId?: [{	data: ValueTypes["UpdateUserWithProfileInput"] | Variable<any, string>,	publicId: string | Variable<any, string>},ValueTypes["User"]],
 updateUserRolesFromArray?: [{	data: ValueTypes["UpdateUserRolesFromArrayRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 updateYearGroup?: [{	data: ValueTypes["UpdateYearGroupInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
+upgradeLessonTheme?: [{	data: ValueTypes["UpgradeLessonThemeInput"] | Variable<any, string>},ValueTypes["LessonEntity"]],
+upgradeThemeVersion?: [{	data: ValueTypes["UpgradeThemeVersionInput"] | Variable<any, string>},ValueTypes["ThemeEntity"]],
 		__typename?: boolean | `@${string}`
 }>;
+	["PageElementType"]:PageElementType;
 	["PageInfo"]: AliasType<{
 	hasNextPage?:boolean | `@${string}`,
 	hasPreviousPage?:boolean | `@${string}`,
@@ -1227,14 +1437,22 @@ classesByYearAndSubject?: [{	input: ValueTypes["ClassByYearSubjectInput"] | Vari
 getAllAssignment?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["AssignmentEntity"]],
 getAllAssignmentSubmission?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["AssignmentSubmissionEntity"]],
 getAllClass?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["ClassEntity"]],
+getAllColorPalette?: [{	data: ValueTypes["FindAllColorPaletteInput"] | Variable<any, string>},ValueTypes["ColorPaletteEntity"]],
+getAllComponentVariant?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["ComponentVariantEntity"]],
 getAllEducatorProfile?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["EducatorProfileDto"]],
 getAllKeyStage?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["KeyStageEntity"]],
 getAllLesson?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["LessonEntity"]],
+getAllMultipleChoiceQuestion?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["MultipleChoiceQuestionEntity"]],
 getAllPermission?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["Permission"]],
 getAllPermissionGroup?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["PermissionGroup"]],
+getAllQuiz?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["QuizEntity"]],
 getAllRole?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["Role"]],
 getAllStudentProfile?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
+getAllStyle?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["StyleEntity"]],
+getAllStyleCollection?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["StyleCollectionEntity"]],
+getAllStyleGroup?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["StyleGroupEntity"]],
 getAllSubject?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+getAllTheme?: [{	data: ValueTypes["FindAllThemeInput"] | Variable<any, string>},ValueTypes["ThemeEntity"]],
 getAllTopic?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 getAllUsers?: [{	data: ValueTypes["PaginatedGetAllRequestDto"] | Variable<any, string>},ValueTypes["User"]],
 getAllYearGroup?: [{	data: ValueTypes["FindAllInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
@@ -1244,25 +1462,40 @@ getAssignmentSubmission?: [{	data: ValueTypes["IdInput"] | Variable<any, string>
 getAssignmentSubmissionBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["AssignmentSubmissionEntity"]],
 getClass?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["ClassEntity"]],
 getClassBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["ClassEntity"]],
+getColorPalette?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["ColorPaletteEntity"]],
+getComponentVariant?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["ComponentVariantEntity"]],
+getComponentVariantBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["ComponentVariantEntity"]],
 getEducatorProfile?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["EducatorProfileDto"]],
 getEducatorProfileBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["EducatorProfileDto"]],
 getKeyStage?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["KeyStageEntity"]],
 getKeyStageBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["KeyStageEntity"]],
 getLesson?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["LessonEntity"]],
 getLessonBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["LessonEntity"]],
+getMultipleChoiceQuestion?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["MultipleChoiceQuestionEntity"]],
+getMultipleChoiceQuestionBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["MultipleChoiceQuestionEntity"]],
 getPermission?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["Permission"]],
 getPermissionBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["Permission"]],
 getPermissionGroup?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["PermissionGroup"]],
 getPermissionGroupBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["PermissionGroup"]],
 getPermissionGroupsForRole?: [{	data: ValueTypes["IdRequestDto"] | Variable<any, string>},ValueTypes["PermissionGroup"]],
 getPermissionsForGroup?: [{	data: ValueTypes["IdRequestDto"] | Variable<any, string>},ValueTypes["Permission"]],
+getQuiz?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["QuizEntity"]],
+getQuizBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["QuizEntity"]],
 getRole?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["Role"]],
 getRoleBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["Role"]],
 getRolesForUser?: [{	data: ValueTypes["PublicIdRequestDto"] | Variable<any, string>},ValueTypes["Role"]],
 getStudentProfile?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
 getStudentProfileBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
+getStyle?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["StyleEntity"]],
+getStyleBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["StyleEntity"]],
+getStyleCollection?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["StyleCollectionEntity"]],
+getStyleCollectionBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["StyleCollectionEntity"]],
+getStyleGroup?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["StyleGroupEntity"]],
+getStyleGroupBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["StyleGroupEntity"]],
 getSubject?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
 getSubjectBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+getTheme?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["ThemeEntity"]],
+getThemeBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["ThemeEntity"]],
 getTopic?: [{	data: ValueTypes["IdInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 getTopicBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 getUserByPublicId?: [{	data: ValueTypes["PublicIdRequestDto"] | Variable<any, string>},ValueTypes["User"]],
@@ -1272,18 +1505,35 @@ getYearGroupBy?: [{	data: ValueTypes["FindOneByInput"] | Variable<any, string>},
 searchAssignment?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["AssignmentEntity"]],
 searchAssignmentSubmission?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["AssignmentSubmissionEntity"]],
 searchClass?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["ClassEntity"]],
+searchComponentVariant?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["ComponentVariantEntity"]],
 searchEducatorProfile?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["EducatorProfileDto"]],
 searchKeyStage?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["KeyStageEntity"]],
 searchLesson?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["LessonEntity"]],
+searchMultipleChoiceQuestion?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["MultipleChoiceQuestionEntity"]],
 searchPermission?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["Permission"]],
 searchPermissionGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["PermissionGroup"]],
+searchQuiz?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["QuizEntity"]],
 searchRole?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["Role"]],
 searchStudentProfile?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["StudentProfileDto"]],
+searchStyle?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["StyleEntity"]],
+searchStyleCollection?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["StyleCollectionEntity"]],
+searchStyleGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["StyleGroupEntity"]],
 searchSubject?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["SubjectEntity"]],
+searchTheme?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["ThemeEntity"]],
 searchTopic?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
 searchUsers?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["User"]],
 searchYearGroup?: [{	data: ValueTypes["SearchInput"] | Variable<any, string>},ValueTypes["YearGroupEntity"]],
 topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Variable<any, string>},ValueTypes["TopicEntity"]],
+		__typename?: boolean | `@${string}`
+}>;
+	["QuizEntity"]: AliasType<{
+	createdAt?:boolean | `@${string}`,
+	description?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	lesson?:ValueTypes["LessonEntity"],
+	multipleChoiceQuestions?:ValueTypes["MultipleChoiceQuestionEntity"],
+	title?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
 	["RelationIdsInput"]: {
@@ -1327,9 +1577,44 @@ topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Varia
 	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
+	["StyleCollectionEntity"]: AliasType<{
+	colorPalettes?:ValueTypes["ColorPaletteEntity"],
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	styleGroups?:ValueTypes["StyleGroupEntity"],
+	styles?:ValueTypes["StyleEntity"],
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["StyleEntity"]: AliasType<{
+	collection?:ValueTypes["StyleCollectionEntity"],
+	collectionId?:boolean | `@${string}`,
+	config?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	element?:boolean | `@${string}`,
+	group?:ValueTypes["StyleGroupEntity"],
+	groupId?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["StyleGroupEntity"]: AliasType<{
+	collection?:ValueTypes["StyleCollectionEntity"],
+	collectionId?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	element?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	styles?:ValueTypes["StyleEntity"],
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["SubjectEntity"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
+	lessons?:ValueTypes["LessonEntity"],
 	name?:boolean | `@${string}`,
 	topics?:ValueTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
@@ -1340,6 +1625,21 @@ topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Varia
 	idArray: Array<number> | Variable<any, string>,
 	recordId: number | Variable<any, string>
 };
+	["ThemeEntity"]: AliasType<{
+	componentVariants?:ValueTypes["ComponentVariantEntity"],
+	createdAt?:boolean | `@${string}`,
+	defaultPalette?:ValueTypes["ColorPaletteEntity"],
+	defaultPaletteId?:boolean | `@${string}`,
+	foundationTokens?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	semanticTokens?:boolean | `@${string}`,
+	styleCollection?:ValueTypes["StyleCollectionEntity"],
+	styleCollectionId?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+	version?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["TopicByYearSubjectInput"]: {
 	pagination?: ValueTypes["PaginationInput"] | undefined | null | Variable<any, string>,
 	subjectId: ValueTypes["ID"] | Variable<any, string>,
@@ -1361,8 +1661,9 @@ topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Varia
 	description?: string | undefined | null | Variable<any, string>,
 	dueDate?: ValueTypes["DateTime"] | undefined | null | Variable<any, string>,
 	id: ValueTypes["ID"] | Variable<any, string>,
-	lessonId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
-	title?: string | undefined | null | Variable<any, string>
+	name?: string | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
 };
 	["UpdateAssignmentSubmissionInput"]: {
 	assignmentId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
@@ -1379,6 +1680,24 @@ topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Varia
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
 };
+	["UpdateColorPaletteInput"]: {
+	collectionId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	colors?: Array<string> | undefined | null | Variable<any, string>,
+	id: ValueTypes["ID"] | Variable<any, string>,
+	name?: string | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
+	["UpdateComponentVariantInput"]: {
+	accessibleName?: string | undefined | null | Variable<any, string>,
+	baseComponent?: string | undefined | null | Variable<any, string>,
+	id: ValueTypes["ID"] | Variable<any, string>,
+	name?: string | undefined | null | Variable<any, string>,
+	props?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	themeId?: ValueTypes["ID"] | undefined | null | Variable<any, string>
+};
 	["UpdateEducatorProfileInput"]: {
 	id: number | Variable<any, string>,
 	staffId?: number | undefined | null | Variable<any, string>
@@ -1389,14 +1708,25 @@ topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Varia
 	name?: string | undefined | null | Variable<any, string>
 };
 	["UpdateLessonInput"]: {
-	content?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	content?: Array<ValueTypes["LessonSlideInput"]> | undefined | null | Variable<any, string>,
 	createdByEducatorId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
 	description?: string | undefined | null | Variable<any, string>,
 	id: ValueTypes["ID"] | Variable<any, string>,
 	recommendedYearGroupIds?: Array<ValueTypes["ID"]> | undefined | null | Variable<any, string>,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	themeId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
 	title?: string | undefined | null | Variable<any, string>
+};
+	["UpdateMultipleChoiceQuestionInput"]: {
+	correctAnswer?: string | undefined | null | Variable<any, string>,
+	id: ValueTypes["ID"] | Variable<any, string>,
+	lessonId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	options?: Array<string> | undefined | null | Variable<any, string>,
+	quizId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	text?: string | undefined | null | Variable<any, string>
 };
 	["UpdatePermissionGroupInput"]: {
 	description?: string | undefined | null | Variable<any, string>,
@@ -1408,6 +1738,14 @@ topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Varia
 	id: number | Variable<any, string>,
 	name?: string | undefined | null | Variable<any, string>
 };
+	["UpdateQuizInput"]: {
+	description?: string | undefined | null | Variable<any, string>,
+	id: ValueTypes["ID"] | Variable<any, string>,
+	lessonId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	title?: string | undefined | null | Variable<any, string>
+};
 	["UpdateRoleInput"]: {
 	description?: string | undefined | null | Variable<any, string>,
 	id: number | Variable<any, string>,
@@ -1418,11 +1756,44 @@ topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Varia
 	schoolYear?: number | undefined | null | Variable<any, string>,
 	studentId?: number | undefined | null | Variable<any, string>
 };
+	["UpdateStyleCollectionInput"]: {
+	id: ValueTypes["ID"] | Variable<any, string>,
+	name?: string | undefined | null | Variable<any, string>
+};
+	["UpdateStyleGroupInput"]: {
+	collectionId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	element?: ValueTypes["PageElementType"] | undefined | null | Variable<any, string>,
+	id: ValueTypes["ID"] | Variable<any, string>,
+	name?: string | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
+	["UpdateStyleInput"]: {
+	collectionId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	config?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	element?: ValueTypes["PageElementType"] | undefined | null | Variable<any, string>,
+	groupId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	id: ValueTypes["ID"] | Variable<any, string>,
+	name?: string | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
 	["UpdateSubjectInput"]: {
 	id: ValueTypes["ID"] | Variable<any, string>,
 	name?: string | undefined | null | Variable<any, string>,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>
+};
+	["UpdateThemeInput"]: {
+	defaultPaletteId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	foundationTokens?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	id: ValueTypes["ID"] | Variable<any, string>,
+	name?: string | undefined | null | Variable<any, string>,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ValueTypes["RelationIdsInput"]> | undefined | null | Variable<any, string>,
+	semanticTokens?: ValueTypes["JSONObject"] | undefined | null | Variable<any, string>,
+	styleCollectionId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
+	version?: number | undefined | null | Variable<any, string>
 };
 	["UpdateTopicInput"]: {
 	id: ValueTypes["ID"] | Variable<any, string>,
@@ -1455,6 +1826,14 @@ topicsByYearAndSubject?: [{	input: ValueTypes["TopicByYearSubjectInput"] | Varia
 	id: ValueTypes["ID"] | Variable<any, string>,
 	keyStageId?: ValueTypes["ID"] | undefined | null | Variable<any, string>,
 	year?: ValueTypes["ValidYear"] | undefined | null | Variable<any, string>
+};
+	["UpgradeLessonThemeInput"]: {
+	lessonId: ValueTypes["ID"] | Variable<any, string>,
+	version: number | Variable<any, string>
+};
+	["UpgradeThemeVersionInput"]: {
+	id: ValueTypes["ID"] | Variable<any, string>,
+	version: number | Variable<any, string>
 };
 	["User"]: AliasType<{
 	addressLine1?:boolean | `@${string}`,
@@ -1508,9 +1887,11 @@ export type ResolverInputTypes = {
 	createdAt?:boolean | `@${string}`,
 	description?:boolean | `@${string}`,
 	dueDate?:boolean | `@${string}`,
+	educators?:ResolverInputTypes["EducatorProfileDto"],
 	id?:boolean | `@${string}`,
-	lesson?:ResolverInputTypes["LessonEntity"],
-	title?:boolean | `@${string}`,
+	lessons?:ResolverInputTypes["LessonEntity"],
+	name?:boolean | `@${string}`,
+	students?:ResolverInputTypes["StudentProfileDto"],
 	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
@@ -1549,12 +1930,35 @@ export type ResolverInputTypes = {
 	yearGroup?:ResolverInputTypes["YearGroupEntity"],
 		__typename?: boolean | `@${string}`
 }>;
+	["ColorPaletteEntity"]: AliasType<{
+	collection?:ResolverInputTypes["StyleCollectionEntity"],
+	collectionId?:boolean | `@${string}`,
+	colors?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["ComponentVariantEntity"]: AliasType<{
+	accessibleName?:boolean | `@${string}`,
+	baseComponent?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	props?:boolean | `@${string}`,
+	theme?:ResolverInputTypes["ThemeEntity"],
+	themeId?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["CreateAssignmentInput"]: {
 	classId: ResolverInputTypes["ID"],
 	description?: string | undefined | null,
 	dueDate?: ResolverInputTypes["DateTime"] | undefined | null,
-	lessonId: ResolverInputTypes["ID"],
-	title: string
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
 };
 	["CreateAssignmentSubmissionInput"]: {
 	assignmentId: ResolverInputTypes["ID"],
@@ -1569,6 +1973,22 @@ export type ResolverInputTypes = {
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
 };
+	["CreateColorPaletteInput"]: {
+	collectionId: ResolverInputTypes["ID"],
+	colors: Array<string>,
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateComponentVariantInput"]: {
+	accessibleName: string,
+	baseComponent: string,
+	name: string,
+	props: ResolverInputTypes["JSONObject"],
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	themeId: ResolverInputTypes["ID"]
+};
 	["CreateEducatorProfileInput"]: {
 	staffId: number
 };
@@ -1577,13 +1997,23 @@ export type ResolverInputTypes = {
 	name: string
 };
 	["CreateLessonInput"]: {
-	content?: ResolverInputTypes["JSONObject"] | undefined | null,
+	content?: Array<ResolverInputTypes["LessonSlideInput"]> | undefined | null,
 	createdByEducatorId?: ResolverInputTypes["ID"] | undefined | null,
 	description?: string | undefined | null,
 	recommendedYearGroupIds?: Array<ResolverInputTypes["ID"] | undefined | null> | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	themeId: ResolverInputTypes["ID"],
 	title: string
+};
+	["CreateMultipleChoiceQuestionInput"]: {
+	correctAnswer: string,
+	lessonId: ResolverInputTypes["ID"],
+	options: Array<string>,
+	quizId?: ResolverInputTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	text: string
 };
 	["CreatePermissionGroupInput"]: {
 	description: string,
@@ -1593,6 +2023,13 @@ export type ResolverInputTypes = {
 	description?: string | undefined | null,
 	name: string
 };
+	["CreateQuizInput"]: {
+	description?: string | undefined | null,
+	lessonId: ResolverInputTypes["ID"],
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	title: string
+};
 	["CreateRoleInput"]: {
 	description?: string | undefined | null,
 	name: string
@@ -1601,10 +2038,39 @@ export type ResolverInputTypes = {
 	schoolYear: number,
 	studentId: number
 };
+	["CreateStyleCollectionInput"]: {
+	name: string
+};
+	["CreateStyleGroupInput"]: {
+	collectionId: ResolverInputTypes["ID"],
+	element: ResolverInputTypes["PageElementType"],
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateStyleInput"]: {
+	collectionId: ResolverInputTypes["ID"],
+	config: ResolverInputTypes["JSONObject"],
+	element: ResolverInputTypes["PageElementType"],
+	groupId?: ResolverInputTypes["ID"] | undefined | null,
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
 	["CreateSubjectInput"]: {
 	name: string,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateThemeInput"]: {
+	defaultPaletteId: ResolverInputTypes["ID"],
+	foundationTokens: ResolverInputTypes["JSONObject"],
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	semanticTokens: ResolverInputTypes["JSONObject"],
+	styleCollectionId: ResolverInputTypes["ID"],
+	version: number
 };
 	["CreateTopicInput"]: {
 	name: string,
@@ -1662,6 +2128,19 @@ export type ResolverInputTypes = {
 	/** Exact value the column must equal */
 	value: string
 };
+	["FindAllColorPaletteInput"]: {
+	/** Set to true to return all records, ignoring pagination values */
+	all?: boolean | undefined | null,
+	collectionId?: ResolverInputTypes["ID"] | undefined | null,
+	/** Column/value pairs to filter by (records must satisfy **all** filters) */
+	filters?: Array<ResolverInputTypes["FilterInput"]> | undefined | null,
+	/** Maximum number of records to return */
+	limit?: number | undefined | null,
+	/** Number of records to skip */
+	offset?: number | undefined | null,
+	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+	relations?: Array<string> | undefined | null
+};
 	["FindAllInput"]: {
 	/** Set to true to return all records, ignoring pagination values */
 	all?: boolean | undefined | null,
@@ -1673,6 +2152,19 @@ export type ResolverInputTypes = {
 	offset?: number | undefined | null,
 	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
 	relations?: Array<string> | undefined | null
+};
+	["FindAllThemeInput"]: {
+	/** Set to true to return all records, ignoring pagination values */
+	all?: boolean | undefined | null,
+	/** Column/value pairs to filter by (records must satisfy **all** filters) */
+	filters?: Array<ResolverInputTypes["FilterInput"]> | undefined | null,
+	/** Maximum number of records to return */
+	limit?: number | undefined | null,
+	/** Number of records to skip */
+	offset?: number | undefined | null,
+	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+	relations?: Array<string> | undefined | null,
+	styleCollectionId?: ResolverInputTypes["ID"] | undefined | null
 };
 	["FindOneByInput"]: {
 	column: string,
@@ -1700,19 +2192,78 @@ export type ResolverInputTypes = {
 	yearGroups?:ResolverInputTypes["YearGroupEntity"],
 		__typename?: boolean | `@${string}`
 }>;
+	["LessonColumn"]: AliasType<{
+	items?:ResolverInputTypes["LessonElement"],
+		__typename?: boolean | `@${string}`
+}>;
+	["LessonColumnInput"]: {
+	columnId: string,
+	items: Array<ResolverInputTypes["LessonElementInput"]>,
+	spacing?: number | undefined | null,
+	title?: string | undefined | null,
+	wrapperStyles?: ResolverInputTypes["JSONObject"] | undefined | null
+};
+	["LessonElement"]: AliasType<{
+	animation?:boolean | `@${string}`,
+	description?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	questions?:boolean | `@${string}`,
+	src?:boolean | `@${string}`,
+	styleId?:boolean | `@${string}`,
+	styleOverrides?:boolean | `@${string}`,
+	table?:boolean | `@${string}`,
+	text?:boolean | `@${string}`,
+	title?:boolean | `@${string}`,
+	type?:boolean | `@${string}`,
+	url?:boolean | `@${string}`,
+	variantId?:boolean | `@${string}`,
+	wrapperStyles?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["LessonElementInput"]: {
+	animation?: ResolverInputTypes["JSONObject"] | undefined | null,
+	description?: string | undefined | null,
+	id: string,
+	questions?: ResolverInputTypes["JSONObject"] | undefined | null,
+	src?: string | undefined | null,
+	styleId?: ResolverInputTypes["ID"] | undefined | null,
+	styleOverrides?: ResolverInputTypes["JSONObject"] | undefined | null,
+	table?: ResolverInputTypes["JSONObject"] | undefined | null,
+	text?: string | undefined | null,
+	title?: string | undefined | null,
+	type: ResolverInputTypes["PageElementType"],
+	url?: string | undefined | null,
+	variantId?: ResolverInputTypes["ID"] | undefined | null,
+	wrapperStyles?: ResolverInputTypes["JSONObject"] | undefined | null
+};
 	["LessonEntity"]: AliasType<{
-	content?:boolean | `@${string}`,
+	content?:ResolverInputTypes["LessonSlide"],
 	createdAt?:boolean | `@${string}`,
 	createdBy?:ResolverInputTypes["EducatorProfileDto"],
 	createdById?:boolean | `@${string}`,
 	description?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
+	lastThemeUpgrade?:boolean | `@${string}`,
+	multipleChoiceQuestions?:ResolverInputTypes["MultipleChoiceQuestionEntity"],
+	quizzes?:ResolverInputTypes["QuizEntity"],
 	recommendedYearGroups?:ResolverInputTypes["YearGroupEntity"],
+	subject?:ResolverInputTypes["SubjectEntity"],
+	theme?:ResolverInputTypes["ThemeEntity"],
+	themeId?:boolean | `@${string}`,
 	title?:boolean | `@${string}`,
 	topic?:ResolverInputTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
+	["LessonSlide"]: AliasType<{
+	columns?:ResolverInputTypes["LessonColumn"],
+		__typename?: boolean | `@${string}`
+}>;
+	["LessonSlideInput"]: {
+	columns: Array<ResolverInputTypes["LessonColumnInput"]>,
+	id: string,
+	title: string
+};
 	["LoginRequest"]: {
 	email: string,
 	password: string
@@ -1723,18 +2274,37 @@ export type ResolverInputTypes = {
 	userDetails?:ResolverInputTypes["UserDetails"],
 		__typename?: boolean | `@${string}`
 }>;
+	["MultipleChoiceQuestionEntity"]: AliasType<{
+	correctAnswer?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	lesson?:ResolverInputTypes["LessonEntity"],
+	options?:boolean | `@${string}`,
+	quiz?:ResolverInputTypes["QuizEntity"],
+	text?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["Mutation"]: AliasType<{
 createAssignment?: [{	data: ResolverInputTypes["CreateAssignmentInput"]},ResolverInputTypes["AssignmentEntity"]],
 createAssignmentSubmission?: [{	data: ResolverInputTypes["CreateAssignmentSubmissionInput"]},ResolverInputTypes["AssignmentSubmissionEntity"]],
 createClass?: [{	data: ResolverInputTypes["CreateClassInput"]},ResolverInputTypes["ClassEntity"]],
+createColorPalette?: [{	data: ResolverInputTypes["CreateColorPaletteInput"]},ResolverInputTypes["ColorPaletteEntity"]],
+createComponentVariant?: [{	data: ResolverInputTypes["CreateComponentVariantInput"]},ResolverInputTypes["ComponentVariantEntity"]],
 createEducatorProfile?: [{	data: ResolverInputTypes["CreateEducatorProfileInput"]},ResolverInputTypes["EducatorProfileDto"]],
 createKeyStage?: [{	data: ResolverInputTypes["CreateKeyStageInput"]},ResolverInputTypes["KeyStageEntity"]],
 createLesson?: [{	data: ResolverInputTypes["CreateLessonInput"]},ResolverInputTypes["LessonEntity"]],
+createMultipleChoiceQuestion?: [{	data: ResolverInputTypes["CreateMultipleChoiceQuestionInput"]},ResolverInputTypes["MultipleChoiceQuestionEntity"]],
 createPermission?: [{	data: ResolverInputTypes["CreatePermissionInput"]},ResolverInputTypes["Permission"]],
 createPermissionGroup?: [{	data: ResolverInputTypes["CreatePermissionGroupInput"]},ResolverInputTypes["PermissionGroup"]],
+createQuiz?: [{	data: ResolverInputTypes["CreateQuizInput"]},ResolverInputTypes["QuizEntity"]],
 createRole?: [{	data: ResolverInputTypes["CreateRoleInput"]},ResolverInputTypes["Role"]],
 createStudentProfile?: [{	data: ResolverInputTypes["CreateStudentProfileInput"]},ResolverInputTypes["StudentProfileDto"]],
+createStyle?: [{	data: ResolverInputTypes["CreateStyleInput"]},ResolverInputTypes["StyleEntity"]],
+createStyleCollection?: [{	data: ResolverInputTypes["CreateStyleCollectionInput"]},ResolverInputTypes["StyleCollectionEntity"]],
+createStyleGroup?: [{	data: ResolverInputTypes["CreateStyleGroupInput"]},ResolverInputTypes["StyleGroupEntity"]],
 createSubject?: [{	data: ResolverInputTypes["CreateSubjectInput"]},ResolverInputTypes["SubjectEntity"]],
+createTheme?: [{	data: ResolverInputTypes["CreateThemeInput"]},ResolverInputTypes["ThemeEntity"]],
 createTopic?: [{	data: ResolverInputTypes["CreateTopicInput"]},ResolverInputTypes["TopicEntity"]],
 createUser?: [{	data: ResolverInputTypes["CreateUserRequestDto"]},ResolverInputTypes["User"]],
 createUserWithProfile?: [{	data: ResolverInputTypes["CreateUserWithProfileInput"]},ResolverInputTypes["User"]],
@@ -1742,14 +2312,22 @@ createYearGroup?: [{	data: ResolverInputTypes["CreateYearGroupInput"]},ResolverI
 deleteAssignment?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteAssignmentSubmission?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteClass?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
+deleteColorPalette?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
+deleteComponentVariant?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteEducatorProfile?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteKeyStage?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteLesson?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
+deleteMultipleChoiceQuestion?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deletePermission?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deletePermissionGroup?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
+deleteQuiz?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteRole?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteStudentProfile?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
+deleteStyle?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
+deleteStyleCollection?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
+deleteStyleGroup?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteSubject?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
+deleteTheme?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteTopic?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 deleteYearGroup?: [{	data: ResolverInputTypes["IdInput"]},boolean | `@${string}`],
 logUserInWithEmailAndPassword?: [{	data: ResolverInputTypes["LoginRequest"]},ResolverInputTypes["AuthTokens"]],
@@ -1759,22 +2337,33 @@ removeUserByPublicId?: [{	data: ResolverInputTypes["PublicIdRequestDto"]},Resolv
 updateAssignment?: [{	data: ResolverInputTypes["UpdateAssignmentInput"]},ResolverInputTypes["AssignmentEntity"]],
 updateAssignmentSubmission?: [{	data: ResolverInputTypes["UpdateAssignmentSubmissionInput"]},ResolverInputTypes["AssignmentSubmissionEntity"]],
 updateClass?: [{	data: ResolverInputTypes["UpdateClassInput"]},ResolverInputTypes["ClassEntity"]],
+updateColorPalette?: [{	data: ResolverInputTypes["UpdateColorPaletteInput"]},ResolverInputTypes["ColorPaletteEntity"]],
+updateComponentVariant?: [{	data: ResolverInputTypes["UpdateComponentVariantInput"]},ResolverInputTypes["ComponentVariantEntity"]],
 updateEducatorProfile?: [{	data: ResolverInputTypes["UpdateEducatorProfileInput"]},ResolverInputTypes["EducatorProfileDto"]],
 updateKeyStage?: [{	data: ResolverInputTypes["UpdateKeyStageInput"]},ResolverInputTypes["KeyStageEntity"]],
 updateLesson?: [{	data: ResolverInputTypes["UpdateLessonInput"]},ResolverInputTypes["LessonEntity"]],
+updateMultipleChoiceQuestion?: [{	data: ResolverInputTypes["UpdateMultipleChoiceQuestionInput"]},ResolverInputTypes["MultipleChoiceQuestionEntity"]],
 updatePermission?: [{	data: ResolverInputTypes["UpdatePermissionInput"]},ResolverInputTypes["Permission"]],
 updatePermissionGroup?: [{	data: ResolverInputTypes["UpdatePermissionGroupInput"]},ResolverInputTypes["PermissionGroup"]],
 updatePermissionGroupPermissionsFromArray?: [{	data: ResolverInputTypes["SubmitIdArrayByIdRequestDto"]},ResolverInputTypes["PermissionGroup"]],
 updatePermissionGroupsForRole?: [{	data: ResolverInputTypes["SubmitIdArrayByIdRequestDto"]},ResolverInputTypes["Role"]],
+updateQuiz?: [{	data: ResolverInputTypes["UpdateQuizInput"]},ResolverInputTypes["QuizEntity"]],
 updateRole?: [{	data: ResolverInputTypes["UpdateRoleInput"]},ResolverInputTypes["Role"]],
 updateStudentProfile?: [{	data: ResolverInputTypes["UpdateStudentProfileInput"]},ResolverInputTypes["StudentProfileDto"]],
+updateStyle?: [{	data: ResolverInputTypes["UpdateStyleInput"]},ResolverInputTypes["StyleEntity"]],
+updateStyleCollection?: [{	data: ResolverInputTypes["UpdateStyleCollectionInput"]},ResolverInputTypes["StyleCollectionEntity"]],
+updateStyleGroup?: [{	data: ResolverInputTypes["UpdateStyleGroupInput"]},ResolverInputTypes["StyleGroupEntity"]],
 updateSubject?: [{	data: ResolverInputTypes["UpdateSubjectInput"]},ResolverInputTypes["SubjectEntity"]],
+updateTheme?: [{	data: ResolverInputTypes["UpdateThemeInput"]},ResolverInputTypes["ThemeEntity"]],
 updateTopic?: [{	data: ResolverInputTypes["UpdateTopicInput"]},ResolverInputTypes["TopicEntity"]],
 updateUserByPublicId?: [{	data: ResolverInputTypes["UpdateUserWithProfileInput"],	publicId: string},ResolverInputTypes["User"]],
 updateUserRolesFromArray?: [{	data: ResolverInputTypes["UpdateUserRolesFromArrayRequestDto"]},ResolverInputTypes["User"]],
 updateYearGroup?: [{	data: ResolverInputTypes["UpdateYearGroupInput"]},ResolverInputTypes["YearGroupEntity"]],
+upgradeLessonTheme?: [{	data: ResolverInputTypes["UpgradeLessonThemeInput"]},ResolverInputTypes["LessonEntity"]],
+upgradeThemeVersion?: [{	data: ResolverInputTypes["UpgradeThemeVersionInput"]},ResolverInputTypes["ThemeEntity"]],
 		__typename?: boolean | `@${string}`
 }>;
+	["PageElementType"]:PageElementType;
 	["PageInfo"]: AliasType<{
 	hasNextPage?:boolean | `@${string}`,
 	hasPreviousPage?:boolean | `@${string}`,
@@ -1827,14 +2416,22 @@ classesByYearAndSubject?: [{	input: ResolverInputTypes["ClassByYearSubjectInput"
 getAllAssignment?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["AssignmentEntity"]],
 getAllAssignmentSubmission?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["AssignmentSubmissionEntity"]],
 getAllClass?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["ClassEntity"]],
+getAllColorPalette?: [{	data: ResolverInputTypes["FindAllColorPaletteInput"]},ResolverInputTypes["ColorPaletteEntity"]],
+getAllComponentVariant?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["ComponentVariantEntity"]],
 getAllEducatorProfile?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["EducatorProfileDto"]],
 getAllKeyStage?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["KeyStageEntity"]],
 getAllLesson?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["LessonEntity"]],
+getAllMultipleChoiceQuestion?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["MultipleChoiceQuestionEntity"]],
 getAllPermission?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["Permission"]],
 getAllPermissionGroup?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["PermissionGroup"]],
+getAllQuiz?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["QuizEntity"]],
 getAllRole?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["Role"]],
 getAllStudentProfile?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["StudentProfileDto"]],
+getAllStyle?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["StyleEntity"]],
+getAllStyleCollection?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["StyleCollectionEntity"]],
+getAllStyleGroup?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["StyleGroupEntity"]],
 getAllSubject?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["SubjectEntity"]],
+getAllTheme?: [{	data: ResolverInputTypes["FindAllThemeInput"]},ResolverInputTypes["ThemeEntity"]],
 getAllTopic?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["TopicEntity"]],
 getAllUsers?: [{	data: ResolverInputTypes["PaginatedGetAllRequestDto"]},ResolverInputTypes["User"]],
 getAllYearGroup?: [{	data: ResolverInputTypes["FindAllInput"]},ResolverInputTypes["YearGroupEntity"]],
@@ -1844,25 +2441,40 @@ getAssignmentSubmission?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputT
 getAssignmentSubmissionBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["AssignmentSubmissionEntity"]],
 getClass?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["ClassEntity"]],
 getClassBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["ClassEntity"]],
+getColorPalette?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["ColorPaletteEntity"]],
+getComponentVariant?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["ComponentVariantEntity"]],
+getComponentVariantBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["ComponentVariantEntity"]],
 getEducatorProfile?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["EducatorProfileDto"]],
 getEducatorProfileBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["EducatorProfileDto"]],
 getKeyStage?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["KeyStageEntity"]],
 getKeyStageBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["KeyStageEntity"]],
 getLesson?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["LessonEntity"]],
 getLessonBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["LessonEntity"]],
+getMultipleChoiceQuestion?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["MultipleChoiceQuestionEntity"]],
+getMultipleChoiceQuestionBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["MultipleChoiceQuestionEntity"]],
 getPermission?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["Permission"]],
 getPermissionBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["Permission"]],
 getPermissionGroup?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["PermissionGroup"]],
 getPermissionGroupBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["PermissionGroup"]],
 getPermissionGroupsForRole?: [{	data: ResolverInputTypes["IdRequestDto"]},ResolverInputTypes["PermissionGroup"]],
 getPermissionsForGroup?: [{	data: ResolverInputTypes["IdRequestDto"]},ResolverInputTypes["Permission"]],
+getQuiz?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["QuizEntity"]],
+getQuizBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["QuizEntity"]],
 getRole?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["Role"]],
 getRoleBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["Role"]],
 getRolesForUser?: [{	data: ResolverInputTypes["PublicIdRequestDto"]},ResolverInputTypes["Role"]],
 getStudentProfile?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["StudentProfileDto"]],
 getStudentProfileBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["StudentProfileDto"]],
+getStyle?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["StyleEntity"]],
+getStyleBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["StyleEntity"]],
+getStyleCollection?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["StyleCollectionEntity"]],
+getStyleCollectionBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["StyleCollectionEntity"]],
+getStyleGroup?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["StyleGroupEntity"]],
+getStyleGroupBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["StyleGroupEntity"]],
 getSubject?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["SubjectEntity"]],
 getSubjectBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["SubjectEntity"]],
+getTheme?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["ThemeEntity"]],
+getThemeBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["ThemeEntity"]],
 getTopic?: [{	data: ResolverInputTypes["IdInput"]},ResolverInputTypes["TopicEntity"]],
 getTopicBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTypes["TopicEntity"]],
 getUserByPublicId?: [{	data: ResolverInputTypes["PublicIdRequestDto"]},ResolverInputTypes["User"]],
@@ -1872,18 +2484,35 @@ getYearGroupBy?: [{	data: ResolverInputTypes["FindOneByInput"]},ResolverInputTyp
 searchAssignment?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["AssignmentEntity"]],
 searchAssignmentSubmission?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["AssignmentSubmissionEntity"]],
 searchClass?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["ClassEntity"]],
+searchComponentVariant?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["ComponentVariantEntity"]],
 searchEducatorProfile?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["EducatorProfileDto"]],
 searchKeyStage?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["KeyStageEntity"]],
 searchLesson?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["LessonEntity"]],
+searchMultipleChoiceQuestion?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["MultipleChoiceQuestionEntity"]],
 searchPermission?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["Permission"]],
 searchPermissionGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["PermissionGroup"]],
+searchQuiz?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["QuizEntity"]],
 searchRole?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["Role"]],
 searchStudentProfile?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["StudentProfileDto"]],
+searchStyle?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["StyleEntity"]],
+searchStyleCollection?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["StyleCollectionEntity"]],
+searchStyleGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["StyleGroupEntity"]],
 searchSubject?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["SubjectEntity"]],
+searchTheme?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["ThemeEntity"]],
 searchTopic?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["TopicEntity"]],
 searchUsers?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["User"]],
 searchYearGroup?: [{	data: ResolverInputTypes["SearchInput"]},ResolverInputTypes["YearGroupEntity"]],
 topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]},ResolverInputTypes["TopicEntity"]],
+		__typename?: boolean | `@${string}`
+}>;
+	["QuizEntity"]: AliasType<{
+	createdAt?:boolean | `@${string}`,
+	description?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	lesson?:ResolverInputTypes["LessonEntity"],
+	multipleChoiceQuestions?:ResolverInputTypes["MultipleChoiceQuestionEntity"],
+	title?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
 	["RelationIdsInput"]: {
@@ -1927,9 +2556,44 @@ topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]
 	updatedAt?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
+	["StyleCollectionEntity"]: AliasType<{
+	colorPalettes?:ResolverInputTypes["ColorPaletteEntity"],
+	createdAt?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	styleGroups?:ResolverInputTypes["StyleGroupEntity"],
+	styles?:ResolverInputTypes["StyleEntity"],
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["StyleEntity"]: AliasType<{
+	collection?:ResolverInputTypes["StyleCollectionEntity"],
+	collectionId?:boolean | `@${string}`,
+	config?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	element?:boolean | `@${string}`,
+	group?:ResolverInputTypes["StyleGroupEntity"],
+	groupId?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["StyleGroupEntity"]: AliasType<{
+	collection?:ResolverInputTypes["StyleCollectionEntity"],
+	collectionId?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	element?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	styles?:ResolverInputTypes["StyleEntity"],
+	updatedAt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["SubjectEntity"]: AliasType<{
 	createdAt?:boolean | `@${string}`,
 	id?:boolean | `@${string}`,
+	lessons?:ResolverInputTypes["LessonEntity"],
 	name?:boolean | `@${string}`,
 	topics?:ResolverInputTypes["TopicEntity"],
 	updatedAt?:boolean | `@${string}`,
@@ -1940,6 +2604,21 @@ topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]
 	idArray: Array<number>,
 	recordId: number
 };
+	["ThemeEntity"]: AliasType<{
+	componentVariants?:ResolverInputTypes["ComponentVariantEntity"],
+	createdAt?:boolean | `@${string}`,
+	defaultPalette?:ResolverInputTypes["ColorPaletteEntity"],
+	defaultPaletteId?:boolean | `@${string}`,
+	foundationTokens?:boolean | `@${string}`,
+	id?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	semanticTokens?:boolean | `@${string}`,
+	styleCollection?:ResolverInputTypes["StyleCollectionEntity"],
+	styleCollectionId?:boolean | `@${string}`,
+	updatedAt?:boolean | `@${string}`,
+	version?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["TopicByYearSubjectInput"]: {
 	pagination?: ResolverInputTypes["PaginationInput"] | undefined | null,
 	subjectId: ResolverInputTypes["ID"],
@@ -1961,8 +2640,9 @@ topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]
 	description?: string | undefined | null,
 	dueDate?: ResolverInputTypes["DateTime"] | undefined | null,
 	id: ResolverInputTypes["ID"],
-	lessonId?: ResolverInputTypes["ID"] | undefined | null,
-	title?: string | undefined | null
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
 };
 	["UpdateAssignmentSubmissionInput"]: {
 	assignmentId?: ResolverInputTypes["ID"] | undefined | null,
@@ -1979,6 +2659,24 @@ topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
 };
+	["UpdateColorPaletteInput"]: {
+	collectionId?: ResolverInputTypes["ID"] | undefined | null,
+	colors?: Array<string> | undefined | null,
+	id: ResolverInputTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateComponentVariantInput"]: {
+	accessibleName?: string | undefined | null,
+	baseComponent?: string | undefined | null,
+	id: ResolverInputTypes["ID"],
+	name?: string | undefined | null,
+	props?: ResolverInputTypes["JSONObject"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	themeId?: ResolverInputTypes["ID"] | undefined | null
+};
 	["UpdateEducatorProfileInput"]: {
 	id: number,
 	staffId?: number | undefined | null
@@ -1989,14 +2687,25 @@ topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]
 	name?: string | undefined | null
 };
 	["UpdateLessonInput"]: {
-	content?: ResolverInputTypes["JSONObject"] | undefined | null,
+	content?: Array<ResolverInputTypes["LessonSlideInput"]> | undefined | null,
 	createdByEducatorId?: ResolverInputTypes["ID"] | undefined | null,
 	description?: string | undefined | null,
 	id: ResolverInputTypes["ID"],
 	recommendedYearGroupIds?: Array<ResolverInputTypes["ID"]> | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	themeId?: ResolverInputTypes["ID"] | undefined | null,
 	title?: string | undefined | null
+};
+	["UpdateMultipleChoiceQuestionInput"]: {
+	correctAnswer?: string | undefined | null,
+	id: ResolverInputTypes["ID"],
+	lessonId?: ResolverInputTypes["ID"] | undefined | null,
+	options?: Array<string> | undefined | null,
+	quizId?: ResolverInputTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	text?: string | undefined | null
 };
 	["UpdatePermissionGroupInput"]: {
 	description?: string | undefined | null,
@@ -2008,6 +2717,14 @@ topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]
 	id: number,
 	name?: string | undefined | null
 };
+	["UpdateQuizInput"]: {
+	description?: string | undefined | null,
+	id: ResolverInputTypes["ID"],
+	lessonId?: ResolverInputTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	title?: string | undefined | null
+};
 	["UpdateRoleInput"]: {
 	description?: string | undefined | null,
 	id: number,
@@ -2018,11 +2735,44 @@ topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]
 	schoolYear?: number | undefined | null,
 	studentId?: number | undefined | null
 };
+	["UpdateStyleCollectionInput"]: {
+	id: ResolverInputTypes["ID"],
+	name?: string | undefined | null
+};
+	["UpdateStyleGroupInput"]: {
+	collectionId?: ResolverInputTypes["ID"] | undefined | null,
+	element?: ResolverInputTypes["PageElementType"] | undefined | null,
+	id: ResolverInputTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateStyleInput"]: {
+	collectionId?: ResolverInputTypes["ID"] | undefined | null,
+	config?: ResolverInputTypes["JSONObject"] | undefined | null,
+	element?: ResolverInputTypes["PageElementType"] | undefined | null,
+	groupId?: ResolverInputTypes["ID"] | undefined | null,
+	id: ResolverInputTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
 	["UpdateSubjectInput"]: {
 	id: ResolverInputTypes["ID"],
 	name?: string | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateThemeInput"]: {
+	defaultPaletteId?: ResolverInputTypes["ID"] | undefined | null,
+	foundationTokens?: ResolverInputTypes["JSONObject"] | undefined | null,
+	id: ResolverInputTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ResolverInputTypes["RelationIdsInput"]> | undefined | null,
+	semanticTokens?: ResolverInputTypes["JSONObject"] | undefined | null,
+	styleCollectionId?: ResolverInputTypes["ID"] | undefined | null,
+	version?: number | undefined | null
 };
 	["UpdateTopicInput"]: {
 	id: ResolverInputTypes["ID"],
@@ -2055,6 +2805,14 @@ topicsByYearAndSubject?: [{	input: ResolverInputTypes["TopicByYearSubjectInput"]
 	id: ResolverInputTypes["ID"],
 	keyStageId?: ResolverInputTypes["ID"] | undefined | null,
 	year?: ResolverInputTypes["ValidYear"] | undefined | null
+};
+	["UpgradeLessonThemeInput"]: {
+	lessonId: ResolverInputTypes["ID"],
+	version: number
+};
+	["UpgradeThemeVersionInput"]: {
+	id: ResolverInputTypes["ID"],
+	version: number
 };
 	["User"]: AliasType<{
 	addressLine1?:boolean | `@${string}`,
@@ -2113,9 +2871,11 @@ export type ModelTypes = {
 	createdAt: ModelTypes["DateTime"],
 	description?: string | undefined | null,
 	dueDate?: ModelTypes["DateTime"] | undefined | null,
+	educators?: Array<ModelTypes["EducatorProfileDto"]> | undefined | null,
 	id: ModelTypes["ID"],
-	lesson: ModelTypes["LessonEntity"],
-	title: string,
+	lessons?: Array<ModelTypes["LessonEntity"]> | undefined | null,
+	name: string,
+	students?: Array<ModelTypes["StudentProfileDto"]> | undefined | null,
 	updatedAt: ModelTypes["DateTime"]
 };
 	["AssignmentSubmissionEntity"]: {
@@ -2150,12 +2910,33 @@ export type ModelTypes = {
 	updatedAt: ModelTypes["DateTime"],
 	yearGroup: ModelTypes["YearGroupEntity"]
 };
+	["ColorPaletteEntity"]: {
+		collection: ModelTypes["StyleCollectionEntity"],
+	collectionId: ModelTypes["ID"],
+	colors: Array<string>,
+	createdAt: ModelTypes["DateTime"],
+	id: ModelTypes["ID"],
+	name: string,
+	updatedAt: ModelTypes["DateTime"]
+};
+	["ComponentVariantEntity"]: {
+		accessibleName: string,
+	baseComponent: string,
+	createdAt: ModelTypes["DateTime"],
+	id: ModelTypes["ID"],
+	name: string,
+	props: ModelTypes["JSONObject"],
+	theme: ModelTypes["ThemeEntity"],
+	themeId: ModelTypes["ID"],
+	updatedAt: ModelTypes["DateTime"]
+};
 	["CreateAssignmentInput"]: {
 	classId: ModelTypes["ID"],
 	description?: string | undefined | null,
 	dueDate?: ModelTypes["DateTime"] | undefined | null,
-	lessonId: ModelTypes["ID"],
-	title: string
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
 };
 	["CreateAssignmentSubmissionInput"]: {
 	assignmentId: ModelTypes["ID"],
@@ -2170,6 +2951,22 @@ export type ModelTypes = {
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
 };
+	["CreateColorPaletteInput"]: {
+	collectionId: ModelTypes["ID"],
+	colors: Array<string>,
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateComponentVariantInput"]: {
+	accessibleName: string,
+	baseComponent: string,
+	name: string,
+	props: ModelTypes["JSONObject"],
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	themeId: ModelTypes["ID"]
+};
 	["CreateEducatorProfileInput"]: {
 	staffId: number
 };
@@ -2178,13 +2975,23 @@ export type ModelTypes = {
 	name: string
 };
 	["CreateLessonInput"]: {
-	content?: ModelTypes["JSONObject"] | undefined | null,
+	content?: Array<ModelTypes["LessonSlideInput"]> | undefined | null,
 	createdByEducatorId?: ModelTypes["ID"] | undefined | null,
 	description?: string | undefined | null,
 	recommendedYearGroupIds?: Array<ModelTypes["ID"] | undefined | null> | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	themeId: ModelTypes["ID"],
 	title: string
+};
+	["CreateMultipleChoiceQuestionInput"]: {
+	correctAnswer: string,
+	lessonId: ModelTypes["ID"],
+	options: Array<string>,
+	quizId?: ModelTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	text: string
 };
 	["CreatePermissionGroupInput"]: {
 	description: string,
@@ -2194,6 +3001,13 @@ export type ModelTypes = {
 	description?: string | undefined | null,
 	name: string
 };
+	["CreateQuizInput"]: {
+	description?: string | undefined | null,
+	lessonId: ModelTypes["ID"],
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	title: string
+};
 	["CreateRoleInput"]: {
 	description?: string | undefined | null,
 	name: string
@@ -2202,10 +3016,39 @@ export type ModelTypes = {
 	schoolYear: number,
 	studentId: number
 };
+	["CreateStyleCollectionInput"]: {
+	name: string
+};
+	["CreateStyleGroupInput"]: {
+	collectionId: ModelTypes["ID"],
+	element: ModelTypes["PageElementType"],
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateStyleInput"]: {
+	collectionId: ModelTypes["ID"],
+	config: ModelTypes["JSONObject"],
+	element: ModelTypes["PageElementType"],
+	groupId?: ModelTypes["ID"] | undefined | null,
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
 	["CreateSubjectInput"]: {
 	name: string,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateThemeInput"]: {
+	defaultPaletteId: ModelTypes["ID"],
+	foundationTokens: ModelTypes["JSONObject"],
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	semanticTokens: ModelTypes["JSONObject"],
+	styleCollectionId: ModelTypes["ID"],
+	version: number
 };
 	["CreateTopicInput"]: {
 	name: string,
@@ -2262,6 +3105,19 @@ export type ModelTypes = {
 	/** Exact value the column must equal */
 	value: string
 };
+	["FindAllColorPaletteInput"]: {
+	/** Set to true to return all records, ignoring pagination values */
+	all?: boolean | undefined | null,
+	collectionId?: ModelTypes["ID"] | undefined | null,
+	/** Column/value pairs to filter by (records must satisfy **all** filters) */
+	filters?: Array<ModelTypes["FilterInput"]> | undefined | null,
+	/** Maximum number of records to return */
+	limit?: number | undefined | null,
+	/** Number of records to skip */
+	offset?: number | undefined | null,
+	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+	relations?: Array<string> | undefined | null
+};
 	["FindAllInput"]: {
 	/** Set to true to return all records, ignoring pagination values */
 	all?: boolean | undefined | null,
@@ -2273,6 +3129,19 @@ export type ModelTypes = {
 	offset?: number | undefined | null,
 	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
 	relations?: Array<string> | undefined | null
+};
+	["FindAllThemeInput"]: {
+	/** Set to true to return all records, ignoring pagination values */
+	all?: boolean | undefined | null,
+	/** Column/value pairs to filter by (records must satisfy **all** filters) */
+	filters?: Array<ModelTypes["FilterInput"]> | undefined | null,
+	/** Maximum number of records to return */
+	limit?: number | undefined | null,
+	/** Number of records to skip */
+	offset?: number | undefined | null,
+	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+	relations?: Array<string> | undefined | null,
+	styleCollectionId?: ModelTypes["ID"] | undefined | null
 };
 	["FindOneByInput"]: {
 	column: string,
@@ -2299,17 +3168,73 @@ export type ModelTypes = {
 	updatedAt: ModelTypes["DateTime"],
 	yearGroups: Array<ModelTypes["YearGroupEntity"]>
 };
+	["LessonColumn"]: {
+		items: Array<ModelTypes["LessonElement"]>
+};
+	["LessonColumnInput"]: {
+	columnId: string,
+	items: Array<ModelTypes["LessonElementInput"]>,
+	spacing?: number | undefined | null,
+	title?: string | undefined | null,
+	wrapperStyles?: ModelTypes["JSONObject"] | undefined | null
+};
+	["LessonElement"]: {
+		animation?: ModelTypes["JSONObject"] | undefined | null,
+	description?: string | undefined | null,
+	id: string,
+	questions?: ModelTypes["JSONObject"] | undefined | null,
+	src?: string | undefined | null,
+	styleId?: ModelTypes["ID"] | undefined | null,
+	styleOverrides?: ModelTypes["JSONObject"] | undefined | null,
+	table?: ModelTypes["JSONObject"] | undefined | null,
+	text?: string | undefined | null,
+	title?: string | undefined | null,
+	type: ModelTypes["PageElementType"],
+	url?: string | undefined | null,
+	variantId?: ModelTypes["ID"] | undefined | null,
+	wrapperStyles?: ModelTypes["JSONObject"] | undefined | null
+};
+	["LessonElementInput"]: {
+	animation?: ModelTypes["JSONObject"] | undefined | null,
+	description?: string | undefined | null,
+	id: string,
+	questions?: ModelTypes["JSONObject"] | undefined | null,
+	src?: string | undefined | null,
+	styleId?: ModelTypes["ID"] | undefined | null,
+	styleOverrides?: ModelTypes["JSONObject"] | undefined | null,
+	table?: ModelTypes["JSONObject"] | undefined | null,
+	text?: string | undefined | null,
+	title?: string | undefined | null,
+	type: ModelTypes["PageElementType"],
+	url?: string | undefined | null,
+	variantId?: ModelTypes["ID"] | undefined | null,
+	wrapperStyles?: ModelTypes["JSONObject"] | undefined | null
+};
 	["LessonEntity"]: {
-		content?: ModelTypes["JSONObject"] | undefined | null,
+		content?: Array<ModelTypes["LessonSlide"]> | undefined | null,
 	createdAt: ModelTypes["DateTime"],
 	createdBy?: ModelTypes["EducatorProfileDto"] | undefined | null,
 	createdById?: ModelTypes["ID"] | undefined | null,
 	description?: string | undefined | null,
 	id: ModelTypes["ID"],
+	lastThemeUpgrade?: ModelTypes["DateTime"] | undefined | null,
+	multipleChoiceQuestions?: Array<ModelTypes["MultipleChoiceQuestionEntity"]> | undefined | null,
+	quizzes?: Array<ModelTypes["QuizEntity"]> | undefined | null,
 	recommendedYearGroups?: Array<ModelTypes["YearGroupEntity"]> | undefined | null,
+	subject: ModelTypes["SubjectEntity"],
+	theme: ModelTypes["ThemeEntity"],
+	themeId: ModelTypes["ID"],
 	title: string,
 	topic: ModelTypes["TopicEntity"],
 	updatedAt: ModelTypes["DateTime"]
+};
+	["LessonSlide"]: {
+		columns: Array<ModelTypes["LessonColumn"]>
+};
+	["LessonSlideInput"]: {
+	columns: Array<ModelTypes["LessonColumnInput"]>,
+	id: string,
+	title: string
 };
 	["LoginRequest"]: {
 	email: string,
@@ -2320,6 +3245,16 @@ export type ModelTypes = {
 	refreshToken: string,
 	userDetails: ModelTypes["UserDetails"]
 };
+	["MultipleChoiceQuestionEntity"]: {
+		correctAnswer: string,
+	createdAt: ModelTypes["DateTime"],
+	id: ModelTypes["ID"],
+	lesson: ModelTypes["LessonEntity"],
+	options: Array<string>,
+	quiz?: ModelTypes["QuizEntity"] | undefined | null,
+	text: string,
+	updatedAt: ModelTypes["DateTime"]
+};
 	["Mutation"]: {
 		/** Create one Assignment */
 	createAssignment: ModelTypes["AssignmentEntity"],
@@ -2327,22 +3262,38 @@ export type ModelTypes = {
 	createAssignmentSubmission: ModelTypes["AssignmentSubmissionEntity"],
 	/** Create one Class */
 	createClass: ModelTypes["ClassEntity"],
+	/** Create one ColorPalette */
+	createColorPalette: ModelTypes["ColorPaletteEntity"],
+	/** Create one ComponentVariant */
+	createComponentVariant: ModelTypes["ComponentVariantEntity"],
 	/** Create one EducatorProfile */
 	createEducatorProfile: ModelTypes["EducatorProfileDto"],
 	/** Create one KeyStage */
 	createKeyStage: ModelTypes["KeyStageEntity"],
 	/** Create one Lesson */
 	createLesson: ModelTypes["LessonEntity"],
+	/** Create one MultipleChoiceQuestion */
+	createMultipleChoiceQuestion: ModelTypes["MultipleChoiceQuestionEntity"],
 	/** Create one Permission */
 	createPermission: ModelTypes["Permission"],
 	/** Create one PermissionGroup */
 	createPermissionGroup: ModelTypes["PermissionGroup"],
+	/** Create one Quiz */
+	createQuiz: ModelTypes["QuizEntity"],
 	/** Create one Role */
 	createRole: ModelTypes["Role"],
 	/** Create one StudentProfile */
 	createStudentProfile: ModelTypes["StudentProfileDto"],
+	/** Create one Style */
+	createStyle: ModelTypes["StyleEntity"],
+	/** Create one StyleCollection */
+	createStyleCollection: ModelTypes["StyleCollectionEntity"],
+	/** Create one StyleGroup */
+	createStyleGroup: ModelTypes["StyleGroupEntity"],
 	/** Create one Subject */
 	createSubject: ModelTypes["SubjectEntity"],
+	/** Create one Theme */
+	createTheme: ModelTypes["ThemeEntity"],
 	/** Create one Topic */
 	createTopic: ModelTypes["TopicEntity"],
 	createUser: ModelTypes["User"],
@@ -2355,22 +3306,38 @@ export type ModelTypes = {
 	deleteAssignmentSubmission: boolean,
 	/** Delete one Class */
 	deleteClass: boolean,
+	/** Delete one ColorPalette */
+	deleteColorPalette: boolean,
+	/** Delete one ComponentVariant */
+	deleteComponentVariant: boolean,
 	/** Delete one EducatorProfile */
 	deleteEducatorProfile: boolean,
 	/** Delete one KeyStage */
 	deleteKeyStage: boolean,
 	/** Delete one Lesson */
 	deleteLesson: boolean,
+	/** Delete one MultipleChoiceQuestion */
+	deleteMultipleChoiceQuestion: boolean,
 	/** Delete one Permission */
 	deletePermission: boolean,
 	/** Delete one PermissionGroup */
 	deletePermissionGroup: boolean,
+	/** Delete one Quiz */
+	deleteQuiz: boolean,
 	/** Delete one Role */
 	deleteRole: boolean,
 	/** Delete one StudentProfile */
 	deleteStudentProfile: boolean,
+	/** Delete one Style */
+	deleteStyle: boolean,
+	/** Delete one StyleCollection */
+	deleteStyleCollection: boolean,
+	/** Delete one StyleGroup */
+	deleteStyleGroup: boolean,
 	/** Delete one Subject */
 	deleteSubject: boolean,
+	/** Delete one Theme */
+	deleteTheme: boolean,
 	/** Delete one Topic */
 	deleteTopic: boolean,
 	/** Delete one YearGroup */
@@ -2385,31 +3352,52 @@ export type ModelTypes = {
 	updateAssignmentSubmission: ModelTypes["AssignmentSubmissionEntity"],
 	/** Updates one Class */
 	updateClass: ModelTypes["ClassEntity"],
+	/** Updates one ColorPalette */
+	updateColorPalette: ModelTypes["ColorPaletteEntity"],
+	/** Updates one ComponentVariant */
+	updateComponentVariant: ModelTypes["ComponentVariantEntity"],
 	/** Updates one EducatorProfile */
 	updateEducatorProfile: ModelTypes["EducatorProfileDto"],
 	/** Updates one KeyStage */
 	updateKeyStage: ModelTypes["KeyStageEntity"],
 	/** Updates one Lesson */
 	updateLesson: ModelTypes["LessonEntity"],
+	/** Updates one MultipleChoiceQuestion */
+	updateMultipleChoiceQuestion: ModelTypes["MultipleChoiceQuestionEntity"],
 	/** Updates one Permission */
 	updatePermission: ModelTypes["Permission"],
 	/** Updates one PermissionGroup */
 	updatePermissionGroup: ModelTypes["PermissionGroup"],
 	updatePermissionGroupPermissionsFromArray: ModelTypes["PermissionGroup"],
 	updatePermissionGroupsForRole: ModelTypes["Role"],
+	/** Updates one Quiz */
+	updateQuiz: ModelTypes["QuizEntity"],
 	/** Updates one Role */
 	updateRole: ModelTypes["Role"],
 	/** Updates one StudentProfile */
 	updateStudentProfile: ModelTypes["StudentProfileDto"],
+	/** Updates one Style */
+	updateStyle: ModelTypes["StyleEntity"],
+	/** Updates one StyleCollection */
+	updateStyleCollection: ModelTypes["StyleCollectionEntity"],
+	/** Updates one StyleGroup */
+	updateStyleGroup: ModelTypes["StyleGroupEntity"],
 	/** Updates one Subject */
 	updateSubject: ModelTypes["SubjectEntity"],
+	/** Updates one Theme */
+	updateTheme: ModelTypes["ThemeEntity"],
 	/** Updates one Topic */
 	updateTopic: ModelTypes["TopicEntity"],
 	updateUserByPublicId: ModelTypes["User"],
 	updateUserRolesFromArray: ModelTypes["User"],
 	/** Updates one YearGroup */
-	updateYearGroup: ModelTypes["YearGroupEntity"]
+	updateYearGroup: ModelTypes["YearGroupEntity"],
+	/** Upgrade the lesson's theme version */
+	upgradeLessonTheme: ModelTypes["LessonEntity"],
+	/** Upgrade a theme to a specific version */
+	upgradeThemeVersion: ModelTypes["ThemeEntity"]
 };
+	["PageElementType"]:PageElementType;
 	["PageInfo"]: {
 		hasNextPage: boolean,
 	hasPreviousPage: boolean,
@@ -2461,22 +3449,38 @@ export type ModelTypes = {
 	getAllAssignmentSubmission: Array<ModelTypes["AssignmentSubmissionEntity"]>,
 	/** Returns all Class (optionally filtered) */
 	getAllClass: Array<ModelTypes["ClassEntity"]>,
+	/** Returns all ColorPalette (optionally filtered) */
+	getAllColorPalette: Array<ModelTypes["ColorPaletteEntity"]>,
+	/** Returns all ComponentVariant (optionally filtered) */
+	getAllComponentVariant: Array<ModelTypes["ComponentVariantEntity"]>,
 	/** Returns all EducatorProfile (optionally filtered) */
 	getAllEducatorProfile: Array<ModelTypes["EducatorProfileDto"]>,
 	/** Returns all KeyStage (optionally filtered) */
 	getAllKeyStage: Array<ModelTypes["KeyStageEntity"]>,
 	/** Returns all Lesson (optionally filtered) */
 	getAllLesson: Array<ModelTypes["LessonEntity"]>,
+	/** Returns all MultipleChoiceQuestion (optionally filtered) */
+	getAllMultipleChoiceQuestion: Array<ModelTypes["MultipleChoiceQuestionEntity"]>,
 	/** Returns all Permission (optionally filtered) */
 	getAllPermission: Array<ModelTypes["Permission"]>,
 	/** Returns all PermissionGroup (optionally filtered) */
 	getAllPermissionGroup: Array<ModelTypes["PermissionGroup"]>,
+	/** Returns all Quiz (optionally filtered) */
+	getAllQuiz: Array<ModelTypes["QuizEntity"]>,
 	/** Returns all Role (optionally filtered) */
 	getAllRole: Array<ModelTypes["Role"]>,
 	/** Returns all StudentProfile (optionally filtered) */
 	getAllStudentProfile: Array<ModelTypes["StudentProfileDto"]>,
+	/** Returns all Style (optionally filtered) */
+	getAllStyle: Array<ModelTypes["StyleEntity"]>,
+	/** Returns all StyleCollection (optionally filtered) */
+	getAllStyleCollection: Array<ModelTypes["StyleCollectionEntity"]>,
+	/** Returns all StyleGroup (optionally filtered) */
+	getAllStyleGroup: Array<ModelTypes["StyleGroupEntity"]>,
 	/** Returns all Subject (optionally filtered) */
 	getAllSubject: Array<ModelTypes["SubjectEntity"]>,
+	/** Returns all Theme (optionally filtered) */
+	getAllTheme: Array<ModelTypes["ThemeEntity"]>,
 	/** Returns all Topic (optionally filtered) */
 	getAllTopic: Array<ModelTypes["TopicEntity"]>,
 	getAllUsers: Array<ModelTypes["User"]>,
@@ -2494,6 +3498,12 @@ export type ModelTypes = {
 	getClass: ModelTypes["ClassEntity"],
 	/** Returns one Class by given conditions */
 	getClassBy: ModelTypes["ClassEntity"],
+	/** Returns one ColorPalette */
+	getColorPalette: ModelTypes["ColorPaletteEntity"],
+	/** Returns one ComponentVariant */
+	getComponentVariant: ModelTypes["ComponentVariantEntity"],
+	/** Returns one ComponentVariant by given conditions */
+	getComponentVariantBy: ModelTypes["ComponentVariantEntity"],
 	/** Returns one EducatorProfile */
 	getEducatorProfile: ModelTypes["EducatorProfileDto"],
 	/** Returns one EducatorProfile by given conditions */
@@ -2506,6 +3516,10 @@ export type ModelTypes = {
 	getLesson: ModelTypes["LessonEntity"],
 	/** Returns one Lesson by given conditions */
 	getLessonBy: ModelTypes["LessonEntity"],
+	/** Returns one MultipleChoiceQuestion */
+	getMultipleChoiceQuestion: ModelTypes["MultipleChoiceQuestionEntity"],
+	/** Returns one MultipleChoiceQuestion by given conditions */
+	getMultipleChoiceQuestionBy: ModelTypes["MultipleChoiceQuestionEntity"],
 	/** Returns one Permission */
 	getPermission: ModelTypes["Permission"],
 	/** Returns one Permission by given conditions */
@@ -2516,6 +3530,10 @@ export type ModelTypes = {
 	getPermissionGroupBy: ModelTypes["PermissionGroup"],
 	getPermissionGroupsForRole: Array<ModelTypes["PermissionGroup"]>,
 	getPermissionsForGroup: Array<ModelTypes["Permission"]>,
+	/** Returns one Quiz */
+	getQuiz: ModelTypes["QuizEntity"],
+	/** Returns one Quiz by given conditions */
+	getQuizBy: ModelTypes["QuizEntity"],
 	/** Returns one Role */
 	getRole: ModelTypes["Role"],
 	/** Returns one Role by given conditions */
@@ -2525,10 +3543,26 @@ export type ModelTypes = {
 	getStudentProfile: ModelTypes["StudentProfileDto"],
 	/** Returns one StudentProfile by given conditions */
 	getStudentProfileBy: ModelTypes["StudentProfileDto"],
+	/** Returns one Style */
+	getStyle: ModelTypes["StyleEntity"],
+	/** Returns one Style by given conditions */
+	getStyleBy: ModelTypes["StyleEntity"],
+	/** Returns one StyleCollection */
+	getStyleCollection: ModelTypes["StyleCollectionEntity"],
+	/** Returns one StyleCollection by given conditions */
+	getStyleCollectionBy: ModelTypes["StyleCollectionEntity"],
+	/** Returns one StyleGroup */
+	getStyleGroup: ModelTypes["StyleGroupEntity"],
+	/** Returns one StyleGroup by given conditions */
+	getStyleGroupBy: ModelTypes["StyleGroupEntity"],
 	/** Returns one Subject */
 	getSubject: ModelTypes["SubjectEntity"],
 	/** Returns one Subject by given conditions */
 	getSubjectBy: ModelTypes["SubjectEntity"],
+	/** Returns one Theme */
+	getTheme: ModelTypes["ThemeEntity"],
+	/** Returns one Theme by given conditions */
+	getThemeBy: ModelTypes["ThemeEntity"],
 	/** Returns one Topic */
 	getTopic: ModelTypes["TopicEntity"],
 	/** Returns one Topic by given conditions */
@@ -2545,28 +3579,51 @@ export type ModelTypes = {
 	searchAssignmentSubmission: Array<ModelTypes["AssignmentSubmissionEntity"]>,
 	/** Search Class records by given columns */
 	searchClass: Array<ModelTypes["ClassEntity"]>,
+	/** Search ComponentVariant records by given columns */
+	searchComponentVariant: Array<ModelTypes["ComponentVariantEntity"]>,
 	/** Search EducatorProfile records by given columns */
 	searchEducatorProfile: Array<ModelTypes["EducatorProfileDto"]>,
 	/** Search KeyStage records by given columns */
 	searchKeyStage: Array<ModelTypes["KeyStageEntity"]>,
 	/** Search Lesson records by given columns */
 	searchLesson: Array<ModelTypes["LessonEntity"]>,
+	/** Search MultipleChoiceQuestion records by given columns */
+	searchMultipleChoiceQuestion: Array<ModelTypes["MultipleChoiceQuestionEntity"]>,
 	/** Search Permission records by given columns */
 	searchPermission: Array<ModelTypes["Permission"]>,
 	/** Search PermissionGroup records by given columns */
 	searchPermissionGroup: Array<ModelTypes["PermissionGroup"]>,
+	/** Search Quiz records by given columns */
+	searchQuiz: Array<ModelTypes["QuizEntity"]>,
 	/** Search Role records by given columns */
 	searchRole: Array<ModelTypes["Role"]>,
 	/** Search StudentProfile records by given columns */
 	searchStudentProfile: Array<ModelTypes["StudentProfileDto"]>,
+	/** Search Style records by given columns */
+	searchStyle: Array<ModelTypes["StyleEntity"]>,
+	/** Search StyleCollection records by given columns */
+	searchStyleCollection: Array<ModelTypes["StyleCollectionEntity"]>,
+	/** Search StyleGroup records by given columns */
+	searchStyleGroup: Array<ModelTypes["StyleGroupEntity"]>,
 	/** Search Subject records by given columns */
 	searchSubject: Array<ModelTypes["SubjectEntity"]>,
+	/** Search Theme records by given columns */
+	searchTheme: Array<ModelTypes["ThemeEntity"]>,
 	/** Search Topic records by given columns */
 	searchTopic: Array<ModelTypes["TopicEntity"]>,
 	searchUsers: Array<ModelTypes["User"]>,
 	/** Search YearGroup records by given columns */
 	searchYearGroup: Array<ModelTypes["YearGroupEntity"]>,
 	topicsByYearAndSubject: Array<ModelTypes["TopicEntity"]>
+};
+	["QuizEntity"]: {
+		createdAt: ModelTypes["DateTime"],
+	description?: string | undefined | null,
+	id: ModelTypes["ID"],
+	lesson: ModelTypes["LessonEntity"],
+	multipleChoiceQuestions?: Array<ModelTypes["MultipleChoiceQuestionEntity"]> | undefined | null,
+	title: string,
+	updatedAt: ModelTypes["DateTime"]
 };
 	["RelationIdsInput"]: {
 	ids: Array<ModelTypes["ID"]>,
@@ -2605,9 +3662,41 @@ export type ModelTypes = {
 	studentId: number,
 	updatedAt: ModelTypes["DateTime"]
 };
+	["StyleCollectionEntity"]: {
+		colorPalettes?: Array<ModelTypes["ColorPaletteEntity"]> | undefined | null,
+	createdAt: ModelTypes["DateTime"],
+	id: ModelTypes["ID"],
+	name: string,
+	styleGroups?: Array<ModelTypes["StyleGroupEntity"]> | undefined | null,
+	styles?: Array<ModelTypes["StyleEntity"]> | undefined | null,
+	updatedAt: ModelTypes["DateTime"]
+};
+	["StyleEntity"]: {
+		collection: ModelTypes["StyleCollectionEntity"],
+	collectionId: ModelTypes["ID"],
+	config: ModelTypes["JSONObject"],
+	createdAt: ModelTypes["DateTime"],
+	element: ModelTypes["PageElementType"],
+	group?: ModelTypes["StyleGroupEntity"] | undefined | null,
+	groupId?: ModelTypes["ID"] | undefined | null,
+	id: ModelTypes["ID"],
+	name: string,
+	updatedAt: ModelTypes["DateTime"]
+};
+	["StyleGroupEntity"]: {
+		collection: ModelTypes["StyleCollectionEntity"],
+	collectionId: ModelTypes["ID"],
+	createdAt: ModelTypes["DateTime"],
+	element: ModelTypes["PageElementType"],
+	id: ModelTypes["ID"],
+	name: string,
+	styles?: Array<ModelTypes["StyleEntity"]> | undefined | null,
+	updatedAt: ModelTypes["DateTime"]
+};
 	["SubjectEntity"]: {
 		createdAt: ModelTypes["DateTime"],
 	id: ModelTypes["ID"],
+	lessons?: Array<ModelTypes["LessonEntity"]> | undefined | null,
 	name: string,
 	topics?: Array<ModelTypes["TopicEntity"]> | undefined | null,
 	updatedAt: ModelTypes["DateTime"],
@@ -2616,6 +3705,20 @@ export type ModelTypes = {
 	["SubmitIdArrayByIdRequestDto"]: {
 	idArray: Array<number>,
 	recordId: number
+};
+	["ThemeEntity"]: {
+		componentVariants?: Array<ModelTypes["ComponentVariantEntity"]> | undefined | null,
+	createdAt: ModelTypes["DateTime"],
+	defaultPalette: ModelTypes["ColorPaletteEntity"],
+	defaultPaletteId: ModelTypes["ID"],
+	foundationTokens: ModelTypes["JSONObject"],
+	id: ModelTypes["ID"],
+	name: string,
+	semanticTokens: ModelTypes["JSONObject"],
+	styleCollection: ModelTypes["StyleCollectionEntity"],
+	styleCollectionId: ModelTypes["ID"],
+	updatedAt: ModelTypes["DateTime"],
+	version: number
 };
 	["TopicByYearSubjectInput"]: {
 	pagination?: ModelTypes["PaginationInput"] | undefined | null,
@@ -2637,8 +3740,9 @@ export type ModelTypes = {
 	description?: string | undefined | null,
 	dueDate?: ModelTypes["DateTime"] | undefined | null,
 	id: ModelTypes["ID"],
-	lessonId?: ModelTypes["ID"] | undefined | null,
-	title?: string | undefined | null
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
 };
 	["UpdateAssignmentSubmissionInput"]: {
 	assignmentId?: ModelTypes["ID"] | undefined | null,
@@ -2655,6 +3759,24 @@ export type ModelTypes = {
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
 };
+	["UpdateColorPaletteInput"]: {
+	collectionId?: ModelTypes["ID"] | undefined | null,
+	colors?: Array<string> | undefined | null,
+	id: ModelTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateComponentVariantInput"]: {
+	accessibleName?: string | undefined | null,
+	baseComponent?: string | undefined | null,
+	id: ModelTypes["ID"],
+	name?: string | undefined | null,
+	props?: ModelTypes["JSONObject"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	themeId?: ModelTypes["ID"] | undefined | null
+};
 	["UpdateEducatorProfileInput"]: {
 	id: number,
 	staffId?: number | undefined | null
@@ -2665,14 +3787,25 @@ export type ModelTypes = {
 	name?: string | undefined | null
 };
 	["UpdateLessonInput"]: {
-	content?: ModelTypes["JSONObject"] | undefined | null,
+	content?: Array<ModelTypes["LessonSlideInput"]> | undefined | null,
 	createdByEducatorId?: ModelTypes["ID"] | undefined | null,
 	description?: string | undefined | null,
 	id: ModelTypes["ID"],
 	recommendedYearGroupIds?: Array<ModelTypes["ID"]> | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	themeId?: ModelTypes["ID"] | undefined | null,
 	title?: string | undefined | null
+};
+	["UpdateMultipleChoiceQuestionInput"]: {
+	correctAnswer?: string | undefined | null,
+	id: ModelTypes["ID"],
+	lessonId?: ModelTypes["ID"] | undefined | null,
+	options?: Array<string> | undefined | null,
+	quizId?: ModelTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	text?: string | undefined | null
 };
 	["UpdatePermissionGroupInput"]: {
 	description?: string | undefined | null,
@@ -2684,6 +3817,14 @@ export type ModelTypes = {
 	id: number,
 	name?: string | undefined | null
 };
+	["UpdateQuizInput"]: {
+	description?: string | undefined | null,
+	id: ModelTypes["ID"],
+	lessonId?: ModelTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	title?: string | undefined | null
+};
 	["UpdateRoleInput"]: {
 	description?: string | undefined | null,
 	id: number,
@@ -2694,11 +3835,44 @@ export type ModelTypes = {
 	schoolYear?: number | undefined | null,
 	studentId?: number | undefined | null
 };
+	["UpdateStyleCollectionInput"]: {
+	id: ModelTypes["ID"],
+	name?: string | undefined | null
+};
+	["UpdateStyleGroupInput"]: {
+	collectionId?: ModelTypes["ID"] | undefined | null,
+	element?: ModelTypes["PageElementType"] | undefined | null,
+	id: ModelTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateStyleInput"]: {
+	collectionId?: ModelTypes["ID"] | undefined | null,
+	config?: ModelTypes["JSONObject"] | undefined | null,
+	element?: ModelTypes["PageElementType"] | undefined | null,
+	groupId?: ModelTypes["ID"] | undefined | null,
+	id: ModelTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
 	["UpdateSubjectInput"]: {
 	id: ModelTypes["ID"],
 	name?: string | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateThemeInput"]: {
+	defaultPaletteId?: ModelTypes["ID"] | undefined | null,
+	foundationTokens?: ModelTypes["JSONObject"] | undefined | null,
+	id: ModelTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<ModelTypes["RelationIdsInput"]> | undefined | null,
+	semanticTokens?: ModelTypes["JSONObject"] | undefined | null,
+	styleCollectionId?: ModelTypes["ID"] | undefined | null,
+	version?: number | undefined | null
 };
 	["UpdateTopicInput"]: {
 	id: ModelTypes["ID"],
@@ -2731,6 +3905,14 @@ export type ModelTypes = {
 	id: ModelTypes["ID"],
 	keyStageId?: ModelTypes["ID"] | undefined | null,
 	year?: ModelTypes["ValidYear"] | undefined | null
+};
+	["UpgradeLessonThemeInput"]: {
+	lessonId: ModelTypes["ID"],
+	version: number
+};
+	["UpgradeThemeVersionInput"]: {
+	id: ModelTypes["ID"],
+	version: number
 };
 	["User"]: {
 		addressLine1?: string | undefined | null,
@@ -2785,9 +3967,11 @@ export type GraphQLTypes = {
 	createdAt: GraphQLTypes["DateTime"],
 	description?: string | undefined | null,
 	dueDate?: GraphQLTypes["DateTime"] | undefined | null,
+	educators?: Array<GraphQLTypes["EducatorProfileDto"]> | undefined | null,
 	id: GraphQLTypes["ID"],
-	lesson: GraphQLTypes["LessonEntity"],
-	title: string,
+	lessons?: Array<GraphQLTypes["LessonEntity"]> | undefined | null,
+	name: string,
+	students?: Array<GraphQLTypes["StudentProfileDto"]> | undefined | null,
 	updatedAt: GraphQLTypes["DateTime"]
 };
 	["AssignmentSubmissionEntity"]: {
@@ -2825,12 +4009,35 @@ export type GraphQLTypes = {
 	updatedAt: GraphQLTypes["DateTime"],
 	yearGroup: GraphQLTypes["YearGroupEntity"]
 };
+	["ColorPaletteEntity"]: {
+	__typename: "ColorPaletteEntity",
+	collection: GraphQLTypes["StyleCollectionEntity"],
+	collectionId: GraphQLTypes["ID"],
+	colors: Array<string>,
+	createdAt: GraphQLTypes["DateTime"],
+	id: GraphQLTypes["ID"],
+	name: string,
+	updatedAt: GraphQLTypes["DateTime"]
+};
+	["ComponentVariantEntity"]: {
+	__typename: "ComponentVariantEntity",
+	accessibleName: string,
+	baseComponent: string,
+	createdAt: GraphQLTypes["DateTime"],
+	id: GraphQLTypes["ID"],
+	name: string,
+	props: GraphQLTypes["JSONObject"],
+	theme: GraphQLTypes["ThemeEntity"],
+	themeId: GraphQLTypes["ID"],
+	updatedAt: GraphQLTypes["DateTime"]
+};
 	["CreateAssignmentInput"]: {
 		classId: GraphQLTypes["ID"],
 	description?: string | undefined | null,
 	dueDate?: GraphQLTypes["DateTime"] | undefined | null,
-	lessonId: GraphQLTypes["ID"],
-	title: string
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
 };
 	["CreateAssignmentSubmissionInput"]: {
 		assignmentId: GraphQLTypes["ID"],
@@ -2845,6 +4052,22 @@ export type GraphQLTypes = {
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
 };
+	["CreateColorPaletteInput"]: {
+		collectionId: GraphQLTypes["ID"],
+	colors: Array<string>,
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateComponentVariantInput"]: {
+		accessibleName: string,
+	baseComponent: string,
+	name: string,
+	props: GraphQLTypes["JSONObject"],
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	themeId: GraphQLTypes["ID"]
+};
 	["CreateEducatorProfileInput"]: {
 		staffId: number
 };
@@ -2853,13 +4076,23 @@ export type GraphQLTypes = {
 	name: string
 };
 	["CreateLessonInput"]: {
-		content?: GraphQLTypes["JSONObject"] | undefined | null,
+		content?: Array<GraphQLTypes["LessonSlideInput"]> | undefined | null,
 	createdByEducatorId?: GraphQLTypes["ID"] | undefined | null,
 	description?: string | undefined | null,
 	recommendedYearGroupIds?: Array<GraphQLTypes["ID"] | undefined | null> | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	themeId: GraphQLTypes["ID"],
 	title: string
+};
+	["CreateMultipleChoiceQuestionInput"]: {
+		correctAnswer: string,
+	lessonId: GraphQLTypes["ID"],
+	options: Array<string>,
+	quizId?: GraphQLTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	text: string
 };
 	["CreatePermissionGroupInput"]: {
 		description: string,
@@ -2869,6 +4102,13 @@ export type GraphQLTypes = {
 		description?: string | undefined | null,
 	name: string
 };
+	["CreateQuizInput"]: {
+		description?: string | undefined | null,
+	lessonId: GraphQLTypes["ID"],
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	title: string
+};
 	["CreateRoleInput"]: {
 		description?: string | undefined | null,
 	name: string
@@ -2877,10 +4117,39 @@ export type GraphQLTypes = {
 		schoolYear: number,
 	studentId: number
 };
+	["CreateStyleCollectionInput"]: {
+		name: string
+};
+	["CreateStyleGroupInput"]: {
+		collectionId: GraphQLTypes["ID"],
+	element: GraphQLTypes["PageElementType"],
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateStyleInput"]: {
+		collectionId: GraphQLTypes["ID"],
+	config: GraphQLTypes["JSONObject"],
+	element: GraphQLTypes["PageElementType"],
+	groupId?: GraphQLTypes["ID"] | undefined | null,
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
 	["CreateSubjectInput"]: {
 		name: string,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
+	["CreateThemeInput"]: {
+		defaultPaletteId: GraphQLTypes["ID"],
+	foundationTokens: GraphQLTypes["JSONObject"],
+	name: string,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	semanticTokens: GraphQLTypes["JSONObject"],
+	styleCollectionId: GraphQLTypes["ID"],
+	version: number
 };
 	["CreateTopicInput"]: {
 		name: string,
@@ -2938,6 +4207,19 @@ export type GraphQLTypes = {
 	/** Exact value the column must equal */
 	value: string
 };
+	["FindAllColorPaletteInput"]: {
+		/** Set to true to return all records, ignoring pagination values */
+	all?: boolean | undefined | null,
+	collectionId?: GraphQLTypes["ID"] | undefined | null,
+	/** Column/value pairs to filter by (records must satisfy **all** filters) */
+	filters?: Array<GraphQLTypes["FilterInput"]> | undefined | null,
+	/** Maximum number of records to return */
+	limit?: number | undefined | null,
+	/** Number of records to skip */
+	offset?: number | undefined | null,
+	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+	relations?: Array<string> | undefined | null
+};
 	["FindAllInput"]: {
 		/** Set to true to return all records, ignoring pagination values */
 	all?: boolean | undefined | null,
@@ -2949,6 +4231,19 @@ export type GraphQLTypes = {
 	offset?: number | undefined | null,
 	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
 	relations?: Array<string> | undefined | null
+};
+	["FindAllThemeInput"]: {
+		/** Set to true to return all records, ignoring pagination values */
+	all?: boolean | undefined | null,
+	/** Column/value pairs to filter by (records must satisfy **all** filters) */
+	filters?: Array<GraphQLTypes["FilterInput"]> | undefined | null,
+	/** Maximum number of records to return */
+	limit?: number | undefined | null,
+	/** Number of records to skip */
+	offset?: number | undefined | null,
+	/** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+	relations?: Array<string> | undefined | null,
+	styleCollectionId?: GraphQLTypes["ID"] | undefined | null
 };
 	["FindOneByInput"]: {
 		column: string,
@@ -2976,18 +4271,77 @@ export type GraphQLTypes = {
 	updatedAt: GraphQLTypes["DateTime"],
 	yearGroups: Array<GraphQLTypes["YearGroupEntity"]>
 };
+	["LessonColumn"]: {
+	__typename: "LessonColumn",
+	items: Array<GraphQLTypes["LessonElement"]>
+};
+	["LessonColumnInput"]: {
+		columnId: string,
+	items: Array<GraphQLTypes["LessonElementInput"]>,
+	spacing?: number | undefined | null,
+	title?: string | undefined | null,
+	wrapperStyles?: GraphQLTypes["JSONObject"] | undefined | null
+};
+	["LessonElement"]: {
+	__typename: "LessonElement",
+	animation?: GraphQLTypes["JSONObject"] | undefined | null,
+	description?: string | undefined | null,
+	id: string,
+	questions?: GraphQLTypes["JSONObject"] | undefined | null,
+	src?: string | undefined | null,
+	styleId?: GraphQLTypes["ID"] | undefined | null,
+	styleOverrides?: GraphQLTypes["JSONObject"] | undefined | null,
+	table?: GraphQLTypes["JSONObject"] | undefined | null,
+	text?: string | undefined | null,
+	title?: string | undefined | null,
+	type: GraphQLTypes["PageElementType"],
+	url?: string | undefined | null,
+	variantId?: GraphQLTypes["ID"] | undefined | null,
+	wrapperStyles?: GraphQLTypes["JSONObject"] | undefined | null
+};
+	["LessonElementInput"]: {
+		animation?: GraphQLTypes["JSONObject"] | undefined | null,
+	description?: string | undefined | null,
+	id: string,
+	questions?: GraphQLTypes["JSONObject"] | undefined | null,
+	src?: string | undefined | null,
+	styleId?: GraphQLTypes["ID"] | undefined | null,
+	styleOverrides?: GraphQLTypes["JSONObject"] | undefined | null,
+	table?: GraphQLTypes["JSONObject"] | undefined | null,
+	text?: string | undefined | null,
+	title?: string | undefined | null,
+	type: GraphQLTypes["PageElementType"],
+	url?: string | undefined | null,
+	variantId?: GraphQLTypes["ID"] | undefined | null,
+	wrapperStyles?: GraphQLTypes["JSONObject"] | undefined | null
+};
 	["LessonEntity"]: {
 	__typename: "LessonEntity",
-	content?: GraphQLTypes["JSONObject"] | undefined | null,
+	content?: Array<GraphQLTypes["LessonSlide"]> | undefined | null,
 	createdAt: GraphQLTypes["DateTime"],
 	createdBy?: GraphQLTypes["EducatorProfileDto"] | undefined | null,
 	createdById?: GraphQLTypes["ID"] | undefined | null,
 	description?: string | undefined | null,
 	id: GraphQLTypes["ID"],
+	lastThemeUpgrade?: GraphQLTypes["DateTime"] | undefined | null,
+	multipleChoiceQuestions?: Array<GraphQLTypes["MultipleChoiceQuestionEntity"]> | undefined | null,
+	quizzes?: Array<GraphQLTypes["QuizEntity"]> | undefined | null,
 	recommendedYearGroups?: Array<GraphQLTypes["YearGroupEntity"]> | undefined | null,
+	subject: GraphQLTypes["SubjectEntity"],
+	theme: GraphQLTypes["ThemeEntity"],
+	themeId: GraphQLTypes["ID"],
 	title: string,
 	topic: GraphQLTypes["TopicEntity"],
 	updatedAt: GraphQLTypes["DateTime"]
+};
+	["LessonSlide"]: {
+	__typename: "LessonSlide",
+	columns: Array<GraphQLTypes["LessonColumn"]>
+};
+	["LessonSlideInput"]: {
+		columns: Array<GraphQLTypes["LessonColumnInput"]>,
+	id: string,
+	title: string
 };
 	["LoginRequest"]: {
 		email: string,
@@ -2999,6 +4353,17 @@ export type GraphQLTypes = {
 	refreshToken: string,
 	userDetails: GraphQLTypes["UserDetails"]
 };
+	["MultipleChoiceQuestionEntity"]: {
+	__typename: "MultipleChoiceQuestionEntity",
+	correctAnswer: string,
+	createdAt: GraphQLTypes["DateTime"],
+	id: GraphQLTypes["ID"],
+	lesson: GraphQLTypes["LessonEntity"],
+	options: Array<string>,
+	quiz?: GraphQLTypes["QuizEntity"] | undefined | null,
+	text: string,
+	updatedAt: GraphQLTypes["DateTime"]
+};
 	["Mutation"]: {
 	__typename: "Mutation",
 	/** Create one Assignment */
@@ -3007,22 +4372,38 @@ export type GraphQLTypes = {
 	createAssignmentSubmission: GraphQLTypes["AssignmentSubmissionEntity"],
 	/** Create one Class */
 	createClass: GraphQLTypes["ClassEntity"],
+	/** Create one ColorPalette */
+	createColorPalette: GraphQLTypes["ColorPaletteEntity"],
+	/** Create one ComponentVariant */
+	createComponentVariant: GraphQLTypes["ComponentVariantEntity"],
 	/** Create one EducatorProfile */
 	createEducatorProfile: GraphQLTypes["EducatorProfileDto"],
 	/** Create one KeyStage */
 	createKeyStage: GraphQLTypes["KeyStageEntity"],
 	/** Create one Lesson */
 	createLesson: GraphQLTypes["LessonEntity"],
+	/** Create one MultipleChoiceQuestion */
+	createMultipleChoiceQuestion: GraphQLTypes["MultipleChoiceQuestionEntity"],
 	/** Create one Permission */
 	createPermission: GraphQLTypes["Permission"],
 	/** Create one PermissionGroup */
 	createPermissionGroup: GraphQLTypes["PermissionGroup"],
+	/** Create one Quiz */
+	createQuiz: GraphQLTypes["QuizEntity"],
 	/** Create one Role */
 	createRole: GraphQLTypes["Role"],
 	/** Create one StudentProfile */
 	createStudentProfile: GraphQLTypes["StudentProfileDto"],
+	/** Create one Style */
+	createStyle: GraphQLTypes["StyleEntity"],
+	/** Create one StyleCollection */
+	createStyleCollection: GraphQLTypes["StyleCollectionEntity"],
+	/** Create one StyleGroup */
+	createStyleGroup: GraphQLTypes["StyleGroupEntity"],
 	/** Create one Subject */
 	createSubject: GraphQLTypes["SubjectEntity"],
+	/** Create one Theme */
+	createTheme: GraphQLTypes["ThemeEntity"],
 	/** Create one Topic */
 	createTopic: GraphQLTypes["TopicEntity"],
 	createUser: GraphQLTypes["User"],
@@ -3035,22 +4416,38 @@ export type GraphQLTypes = {
 	deleteAssignmentSubmission: boolean,
 	/** Delete one Class */
 	deleteClass: boolean,
+	/** Delete one ColorPalette */
+	deleteColorPalette: boolean,
+	/** Delete one ComponentVariant */
+	deleteComponentVariant: boolean,
 	/** Delete one EducatorProfile */
 	deleteEducatorProfile: boolean,
 	/** Delete one KeyStage */
 	deleteKeyStage: boolean,
 	/** Delete one Lesson */
 	deleteLesson: boolean,
+	/** Delete one MultipleChoiceQuestion */
+	deleteMultipleChoiceQuestion: boolean,
 	/** Delete one Permission */
 	deletePermission: boolean,
 	/** Delete one PermissionGroup */
 	deletePermissionGroup: boolean,
+	/** Delete one Quiz */
+	deleteQuiz: boolean,
 	/** Delete one Role */
 	deleteRole: boolean,
 	/** Delete one StudentProfile */
 	deleteStudentProfile: boolean,
+	/** Delete one Style */
+	deleteStyle: boolean,
+	/** Delete one StyleCollection */
+	deleteStyleCollection: boolean,
+	/** Delete one StyleGroup */
+	deleteStyleGroup: boolean,
 	/** Delete one Subject */
 	deleteSubject: boolean,
+	/** Delete one Theme */
+	deleteTheme: boolean,
 	/** Delete one Topic */
 	deleteTopic: boolean,
 	/** Delete one YearGroup */
@@ -3065,31 +4462,52 @@ export type GraphQLTypes = {
 	updateAssignmentSubmission: GraphQLTypes["AssignmentSubmissionEntity"],
 	/** Updates one Class */
 	updateClass: GraphQLTypes["ClassEntity"],
+	/** Updates one ColorPalette */
+	updateColorPalette: GraphQLTypes["ColorPaletteEntity"],
+	/** Updates one ComponentVariant */
+	updateComponentVariant: GraphQLTypes["ComponentVariantEntity"],
 	/** Updates one EducatorProfile */
 	updateEducatorProfile: GraphQLTypes["EducatorProfileDto"],
 	/** Updates one KeyStage */
 	updateKeyStage: GraphQLTypes["KeyStageEntity"],
 	/** Updates one Lesson */
 	updateLesson: GraphQLTypes["LessonEntity"],
+	/** Updates one MultipleChoiceQuestion */
+	updateMultipleChoiceQuestion: GraphQLTypes["MultipleChoiceQuestionEntity"],
 	/** Updates one Permission */
 	updatePermission: GraphQLTypes["Permission"],
 	/** Updates one PermissionGroup */
 	updatePermissionGroup: GraphQLTypes["PermissionGroup"],
 	updatePermissionGroupPermissionsFromArray: GraphQLTypes["PermissionGroup"],
 	updatePermissionGroupsForRole: GraphQLTypes["Role"],
+	/** Updates one Quiz */
+	updateQuiz: GraphQLTypes["QuizEntity"],
 	/** Updates one Role */
 	updateRole: GraphQLTypes["Role"],
 	/** Updates one StudentProfile */
 	updateStudentProfile: GraphQLTypes["StudentProfileDto"],
+	/** Updates one Style */
+	updateStyle: GraphQLTypes["StyleEntity"],
+	/** Updates one StyleCollection */
+	updateStyleCollection: GraphQLTypes["StyleCollectionEntity"],
+	/** Updates one StyleGroup */
+	updateStyleGroup: GraphQLTypes["StyleGroupEntity"],
 	/** Updates one Subject */
 	updateSubject: GraphQLTypes["SubjectEntity"],
+	/** Updates one Theme */
+	updateTheme: GraphQLTypes["ThemeEntity"],
 	/** Updates one Topic */
 	updateTopic: GraphQLTypes["TopicEntity"],
 	updateUserByPublicId: GraphQLTypes["User"],
 	updateUserRolesFromArray: GraphQLTypes["User"],
 	/** Updates one YearGroup */
-	updateYearGroup: GraphQLTypes["YearGroupEntity"]
+	updateYearGroup: GraphQLTypes["YearGroupEntity"],
+	/** Upgrade the lesson's theme version */
+	upgradeLessonTheme: GraphQLTypes["LessonEntity"],
+	/** Upgrade a theme to a specific version */
+	upgradeThemeVersion: GraphQLTypes["ThemeEntity"]
 };
+	["PageElementType"]: PageElementType;
 	["PageInfo"]: {
 	__typename: "PageInfo",
 	hasNextPage: boolean,
@@ -3146,22 +4564,38 @@ export type GraphQLTypes = {
 	getAllAssignmentSubmission: Array<GraphQLTypes["AssignmentSubmissionEntity"]>,
 	/** Returns all Class (optionally filtered) */
 	getAllClass: Array<GraphQLTypes["ClassEntity"]>,
+	/** Returns all ColorPalette (optionally filtered) */
+	getAllColorPalette: Array<GraphQLTypes["ColorPaletteEntity"]>,
+	/** Returns all ComponentVariant (optionally filtered) */
+	getAllComponentVariant: Array<GraphQLTypes["ComponentVariantEntity"]>,
 	/** Returns all EducatorProfile (optionally filtered) */
 	getAllEducatorProfile: Array<GraphQLTypes["EducatorProfileDto"]>,
 	/** Returns all KeyStage (optionally filtered) */
 	getAllKeyStage: Array<GraphQLTypes["KeyStageEntity"]>,
 	/** Returns all Lesson (optionally filtered) */
 	getAllLesson: Array<GraphQLTypes["LessonEntity"]>,
+	/** Returns all MultipleChoiceQuestion (optionally filtered) */
+	getAllMultipleChoiceQuestion: Array<GraphQLTypes["MultipleChoiceQuestionEntity"]>,
 	/** Returns all Permission (optionally filtered) */
 	getAllPermission: Array<GraphQLTypes["Permission"]>,
 	/** Returns all PermissionGroup (optionally filtered) */
 	getAllPermissionGroup: Array<GraphQLTypes["PermissionGroup"]>,
+	/** Returns all Quiz (optionally filtered) */
+	getAllQuiz: Array<GraphQLTypes["QuizEntity"]>,
 	/** Returns all Role (optionally filtered) */
 	getAllRole: Array<GraphQLTypes["Role"]>,
 	/** Returns all StudentProfile (optionally filtered) */
 	getAllStudentProfile: Array<GraphQLTypes["StudentProfileDto"]>,
+	/** Returns all Style (optionally filtered) */
+	getAllStyle: Array<GraphQLTypes["StyleEntity"]>,
+	/** Returns all StyleCollection (optionally filtered) */
+	getAllStyleCollection: Array<GraphQLTypes["StyleCollectionEntity"]>,
+	/** Returns all StyleGroup (optionally filtered) */
+	getAllStyleGroup: Array<GraphQLTypes["StyleGroupEntity"]>,
 	/** Returns all Subject (optionally filtered) */
 	getAllSubject: Array<GraphQLTypes["SubjectEntity"]>,
+	/** Returns all Theme (optionally filtered) */
+	getAllTheme: Array<GraphQLTypes["ThemeEntity"]>,
 	/** Returns all Topic (optionally filtered) */
 	getAllTopic: Array<GraphQLTypes["TopicEntity"]>,
 	getAllUsers: Array<GraphQLTypes["User"]>,
@@ -3179,6 +4613,12 @@ export type GraphQLTypes = {
 	getClass: GraphQLTypes["ClassEntity"],
 	/** Returns one Class by given conditions */
 	getClassBy: GraphQLTypes["ClassEntity"],
+	/** Returns one ColorPalette */
+	getColorPalette: GraphQLTypes["ColorPaletteEntity"],
+	/** Returns one ComponentVariant */
+	getComponentVariant: GraphQLTypes["ComponentVariantEntity"],
+	/** Returns one ComponentVariant by given conditions */
+	getComponentVariantBy: GraphQLTypes["ComponentVariantEntity"],
 	/** Returns one EducatorProfile */
 	getEducatorProfile: GraphQLTypes["EducatorProfileDto"],
 	/** Returns one EducatorProfile by given conditions */
@@ -3191,6 +4631,10 @@ export type GraphQLTypes = {
 	getLesson: GraphQLTypes["LessonEntity"],
 	/** Returns one Lesson by given conditions */
 	getLessonBy: GraphQLTypes["LessonEntity"],
+	/** Returns one MultipleChoiceQuestion */
+	getMultipleChoiceQuestion: GraphQLTypes["MultipleChoiceQuestionEntity"],
+	/** Returns one MultipleChoiceQuestion by given conditions */
+	getMultipleChoiceQuestionBy: GraphQLTypes["MultipleChoiceQuestionEntity"],
 	/** Returns one Permission */
 	getPermission: GraphQLTypes["Permission"],
 	/** Returns one Permission by given conditions */
@@ -3201,6 +4645,10 @@ export type GraphQLTypes = {
 	getPermissionGroupBy: GraphQLTypes["PermissionGroup"],
 	getPermissionGroupsForRole: Array<GraphQLTypes["PermissionGroup"]>,
 	getPermissionsForGroup: Array<GraphQLTypes["Permission"]>,
+	/** Returns one Quiz */
+	getQuiz: GraphQLTypes["QuizEntity"],
+	/** Returns one Quiz by given conditions */
+	getQuizBy: GraphQLTypes["QuizEntity"],
 	/** Returns one Role */
 	getRole: GraphQLTypes["Role"],
 	/** Returns one Role by given conditions */
@@ -3210,10 +4658,26 @@ export type GraphQLTypes = {
 	getStudentProfile: GraphQLTypes["StudentProfileDto"],
 	/** Returns one StudentProfile by given conditions */
 	getStudentProfileBy: GraphQLTypes["StudentProfileDto"],
+	/** Returns one Style */
+	getStyle: GraphQLTypes["StyleEntity"],
+	/** Returns one Style by given conditions */
+	getStyleBy: GraphQLTypes["StyleEntity"],
+	/** Returns one StyleCollection */
+	getStyleCollection: GraphQLTypes["StyleCollectionEntity"],
+	/** Returns one StyleCollection by given conditions */
+	getStyleCollectionBy: GraphQLTypes["StyleCollectionEntity"],
+	/** Returns one StyleGroup */
+	getStyleGroup: GraphQLTypes["StyleGroupEntity"],
+	/** Returns one StyleGroup by given conditions */
+	getStyleGroupBy: GraphQLTypes["StyleGroupEntity"],
 	/** Returns one Subject */
 	getSubject: GraphQLTypes["SubjectEntity"],
 	/** Returns one Subject by given conditions */
 	getSubjectBy: GraphQLTypes["SubjectEntity"],
+	/** Returns one Theme */
+	getTheme: GraphQLTypes["ThemeEntity"],
+	/** Returns one Theme by given conditions */
+	getThemeBy: GraphQLTypes["ThemeEntity"],
 	/** Returns one Topic */
 	getTopic: GraphQLTypes["TopicEntity"],
 	/** Returns one Topic by given conditions */
@@ -3230,28 +4694,52 @@ export type GraphQLTypes = {
 	searchAssignmentSubmission: Array<GraphQLTypes["AssignmentSubmissionEntity"]>,
 	/** Search Class records by given columns */
 	searchClass: Array<GraphQLTypes["ClassEntity"]>,
+	/** Search ComponentVariant records by given columns */
+	searchComponentVariant: Array<GraphQLTypes["ComponentVariantEntity"]>,
 	/** Search EducatorProfile records by given columns */
 	searchEducatorProfile: Array<GraphQLTypes["EducatorProfileDto"]>,
 	/** Search KeyStage records by given columns */
 	searchKeyStage: Array<GraphQLTypes["KeyStageEntity"]>,
 	/** Search Lesson records by given columns */
 	searchLesson: Array<GraphQLTypes["LessonEntity"]>,
+	/** Search MultipleChoiceQuestion records by given columns */
+	searchMultipleChoiceQuestion: Array<GraphQLTypes["MultipleChoiceQuestionEntity"]>,
 	/** Search Permission records by given columns */
 	searchPermission: Array<GraphQLTypes["Permission"]>,
 	/** Search PermissionGroup records by given columns */
 	searchPermissionGroup: Array<GraphQLTypes["PermissionGroup"]>,
+	/** Search Quiz records by given columns */
+	searchQuiz: Array<GraphQLTypes["QuizEntity"]>,
 	/** Search Role records by given columns */
 	searchRole: Array<GraphQLTypes["Role"]>,
 	/** Search StudentProfile records by given columns */
 	searchStudentProfile: Array<GraphQLTypes["StudentProfileDto"]>,
+	/** Search Style records by given columns */
+	searchStyle: Array<GraphQLTypes["StyleEntity"]>,
+	/** Search StyleCollection records by given columns */
+	searchStyleCollection: Array<GraphQLTypes["StyleCollectionEntity"]>,
+	/** Search StyleGroup records by given columns */
+	searchStyleGroup: Array<GraphQLTypes["StyleGroupEntity"]>,
 	/** Search Subject records by given columns */
 	searchSubject: Array<GraphQLTypes["SubjectEntity"]>,
+	/** Search Theme records by given columns */
+	searchTheme: Array<GraphQLTypes["ThemeEntity"]>,
 	/** Search Topic records by given columns */
 	searchTopic: Array<GraphQLTypes["TopicEntity"]>,
 	searchUsers: Array<GraphQLTypes["User"]>,
 	/** Search YearGroup records by given columns */
 	searchYearGroup: Array<GraphQLTypes["YearGroupEntity"]>,
 	topicsByYearAndSubject: Array<GraphQLTypes["TopicEntity"]>
+};
+	["QuizEntity"]: {
+	__typename: "QuizEntity",
+	createdAt: GraphQLTypes["DateTime"],
+	description?: string | undefined | null,
+	id: GraphQLTypes["ID"],
+	lesson: GraphQLTypes["LessonEntity"],
+	multipleChoiceQuestions?: Array<GraphQLTypes["MultipleChoiceQuestionEntity"]> | undefined | null,
+	title: string,
+	updatedAt: GraphQLTypes["DateTime"]
 };
 	["RelationIdsInput"]: {
 		ids: Array<GraphQLTypes["ID"]>,
@@ -3294,10 +4782,45 @@ export type GraphQLTypes = {
 	studentId: number,
 	updatedAt: GraphQLTypes["DateTime"]
 };
+	["StyleCollectionEntity"]: {
+	__typename: "StyleCollectionEntity",
+	colorPalettes?: Array<GraphQLTypes["ColorPaletteEntity"]> | undefined | null,
+	createdAt: GraphQLTypes["DateTime"],
+	id: GraphQLTypes["ID"],
+	name: string,
+	styleGroups?: Array<GraphQLTypes["StyleGroupEntity"]> | undefined | null,
+	styles?: Array<GraphQLTypes["StyleEntity"]> | undefined | null,
+	updatedAt: GraphQLTypes["DateTime"]
+};
+	["StyleEntity"]: {
+	__typename: "StyleEntity",
+	collection: GraphQLTypes["StyleCollectionEntity"],
+	collectionId: GraphQLTypes["ID"],
+	config: GraphQLTypes["JSONObject"],
+	createdAt: GraphQLTypes["DateTime"],
+	element: GraphQLTypes["PageElementType"],
+	group?: GraphQLTypes["StyleGroupEntity"] | undefined | null,
+	groupId?: GraphQLTypes["ID"] | undefined | null,
+	id: GraphQLTypes["ID"],
+	name: string,
+	updatedAt: GraphQLTypes["DateTime"]
+};
+	["StyleGroupEntity"]: {
+	__typename: "StyleGroupEntity",
+	collection: GraphQLTypes["StyleCollectionEntity"],
+	collectionId: GraphQLTypes["ID"],
+	createdAt: GraphQLTypes["DateTime"],
+	element: GraphQLTypes["PageElementType"],
+	id: GraphQLTypes["ID"],
+	name: string,
+	styles?: Array<GraphQLTypes["StyleEntity"]> | undefined | null,
+	updatedAt: GraphQLTypes["DateTime"]
+};
 	["SubjectEntity"]: {
 	__typename: "SubjectEntity",
 	createdAt: GraphQLTypes["DateTime"],
 	id: GraphQLTypes["ID"],
+	lessons?: Array<GraphQLTypes["LessonEntity"]> | undefined | null,
 	name: string,
 	topics?: Array<GraphQLTypes["TopicEntity"]> | undefined | null,
 	updatedAt: GraphQLTypes["DateTime"],
@@ -3306,6 +4829,21 @@ export type GraphQLTypes = {
 	["SubmitIdArrayByIdRequestDto"]: {
 		idArray: Array<number>,
 	recordId: number
+};
+	["ThemeEntity"]: {
+	__typename: "ThemeEntity",
+	componentVariants?: Array<GraphQLTypes["ComponentVariantEntity"]> | undefined | null,
+	createdAt: GraphQLTypes["DateTime"],
+	defaultPalette: GraphQLTypes["ColorPaletteEntity"],
+	defaultPaletteId: GraphQLTypes["ID"],
+	foundationTokens: GraphQLTypes["JSONObject"],
+	id: GraphQLTypes["ID"],
+	name: string,
+	semanticTokens: GraphQLTypes["JSONObject"],
+	styleCollection: GraphQLTypes["StyleCollectionEntity"],
+	styleCollectionId: GraphQLTypes["ID"],
+	updatedAt: GraphQLTypes["DateTime"],
+	version: number
 };
 	["TopicByYearSubjectInput"]: {
 		pagination?: GraphQLTypes["PaginationInput"] | undefined | null,
@@ -3328,8 +4866,9 @@ export type GraphQLTypes = {
 	description?: string | undefined | null,
 	dueDate?: GraphQLTypes["DateTime"] | undefined | null,
 	id: GraphQLTypes["ID"],
-	lessonId?: GraphQLTypes["ID"] | undefined | null,
-	title?: string | undefined | null
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
 };
 	["UpdateAssignmentSubmissionInput"]: {
 		assignmentId?: GraphQLTypes["ID"] | undefined | null,
@@ -3346,6 +4885,24 @@ export type GraphQLTypes = {
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
 };
+	["UpdateColorPaletteInput"]: {
+		collectionId?: GraphQLTypes["ID"] | undefined | null,
+	colors?: Array<string> | undefined | null,
+	id: GraphQLTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateComponentVariantInput"]: {
+		accessibleName?: string | undefined | null,
+	baseComponent?: string | undefined | null,
+	id: GraphQLTypes["ID"],
+	name?: string | undefined | null,
+	props?: GraphQLTypes["JSONObject"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	themeId?: GraphQLTypes["ID"] | undefined | null
+};
 	["UpdateEducatorProfileInput"]: {
 		id: number,
 	staffId?: number | undefined | null
@@ -3356,14 +4913,25 @@ export type GraphQLTypes = {
 	name?: string | undefined | null
 };
 	["UpdateLessonInput"]: {
-		content?: GraphQLTypes["JSONObject"] | undefined | null,
+		content?: Array<GraphQLTypes["LessonSlideInput"]> | undefined | null,
 	createdByEducatorId?: GraphQLTypes["ID"] | undefined | null,
 	description?: string | undefined | null,
 	id: GraphQLTypes["ID"],
 	recommendedYearGroupIds?: Array<GraphQLTypes["ID"]> | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	themeId?: GraphQLTypes["ID"] | undefined | null,
 	title?: string | undefined | null
+};
+	["UpdateMultipleChoiceQuestionInput"]: {
+		correctAnswer?: string | undefined | null,
+	id: GraphQLTypes["ID"],
+	lessonId?: GraphQLTypes["ID"] | undefined | null,
+	options?: Array<string> | undefined | null,
+	quizId?: GraphQLTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	text?: string | undefined | null
 };
 	["UpdatePermissionGroupInput"]: {
 		description?: string | undefined | null,
@@ -3375,6 +4943,14 @@ export type GraphQLTypes = {
 	id: number,
 	name?: string | undefined | null
 };
+	["UpdateQuizInput"]: {
+		description?: string | undefined | null,
+	id: GraphQLTypes["ID"],
+	lessonId?: GraphQLTypes["ID"] | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	title?: string | undefined | null
+};
 	["UpdateRoleInput"]: {
 		description?: string | undefined | null,
 	id: number,
@@ -3385,11 +4961,44 @@ export type GraphQLTypes = {
 	schoolYear?: number | undefined | null,
 	studentId?: number | undefined | null
 };
+	["UpdateStyleCollectionInput"]: {
+		id: GraphQLTypes["ID"],
+	name?: string | undefined | null
+};
+	["UpdateStyleGroupInput"]: {
+		collectionId?: GraphQLTypes["ID"] | undefined | null,
+	element?: GraphQLTypes["PageElementType"] | undefined | null,
+	id: GraphQLTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateStyleInput"]: {
+		collectionId?: GraphQLTypes["ID"] | undefined | null,
+	config?: GraphQLTypes["JSONObject"] | undefined | null,
+	element?: GraphQLTypes["PageElementType"] | undefined | null,
+	groupId?: GraphQLTypes["ID"] | undefined | null,
+	id: GraphQLTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
 	["UpdateSubjectInput"]: {
 		id: GraphQLTypes["ID"],
 	name?: string | undefined | null,
 	/** Generic hook for attaching any relations by IDs */
 	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null
+};
+	["UpdateThemeInput"]: {
+		defaultPaletteId?: GraphQLTypes["ID"] | undefined | null,
+	foundationTokens?: GraphQLTypes["JSONObject"] | undefined | null,
+	id: GraphQLTypes["ID"],
+	name?: string | undefined | null,
+	/** Generic hook for attaching any relations by IDs */
+	relationIds?: Array<GraphQLTypes["RelationIdsInput"]> | undefined | null,
+	semanticTokens?: GraphQLTypes["JSONObject"] | undefined | null,
+	styleCollectionId?: GraphQLTypes["ID"] | undefined | null,
+	version?: number | undefined | null
 };
 	["UpdateTopicInput"]: {
 		id: GraphQLTypes["ID"],
@@ -3422,6 +5031,14 @@ export type GraphQLTypes = {
 		id: GraphQLTypes["ID"],
 	keyStageId?: GraphQLTypes["ID"] | undefined | null,
 	year?: GraphQLTypes["ValidYear"] | undefined | null
+};
+	["UpgradeLessonThemeInput"]: {
+		lessonId: GraphQLTypes["ID"],
+	version: number
+};
+	["UpgradeThemeVersionInput"]: {
+		id: GraphQLTypes["ID"],
+	version: number
 };
 	["User"]: {
 	__typename: "User",
@@ -3468,6 +5085,13 @@ export type GraphQLTypes = {
 };
 	["ID"]: "scalar" & { name: "ID" }
     }
+export enum PageElementType {
+	Image = "Image",
+	Quiz = "Quiz",
+	Table = "Table",
+	Text = "Text",
+	Video = "Video"
+}
 /** National Curriculum Key Stage (3, 4 or 5) */
 export enum ValidKeyStage {
 	KS3 = "KS3",
@@ -3489,26 +5113,40 @@ type ZEUS_VARIABLES = {
 	["CreateAssignmentInput"]: ValueTypes["CreateAssignmentInput"];
 	["CreateAssignmentSubmissionInput"]: ValueTypes["CreateAssignmentSubmissionInput"];
 	["CreateClassInput"]: ValueTypes["CreateClassInput"];
+	["CreateColorPaletteInput"]: ValueTypes["CreateColorPaletteInput"];
+	["CreateComponentVariantInput"]: ValueTypes["CreateComponentVariantInput"];
 	["CreateEducatorProfileInput"]: ValueTypes["CreateEducatorProfileInput"];
 	["CreateKeyStageInput"]: ValueTypes["CreateKeyStageInput"];
 	["CreateLessonInput"]: ValueTypes["CreateLessonInput"];
+	["CreateMultipleChoiceQuestionInput"]: ValueTypes["CreateMultipleChoiceQuestionInput"];
 	["CreatePermissionGroupInput"]: ValueTypes["CreatePermissionGroupInput"];
 	["CreatePermissionInput"]: ValueTypes["CreatePermissionInput"];
+	["CreateQuizInput"]: ValueTypes["CreateQuizInput"];
 	["CreateRoleInput"]: ValueTypes["CreateRoleInput"];
 	["CreateStudentProfileInput"]: ValueTypes["CreateStudentProfileInput"];
+	["CreateStyleCollectionInput"]: ValueTypes["CreateStyleCollectionInput"];
+	["CreateStyleGroupInput"]: ValueTypes["CreateStyleGroupInput"];
+	["CreateStyleInput"]: ValueTypes["CreateStyleInput"];
 	["CreateSubjectInput"]: ValueTypes["CreateSubjectInput"];
+	["CreateThemeInput"]: ValueTypes["CreateThemeInput"];
 	["CreateTopicInput"]: ValueTypes["CreateTopicInput"];
 	["CreateUserRequestDto"]: ValueTypes["CreateUserRequestDto"];
 	["CreateUserWithProfileInput"]: ValueTypes["CreateUserWithProfileInput"];
 	["CreateYearGroupInput"]: ValueTypes["CreateYearGroupInput"];
 	["DateTime"]: ValueTypes["DateTime"];
 	["FilterInput"]: ValueTypes["FilterInput"];
+	["FindAllColorPaletteInput"]: ValueTypes["FindAllColorPaletteInput"];
 	["FindAllInput"]: ValueTypes["FindAllInput"];
+	["FindAllThemeInput"]: ValueTypes["FindAllThemeInput"];
 	["FindOneByInput"]: ValueTypes["FindOneByInput"];
 	["IdInput"]: ValueTypes["IdInput"];
 	["IdRequestDto"]: ValueTypes["IdRequestDto"];
 	["JSONObject"]: ValueTypes["JSONObject"];
+	["LessonColumnInput"]: ValueTypes["LessonColumnInput"];
+	["LessonElementInput"]: ValueTypes["LessonElementInput"];
+	["LessonSlideInput"]: ValueTypes["LessonSlideInput"];
 	["LoginRequest"]: ValueTypes["LoginRequest"];
+	["PageElementType"]: ValueTypes["PageElementType"];
 	["PaginatedGetAllRequestDto"]: ValueTypes["PaginatedGetAllRequestDto"];
 	["PaginationInput"]: ValueTypes["PaginationInput"];
 	["PublicIdRequestDto"]: ValueTypes["PublicIdRequestDto"];
@@ -3519,18 +5157,28 @@ type ZEUS_VARIABLES = {
 	["UpdateAssignmentInput"]: ValueTypes["UpdateAssignmentInput"];
 	["UpdateAssignmentSubmissionInput"]: ValueTypes["UpdateAssignmentSubmissionInput"];
 	["UpdateClassInput"]: ValueTypes["UpdateClassInput"];
+	["UpdateColorPaletteInput"]: ValueTypes["UpdateColorPaletteInput"];
+	["UpdateComponentVariantInput"]: ValueTypes["UpdateComponentVariantInput"];
 	["UpdateEducatorProfileInput"]: ValueTypes["UpdateEducatorProfileInput"];
 	["UpdateKeyStageInput"]: ValueTypes["UpdateKeyStageInput"];
 	["UpdateLessonInput"]: ValueTypes["UpdateLessonInput"];
+	["UpdateMultipleChoiceQuestionInput"]: ValueTypes["UpdateMultipleChoiceQuestionInput"];
 	["UpdatePermissionGroupInput"]: ValueTypes["UpdatePermissionGroupInput"];
 	["UpdatePermissionInput"]: ValueTypes["UpdatePermissionInput"];
+	["UpdateQuizInput"]: ValueTypes["UpdateQuizInput"];
 	["UpdateRoleInput"]: ValueTypes["UpdateRoleInput"];
 	["UpdateStudentProfileInput"]: ValueTypes["UpdateStudentProfileInput"];
+	["UpdateStyleCollectionInput"]: ValueTypes["UpdateStyleCollectionInput"];
+	["UpdateStyleGroupInput"]: ValueTypes["UpdateStyleGroupInput"];
+	["UpdateStyleInput"]: ValueTypes["UpdateStyleInput"];
 	["UpdateSubjectInput"]: ValueTypes["UpdateSubjectInput"];
+	["UpdateThemeInput"]: ValueTypes["UpdateThemeInput"];
 	["UpdateTopicInput"]: ValueTypes["UpdateTopicInput"];
 	["UpdateUserRolesFromArrayRequestDto"]: ValueTypes["UpdateUserRolesFromArrayRequestDto"];
 	["UpdateUserWithProfileInput"]: ValueTypes["UpdateUserWithProfileInput"];
 	["UpdateYearGroupInput"]: ValueTypes["UpdateYearGroupInput"];
+	["UpgradeLessonThemeInput"]: ValueTypes["UpgradeLessonThemeInput"];
+	["UpgradeThemeVersionInput"]: ValueTypes["UpgradeThemeVersionInput"];
 	["UserPermissionsInput"]: ValueTypes["UserPermissionsInput"];
 	["ValidKeyStage"]: ValueTypes["ValidKeyStage"];
 	["ValidYear"]: ValueTypes["ValidYear"];

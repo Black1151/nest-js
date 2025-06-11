@@ -22,9 +22,11 @@ export type AssignmentEntity = {
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   dueDate?: Maybe<Scalars['DateTime']['output']>;
+  educators?: Maybe<Array<EducatorProfileDto>>;
   id: Scalars['ID']['output'];
-  lesson: LessonEntity;
-  title: Scalars['String']['output'];
+  lessons?: Maybe<Array<LessonEntity>>;
+  name: Scalars['String']['output'];
+  students?: Maybe<Array<StudentProfileDto>>;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -67,12 +69,37 @@ export type ClassEntity = {
   yearGroup: YearGroupEntity;
 };
 
+export type ColorPaletteEntity = {
+  __typename?: 'ColorPaletteEntity';
+  collection: StyleCollectionEntity;
+  collectionId: Scalars['ID']['output'];
+  colors: Array<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ComponentVariantEntity = {
+  __typename?: 'ComponentVariantEntity';
+  accessibleName: Scalars['String']['output'];
+  baseComponent: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  props: Scalars['JSONObject']['output'];
+  theme: ThemeEntity;
+  themeId: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type CreateAssignmentInput = {
   classId: Scalars['ID']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   dueDate?: InputMaybe<Scalars['DateTime']['input']>;
-  lessonId: Scalars['ID']['input'];
-  title: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
 export type CreateAssignmentSubmissionInput = {
@@ -90,6 +117,24 @@ export type CreateClassInput = {
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
+export type CreateColorPaletteInput = {
+  collectionId: Scalars['ID']['input'];
+  colors: Array<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
+export type CreateComponentVariantInput = {
+  accessibleName: Scalars['String']['input'];
+  baseComponent: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  props: Scalars['JSONObject']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  themeId: Scalars['ID']['input'];
+};
+
 export type CreateEducatorProfileInput = {
   staffId: Scalars['Float']['input'];
 };
@@ -100,13 +145,24 @@ export type CreateKeyStageInput = {
 };
 
 export type CreateLessonInput = {
-  content?: InputMaybe<Scalars['JSONObject']['input']>;
+  content?: InputMaybe<Array<LessonSlideInput>>;
   createdByEducatorId?: InputMaybe<Scalars['ID']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   recommendedYearGroupIds?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
   /** Generic hook for attaching any relations by IDs */
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  themeId: Scalars['ID']['input'];
   title: Scalars['String']['input'];
+};
+
+export type CreateMultipleChoiceQuestionInput = {
+  correctAnswer: Scalars['String']['input'];
+  lessonId: Scalars['ID']['input'];
+  options: Array<Scalars['String']['input']>;
+  quizId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  text: Scalars['String']['input'];
 };
 
 export type CreatePermissionGroupInput = {
@@ -119,6 +175,14 @@ export type CreatePermissionInput = {
   name: Scalars['String']['input'];
 };
 
+export type CreateQuizInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  lessonId: Scalars['ID']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  title: Scalars['String']['input'];
+};
+
 export type CreateRoleInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
@@ -129,10 +193,43 @@ export type CreateStudentProfileInput = {
   studentId: Scalars['Float']['input'];
 };
 
+export type CreateStyleCollectionInput = {
+  name: Scalars['String']['input'];
+};
+
+export type CreateStyleGroupInput = {
+  collectionId: Scalars['ID']['input'];
+  element: PageElementType;
+  name: Scalars['String']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
+export type CreateStyleInput = {
+  collectionId: Scalars['ID']['input'];
+  config: Scalars['JSONObject']['input'];
+  element: PageElementType;
+  groupId?: InputMaybe<Scalars['ID']['input']>;
+  name: Scalars['String']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
 export type CreateSubjectInput = {
   name: Scalars['String']['input'];
   /** Generic hook for attaching any relations by IDs */
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
+export type CreateThemeInput = {
+  defaultPaletteId: Scalars['ID']['input'];
+  foundationTokens: Scalars['JSONObject']['input'];
+  name: Scalars['String']['input'];
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  semanticTokens: Scalars['JSONObject']['input'];
+  styleCollectionId: Scalars['ID']['input'];
+  version?: Scalars['Float']['input'];
 };
 
 export type CreateTopicInput = {
@@ -195,6 +292,20 @@ export type FilterInput = {
   value: Scalars['String']['input'];
 };
 
+export type FindAllColorPaletteInput = {
+  /** Set to true to return all records, ignoring pagination values */
+  all?: InputMaybe<Scalars['Boolean']['input']>;
+  collectionId?: InputMaybe<Scalars['ID']['input']>;
+  /** Column/value pairs to filter by (records must satisfy **all** filters) */
+  filters?: InputMaybe<Array<FilterInput>>;
+  /** Maximum number of records to return */
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  /** Number of records to skip */
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  /** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+  relations?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
 export type FindAllInput = {
   /** Set to true to return all records, ignoring pagination values */
   all?: InputMaybe<Scalars['Boolean']['input']>;
@@ -206,6 +317,20 @@ export type FindAllInput = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   /** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
   relations?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type FindAllThemeInput = {
+  /** Set to true to return all records, ignoring pagination values */
+  all?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Column/value pairs to filter by (records must satisfy **all** filters) */
+  filters?: InputMaybe<Array<FilterInput>>;
+  /** Maximum number of records to return */
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  /** Number of records to skip */
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  /** Names of relations to eager-load (e.g. ["keyStage", "author"]) */
+  relations?: InputMaybe<Array<Scalars['String']['input']>>;
+  styleCollectionId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type FindOneByInput = {
@@ -236,18 +361,83 @@ export type KeyStageEntity = {
   yearGroups: Array<YearGroupEntity>;
 };
 
+export type LessonColumn = {
+  __typename?: 'LessonColumn';
+  items: Array<LessonElement>;
+};
+
+export type LessonColumnInput = {
+  columnId: Scalars['String']['input'];
+  items: Array<LessonElementInput>;
+  spacing?: InputMaybe<Scalars['Float']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  wrapperStyles?: InputMaybe<Scalars['JSONObject']['input']>;
+};
+
+export type LessonElement = {
+  __typename?: 'LessonElement';
+  animation?: Maybe<Scalars['JSONObject']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  questions?: Maybe<Scalars['JSONObject']['output']>;
+  src?: Maybe<Scalars['String']['output']>;
+  styleId?: Maybe<Scalars['ID']['output']>;
+  styleOverrides?: Maybe<Scalars['JSONObject']['output']>;
+  table?: Maybe<Scalars['JSONObject']['output']>;
+  text?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  type: PageElementType;
+  url?: Maybe<Scalars['String']['output']>;
+  variantId?: Maybe<Scalars['ID']['output']>;
+  wrapperStyles?: Maybe<Scalars['JSONObject']['output']>;
+};
+
+export type LessonElementInput = {
+  animation?: InputMaybe<Scalars['JSONObject']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  questions?: InputMaybe<Scalars['JSONObject']['input']>;
+  src?: InputMaybe<Scalars['String']['input']>;
+  styleId?: InputMaybe<Scalars['ID']['input']>;
+  styleOverrides?: InputMaybe<Scalars['JSONObject']['input']>;
+  table?: InputMaybe<Scalars['JSONObject']['input']>;
+  text?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  type: PageElementType;
+  url?: InputMaybe<Scalars['String']['input']>;
+  variantId?: InputMaybe<Scalars['ID']['input']>;
+  wrapperStyles?: InputMaybe<Scalars['JSONObject']['input']>;
+};
+
 export type LessonEntity = {
   __typename?: 'LessonEntity';
-  content?: Maybe<Scalars['JSONObject']['output']>;
+  content?: Maybe<Array<LessonSlide>>;
   createdAt: Scalars['DateTime']['output'];
   createdBy?: Maybe<EducatorProfileDto>;
   createdById?: Maybe<Scalars['ID']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  lastThemeUpgrade?: Maybe<Scalars['DateTime']['output']>;
+  multipleChoiceQuestions?: Maybe<Array<MultipleChoiceQuestionEntity>>;
+  quizzes?: Maybe<Array<QuizEntity>>;
   recommendedYearGroups?: Maybe<Array<YearGroupEntity>>;
+  subject: SubjectEntity;
+  theme: ThemeEntity;
+  themeId: Scalars['ID']['output'];
   title: Scalars['String']['output'];
   topic: TopicEntity;
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type LessonSlide = {
+  __typename?: 'LessonSlide';
+  columns: Array<LessonColumn>;
+};
+
+export type LessonSlideInput = {
+  columns: Array<LessonColumnInput>;
+  id: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type LoginRequest = {
@@ -262,6 +452,18 @@ export type LoginResponse = {
   userDetails: UserDetails;
 };
 
+export type MultipleChoiceQuestionEntity = {
+  __typename?: 'MultipleChoiceQuestionEntity';
+  correctAnswer: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  lesson: LessonEntity;
+  options: Array<Scalars['String']['output']>;
+  quiz?: Maybe<QuizEntity>;
+  text: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   /** Create one Assignment */
@@ -270,22 +472,38 @@ export type Mutation = {
   createAssignmentSubmission: AssignmentSubmissionEntity;
   /** Create one Class */
   createClass: ClassEntity;
+  /** Create one ColorPalette */
+  createColorPalette: ColorPaletteEntity;
+  /** Create one ComponentVariant */
+  createComponentVariant: ComponentVariantEntity;
   /** Create one EducatorProfile */
   createEducatorProfile: EducatorProfileDto;
   /** Create one KeyStage */
   createKeyStage: KeyStageEntity;
   /** Create one Lesson */
   createLesson: LessonEntity;
+  /** Create one MultipleChoiceQuestion */
+  createMultipleChoiceQuestion: MultipleChoiceQuestionEntity;
   /** Create one Permission */
   createPermission: Permission;
   /** Create one PermissionGroup */
   createPermissionGroup: PermissionGroup;
+  /** Create one Quiz */
+  createQuiz: QuizEntity;
   /** Create one Role */
   createRole: Role;
   /** Create one StudentProfile */
   createStudentProfile: StudentProfileDto;
+  /** Create one Style */
+  createStyle: StyleEntity;
+  /** Create one StyleCollection */
+  createStyleCollection: StyleCollectionEntity;
+  /** Create one StyleGroup */
+  createStyleGroup: StyleGroupEntity;
   /** Create one Subject */
   createSubject: SubjectEntity;
+  /** Create one Theme */
+  createTheme: ThemeEntity;
   /** Create one Topic */
   createTopic: TopicEntity;
   createUser: User;
@@ -298,22 +516,38 @@ export type Mutation = {
   deleteAssignmentSubmission: Scalars['Boolean']['output'];
   /** Delete one Class */
   deleteClass: Scalars['Boolean']['output'];
+  /** Delete one ColorPalette */
+  deleteColorPalette: Scalars['Boolean']['output'];
+  /** Delete one ComponentVariant */
+  deleteComponentVariant: Scalars['Boolean']['output'];
   /** Delete one EducatorProfile */
   deleteEducatorProfile: Scalars['Boolean']['output'];
   /** Delete one KeyStage */
   deleteKeyStage: Scalars['Boolean']['output'];
   /** Delete one Lesson */
   deleteLesson: Scalars['Boolean']['output'];
+  /** Delete one MultipleChoiceQuestion */
+  deleteMultipleChoiceQuestion: Scalars['Boolean']['output'];
   /** Delete one Permission */
   deletePermission: Scalars['Boolean']['output'];
   /** Delete one PermissionGroup */
   deletePermissionGroup: Scalars['Boolean']['output'];
+  /** Delete one Quiz */
+  deleteQuiz: Scalars['Boolean']['output'];
   /** Delete one Role */
   deleteRole: Scalars['Boolean']['output'];
   /** Delete one StudentProfile */
   deleteStudentProfile: Scalars['Boolean']['output'];
+  /** Delete one Style */
+  deleteStyle: Scalars['Boolean']['output'];
+  /** Delete one StyleCollection */
+  deleteStyleCollection: Scalars['Boolean']['output'];
+  /** Delete one StyleGroup */
+  deleteStyleGroup: Scalars['Boolean']['output'];
   /** Delete one Subject */
   deleteSubject: Scalars['Boolean']['output'];
+  /** Delete one Theme */
+  deleteTheme: Scalars['Boolean']['output'];
   /** Delete one Topic */
   deleteTopic: Scalars['Boolean']['output'];
   /** Delete one YearGroup */
@@ -328,30 +562,50 @@ export type Mutation = {
   updateAssignmentSubmission: AssignmentSubmissionEntity;
   /** Updates one Class */
   updateClass: ClassEntity;
+  /** Updates one ColorPalette */
+  updateColorPalette: ColorPaletteEntity;
+  /** Updates one ComponentVariant */
+  updateComponentVariant: ComponentVariantEntity;
   /** Updates one EducatorProfile */
   updateEducatorProfile: EducatorProfileDto;
   /** Updates one KeyStage */
   updateKeyStage: KeyStageEntity;
   /** Updates one Lesson */
   updateLesson: LessonEntity;
+  /** Updates one MultipleChoiceQuestion */
+  updateMultipleChoiceQuestion: MultipleChoiceQuestionEntity;
   /** Updates one Permission */
   updatePermission: Permission;
   /** Updates one PermissionGroup */
   updatePermissionGroup: PermissionGroup;
   updatePermissionGroupPermissionsFromArray: PermissionGroup;
   updatePermissionGroupsForRole: Role;
+  /** Updates one Quiz */
+  updateQuiz: QuizEntity;
   /** Updates one Role */
   updateRole: Role;
   /** Updates one StudentProfile */
   updateStudentProfile: StudentProfileDto;
+  /** Updates one Style */
+  updateStyle: StyleEntity;
+  /** Updates one StyleCollection */
+  updateStyleCollection: StyleCollectionEntity;
+  /** Updates one StyleGroup */
+  updateStyleGroup: StyleGroupEntity;
   /** Updates one Subject */
   updateSubject: SubjectEntity;
+  /** Updates one Theme */
+  updateTheme: ThemeEntity;
   /** Updates one Topic */
   updateTopic: TopicEntity;
   updateUserByPublicId: User;
   updateUserRolesFromArray: User;
   /** Updates one YearGroup */
   updateYearGroup: YearGroupEntity;
+  /** Upgrade the lesson's theme version */
+  upgradeLessonTheme: LessonEntity;
+  /** Upgrade a theme to a specific version */
+  upgradeThemeVersion: ThemeEntity;
 };
 
 
@@ -370,6 +624,16 @@ export type MutationCreateClassArgs = {
 };
 
 
+export type MutationCreateColorPaletteArgs = {
+  data: CreateColorPaletteInput;
+};
+
+
+export type MutationCreateComponentVariantArgs = {
+  data: CreateComponentVariantInput;
+};
+
+
 export type MutationCreateEducatorProfileArgs = {
   data: CreateEducatorProfileInput;
 };
@@ -385,6 +649,11 @@ export type MutationCreateLessonArgs = {
 };
 
 
+export type MutationCreateMultipleChoiceQuestionArgs = {
+  data: CreateMultipleChoiceQuestionInput;
+};
+
+
 export type MutationCreatePermissionArgs = {
   data: CreatePermissionInput;
 };
@@ -392,6 +661,11 @@ export type MutationCreatePermissionArgs = {
 
 export type MutationCreatePermissionGroupArgs = {
   data: CreatePermissionGroupInput;
+};
+
+
+export type MutationCreateQuizArgs = {
+  data: CreateQuizInput;
 };
 
 
@@ -405,8 +679,28 @@ export type MutationCreateStudentProfileArgs = {
 };
 
 
+export type MutationCreateStyleArgs = {
+  data: CreateStyleInput;
+};
+
+
+export type MutationCreateStyleCollectionArgs = {
+  data: CreateStyleCollectionInput;
+};
+
+
+export type MutationCreateStyleGroupArgs = {
+  data: CreateStyleGroupInput;
+};
+
+
 export type MutationCreateSubjectArgs = {
   data: CreateSubjectInput;
+};
+
+
+export type MutationCreateThemeArgs = {
+  data: CreateThemeInput;
 };
 
 
@@ -445,6 +739,16 @@ export type MutationDeleteClassArgs = {
 };
 
 
+export type MutationDeleteColorPaletteArgs = {
+  data: IdInput;
+};
+
+
+export type MutationDeleteComponentVariantArgs = {
+  data: IdInput;
+};
+
+
 export type MutationDeleteEducatorProfileArgs = {
   data: IdInput;
 };
@@ -460,12 +764,22 @@ export type MutationDeleteLessonArgs = {
 };
 
 
+export type MutationDeleteMultipleChoiceQuestionArgs = {
+  data: IdInput;
+};
+
+
 export type MutationDeletePermissionArgs = {
   data: IdInput;
 };
 
 
 export type MutationDeletePermissionGroupArgs = {
+  data: IdInput;
+};
+
+
+export type MutationDeleteQuizArgs = {
   data: IdInput;
 };
 
@@ -480,7 +794,27 @@ export type MutationDeleteStudentProfileArgs = {
 };
 
 
+export type MutationDeleteStyleArgs = {
+  data: IdInput;
+};
+
+
+export type MutationDeleteStyleCollectionArgs = {
+  data: IdInput;
+};
+
+
+export type MutationDeleteStyleGroupArgs = {
+  data: IdInput;
+};
+
+
 export type MutationDeleteSubjectArgs = {
+  data: IdInput;
+};
+
+
+export type MutationDeleteThemeArgs = {
   data: IdInput;
 };
 
@@ -530,6 +864,16 @@ export type MutationUpdateClassArgs = {
 };
 
 
+export type MutationUpdateColorPaletteArgs = {
+  data: UpdateColorPaletteInput;
+};
+
+
+export type MutationUpdateComponentVariantArgs = {
+  data: UpdateComponentVariantInput;
+};
+
+
 export type MutationUpdateEducatorProfileArgs = {
   data: UpdateEducatorProfileInput;
 };
@@ -542,6 +886,11 @@ export type MutationUpdateKeyStageArgs = {
 
 export type MutationUpdateLessonArgs = {
   data: UpdateLessonInput;
+};
+
+
+export type MutationUpdateMultipleChoiceQuestionArgs = {
+  data: UpdateMultipleChoiceQuestionInput;
 };
 
 
@@ -565,6 +914,11 @@ export type MutationUpdatePermissionGroupsForRoleArgs = {
 };
 
 
+export type MutationUpdateQuizArgs = {
+  data: UpdateQuizInput;
+};
+
+
 export type MutationUpdateRoleArgs = {
   data: UpdateRoleInput;
 };
@@ -575,8 +929,28 @@ export type MutationUpdateStudentProfileArgs = {
 };
 
 
+export type MutationUpdateStyleArgs = {
+  data: UpdateStyleInput;
+};
+
+
+export type MutationUpdateStyleCollectionArgs = {
+  data: UpdateStyleCollectionInput;
+};
+
+
+export type MutationUpdateStyleGroupArgs = {
+  data: UpdateStyleGroupInput;
+};
+
+
 export type MutationUpdateSubjectArgs = {
   data: UpdateSubjectInput;
+};
+
+
+export type MutationUpdateThemeArgs = {
+  data: UpdateThemeInput;
 };
 
 
@@ -599,6 +973,24 @@ export type MutationUpdateUserRolesFromArrayArgs = {
 export type MutationUpdateYearGroupArgs = {
   data: UpdateYearGroupInput;
 };
+
+
+export type MutationUpgradeLessonThemeArgs = {
+  data: UpgradeLessonThemeInput;
+};
+
+
+export type MutationUpgradeThemeVersionArgs = {
+  data: UpgradeThemeVersionInput;
+};
+
+export enum PageElementType {
+  Image = 'Image',
+  Quiz = 'Quiz',
+  Table = 'Table',
+  Text = 'Text',
+  Video = 'Video'
+}
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -663,22 +1055,38 @@ export type Query = {
   getAllAssignmentSubmission: Array<AssignmentSubmissionEntity>;
   /** Returns all Class (optionally filtered) */
   getAllClass: Array<ClassEntity>;
+  /** Returns all ColorPalette (optionally filtered) */
+  getAllColorPalette: Array<ColorPaletteEntity>;
+  /** Returns all ComponentVariant (optionally filtered) */
+  getAllComponentVariant: Array<ComponentVariantEntity>;
   /** Returns all EducatorProfile (optionally filtered) */
   getAllEducatorProfile: Array<EducatorProfileDto>;
   /** Returns all KeyStage (optionally filtered) */
   getAllKeyStage: Array<KeyStageEntity>;
   /** Returns all Lesson (optionally filtered) */
   getAllLesson: Array<LessonEntity>;
+  /** Returns all MultipleChoiceQuestion (optionally filtered) */
+  getAllMultipleChoiceQuestion: Array<MultipleChoiceQuestionEntity>;
   /** Returns all Permission (optionally filtered) */
   getAllPermission: Array<Permission>;
   /** Returns all PermissionGroup (optionally filtered) */
   getAllPermissionGroup: Array<PermissionGroup>;
+  /** Returns all Quiz (optionally filtered) */
+  getAllQuiz: Array<QuizEntity>;
   /** Returns all Role (optionally filtered) */
   getAllRole: Array<Role>;
   /** Returns all StudentProfile (optionally filtered) */
   getAllStudentProfile: Array<StudentProfileDto>;
+  /** Returns all Style (optionally filtered) */
+  getAllStyle: Array<StyleEntity>;
+  /** Returns all StyleCollection (optionally filtered) */
+  getAllStyleCollection: Array<StyleCollectionEntity>;
+  /** Returns all StyleGroup (optionally filtered) */
+  getAllStyleGroup: Array<StyleGroupEntity>;
   /** Returns all Subject (optionally filtered) */
   getAllSubject: Array<SubjectEntity>;
+  /** Returns all Theme (optionally filtered) */
+  getAllTheme: Array<ThemeEntity>;
   /** Returns all Topic (optionally filtered) */
   getAllTopic: Array<TopicEntity>;
   getAllUsers: Array<User>;
@@ -696,6 +1104,12 @@ export type Query = {
   getClass: ClassEntity;
   /** Returns one Class by given conditions */
   getClassBy: ClassEntity;
+  /** Returns one ColorPalette */
+  getColorPalette: ColorPaletteEntity;
+  /** Returns one ComponentVariant */
+  getComponentVariant: ComponentVariantEntity;
+  /** Returns one ComponentVariant by given conditions */
+  getComponentVariantBy: ComponentVariantEntity;
   /** Returns one EducatorProfile */
   getEducatorProfile: EducatorProfileDto;
   /** Returns one EducatorProfile by given conditions */
@@ -708,6 +1122,10 @@ export type Query = {
   getLesson: LessonEntity;
   /** Returns one Lesson by given conditions */
   getLessonBy: LessonEntity;
+  /** Returns one MultipleChoiceQuestion */
+  getMultipleChoiceQuestion: MultipleChoiceQuestionEntity;
+  /** Returns one MultipleChoiceQuestion by given conditions */
+  getMultipleChoiceQuestionBy: MultipleChoiceQuestionEntity;
   /** Returns one Permission */
   getPermission: Permission;
   /** Returns one Permission by given conditions */
@@ -718,6 +1136,10 @@ export type Query = {
   getPermissionGroupBy: PermissionGroup;
   getPermissionGroupsForRole: Array<PermissionGroup>;
   getPermissionsForGroup: Array<Permission>;
+  /** Returns one Quiz */
+  getQuiz: QuizEntity;
+  /** Returns one Quiz by given conditions */
+  getQuizBy: QuizEntity;
   /** Returns one Role */
   getRole: Role;
   /** Returns one Role by given conditions */
@@ -727,10 +1149,26 @@ export type Query = {
   getStudentProfile: StudentProfileDto;
   /** Returns one StudentProfile by given conditions */
   getStudentProfileBy: StudentProfileDto;
+  /** Returns one Style */
+  getStyle: StyleEntity;
+  /** Returns one Style by given conditions */
+  getStyleBy: StyleEntity;
+  /** Returns one StyleCollection */
+  getStyleCollection: StyleCollectionEntity;
+  /** Returns one StyleCollection by given conditions */
+  getStyleCollectionBy: StyleCollectionEntity;
+  /** Returns one StyleGroup */
+  getStyleGroup: StyleGroupEntity;
+  /** Returns one StyleGroup by given conditions */
+  getStyleGroupBy: StyleGroupEntity;
   /** Returns one Subject */
   getSubject: SubjectEntity;
   /** Returns one Subject by given conditions */
   getSubjectBy: SubjectEntity;
+  /** Returns one Theme */
+  getTheme: ThemeEntity;
+  /** Returns one Theme by given conditions */
+  getThemeBy: ThemeEntity;
   /** Returns one Topic */
   getTopic: TopicEntity;
   /** Returns one Topic by given conditions */
@@ -747,22 +1185,36 @@ export type Query = {
   searchAssignmentSubmission: Array<AssignmentSubmissionEntity>;
   /** Search Class records by given columns */
   searchClass: Array<ClassEntity>;
+  /** Search ComponentVariant records by given columns */
+  searchComponentVariant: Array<ComponentVariantEntity>;
   /** Search EducatorProfile records by given columns */
   searchEducatorProfile: Array<EducatorProfileDto>;
   /** Search KeyStage records by given columns */
   searchKeyStage: Array<KeyStageEntity>;
   /** Search Lesson records by given columns */
   searchLesson: Array<LessonEntity>;
+  /** Search MultipleChoiceQuestion records by given columns */
+  searchMultipleChoiceQuestion: Array<MultipleChoiceQuestionEntity>;
   /** Search Permission records by given columns */
   searchPermission: Array<Permission>;
   /** Search PermissionGroup records by given columns */
   searchPermissionGroup: Array<PermissionGroup>;
+  /** Search Quiz records by given columns */
+  searchQuiz: Array<QuizEntity>;
   /** Search Role records by given columns */
   searchRole: Array<Role>;
   /** Search StudentProfile records by given columns */
   searchStudentProfile: Array<StudentProfileDto>;
+  /** Search Style records by given columns */
+  searchStyle: Array<StyleEntity>;
+  /** Search StyleCollection records by given columns */
+  searchStyleCollection: Array<StyleCollectionEntity>;
+  /** Search StyleGroup records by given columns */
+  searchStyleGroup: Array<StyleGroupEntity>;
   /** Search Subject records by given columns */
   searchSubject: Array<SubjectEntity>;
+  /** Search Theme records by given columns */
+  searchTheme: Array<ThemeEntity>;
   /** Search Topic records by given columns */
   searchTopic: Array<TopicEntity>;
   searchUsers: Array<User>;
@@ -792,6 +1244,16 @@ export type QueryGetAllClassArgs = {
 };
 
 
+export type QueryGetAllColorPaletteArgs = {
+  data: FindAllColorPaletteInput;
+};
+
+
+export type QueryGetAllComponentVariantArgs = {
+  data: FindAllInput;
+};
+
+
 export type QueryGetAllEducatorProfileArgs = {
   data: FindAllInput;
 };
@@ -807,12 +1269,22 @@ export type QueryGetAllLessonArgs = {
 };
 
 
+export type QueryGetAllMultipleChoiceQuestionArgs = {
+  data: FindAllInput;
+};
+
+
 export type QueryGetAllPermissionArgs = {
   data: FindAllInput;
 };
 
 
 export type QueryGetAllPermissionGroupArgs = {
+  data: FindAllInput;
+};
+
+
+export type QueryGetAllQuizArgs = {
   data: FindAllInput;
 };
 
@@ -827,8 +1299,28 @@ export type QueryGetAllStudentProfileArgs = {
 };
 
 
+export type QueryGetAllStyleArgs = {
+  data: FindAllInput;
+};
+
+
+export type QueryGetAllStyleCollectionArgs = {
+  data: FindAllInput;
+};
+
+
+export type QueryGetAllStyleGroupArgs = {
+  data: FindAllInput;
+};
+
+
 export type QueryGetAllSubjectArgs = {
   data: FindAllInput;
+};
+
+
+export type QueryGetAllThemeArgs = {
+  data: FindAllThemeInput;
 };
 
 
@@ -877,6 +1369,21 @@ export type QueryGetClassByArgs = {
 };
 
 
+export type QueryGetColorPaletteArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetComponentVariantArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetComponentVariantByArgs = {
+  data: FindOneByInput;
+};
+
+
 export type QueryGetEducatorProfileArgs = {
   data: IdInput;
 };
@@ -903,6 +1410,16 @@ export type QueryGetLessonArgs = {
 
 
 export type QueryGetLessonByArgs = {
+  data: FindOneByInput;
+};
+
+
+export type QueryGetMultipleChoiceQuestionArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetMultipleChoiceQuestionByArgs = {
   data: FindOneByInput;
 };
 
@@ -937,6 +1454,16 @@ export type QueryGetPermissionsForGroupArgs = {
 };
 
 
+export type QueryGetQuizArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetQuizByArgs = {
+  data: FindOneByInput;
+};
+
+
 export type QueryGetRoleArgs = {
   data: IdInput;
 };
@@ -962,12 +1489,52 @@ export type QueryGetStudentProfileByArgs = {
 };
 
 
+export type QueryGetStyleArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetStyleByArgs = {
+  data: FindOneByInput;
+};
+
+
+export type QueryGetStyleCollectionArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetStyleCollectionByArgs = {
+  data: FindOneByInput;
+};
+
+
+export type QueryGetStyleGroupArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetStyleGroupByArgs = {
+  data: FindOneByInput;
+};
+
+
 export type QueryGetSubjectArgs = {
   data: IdInput;
 };
 
 
 export type QueryGetSubjectByArgs = {
+  data: FindOneByInput;
+};
+
+
+export type QueryGetThemeArgs = {
+  data: IdInput;
+};
+
+
+export type QueryGetThemeByArgs = {
   data: FindOneByInput;
 };
 
@@ -1017,6 +1584,11 @@ export type QuerySearchClassArgs = {
 };
 
 
+export type QuerySearchComponentVariantArgs = {
+  data: SearchInput;
+};
+
+
 export type QuerySearchEducatorProfileArgs = {
   data: SearchInput;
 };
@@ -1032,12 +1604,22 @@ export type QuerySearchLessonArgs = {
 };
 
 
+export type QuerySearchMultipleChoiceQuestionArgs = {
+  data: SearchInput;
+};
+
+
 export type QuerySearchPermissionArgs = {
   data: SearchInput;
 };
 
 
 export type QuerySearchPermissionGroupArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchQuizArgs = {
   data: SearchInput;
 };
 
@@ -1052,7 +1634,27 @@ export type QuerySearchStudentProfileArgs = {
 };
 
 
+export type QuerySearchStyleArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchStyleCollectionArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchStyleGroupArgs = {
+  data: SearchInput;
+};
+
+
 export type QuerySearchSubjectArgs = {
+  data: SearchInput;
+};
+
+
+export type QuerySearchThemeArgs = {
   data: SearchInput;
 };
 
@@ -1074,6 +1676,17 @@ export type QuerySearchYearGroupArgs = {
 
 export type QueryTopicsByYearAndSubjectArgs = {
   input: TopicByYearSubjectInput;
+};
+
+export type QuizEntity = {
+  __typename?: 'QuizEntity';
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lesson: LessonEntity;
+  multipleChoiceQuestions?: Maybe<Array<MultipleChoiceQuestionEntity>>;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type RelationIdsInput = {
@@ -1123,10 +1736,48 @@ export type StudentProfileDto = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type StyleCollectionEntity = {
+  __typename?: 'StyleCollectionEntity';
+  colorPalettes?: Maybe<Array<ColorPaletteEntity>>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  styleGroups?: Maybe<Array<StyleGroupEntity>>;
+  styles?: Maybe<Array<StyleEntity>>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type StyleEntity = {
+  __typename?: 'StyleEntity';
+  collection: StyleCollectionEntity;
+  collectionId: Scalars['ID']['output'];
+  config: Scalars['JSONObject']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  element: PageElementType;
+  group?: Maybe<StyleGroupEntity>;
+  groupId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type StyleGroupEntity = {
+  __typename?: 'StyleGroupEntity';
+  collection: StyleCollectionEntity;
+  collectionId: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  element: PageElementType;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  styles?: Maybe<Array<StyleEntity>>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type SubjectEntity = {
   __typename?: 'SubjectEntity';
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
+  lessons?: Maybe<Array<LessonEntity>>;
   name: Scalars['String']['output'];
   topics?: Maybe<Array<TopicEntity>>;
   updatedAt: Scalars['DateTime']['output'];
@@ -1136,6 +1787,22 @@ export type SubjectEntity = {
 export type SubmitIdArrayByIdRequestDto = {
   idArray: Array<Scalars['Int']['input']>;
   recordId: Scalars['Int']['input'];
+};
+
+export type ThemeEntity = {
+  __typename?: 'ThemeEntity';
+  componentVariants?: Maybe<Array<ComponentVariantEntity>>;
+  createdAt: Scalars['DateTime']['output'];
+  defaultPalette: ColorPaletteEntity;
+  defaultPaletteId: Scalars['ID']['output'];
+  foundationTokens: Scalars['JSONObject']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  semanticTokens: Scalars['JSONObject']['output'];
+  styleCollection: StyleCollectionEntity;
+  styleCollectionId: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  version: Scalars['Float']['output'];
 };
 
 export type TopicByYearSubjectInput = {
@@ -1161,8 +1828,9 @@ export type UpdateAssignmentInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   dueDate?: InputMaybe<Scalars['DateTime']['input']>;
   id: Scalars['ID']['input'];
-  lessonId?: InputMaybe<Scalars['ID']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
 export type UpdateAssignmentSubmissionInput = {
@@ -1182,6 +1850,26 @@ export type UpdateClassInput = {
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
+export type UpdateColorPaletteInput = {
+  collectionId?: InputMaybe<Scalars['ID']['input']>;
+  colors?: InputMaybe<Array<Scalars['String']['input']>>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
+export type UpdateComponentVariantInput = {
+  accessibleName?: InputMaybe<Scalars['String']['input']>;
+  baseComponent?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  props?: InputMaybe<Scalars['JSONObject']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  themeId?: InputMaybe<Scalars['ID']['input']>;
+};
+
 export type UpdateEducatorProfileInput = {
   id: Scalars['Int']['input'];
   staffId?: InputMaybe<Scalars['Float']['input']>;
@@ -1194,14 +1882,26 @@ export type UpdateKeyStageInput = {
 };
 
 export type UpdateLessonInput = {
-  content?: InputMaybe<Scalars['JSONObject']['input']>;
+  content?: InputMaybe<Array<LessonSlideInput>>;
   createdByEducatorId?: InputMaybe<Scalars['ID']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   recommendedYearGroupIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** Generic hook for attaching any relations by IDs */
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  themeId?: InputMaybe<Scalars['ID']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateMultipleChoiceQuestionInput = {
+  correctAnswer?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  lessonId?: InputMaybe<Scalars['ID']['input']>;
+  options?: InputMaybe<Array<Scalars['String']['input']>>;
+  quizId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  text?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdatePermissionGroupInput = {
@@ -1216,6 +1916,15 @@ export type UpdatePermissionInput = {
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateQuizInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  lessonId?: InputMaybe<Scalars['ID']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UpdateRoleInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
@@ -1228,11 +1937,48 @@ export type UpdateStudentProfileInput = {
   studentId?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateStyleCollectionInput = {
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateStyleGroupInput = {
+  collectionId?: InputMaybe<Scalars['ID']['input']>;
+  element?: InputMaybe<PageElementType>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
+export type UpdateStyleInput = {
+  collectionId?: InputMaybe<Scalars['ID']['input']>;
+  config?: InputMaybe<Scalars['JSONObject']['input']>;
+  element?: InputMaybe<PageElementType>;
+  groupId?: InputMaybe<Scalars['ID']['input']>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
 export type UpdateSubjectInput = {
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   /** Generic hook for attaching any relations by IDs */
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
+};
+
+export type UpdateThemeInput = {
+  defaultPaletteId?: InputMaybe<Scalars['ID']['input']>;
+  foundationTokens?: InputMaybe<Scalars['JSONObject']['input']>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  /** Generic hook for attaching any relations by IDs */
+  relationIds?: InputMaybe<Array<RelationIdsInput>>;
+  semanticTokens?: InputMaybe<Scalars['JSONObject']['input']>;
+  styleCollectionId?: InputMaybe<Scalars['ID']['input']>;
+  version?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type UpdateTopicInput = {
@@ -1269,6 +2015,16 @@ export type UpdateYearGroupInput = {
   id: Scalars['ID']['input'];
   keyStageId?: InputMaybe<Scalars['ID']['input']>;
   year?: InputMaybe<ValidYear>;
+};
+
+export type UpgradeLessonThemeInput = {
+  lessonId: Scalars['ID']['input'];
+  version: Scalars['Float']['input'];
+};
+
+export type UpgradeThemeVersionInput = {
+  id: Scalars['ID']['input'];
+  version: Scalars['Float']['input'];
 };
 
 export type User = {

@@ -1,8 +1,13 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { createBaseResolver } from 'src/common/base.resolver';
-import { CreateLessonInput, UpdateLessonInput, UpgradeLessonThemeInput } from './lesson.inputs';
+import {
+  CreateLessonInput,
+  UpdateLessonInput,
+  UpgradeLessonThemeInput,
+} from './lesson.inputs';
 import { LessonEntity } from './lesson.entity';
 import { LessonService } from './lesson.service';
+import { RbacPermissionKey } from 'src/modules/rbac/decorators/resolver-permission-key.decorator';
 
 const BaseLessonResolver = createBaseResolver<
   LessonEntity,
@@ -30,10 +35,12 @@ export class LessonResolver extends BaseLessonResolver {
 
   @Mutation(() => LessonEntity, {
     name: 'upgradeLessonTheme',
-    description: 'Upgrade the lesson\'s theme version',
+    description: "Upgrade the lesson's theme version",
   })
+  @RbacPermissionKey('lesson.upgradeLessonTheme')
   async upgradeLessonTheme(
-    @Args('data', { type: () => UpgradeLessonThemeInput }) data: UpgradeLessonThemeInput,
+    @Args('data', { type: () => UpgradeLessonThemeInput })
+    data: UpgradeLessonThemeInput,
   ): Promise<LessonEntity> {
     return this.lessonService.upgradeThemeVersion(data.lessonId, data.version);
   }
