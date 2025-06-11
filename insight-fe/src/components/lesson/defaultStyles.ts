@@ -1,7 +1,7 @@
 import type { ElementWrapperStyles } from "./elements/ElementWrapper";
 
 export const defaultColumnWrapperStyles: ElementWrapperStyles = {
-  bgColor: "#ffffff",
+  bgColor: "surface.card",
   bgOpacity: 0,
   gradientFrom: "",
   gradientTo: "",
@@ -11,7 +11,7 @@ export const defaultColumnWrapperStyles: ElementWrapperStyles = {
   paddingY: 0,
   marginX: 0,
   marginY: 0,
-  borderColor: "#000000",
+  borderColor: "border.default",
   borderWidth: 0,
   borderRadius: "none",
 };
