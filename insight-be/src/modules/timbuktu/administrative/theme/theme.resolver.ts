@@ -1,10 +1,11 @@
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
 import { createBaseResolver } from 'src/common/base.resolver';
 import { ThemeEntity } from './theme.entity';
 import {
   CreateThemeInput,
   UpdateThemeInput,
   FindAllThemeInput,
+  UpgradeThemeVersionInput,
 } from './theme.inputs';
 import { IdInput } from 'src/common/base.inputs';
 import { RbacPermissionKey } from 'src/modules/rbac/decorators/resolver-permission-key.decorator';
@@ -62,5 +63,15 @@ export class ThemeResolver extends BaseThemeResolver {
       filters: finalFilters,
       relations: ['componentVariants'],
     });
+  }
+
+  @Mutation(() => ThemeEntity, {
+    name: 'upgradeThemeVersion',
+    description: 'Upgrade a theme to a specific version',
+  })
+  async upgradeThemeVersion(
+    @Args('data', { type: () => UpgradeThemeVersionInput }) data: UpgradeThemeVersionInput,
+  ): Promise<ThemeEntity> {
+    return this.themeService.upgradeVersion(data.id, data.version);
   }
 }

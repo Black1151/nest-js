@@ -48,4 +48,27 @@ export class LessonService extends BaseService<
     ];
     return super.update({ ...rest, relationIds: relations } as any);
   }
+
+  async upgradeThemeVersion(
+    lessonId: number,
+    version: number,
+  ): Promise<LessonEntity> {
+    return this.dataSource.transaction(async (manager) => {
+      const lessonRepo = manager.getRepository(LessonEntity);
+      const themeRepo = manager.getRepository(ThemeEntity);
+
+      const lesson = await lessonRepo.findOneOrFail({ where: { id: lessonId } });
+      const theme = await themeRepo.findOneOrFail({ where: { id: lesson.themeId } });
+
+      if (theme.version < version) {
+        theme.version = version;
+        await themeRepo.save(theme);
+      }
+
+      lesson.lastThemeUpgrade = new Date();
+      await lessonRepo.save(lesson);
+
+      return lessonRepo.findOneOrFail({ where: { id: lessonId }, relations: ['theme'] });
+    });
+  }
 }

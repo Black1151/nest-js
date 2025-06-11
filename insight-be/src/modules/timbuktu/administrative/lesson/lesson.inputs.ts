@@ -28,3 +28,12 @@ export class UpdateLessonInput extends PartialType(CreateLessonInput) {
   @Field(() => ID)
   id: number;
 }
+
+@InputType()
+export class UpgradeLessonThemeInput {
+  @Field(() => ID)
+  lessonId: number;
+
+  @Field()
+  version: number;
+}

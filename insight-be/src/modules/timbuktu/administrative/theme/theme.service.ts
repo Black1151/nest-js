@@ -51,4 +51,16 @@ export class ThemeService extends BaseService<
     }
     return super.update({ ...rest, relationIds: relations } as any);
   }
+
+  async upgradeVersion(id: number, version: number): Promise<ThemeEntity> {
+    return this.dataSource.transaction(async (manager) => {
+      const repo = manager.getRepository(ThemeEntity);
+      const theme = await repo.findOneOrFail({ where: { id } });
+      if (theme.version < version) {
+        theme.version = version;
+        await repo.save(theme);
+      }
+      return repo.findOneOrFail({ where: { id } });
+    });
+  }
 }
