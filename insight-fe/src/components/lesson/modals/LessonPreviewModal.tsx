@@ -6,7 +6,7 @@ import SlidePreview from "../slide/SlidePreview";
 import { Slide } from "../slide/SlideSequencer";
 import { useQuery } from "@apollo/client";
 import { GET_THEME, GET_COLOR_PALETTE } from "@/graphql/lesson";
-import { ComponentVariant, SemanticTokens } from "@/theme/helpers";
+import { ComponentVariant, SemanticTokens, ColorPalette } from "@/theme/helpers";
 import baseTheme from "@/theme/theme";
 
 interface LessonPreviewModalProps {
@@ -34,18 +34,23 @@ export default function LessonPreviewModal({
     skip: !paletteId || !isOpen,
   });
 
+  const palette: ColorPalette | undefined = paletteData?.getColorPalette;
+
   const theme = themeData?.getTheme;
   const variants: ComponentVariant[] | undefined = theme?.componentVariants;
 
   const foundation = theme ? { ...(theme.foundationTokens as any) } : undefined;
-  if (foundation?.colors && paletteData?.getColorPalette?.colors) {
-    const keys = Object.keys(foundation.colors);
+  if (foundation?.colors && palette) {
+    const paletteMap = palette.colors.reduce(
+      (acc: Record<string, string>, cur: { name: string; value: string }) => {
+        acc[cur.name] = cur.value;
+        return acc;
+      },
+      {},
+    );
     const merged: Record<string, string> = {};
-    keys.forEach((k) => {
-      const found = paletteData.getColorPalette.colors.find(
-        (c: { name: string; value: string }) => c.name === k,
-      );
-      merged[k] = found?.value ?? foundation.colors[k];
+    Object.entries(foundation.colors).forEach(([k, val]) => {
+      merged[k] = paletteMap[k] ?? (val as string);
     });
     foundation.colors = merged;
   }

@@ -25,6 +25,7 @@ import {
 import SlideToolbar from "./slide/SlideToolbar";
 import { extendTheme, ChakraProvider } from "@chakra-ui/react";
 import baseTheme from "@/theme/theme";
+import { ColorPalette } from "@/theme/helpers";
 
 const AVAILABLE_ELEMENTS = [
   { type: "text", label: "Text" },
@@ -50,11 +51,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     id: number;
     name: string;
   }[]>([]);
-  const [colorPalettes, setColorPalettes] = useState<{
-    id: number;
-    name: string;
-    colors: { name: string; value: string }[];
-  }[]>([]);
+  const [colorPalettes, setColorPalettes] = useState<ColorPalette[]>([]);
   const [theme, setThemeState] = useState<any | null>(null);
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
     ""
@@ -196,8 +193,8 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         palettesData.getAllColorPalette.map((p: any) => ({
           id: Number(p.id),
           name: p.name,
-          colors: p.colors,
-        }))
+          colors: p.colors as { name: string; value: string }[],
+        })) as ColorPalette[],
       );
     } else {
       setColorPalettes([]);
@@ -235,13 +232,15 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       JSON.stringify(theme.foundationTokens || {}),
     );
     if (foundation.colors && paletteData?.getColorPalette?.colors) {
-      const keys = Object.keys(foundation.colors);
+      const paletteMap = paletteData.getColorPalette.colors.reduce(
+        (acc: Record<string, string>, cur: { name: string; value: string }) => {
+          acc[cur.name] = cur.value;
+          return acc;
+        },
+      {});
       const merged: Record<string, string> = {};
-      keys.forEach((key) => {
-        const found = paletteData.getColorPalette.colors.find(
-          (c: { name: string; value: string }) => c.name === key,
-        );
-        merged[key] = found?.value ?? foundation.colors[key];
+      Object.entries(foundation.colors).forEach(([key, val]) => {
+        merged[key] = paletteMap[key] ?? (val as string);
       });
       foundation.colors = merged;
     }
