@@ -16,6 +16,10 @@ interface BaseModalProps
   showCloseButton?: boolean;
   footer?: React.ReactNode;
   children: React.ReactNode;
+  /** Element to focus when the modal opens */
+  initialFocusRef?: React.RefObject<HTMLElement>;
+  /** Element to return focus to when the modal closes */
+  finalFocusRef?: React.RefObject<HTMLElement>;
 }
 
 export const BaseModal: React.FC<BaseModalProps> = ({
@@ -26,9 +30,18 @@ export const BaseModal: React.FC<BaseModalProps> = ({
   showCloseButton = true,
   footer,
   children,
+  initialFocusRef,
+  finalFocusRef,
 }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={size} isCentered>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={size}
+      isCentered
+      initialFocusRef={initialFocusRef}
+      finalFocusRef={finalFocusRef}
+    >
       <ModalOverlay />
       <ModalContent>
         {title && <ModalHeader>{title}</ModalHeader>}
