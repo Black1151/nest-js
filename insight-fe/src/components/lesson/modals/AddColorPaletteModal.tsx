@@ -49,8 +49,6 @@ export default function ColorPaletteModal({
   const [colors, setColors] = useState<string[]>(
     initialColors.length > 0 ? initialColors : ["#000000"]
   );
-  const [initialized, setInitialized] = useState(false);
-
   const { data: paletteData } = useQuery(GET_COLOR_PALETTE, {
     variables: { id: String(paletteId) },
     skip: !paletteId || !isOpen,
@@ -63,42 +61,30 @@ export default function ColorPaletteModal({
 
   const loading = creating || updating;
 
-  // Initialize fields when the modal opens
+  // Populate fields when the modal opens
   useEffect(() => {
-    if (!isOpen) {
-      setInitialized(false);
-      return;
-    }
+    if (!isOpen) return;
+    setName(initialName);
+    setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
+  }, [isOpen, initialName, initialColors]);
 
-    if (initialized) return;
-
-    if (paletteId) {
-      if (!palette) return; // wait for palette data
-      setName(palette.name);
-      setColors(
-        palette.colors.length > 0 ? palette.colors : ["#000000"]
-      );
-    } else {
-      setName(initialName);
-      setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
-    }
-
-    setInitialized(true);
-  }, [isOpen, paletteId, palette, initialName, initialColors, initialized]);
+  // Update with fresh data when editing
+  useEffect(() => {
+    if (!isOpen || !paletteId || !palette) return;
+    setName(palette.name);
+    setColors(palette.colors.length > 0 ? palette.colors : ["#000000"]);
+  }, [isOpen, paletteId, palette]);
 
   const handleColorChange = (idx: number, value: string) => {
     setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
-    setInitialized(true);
   };
 
   const addColor = () => {
     setColors((cols) => [...cols, "#000000"]);
-    setInitialized(true);
   };
 
   const removeColor = (idx: number) => {
     setColors((cols) => cols.filter((_, i) => i !== idx));
-    setInitialized(true);
   };
 
   return (
@@ -154,10 +140,7 @@ export default function ColorPaletteModal({
         <Input
           placeholder="Palette name"
           value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-            setInitialized(true);
-          }}
+          onChange={(e) => setName(e.target.value)}
         />
         {colors.map((color, idx) => (
           <HStack key={idx}>
