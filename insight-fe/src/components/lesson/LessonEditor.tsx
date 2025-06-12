@@ -53,7 +53,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [colorPalettes, setColorPalettes] = useState<{
     id: number;
     name: string;
-    colors: string[];
+    colors: { name: string; value: string }[];
   }[]>([]);
   const [theme, setThemeState] = useState<any | null>(null);
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
@@ -239,7 +239,8 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       const merged: Record<string, string> = {};
       keys.forEach((key, idx) => {
         merged[key] =
-          paletteData.getColorPalette.colors[idx] ?? foundation.colors[key];
+          paletteData.getColorPalette.colors[idx]?.value ??
+          foundation.colors[key];
       });
       foundation.colors = merged;
     }

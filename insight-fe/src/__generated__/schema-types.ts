@@ -73,11 +73,17 @@ export type ColorPaletteEntity = {
   __typename?: 'ColorPaletteEntity';
   collection: StyleCollectionEntity;
   collectionId: Scalars['ID']['output'];
-  colors: Array<Scalars['String']['output']>;
+  colors: Array<PaletteColor>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type PaletteColor = {
+  __typename?: 'PaletteColor';
+  name: Scalars['String']['output'];
+  value: Scalars['String']['output'];
 };
 
 export type ComponentVariantEntity = {
@@ -117,9 +123,14 @@ export type CreateClassInput = {
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
 };
 
+export type PaletteColorInput = {
+  name: Scalars['String']['input'];
+  value: Scalars['String']['input'];
+};
+
 export type CreateColorPaletteInput = {
   collectionId: Scalars['ID']['input'];
-  colors: Array<Scalars['String']['input']>;
+  colors: Array<PaletteColorInput>;
   name: Scalars['String']['input'];
   /** Generic hook for attaching any relations by IDs */
   relationIds?: InputMaybe<Array<RelationIdsInput>>;
@@ -1852,7 +1863,7 @@ export type UpdateClassInput = {
 
 export type UpdateColorPaletteInput = {
   collectionId?: InputMaybe<Scalars['ID']['input']>;
-  colors?: InputMaybe<Array<Scalars['String']['input']>>;
+  colors?: InputMaybe<Array<PaletteColorInput>>;
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   /** Generic hook for attaching any relations by IDs */

@@ -14,9 +14,10 @@ export const AllTypesProps: Record<string,any> = {
 	CreateClassInput:{
 		relationIds:"RelationIdsInput"
 	},
-	CreateColorPaletteInput:{
-		relationIds:"RelationIdsInput"
-	},
+        CreateColorPaletteInput:{
+                relationIds:"RelationIdsInput",
+                colors:"PaletteColorInput"
+        },
 	CreateComponentVariantInput:{
 		props:"JSONObject",
 		relationIds:"RelationIdsInput"
@@ -658,9 +659,10 @@ export const AllTypesProps: Record<string,any> = {
 	UpdateClassInput:{
 		relationIds:"RelationIdsInput"
 	},
-	UpdateColorPaletteInput:{
-		relationIds:"RelationIdsInput"
-	},
+        UpdateColorPaletteInput:{
+                relationIds:"RelationIdsInput",
+                colors:"PaletteColorInput"
+        },
 	UpdateComponentVariantInput:{
 		props:"JSONObject",
 		relationIds:"RelationIdsInput"

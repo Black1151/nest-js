@@ -9,7 +9,7 @@ export interface ComponentVariant {
 export interface ColorPalette {
   id: number;
   name: string;
-  colors: string[];
+  colors: { name: string; value: string }[];
 }
 
 export function resolveVariant(
@@ -25,7 +25,7 @@ export function paletteColor(
   index: number,
 ): string | undefined {
   if (!palette) return undefined;
-  return palette.colors[index];
+  return palette.colors[index]?.value;
 }
 
 export type SemanticTokens = Record<string, Record<string, string>>;

@@ -21,11 +21,13 @@ interface ColorPaletteModalProps {
   isOpen: boolean;
   onClose: () => void;
   collectionId: number;
-  onSave?: (palette: { id: number; name: string; colors: string[] }) => void;
+  onSave?: (
+    palette: { id: number; name: string; colors: { name: string; value: string }[] }
+  ) => void;
   /** Pre-populated palette name */
   initialName?: string;
   /** Pre-populated list of colors */
-  initialColors?: string[];
+  initialColors?: { name: string; value: string }[];
   /** Existing palette id for updates */
   paletteId?: number;
   /** Modal title */
@@ -46,8 +48,10 @@ export default function ColorPaletteModal({
   confirmLabel = "Save",
 }: ColorPaletteModalProps) {
   const [name, setName] = useState(initialName);
-  const [colors, setColors] = useState<string[]>(
-    initialColors.length > 0 ? initialColors : ["#000000"]
+  const [colors, setColors] = useState<{ name: string; value: string }[]>(
+    initialColors.length > 0
+      ? initialColors
+      : [{ name: "", value: "#000000" }]
   );
   const [initialized, setInitialized] = useState(false);
 
@@ -76,23 +80,31 @@ export default function ColorPaletteModal({
       if (!palette) return; // wait for palette data
       setName(palette.name);
       setColors(
-        palette.colors.length > 0 ? palette.colors : ["#000000"]
+        palette.colors.length > 0
+          ? palette.colors
+          : [{ name: "", value: "#000000" }]
       );
     } else {
       setName(initialName);
-      setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
+      setColors(
+        initialColors.length > 0
+          ? initialColors
+          : [{ name: "", value: "#000000" }]
+      );
     }
 
     setInitialized(true);
   }, [isOpen, paletteId, palette, initialName, initialColors, initialized]);
 
   const handleColorChange = (idx: number, value: string) => {
-    setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
+    setColors((cols) =>
+      cols.map((c, i) => (i === idx ? { ...c, value } : c))
+    );
     setInitialized(true);
   };
 
   const addColor = () => {
-    setColors((cols) => [...cols, "#000000"]);
+    setColors((cols) => [...cols, { name: "", value: "#000000" }]);
     setInitialized(true);
   };
 
@@ -138,7 +150,7 @@ export default function ColorPaletteModal({
                     colors: data.createColorPalette.colors,
                   });
                   setName("");
-                  setColors(["#000000"]);
+                  setColors([{ name: "", value: "#000000" }]);
                 }
               }
               onClose();
@@ -163,7 +175,7 @@ export default function ColorPaletteModal({
           <HStack key={idx}>
             <Input
               type="color"
-              value={color}
+              value={color.value}
               onChange={(e) => handleColorChange(idx, e.target.value)}
               w="40px"
               h="40px"

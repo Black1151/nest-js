@@ -4,15 +4,24 @@ import { AbstractBaseEntity } from 'src/common/base.entity';
 import { StyleCollectionEntity } from '../style-collection/style-collection.entity';
 
 @ObjectType()
+export class PaletteColor {
+  @Field()
+  name!: string;
+
+  @Field()
+  value!: string;
+}
+
+@ObjectType()
 @Entity('color_palettes')
 export class ColorPaletteEntity extends AbstractBaseEntity {
   @Field()
   @Column()
   name: string;
 
-  @Field(() => [String])
+  @Field(() => [PaletteColor])
   @Column({ type: 'jsonb' })
-  colors: string[];
+  colors: PaletteColor[];
 
   @Field(() => StyleCollectionEntity)
   @ManyToOne(() => StyleCollectionEntity, (collection) => collection.colorPalettes, { nullable: false })
