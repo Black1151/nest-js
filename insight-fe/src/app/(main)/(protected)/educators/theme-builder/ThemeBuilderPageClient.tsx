@@ -13,6 +13,7 @@ import {
 import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
 import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollectionModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
+import ColorPaletteManagement from "./ColorPaletteManagement";
 
 export default function ThemeBuilderPageClient() {
   const { data, refetch } = useQuery(GET_STYLE_COLLECTIONS);
@@ -112,6 +113,8 @@ export default function ThemeBuilderPageClient() {
         }}
         isLoading={deleting}
       />
+
+      <ColorPaletteManagement collectionId={selectedId} />
     </Box>
   );
 }
