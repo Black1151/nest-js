@@ -1,31 +1,32 @@
-import { Box } from "@chakra-ui/react";
+"use client";
+
+import { Box, Flex } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 
-import {
-  GET_COLOR_PALETTES,
-  DELETE_COLOR_PALETTE,
-} from "@/graphql/lesson";
+import { GET_COLOR_PALETTES, DELETE_COLOR_PALETTE } from "@/graphql/lesson";
 import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
 import ColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface ColorPaletteManagementProps {
-  /**
-   * Currently selected style collection id. When empty, palette management is disabled.
-   */
-  collectionId: number | "";
+  collectionId: number | null;
 }
 
-export default function ColorPaletteManagement({ collectionId }: ColorPaletteManagementProps) {
+export default function ColorPaletteManagement({
+  collectionId,
+}: ColorPaletteManagementProps) {
   const { data, refetch } = useQuery(GET_COLOR_PALETTES, {
     variables: { collectionId: String(collectionId) },
-    skip: collectionId === "",
+    skip: collectionId === null,
     fetchPolicy: "network-only",
   });
-  const [deletePalette, { loading: deleting }] = useMutation(DELETE_COLOR_PALETTE);
+  const [deletePalette, { loading: deleting }] =
+    useMutation(DELETE_COLOR_PALETTE);
 
-  const [palettes, setPalettes] = useState<{ id: number; name: string; colors: string[] }[]>([]);
+  const [palettes, setPalettes] = useState<
+    { id: number; name: string; colors: string[] }[]
+  >([]);
   const [selectedId, setSelectedId] = useState<number | "">("");
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -52,15 +53,17 @@ export default function ColorPaletteManagement({ collectionId }: ColorPaletteMan
 
   const selected = palettes.find((p) => p.id === selectedId);
   const options = palettes.map((p) => ({ label: p.name, value: String(p.id) }));
-  const isDisabled = collectionId === "";
+  const isDisabled = collectionId === null;
 
   return (
-    <Box p={4} pt={8}>
+    <Flex flex={1} p={4} w="100%">
       <CrudDropdown
         options={options}
         value={selectedId}
         onChange={(e) =>
-          setSelectedId(e.target.value === "" ? "" : parseInt(e.target.value, 10))
+          setSelectedId(
+            e.target.value === "" ? "" : parseInt(e.target.value, 10)
+          )
         }
         onCreate={() => setIsAddOpen(true)}
         onUpdate={() => setIsEditOpen(true)}
@@ -73,7 +76,7 @@ export default function ColorPaletteManagement({ collectionId }: ColorPaletteMan
       <ColorPaletteModal
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        collectionId={collectionId === "" ? 0 : (collectionId as number)}
+        collectionId={collectionId === null ? 0 : (collectionId as number)}
         onSave={async (palette) => {
           setPalettes((ps) => [...ps, palette]);
           refetch();
@@ -83,7 +86,7 @@ export default function ColorPaletteManagement({ collectionId }: ColorPaletteMan
       <ColorPaletteModal
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
-        collectionId={collectionId === "" ? 0 : (collectionId as number)}
+        collectionId={collectionId === null ? 0 : (collectionId as number)}
         paletteId={selectedId === "" ? undefined : selectedId}
         initialName={selected?.name ?? ""}
         initialColors={selected?.colors ?? []}
@@ -112,6 +115,6 @@ export default function ColorPaletteManagement({ collectionId }: ColorPaletteMan
         }}
         isLoading={deleting}
       />
-    </Box>
+    </Flex>
   );
 }
