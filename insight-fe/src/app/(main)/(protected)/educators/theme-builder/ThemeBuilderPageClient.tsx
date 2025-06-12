@@ -130,9 +130,15 @@ export default function ThemeBuilderPageClient() {
   const { data: collectionsData, refetch: refetchCollections } = useQuery(
     GET_STYLE_COLLECTIONS
   );
-  const [fetchPalettes, { data: palettesData }] =
-    useLazyQuery(GET_COLOR_PALETTES);
-  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
+  const [fetchPalettes, { data: palettesData }] = useLazyQuery(
+    GET_COLOR_PALETTES,
+    {
+      fetchPolicy: "network-only",
+    },
+  );
+  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS, {
+    fetchPolicy: "network-only",
+  });
   const [createTheme, { loading: saving }] = useMutation(CREATE_THEME, {
     onCompleted: () => {
       setThemeName("");
@@ -155,7 +161,12 @@ export default function ThemeBuilderPageClient() {
 
   useEffect(() => {
     if (collectionsData?.getAllStyleCollection) {
-      setStyleCollections(collectionsData.getAllStyleCollection);
+      setStyleCollections(
+        collectionsData.getAllStyleCollection.map((c: any) => ({
+          ...c,
+          id: Number(c.id),
+        }))
+      );
     }
   }, [collectionsData]);
 
@@ -172,7 +183,12 @@ export default function ThemeBuilderPageClient() {
 
   useEffect(() => {
     if (palettesData?.getAllColorPalette) {
-      setColorPalettes(palettesData.getAllColorPalette);
+      setColorPalettes(
+        palettesData.getAllColorPalette.map((p: any) => ({
+          ...p,
+          id: Number(p.id),
+        }))
+      );
     }
   }, [palettesData]);
 
@@ -206,7 +222,12 @@ export default function ThemeBuilderPageClient() {
 
   useEffect(() => {
     if (groupsData?.getAllStyleGroup) {
-      setStyleGroups(groupsData.getAllStyleGroup);
+      setStyleGroups(
+        groupsData.getAllStyleGroup.map((g: any) => ({
+          ...g,
+          id: Number(g.id),
+        }))
+      );
     }
   }, [groupsData]);
 
@@ -360,9 +381,9 @@ export default function ThemeBuilderPageClient() {
             if (data?.createStyleCollection) {
               setStyleCollections((cols) => [
                 ...cols,
-                data.createStyleCollection,
+                { ...data.createStyleCollection, id: Number(data.createStyleCollection.id) },
               ]);
-              setSelectedCollectionId(data.createStyleCollection.id);
+              setSelectedCollectionId(Number(data.createStyleCollection.id));
               refetchCollections();
             }
           }}
@@ -433,8 +454,11 @@ export default function ThemeBuilderPageClient() {
               },
             });
             if (data?.createStyleGroup) {
-              setStyleGroups((g) => [...g, data.createStyleGroup]);
-              setSelectedGroupId(data.createStyleGroup.id);
+              setStyleGroups((g) => [
+                ...g,
+                { ...data.createStyleGroup, id: Number(data.createStyleGroup.id) },
+              ]);
+              setSelectedGroupId(Number(data.createStyleGroup.id));
             }
           }}
         />
