@@ -65,7 +65,7 @@ export default function ThemeBuilderPageClient() {
     {
       id: number;
       name: string;
-      colors: string[];
+      colors: { name: string; value: string }[];
     }[]
   >([]);
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | "">("");
