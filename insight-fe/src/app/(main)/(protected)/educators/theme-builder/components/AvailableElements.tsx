@@ -9,11 +9,24 @@ const AVAILABLE_ELEMENTS = [
   { type: "quiz", label: "Quiz" },
 ];
 
-export const AvailableElements = () => {
+interface AvailableElementsProps {
+  selectedType: string | null;
+  onSelect: (type: string) => void;
+}
+
+export const AvailableElements = ({
+  selectedType,
+  onSelect,
+}: AvailableElementsProps) => {
   return (
     <HStack w="100%">
       {AVAILABLE_ELEMENTS.map((el) => (
-        <Button key={el.type} size="2xl">
+        <Button
+          key={el.type}
+          size="2xl"
+          colorScheme={selectedType === el.type ? "blue" : undefined}
+          onClick={() => onSelect(el.type)}
+        >
           {el.label}
         </Button>
       ))}
