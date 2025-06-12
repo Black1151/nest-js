@@ -129,9 +129,6 @@ export default function ThemeBuilderPageClient() {
   const [selectedElementType, setSelectedElementType] =
     useState<string>("text");
 
-  const [foundationColors, setFoundationColors] = useState<
-    { name: string; value: string }[]
-  >([{ name: "primary", value: "#000000" }]);
   const [semanticColors, setSemanticColors] = useState<
     { name: string; ref: string }[]
   >([]);
@@ -215,21 +212,6 @@ export default function ThemeBuilderPageClient() {
     }
   }, [styleGroups]);
 
-  const tokens = useMemo(
-    () => ({
-      foundationTokens: {
-        colors: Object.fromEntries(
-          foundationColors.map((c) => [c.name, c.value])
-        ),
-      },
-      semanticTokens: {
-        colors: Object.fromEntries(
-          semanticColors.map((c) => [c.name, `colors.${c.ref}`])
-        ),
-      },
-    }),
-    [foundationColors, semanticColors]
-  );
 
   return (
     <Stack spacing={4}>
@@ -306,60 +288,6 @@ export default function ThemeBuilderPageClient() {
         }}
       />
 
-      <Box>
-        <Text fontWeight="bold" mb={2}>
-          Foundation Colors
-        </Text>
-        {foundationColors.map((c, idx) => (
-          <HStack key={idx} mb={2} align="center">
-            <Input
-              placeholder="token name"
-              value={c.name}
-              onChange={(e) =>
-                setFoundationColors((arr) =>
-                  arr.map((it, i) =>
-                    i === idx ? { ...it, name: e.target.value } : it
-                  )
-                )
-              }
-            />
-            <Input
-              type="color"
-              w="40px"
-              h="40px"
-              p={0}
-              value={c.value}
-              onChange={(e) =>
-                setFoundationColors((arr) =>
-                  arr.map((it, i) =>
-                    i === idx ? { ...it, value: e.target.value } : it
-                  )
-                )
-              }
-            />
-            <IconButton
-              aria-label="remove"
-              size="sm"
-              icon={<Trash2 size={16} />}
-              onClick={() =>
-                setFoundationColors((arr) => arr.filter((_, i) => i !== idx))
-              }
-            />
-          </HStack>
-        ))}
-        <Button
-          leftIcon={<Plus size={16} />}
-          size="sm"
-          onClick={() =>
-            setFoundationColors((arr) => [
-              ...arr,
-              { name: "", value: "#000000" },
-            ])
-          }
-        >
-          Add Color Token
-        </Button>
-      </Box>
 
       <Box>
         <Text fontWeight="bold" mt={4} mb={2}>
@@ -389,7 +317,7 @@ export default function ThemeBuilderPageClient() {
                 )
               }
             >
-              {foundationColors.map((fc) => (
+              {selectedPalette?.colors.map((fc) => (
                 <option key={fc.name} value={fc.name}>
                   {fc.name}
                 </option>
@@ -411,7 +339,7 @@ export default function ThemeBuilderPageClient() {
           onClick={() =>
             setSemanticColors((arr) => [
               ...arr,
-              { name: "", ref: foundationColors[0]?.name || "" },
+              { name: "", ref: selectedPalette?.colors[0]?.name || "" },
             ])
           }
         >
@@ -506,8 +434,8 @@ export default function ThemeBuilderPageClient() {
         onClick={async () => {
           if (selectedCollectionId === "" || selectedPaletteId === "") return;
           const fTokens: Record<string, any> = { colors: {} };
-          foundationColors.forEach((c) => {
-            if (c.name) (fTokens.colors as any)[c.name] = c.value;
+          selectedPalette?.colors.forEach(({ name, value }) => {
+            if (name) (fTokens.colors as any)[name] = value;
           });
           const sTokens: Record<string, any> = { colors: {} };
           semanticColors.forEach((c) => {
