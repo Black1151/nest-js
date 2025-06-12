@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,7 +9,6 @@ import {
   Heading,
   Input,
   Stack,
-  HStack,
   Text,
   Accordion,
 } from "@chakra-ui/react";
@@ -18,19 +17,11 @@ import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import {
   GET_STYLE_COLLECTIONS,
   GET_COLOR_PALETTES,
+  GET_STYLE_GROUPS,
   CREATE_THEME,
-  CREATE_STYLE_COLLECTION,
-  UPDATE_STYLE_COLLECTION,
-  DELETE_STYLE_COLLECTION,
-  CREATE_COLOR_PALETTE,
-  UPDATE_COLOR_PALETTE,
-  DELETE_COLOR_PALETTE,
 } from "@/graphql/lesson";
-import SaveStyleModal from "@/components/lesson/modals/SaveStyleModal";
-import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollectionModal";
-import AddColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModal";
-import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
-import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
+import ThemeToolbar from "@/components/theme/ThemeToolbar";
+import ThemeSlideSequencer from "@/components/theme/ThemeSlideSequencer";
 import { availableFonts } from "@/theme/fonts";
 import WrapperSettings from "@/components/lesson/attributes/WrapperSettings";
 import TextAttributes from "@/components/lesson/attributes/TextAttributes";
@@ -56,38 +47,11 @@ export default function ThemeBuilderPageClient() {
     }[]
   >([]);
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | "">("");
-  const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
-  const [isEditCollectionOpen, setIsEditCollectionOpen] = useState(false);
-  const [isDeleteCollectionOpen, setIsDeleteCollectionOpen] = useState(false);
-  const [isAddPaletteOpen, setIsAddPaletteOpen] = useState(false);
-  const [isEditPaletteOpen, setIsEditPaletteOpen] = useState(false);
-  const [isDeletePaletteOpen, setIsDeletePaletteOpen] = useState(false);
-
-  const collectionOptions = useMemo(
-    () => styleCollections.map((c) => ({ label: c.name, value: String(c.id) })),
-    [styleCollections],
+  const [styleGroups, setStyleGroups] = useState<{ id: number; name: string }[]>(
+    [],
   );
+  const [selectedGroupId, setSelectedGroupId] = useState<number | "">("");
 
-  const paletteOptions = useMemo(
-    () => colorPalettes.map((p) => ({ label: p.name, value: String(p.id) })),
-    [colorPalettes],
-  );
-
-  const selectedCollection = useMemo(
-    () =>
-      selectedCollectionId === ""
-        ? undefined
-        : styleCollections.find((c) => c.id === selectedCollectionId),
-    [styleCollections, selectedCollectionId],
-  );
-
-  const selectedPalette = useMemo(
-    () =>
-      selectedPaletteId === ""
-        ? undefined
-        : colorPalettes.find((p) => p.id === selectedPaletteId),
-    [colorPalettes, selectedPaletteId],
-  );
 
   const wrapperAttrs = useStyleAttributes({ deps: [] });
 
@@ -104,21 +68,12 @@ export default function ThemeBuilderPageClient() {
   );
   const [fetchPalettes, { data: palettesData }] =
     useLazyQuery(GET_COLOR_PALETTES);
+  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
   const [createTheme, { loading: saving }] = useMutation(CREATE_THEME, {
     onCompleted: () => {
       setThemeName("");
     },
   });
-  const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
-  const [updateCollection] = useMutation(UPDATE_STYLE_COLLECTION);
-  const [deleteCollection, { loading: deletingCollection }] = useMutation(
-    DELETE_STYLE_COLLECTION,
-  );
-  const [createPalette] = useMutation(CREATE_COLOR_PALETTE);
-  const [updatePalette] = useMutation(UPDATE_COLOR_PALETTE);
-  const [deletePalette, { loading: deletingPalette }] = useMutation(
-    DELETE_COLOR_PALETTE,
-  );
 
   useEffect(() => {
     if (collectionsData?.getAllStyleCollection) {
@@ -131,10 +86,18 @@ export default function ThemeBuilderPageClient() {
       fetchPalettes({
         variables: { collectionId: String(selectedCollectionId) },
       });
+      fetchGroups({
+        variables: {
+          collectionId: String(selectedCollectionId),
+          element: "Text",
+        },
+      });
     } else {
       setColorPalettes([]);
       setSelectedPaletteId("");
+      setStyleGroups([]);
     }
+    setSelectedGroupId("");
   }, [selectedCollectionId]);
 
   useEffect(() => {
@@ -142,6 +105,14 @@ export default function ThemeBuilderPageClient() {
       setColorPalettes(palettesData.getAllColorPalette);
     }
   }, [palettesData]);
+
+  useEffect(() => {
+    if (groupsData?.getAllStyleGroup) {
+      setStyleGroups(groupsData.getAllStyleGroup);
+    } else {
+      setStyleGroups([]);
+    }
+  }, [groupsData]);
 
   const previewStyles = {
     bgColor: wrapperAttrs.bgColor,
@@ -169,25 +140,65 @@ export default function ThemeBuilderPageClient() {
           onChange={(e) => setThemeName(e.target.value)}
         />
       </FormControl>
-      <HStack align="start">
-        <FormControl flex={1}>
-          <FormLabel>Style Collection</FormLabel>
-          <CrudDropdown
-            options={collectionOptions}
-            value={selectedCollectionId}
-            onChange={(e) =>
-              setSelectedCollectionId(
-                e.target.value === "" ? "" : parseInt(e.target.value, 10),
-              )
-            }
-            onCreate={() => setIsAddCollectionOpen(true)}
-            onUpdate={() => setIsEditCollectionOpen(true)}
-            onDelete={() => setIsDeleteCollectionOpen(true)}
-            isUpdateDisabled={selectedCollectionId === ""}
-            isDeleteDisabled={selectedCollectionId === ""}
-          />
-        </FormControl>
-      </HStack>
+      <ThemeToolbar
+        styleCollections={styleCollections}
+        styleGroups={styleGroups}
+        colorPalettes={colorPalettes}
+        selectedCollectionId={selectedCollectionId}
+        onSelectCollection={setSelectedCollectionId}
+        selectedPaletteId={selectedPaletteId}
+        onSelectPalette={setSelectedPaletteId}
+        selectedElementType="text"
+        selectedGroupId={selectedGroupId}
+        onSelectGroup={setSelectedGroupId}
+        onAddCollection={async (collection) => {
+          setStyleCollections([...styleCollections, collection]);
+          await refetchCollections();
+        }}
+        onUpdateCollection={async (collection) => {
+          setStyleCollections((cols) =>
+            cols.map((c) => (c.id === collection.id ? collection : c)),
+          );
+          await refetchCollections();
+        }}
+        onDeleteCollection={async (id) => {
+          setStyleCollections((cols) => cols.filter((c) => c.id !== id));
+          if (selectedCollectionId === id) {
+            setSelectedCollectionId("");
+            setColorPalettes([]);
+            setSelectedPaletteId("");
+            setStyleGroups([]);
+            setSelectedGroupId("");
+          }
+          await refetchCollections();
+        }}
+        onAddGroup={(group) => {
+          setStyleGroups((gs) => [...gs, group]);
+          setSelectedGroupId(group.id);
+        }}
+        onUpdateGroup={(group) => {
+          setStyleGroups((gs) =>
+            gs.map((g) => (g.id === group.id ? group : g)),
+          );
+        }}
+        onDeleteGroup={(id) => {
+          setStyleGroups((gs) => gs.filter((g) => g.id !== id));
+          if (selectedGroupId === id) setSelectedGroupId("");
+        }}
+        onAddPalette={(palette) => {
+          setColorPalettes((p) => [...p, palette]);
+          setSelectedPaletteId(palette.id);
+        }}
+        onUpdatePalette={(palette) => {
+          setColorPalettes((p) =>
+            p.map((pl) => (pl.id === palette.id ? palette : pl)),
+          );
+        }}
+        onDeletePalette={(id) => {
+          setColorPalettes((p) => p.filter((pl) => pl.id !== id));
+          if (selectedPaletteId === id) setSelectedPaletteId("");
+        }}
+      />
 
       <Accordion allowMultiple>
         <WrapperSettings
@@ -253,122 +264,6 @@ export default function ThemeBuilderPageClient() {
         Save Theme
       </Button>
 
-      {isAddCollectionOpen && (
-        <SaveStyleModal
-          isOpen={isAddCollectionOpen}
-          onClose={() => setIsAddCollectionOpen(false)}
-          collections={styleCollections}
-          elementType={null as any}
-          groups={[]}
-          onSave={() => {}}
-          onAddCollection={(collection) => {
-            setStyleCollections((cols) => [...cols, collection]);
-            setSelectedCollectionId(collection.id);
-            refetchCollections();
-          }}
-          onAddGroup={() => {}}
-        />
-      )}
-
-      {isEditCollectionOpen && selectedCollection && (
-        <AddStyleCollectionModal
-          isOpen={isEditCollectionOpen}
-          onClose={() => setIsEditCollectionOpen(false)}
-          title="Update Style Collection"
-          confirmLabel="Update"
-          initialName={selectedCollection.name}
-          onSave={async (name) => {
-            const { data } = await updateCollection({
-              variables: { data: { id: selectedCollectionId as number, name } },
-            });
-            if (data?.updateStyleCollection) {
-              setStyleCollections((cols) =>
-                cols.map((c) =>
-                  c.id === selectedCollectionId
-                    ? { ...c, name: data.updateStyleCollection.name }
-                    : c,
-                ),
-              );
-            }
-          }}
-        />
-      )}
-
-      {isDeleteCollectionOpen && (
-        <ConfirmationModal
-          isOpen={isDeleteCollectionOpen}
-          onClose={() => setIsDeleteCollectionOpen(false)}
-          action="delete collection"
-          bodyText="Are you sure you want to delete this collection?"
-          onConfirm={async () => {
-            if (selectedCollectionId === "") return;
-            await deleteCollection({
-              variables: { data: { id: selectedCollectionId } },
-            });
-            setStyleCollections((cols) =>
-              cols.filter((c) => c.id !== selectedCollectionId),
-            );
-            setSelectedCollectionId("");
-            setColorPalettes([]);
-            setSelectedPaletteId("");
-            setIsDeleteCollectionOpen(false);
-          }}
-          isLoading={deletingCollection}
-        />
-      )}
-
-      {isAddPaletteOpen && selectedCollectionId !== "" && (
-        <AddColorPaletteModal
-          key="add-palette"
-          isOpen={isAddPaletteOpen}
-          onClose={() => setIsAddPaletteOpen(false)}
-          collectionId={selectedCollectionId as number}
-          onSave={(palette) => {
-            setColorPalettes((p) => [...p, palette]);
-            setSelectedPaletteId(palette.id);
-          }}
-        />
-      )}
-
-      {isEditPaletteOpen && (
-        <AddColorPaletteModal
-          key={`edit-palette-${selectedPaletteId}`}
-          isOpen={isEditPaletteOpen}
-          onClose={() => setIsEditPaletteOpen(false)}
-          collectionId={selectedCollectionId as number}
-          paletteId={
-            selectedPaletteId === "" ? undefined : (selectedPaletteId as number)
-          }
-          initialName={selectedPalette?.name ?? ""}
-          initialColors={selectedPalette?.colors ?? []}
-          title="Update Color Palette"
-          confirmLabel="Update"
-          onSave={(palette) => {
-            setColorPalettes((p) =>
-              p.map((col) => (col.id === palette.id ? palette : col)),
-            );
-          }}
-        />
-      )}
-
-      {isDeletePaletteOpen && (
-        <ConfirmationModal
-          isOpen={isDeletePaletteOpen}
-          onClose={() => setIsDeletePaletteOpen(false)}
-          action="delete palette"
-          bodyText="Are you sure you want to delete this palette?"
-          onConfirm={async () => {
-            if (selectedPaletteId === "") return;
-            await deletePalette({ variables: { data: { id: selectedPaletteId } } });
-            setColorPalettes((p) =>
-              p.filter((col) => col.id !== selectedPaletteId),
-            );
-            setSelectedPaletteId("");
-            setIsDeletePaletteOpen(false);
-          }}
-          isLoading={deletingPalette}
-        />
-      )}
     </Stack>
   );
 }
