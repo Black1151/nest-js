@@ -64,16 +64,17 @@ export default function ColorPaletteModal({
   // Populate fields when the modal opens
   useEffect(() => {
     if (!isOpen) return;
-    setName(initialName);
-    setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
-  }, [isOpen, initialName, initialColors]);
 
-  // Update with fresh data when editing
-  useEffect(() => {
-    if (!isOpen || !paletteId || !palette) return;
-    setName(palette.name);
-    setColors(palette.colors.length > 0 ? palette.colors : ["#000000"]);
-  }, [isOpen, paletteId, palette]);
+    if (paletteId) {
+      if (palette) {
+        setName(palette.name);
+        setColors(palette.colors.length > 0 ? palette.colors : ["#000000"]);
+      }
+    } else {
+      setName(initialName);
+      setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
+    }
+  }, [isOpen, paletteId, palette, initialName, initialColors]);
 
   const handleColorChange = (idx: number, value: string) => {
     setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
