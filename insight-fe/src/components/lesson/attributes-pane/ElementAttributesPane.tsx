@@ -19,7 +19,7 @@ interface ElementAttributesPaneProps {
   onChange: (updated: SlideElementDnDItemProps) => void;
   onClone?: () => void;
   onDelete?: () => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  colorPalettes?: { id: number; name: string; tokens: { token: string; color: string }[] }[];
   selectedPaletteId?: number | "";
 }
 

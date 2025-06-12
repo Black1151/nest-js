@@ -20,7 +20,7 @@ interface StyleModalsProps {
   onSave: (data: { name: string; collectionId: number; groupId: number | null }) => void;
   onAddCollection: (collection: { id: number; name: string }) => void;
   onAddGroup: (group: { id: number; name: string }) => void;
-  onAddPalette: (palette: { id: number; name: string; colors: string[] }) => void;
+  onAddPalette: (palette: { id: number; name: string; tokens: { token: string; color: string }[] }) => void;
   onLoad: (styleId: number) => void;
 }
 

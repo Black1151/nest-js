@@ -52,7 +52,7 @@ export default function ThemeBuilderPageClient() {
     {
       id: number;
       name: string;
-      colors: string[];
+      tokens: { token: string; color: string }[];
     }[]
   >([]);
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | "">("");
@@ -340,7 +340,7 @@ export default function ThemeBuilderPageClient() {
             selectedPaletteId === "" ? undefined : (selectedPaletteId as number)
           }
           initialName={selectedPalette?.name ?? ""}
-          initialColors={selectedPalette?.colors ?? []}
+          initialTokens={selectedPalette?.tokens ?? []}
           title="Update Color Palette"
           confirmLabel="Update"
           onSave={(palette) => {

@@ -150,7 +150,10 @@ export const GET_COLOR_PALETTES = gql`
     ) {
       id
       name
-      colors
+      tokens {
+        token
+        color
+      }
     }
   }
 `;
@@ -160,7 +163,10 @@ export const GET_COLOR_PALETTE = gql`
     getColorPalette(data: { id: $id }) {
       id
       name
-      colors
+      tokens {
+        token
+        color
+      }
     }
   }
 `;
@@ -170,7 +176,10 @@ export const CREATE_COLOR_PALETTE = gql`
     createColorPalette(data: $data) {
       id
       name
-      colors
+      tokens {
+        token
+        color
+      }
     }
   }
 `;
@@ -180,7 +189,10 @@ export const UPDATE_COLOR_PALETTE = gql`
     updateColorPalette(data: $data) {
       id
       name
-      colors
+      tokens {
+        token
+        color
+      }
     }
   }
 `;

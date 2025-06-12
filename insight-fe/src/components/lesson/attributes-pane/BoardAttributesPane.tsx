@@ -8,7 +8,7 @@ import { BoardRow } from "../slide/SlideElementsContainer";
 interface BoardAttributesPaneProps {
   board: BoardRow;
   onChange: (updated: BoardRow) => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  colorPalettes?: { id: number; name: string; tokens: { token: string; color: string }[] }[];
   selectedPaletteId?: number | "";
 }
 

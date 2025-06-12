@@ -19,7 +19,7 @@ import PaletteColorPicker from "../PaletteColorPicker";
 
 interface WrapperSettingsProps {
   attrs: ReturnType<typeof useStyleAttributes>;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  colorPalettes?: { id: number; name: string; tokens: { token: string; color: string }[] }[];
   selectedPaletteId?: number | "";
 }
 
@@ -64,7 +64,7 @@ export default function WrapperSettings({
   const paletteColors =
     colorPalettes?.find(
       (p) => Number(p.id) === Number(selectedPaletteId)
-    )?.colors ?? [];
+    )?.tokens.map((t) => t.color) ?? [];
 
   return (
     <>
