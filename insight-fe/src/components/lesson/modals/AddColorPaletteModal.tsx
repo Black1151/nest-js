@@ -21,11 +21,11 @@ interface ColorPaletteModalProps {
   isOpen: boolean;
   onClose: () => void;
   collectionId: number;
-  onSave?: (palette: { id: number; name: string; colors: string[] }) => void;
+  onSave?: (palette: { id: number; name: string; tokens: { token: string; color: string }[] }) => void;
   /** Pre-populated palette name */
   initialName?: string;
-  /** Pre-populated list of colors */
-  initialColors?: string[];
+  /** Pre-populated list of tokens */
+  initialTokens?: { token: string; color: string }[];
   /** Existing palette id for updates */
   paletteId?: number;
   /** Modal title */
@@ -40,14 +40,14 @@ export default function ColorPaletteModal({
   collectionId,
   onSave,
   initialName = "",
-  initialColors = ["#000000"],
+  initialTokens = [{ token: "", color: "#000000" }],
   paletteId,
   title = "Add Color Palette",
   confirmLabel = "Save",
 }: ColorPaletteModalProps) {
   const [name, setName] = useState(initialName);
-  const [colors, setColors] = useState<string[]>(
-    initialColors.length > 0 ? initialColors : ["#000000"]
+  const [tokens, setTokens] = useState<{ token: string; color: string }[]>(
+    initialTokens.length > 0 ? initialTokens : [{ token: "", color: "#000000" }]
   );
 
   const { data: paletteData } = useQuery(GET_COLOR_PALETTE, {
@@ -67,25 +67,28 @@ export default function ColorPaletteModal({
 
     if (paletteId && paletteData?.getColorPalette) {
       setName(paletteData.getColorPalette.name);
-      setColors(
-        paletteData.getColorPalette.colors.length > 0
-          ? paletteData.getColorPalette.colors
-          : ["#000000"]
+      setTokens(
+        paletteData.getColorPalette.tokens.length > 0
+          ? paletteData.getColorPalette.tokens
+          : [{ token: "", color: "#000000" }]
       );
     } else {
       setName(initialName);
-      setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
+      setTokens(initialTokens.length > 0 ? initialTokens : [{ token: "", color: "#000000" }]);
     }
-  }, [isOpen, initialName, initialColors, paletteId, paletteData]);
+  }, [isOpen, initialName, initialTokens, paletteId, paletteData]);
 
-  const handleColorChange = (idx: number, value: string) => {
-    setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
+  const handleTokenChange = (idx: number, field: 'token' | 'color', value: string) => {
+    setTokens((toks) =>
+      toks.map((t, i) => (i === idx ? { ...t, [field]: value } : t))
+    );
   };
 
-  const addColor = () => setColors((cols) => [...cols, "#000000"]);
+  const addToken = () =>
+    setTokens((toks) => [...toks, { token: "", color: "#000000" }]);
 
-  const removeColor = (idx: number) =>
-    setColors((cols) => cols.filter((_, i) => i !== idx));
+  const removeToken = (idx: number) =>
+    setTokens((toks) => toks.filter((_, i) => i !== idx));
 
   return (
     <BaseModal
@@ -101,30 +104,30 @@ export default function ColorPaletteModal({
               if (paletteId) {
                 const { data } = await updatePalette({
                   variables: {
-                    data: { id: paletteId, name, colors },
+                    data: { id: paletteId, name, tokens },
                   },
                 });
                 if (data?.updateColorPalette) {
                   onSave?.({
                     id: Number(data.updateColorPalette.id),
                     name: data.updateColorPalette.name,
-                    colors: data.updateColorPalette.colors,
+                    tokens: data.updateColorPalette.tokens,
                   });
                 }
               } else {
                 const { data } = await createPalette({
                   variables: {
-                    data: { name, colors, collectionId },
+                    data: { name, tokens, collectionId },
                   },
                 });
                 if (data?.createColorPalette) {
                   onSave?.({
                     id: Number(data.createColorPalette.id),
                     name: data.createColorPalette.name,
-                    colors: data.createColorPalette.colors,
+                    tokens: data.createColorPalette.tokens,
                   });
                   setName("");
-                  setColors(["#000000"]);
+                  setTokens([{ token: "", color: "#000000" }]);
                 }
               }
               onClose();
@@ -142,12 +145,17 @@ export default function ColorPaletteModal({
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        {colors.map((color, idx) => (
+        {tokens.map((tok, idx) => (
           <HStack key={idx}>
             <Input
+              placeholder="Token"
+              value={tok.token}
+              onChange={(e) => handleTokenChange(idx, 'token', e.target.value)}
+            />
+            <Input
               type="color"
-              value={color}
-              onChange={(e) => handleColorChange(idx, e.target.value)}
+              value={tok.color}
+              onChange={(e) => handleTokenChange(idx, 'color', e.target.value)}
               w="40px"
               h="40px"
               p={0}
@@ -156,12 +164,12 @@ export default function ColorPaletteModal({
               aria-label="Remove color"
               size="sm"
               icon={<Trash2 size={16} />}
-              onClick={() => removeColor(idx)}
+              onClick={() => removeToken(idx)}
             />
           </HStack>
         ))}
-        <Button leftIcon={<Plus size={16} />} size="sm" onClick={addColor}>
-          Add Color
+        <Button leftIcon={<Plus size={16} />} size="sm" onClick={addToken}>
+          Add Token
         </Button>
       </VStack>
     </BaseModal>

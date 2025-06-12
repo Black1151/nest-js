@@ -36,7 +36,7 @@ interface SlideToolbarProps {
   availableElements: { type: string; label: string }[];
   styleCollections: { id: number; name: string }[];
   styleGroups: { id: number; name: string }[];
-  colorPalettes: { id: number; name: string; colors: string[] }[];
+  colorPalettes: { id: number; name: string; tokens: { token: string; color: string }[] }[];
   themes: { id: number; name: string }[];
   selectedCollectionId: number | "";
   onSelectCollection: (id: number | "") => void;
@@ -55,8 +55,8 @@ interface SlideToolbarProps {
   onAddGroup: (group: { id: number; name: string }) => void;
   onUpdateGroup?: (group: { id: number; name: string }) => void;
   onDeleteGroup?: (id: number) => void;
-  onAddPalette: (palette: { id: number; name: string; colors: string[] }) => void;
-  onUpdatePalette?: (palette: { id: number; name: string; colors: string[] }) => void;
+  onAddPalette: (palette: { id: number; name: string; tokens: { token: string; color: string }[] }) => void;
+  onUpdatePalette?: (palette: { id: number; name: string; tokens: { token: string; color: string }[] }) => void;
   onDeletePalette?: (id: number) => void;
 }
 
@@ -396,7 +396,7 @@ export default function SlideToolbar({
         collectionId={selectedCollectionId as number}
         paletteId={selectedPaletteId === "" ? undefined : selectedPaletteId}
         initialName={selectedPalette?.name ?? ""}
-        initialColors={selectedPalette?.colors ?? []}
+        initialTokens={selectedPalette?.tokens ?? []}
         title="Update Color Palette"
         confirmLabel="Update"
         onSave={(palette) => {

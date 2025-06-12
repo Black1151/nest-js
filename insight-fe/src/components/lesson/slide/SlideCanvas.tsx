@@ -32,7 +32,7 @@ interface SlideCanvasProps {
   handleDropElement: (e: React.DragEvent<HTMLDivElement>) => void;
   openSaveStyle: () => void;
   openLoadStyle: () => void;
-  colorPalettes: { id: number; name: string; colors: string[] }[];
+  colorPalettes: { id: number; name: string; tokens: { token: string; color: string }[] }[];
   selectedPaletteId: number | "";
 } 
 

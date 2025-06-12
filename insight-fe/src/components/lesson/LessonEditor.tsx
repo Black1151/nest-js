@@ -54,7 +54,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const [colorPalettes, setColorPalettes] = useState<{
     id: number;
     name: string;
-    colors: string[];
+    tokens: { token: string; color: string }[];
   }[]>([]);
   const [themes, setThemes] = useState<{
     id: number;
@@ -90,7 +90,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
       : undefined;
 
   const editor = useLessonEditorState(undefined, {
-    defaultColor: selectedPalette?.colors[0] ?? "#000000",
+    defaultColor: selectedPalette?.tokens[0]?.color ?? "#000000",
     defaultFontFamily: availableFonts[0].fontFamily,
   });
 
@@ -208,7 +208,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         palettesData.getAllColorPalette.map((p: any) => ({
           id: Number(p.id),
           name: p.name,
-          colors: p.colors,
+          tokens: p.tokens,
         }))
       );
     } else {
@@ -236,12 +236,12 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const handleUpdatePalette = async (palette: {
     id: number;
     name: string;
-    colors: string[];
+    tokens: { token: string; color: string }[];
   }) => {
     const normalized = {
       id: Number(palette.id),
       name: palette.name,
-      colors: palette.colors,
+      tokens: palette.tokens,
     };
     setColorPalettes((p) => p.map((pl) => (pl.id === normalized.id ? normalized : pl)));
     await fetchPalettes({
@@ -252,11 +252,11 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
   const handleAddPalette = async (palette: {
     id: number;
     name: string;
-    colors: string[];
+    tokens: { token: string; color: string }[];
   }) => {
     setColorPalettes((p) => [
       ...p,
-      { id: Number(palette.id), name: palette.name, colors: palette.colors },
+      { id: Number(palette.id), name: palette.name, tokens: palette.tokens },
     ]);
     await fetchPalettes({
       variables: { collectionId: String(selectedCollectionId) },

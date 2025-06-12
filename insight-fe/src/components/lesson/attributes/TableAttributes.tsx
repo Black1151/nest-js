@@ -23,7 +23,7 @@ interface TableAttributesProps {
     cells: TableCell[][];
   };
   setTable: (table: { rows: number; cols: number; cells: TableCell[][] }) => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  colorPalettes?: { id: number; name: string; tokens: { token: string; color: string }[] }[];
   selectedPaletteId?: number | "";
 }
 
@@ -90,7 +90,7 @@ export default function TableAttributes({
   };
 
   const paletteColors =
-    colorPalettes?.find((p) => Number(p.id) === Number(selectedPaletteId))?.colors ?? [];
+    colorPalettes?.find((p) => Number(p.id) === Number(selectedPaletteId))?.tokens.map((t) => t.color) ?? [];
 
   const updateCell = (r: number, c: number, cell: TableCell) => {
     updateTableCells((prev) => {

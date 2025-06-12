@@ -10,7 +10,7 @@ import useStyleAttributes from "../hooks/useStyleAttributes";
 interface ColumnAttributesPaneProps {
   column: ColumnType<SlideElementDnDItemProps>;
   onChange: (updated: ColumnType<SlideElementDnDItemProps>) => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  colorPalettes?: { id: number; name: string; tokens: { token: string; color: string }[] }[];
   selectedPaletteId?: number | "";
 }
 

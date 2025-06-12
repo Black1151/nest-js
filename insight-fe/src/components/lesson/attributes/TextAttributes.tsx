@@ -30,7 +30,7 @@ interface TextAttributesProps {
   setLineHeight: (val: string) => void;
   textAlign: string;
   setTextAlign: (val: string) => void;
-  colorPalettes?: { id: number; name: string; colors: string[] }[];
+  colorPalettes?: { id: number; name: string; tokens: { token: string; color: string }[] }[];
   selectedPaletteId?: number | "";
 }
 
@@ -55,7 +55,7 @@ export default function TextAttributes({
   const paletteColors =
     colorPalettes?.find(
       (p) => Number(p.id) === Number(selectedPaletteId)
-    )?.colors ?? [];
+    )?.tokens.map((t) => t.color) ?? [];
 
   return (
     <AccordionItem borderWidth="1px" borderColor="purple.300" borderRadius="md" mb={2}>
