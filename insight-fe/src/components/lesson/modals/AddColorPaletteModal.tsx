@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+const DEFAULT_COLORS = ["#000000"];
 import {
   Button,
   HStack,
@@ -40,14 +42,14 @@ export default function ColorPaletteModal({
   collectionId,
   onSave,
   initialName = "",
-  initialColors = ["#000000"],
+  initialColors = DEFAULT_COLORS,
   paletteId,
   title = "Add Color Palette",
   confirmLabel = "Save",
 }: ColorPaletteModalProps) {
   const [name, setName] = useState(initialName);
   const [colors, setColors] = useState<string[]>(
-    initialColors.length > 0 ? initialColors : ["#000000"]
+    initialColors.length > 0 ? [...initialColors] : DEFAULT_COLORS
   );
 
   const { data: paletteData } = useQuery(GET_COLOR_PALETTE, {
@@ -56,27 +58,27 @@ export default function ColorPaletteModal({
     fetchPolicy: "network-only",
   });
 
+  const palette = paletteData?.getColorPalette;
+
   const [createPalette, { loading: creating }] = useMutation(CREATE_COLOR_PALETTE);
   const [updatePalette, { loading: updating }] = useMutation(UPDATE_COLOR_PALETTE);
 
   const loading = creating || updating;
 
-  // Reset fields when the modal opens or initial values change
+  // Reset fields when the modal opens or when the initial values or palette
+  // data change. Using the palette id ensures this effect only runs when new
+  // palette data is fetched rather than on every render.
   useEffect(() => {
     if (!isOpen) return;
 
-    if (paletteId && paletteData?.getColorPalette) {
-      setName(paletteData.getColorPalette.name);
-      setColors(
-        paletteData.getColorPalette.colors.length > 0
-          ? paletteData.getColorPalette.colors
-          : ["#000000"]
-      );
+    if (paletteId && palette) {
+      setName(palette.name);
+      setColors(palette.colors.length > 0 ? [...palette.colors] : DEFAULT_COLORS);
     } else {
       setName(initialName);
-      setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
+      setColors(initialColors.length > 0 ? [...initialColors] : DEFAULT_COLORS);
     }
-  }, [isOpen, initialName, initialColors, paletteId, paletteData]);
+  }, [isOpen, initialName, initialColors, paletteId, palette?.id]);
 
   const handleColorChange = (idx: number, value: string) => {
     setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
