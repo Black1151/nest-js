@@ -375,9 +375,9 @@ export default function ThemeBuilderPageClient() {
             if (data?.createStyleCollection) {
               setStyleCollections((cols) => [
                 ...cols,
-                data.createStyleCollection,
+                { ...data.createStyleCollection, id: Number(data.createStyleCollection.id) },
               ]);
-              setSelectedCollectionId(data.createStyleCollection.id);
+              setSelectedCollectionId(Number(data.createStyleCollection.id));
               refetchCollections();
             }
           }}
@@ -448,8 +448,11 @@ export default function ThemeBuilderPageClient() {
               },
             });
             if (data?.createStyleGroup) {
-              setStyleGroups((g) => [...g, data.createStyleGroup]);
-              setSelectedGroupId(data.createStyleGroup.id);
+              setStyleGroups((g) => [
+                ...g,
+                { ...data.createStyleGroup, id: Number(data.createStyleGroup.id) },
+              ]);
+              setSelectedGroupId(Number(data.createStyleGroup.id));
             }
           }}
         />
