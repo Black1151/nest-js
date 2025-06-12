@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+const DEFAULT_COLORS = ["#000000"];
 import {
   Button,
   HStack,
@@ -40,14 +42,14 @@ export default function ColorPaletteModal({
   collectionId,
   onSave,
   initialName = "",
-  initialColors = ["#000000"],
+  initialColors = DEFAULT_COLORS,
   paletteId,
   title = "Add Color Palette",
   confirmLabel = "Save",
 }: ColorPaletteModalProps) {
   const [name, setName] = useState(initialName);
   const [colors, setColors] = useState<string[]>(
-    initialColors.length > 0 ? initialColors : ["#000000"]
+    initialColors.length > 0 ? [...initialColors] : DEFAULT_COLORS
   );
 
   const { data: paletteData } = useQuery(GET_COLOR_PALETTE, {
@@ -71,10 +73,10 @@ export default function ColorPaletteModal({
 
     if (paletteId && palette) {
       setName(palette.name);
-      setColors(palette.colors.length > 0 ? palette.colors : ["#000000"]);
+      setColors(palette.colors.length > 0 ? [...palette.colors] : DEFAULT_COLORS);
     } else {
       setName(initialName);
-      setColors(initialColors.length > 0 ? initialColors : ["#000000"]);
+      setColors(initialColors.length > 0 ? [...initialColors] : DEFAULT_COLORS);
     }
   }, [isOpen, initialName, initialColors, paletteId, palette?.id]);
 
