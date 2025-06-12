@@ -1,4 +1,4 @@
-import { Button, HStack } from "@chakra-ui/react";
+import { Button, HStack, Text } from "@chakra-ui/react";
 
 /// this should be standardised with lesson editor
 const AVAILABLE_ELEMENTS = [
@@ -9,12 +9,26 @@ const AVAILABLE_ELEMENTS = [
   { type: "quiz", label: "Quiz" },
 ];
 
-export const AvailableElements = () => {
+interface AvailableElementsProps {
+  selectedType: string | null;
+  onSelect: (type: string) => void;
+}
+
+export const AvailableElements = ({
+  selectedType,
+  onSelect,
+}: AvailableElementsProps) => {
   return (
-    <HStack w="100%">
+    <HStack w="50%" gap={4} pl={4}>
       {AVAILABLE_ELEMENTS.map((el) => (
-        <Button key={el.type} size="2xl">
-          {el.label}
+        <Button
+          key={el.type}
+          size="lg"
+          colorScheme={selectedType === el.type ? "green" : "yellow"}
+          onClick={() => onSelect(el.type)}
+          //   p={4}
+        >
+          <Text>{el.label}</Text>
         </Button>
       ))}
     </HStack>
