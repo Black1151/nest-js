@@ -42,7 +42,7 @@ export default function ColorPaletteModal({
   collectionId,
   onSave,
   initialName = "",
-  initialColors = ["#000000"],
+  initialColors = [{ name: "", value: "#000000" }],
   paletteId,
   title = "Add Color Palette",
   confirmLabel = "Save",
@@ -100,6 +100,11 @@ export default function ColorPaletteModal({
     setColors((cols) =>
       cols.map((c, i) => (i === idx ? { ...c, value } : c))
     );
+    setInitialized(true);
+  };
+
+  const handleColorNameChange = (idx: number, name: string) => {
+    setColors((cols) => cols.map((c, i) => (i === idx ? { ...c, name } : c)));
     setInitialized(true);
   };
 
@@ -173,6 +178,11 @@ export default function ColorPaletteModal({
         />
         {colors.map((color, idx) => (
           <HStack key={idx}>
+            <Input
+              placeholder="Token name"
+              value={color.name}
+              onChange={(e) => handleColorNameChange(idx, e.target.value)}
+            />
             <Input
               type="color"
               value={color.value}
