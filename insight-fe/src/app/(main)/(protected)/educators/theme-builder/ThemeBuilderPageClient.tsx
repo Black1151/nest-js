@@ -81,6 +81,11 @@ export default function ThemeBuilderPageClient() {
   const [isEditGroupOpen, setIsEditGroupOpen] = useState(false);
   const [isDeleteGroupOpen, setIsDeleteGroupOpen] = useState(false);
 
+  const [styleGroups, setStyleGroups] = useState<{
+    id: number;
+    name: string;
+  }[]>([]);
+
   const collectionOptions = useMemo(
     () => styleCollections.map((c) => ({ label: c.name, value: String(c.id) })),
     [styleCollections],
@@ -131,10 +136,6 @@ export default function ThemeBuilderPageClient() {
   const [variants, setVariants] = useState<
     { name: string; base: string; accessible: string; props: string }[]
   >([]);
-  const [styleGroups, setStyleGroups] = useState<{
-    id: number;
-    name: string;
-  }[]>([]);
 
   const { data: collectionsData, refetch: refetchCollections } = useQuery(
     GET_STYLE_COLLECTIONS,
