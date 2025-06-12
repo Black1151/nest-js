@@ -47,7 +47,7 @@ export default function ColorPaletteModal({
   title = "Add Color Palette",
   confirmLabel = "Save",
 }: ColorPaletteModalProps) {
-  const [name, setName] = useState(initialName);
+  const [paletteName, setPaletteName] = useState(initialName);
   const [colors, setColors] = useState<{ name: string; value: string }[]>(
     initialColors.length > 0
       ? initialColors
@@ -78,14 +78,14 @@ export default function ColorPaletteModal({
 
     if (paletteId) {
       if (!palette) return; // wait for palette data
-      setName(palette.name);
+      setPaletteName(palette.name);
       setColors(
         palette.colors.length > 0
           ? palette.colors
           : [{ name: "", value: "#000000" }]
       );
     } else {
-      setName(initialName);
+      setPaletteName(initialName);
       setColors(
         initialColors.length > 0
           ? initialColors
@@ -132,7 +132,7 @@ export default function ColorPaletteModal({
               if (paletteId) {
                 const { data } = await updatePalette({
                   variables: {
-                    data: { id: paletteId, name, colors },
+                    data: { id: paletteId, name: paletteName, colors },
                   },
                 });
                 if (data?.updateColorPalette) {
@@ -145,7 +145,7 @@ export default function ColorPaletteModal({
               } else {
                 const { data } = await createPalette({
                   variables: {
-                    data: { name, colors, collectionId },
+                    data: { name: paletteName, colors, collectionId },
                   },
                 });
                 if (data?.createColorPalette) {
@@ -154,7 +154,7 @@ export default function ColorPaletteModal({
                     name: data.createColorPalette.name,
                     colors: data.createColorPalette.colors,
                   });
-                  setName("");
+                  setPaletteName("");
                   setColors([{ name: "", value: "#000000" }]);
                 }
               }
@@ -170,11 +170,12 @@ export default function ColorPaletteModal({
       <VStack align="stretch" spacing={2}>
         <Input
           placeholder="Palette name"
-          value={name}
+          value={paletteName}
           onChange={(e) => {
-            setName(e.target.value);
+            setPaletteName(e.target.value);
             setInitialized(true);
           }}
+          autoFocus
         />
         {colors.map((color, idx) => (
           <HStack key={idx}>
@@ -182,6 +183,14 @@ export default function ColorPaletteModal({
               placeholder="Token name"
               value={color.name}
               onChange={(e) => handleColorNameChange(idx, e.target.value)}
+            />
+            <Input
+              type="text"
+              value={color.value}
+              onChange={(e) => handleColorChange(idx, e.target.value)}
+              pattern="^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$"
+              title="Enter a hex color code"
+              w="80px"
             />
             <Input
               type="color"
