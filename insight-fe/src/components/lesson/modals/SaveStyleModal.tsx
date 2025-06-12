@@ -6,6 +6,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Checkbox,
 } from "@chakra-ui/react";
 import { gql, useMutation } from "@apollo/client";
 import { BaseModal } from "../../modals/BaseModal";
@@ -52,6 +53,7 @@ interface SaveStyleModalProps {
     name: string;
     collectionId: number;
     groupId: number | null;
+    asVariant: boolean;
   }) => void;
 }
 
@@ -73,6 +75,7 @@ export default function SaveStyleModal({
     collectionId ?? "",
   );
   const [groupId, setGroupId] = useState<number | "">("");
+  const [asVariant, setAsVariant] = useState(false);
   const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
   const [createGroup] = useMutation(CREATE_STYLE_GROUP);
 
@@ -134,6 +137,12 @@ export default function SaveStyleModal({
               Add Group
             </Button>
           )}
+          <Checkbox
+            isChecked={asVariant}
+            onChange={(e) => setAsVariant(e.target.checked)}
+          >
+            Save as Variant
+          </Checkbox>
           <Button
             colorScheme="blue"
             isDisabled={!name || (collections ? collectionIdState === "" : false)}
@@ -143,10 +152,12 @@ export default function SaveStyleModal({
                   name,
                   collectionId: collections ? Number(collectionIdState) : (collectionId as number),
                   groupId: groupId === "" ? null : groupId,
+                  asVariant,
                 });
                 setName("");
                 if (collections) setCollectionIdState("");
                 setGroupId("");
+                setAsVariant(false);
                 onClose();
               }
             }}

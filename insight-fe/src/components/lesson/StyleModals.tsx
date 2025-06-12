@@ -13,7 +13,7 @@ interface StyleModalsProps {
   styleGroups: { id: number; name: string }[];
   selectedCollectionId: number | "";
   selectedElement: SlideElementDnDItemProps | null;
-  onSave: (data: { name: string; groupId: number | null }) => void;
+  onSave: (data: { name: string; groupId: number | null; asVariant: boolean }) => void;
   onLoad: (styleId: number) => void;
 }
 
@@ -36,7 +36,9 @@ export default function StyleModals({
         collectionId={selectedCollectionId as number}
         elementType={selectedElement ? selectedElement.type : null}
         groups={styleGroups}
-        onSave={(data) => onSave({ name: data.name, groupId: data.groupId })}
+        onSave={(data) =>
+          onSave({ name: data.name, groupId: data.groupId, asVariant: data.asVariant })
+        }
       />
       <LoadStyleModal
         isOpen={isLoadOpen}

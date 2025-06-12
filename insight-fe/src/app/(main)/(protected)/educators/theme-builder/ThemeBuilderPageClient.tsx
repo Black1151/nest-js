@@ -9,8 +9,6 @@ import {
   Heading,
   Input,
   Select,
-  Textarea,
-  IconButton,
   Stack,
   HStack,
   Text,
@@ -32,7 +30,6 @@ import {
   CREATE_STYLE_GROUP,
   UPDATE_STYLE_GROUP,
   DELETE_STYLE_GROUP,
-  CREATE_COMPONENT_VARIANT,
 } from "@/graphql/lesson";
 import { PageElementType } from "@/__generated__/schema-types";
 import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollectionModal";
@@ -40,7 +37,6 @@ import AddColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModa
 import AddStyleGroupModal from "@/components/lesson/modals/AddStyleGroupModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
-import { Plus, Trash2 } from "lucide-react";
 import ThemeCanvas from "@/components/theme/ThemeCanvas";
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, PageElementType> = {
@@ -130,9 +126,6 @@ export default function ThemeBuilderPageClient() {
     useState<string>("text");
 
   const [semanticColors, setSemanticColors] = useState<Record<string, string>>({});
-  const [variants, setVariants] = useState<
-    { name: string; base: string; accessible: string; props: string }[]
-  >([]);
 
   const { data: collectionsData, refetch: refetchCollections } = useQuery(
     GET_STYLE_COLLECTIONS
@@ -159,7 +152,6 @@ export default function ThemeBuilderPageClient() {
   const [deleteGroup, { loading: deletingGroup }] =
     useMutation(DELETE_STYLE_GROUP);
   const [createStyle] = useMutation(CREATE_STYLE);
-  const [createVariant] = useMutation(CREATE_COMPONENT_VARIANT);
 
   useEffect(() => {
     if (collectionsData?.getAllStyleCollection) {
@@ -321,85 +313,6 @@ export default function ThemeBuilderPageClient() {
           </HStack>
         ))}
       </Box>
-
-      <Box>
-        <Text fontWeight="bold" mt={4} mb={2}>
-          Component Variants
-        </Text>
-        {variants.map((v, idx) => (
-          <Box key={idx} borderWidth="1px" borderRadius="md" p={2} mb={2}>
-            <HStack mb={2}>
-              <Input
-                placeholder="Variant name"
-                value={v.name}
-                onChange={(e) =>
-                  setVariants((arr) =>
-                    arr.map((it, i) =>
-                      i === idx ? { ...it, name: e.target.value } : it
-                    )
-                  )
-                }
-              />
-              <Input
-                placeholder="Base component"
-                value={v.base}
-                onChange={(e) =>
-                  setVariants((arr) =>
-                    arr.map((it, i) =>
-                      i === idx ? { ...it, base: e.target.value } : it
-                    )
-                  )
-                }
-              />
-            </HStack>
-            <Input
-              mb={2}
-              placeholder="Accessible name"
-              value={v.accessible}
-              onChange={(e) =>
-                setVariants((arr) =>
-                  arr.map((it, i) =>
-                    i === idx ? { ...it, accessible: e.target.value } : it
-                  )
-                )
-              }
-            />
-            <Textarea
-              mb={2}
-              placeholder="Props JSON"
-              value={v.props}
-              onChange={(e) =>
-                setVariants((arr) =>
-                  arr.map((it, i) =>
-                    i === idx ? { ...it, props: e.target.value } : it
-                  )
-                )
-              }
-            />
-            <IconButton
-              aria-label="remove"
-              size="sm"
-              icon={<Trash2 size={16} />}
-              onClick={() =>
-                setVariants((arr) => arr.filter((_, i) => i !== idx))
-              }
-            />
-          </Box>
-        ))}
-        <Button
-          leftIcon={<Plus size={16} />}
-          size="sm"
-          onClick={() =>
-            setVariants((arr) => [
-              ...arr,
-              { name: "", base: "", accessible: "", props: "{}" },
-            ])
-          }
-        >
-          Add Variant
-        </Button>
-      </Box>
-
       <Button
         colorScheme="blue"
         isDisabled={
@@ -429,23 +342,7 @@ export default function ThemeBuilderPageClient() {
           });
           const themeId = data?.createTheme.id;
           if (themeId) {
-            for (const v of variants) {
-              try {
-                await createVariant({
-                  variables: {
-                    data: {
-                      name: v.name,
-                      baseComponent: v.base,
-                      props: JSON.parse(v.props || "{}"),
-                      accessibleName: v.accessible,
-                      themeId: Number(themeId),
-                    },
-                  },
-                });
-              } catch (e) {
-                console.error(e);
-              }
-            }
+            // theme created successfully
           }
         }}
       >
