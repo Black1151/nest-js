@@ -35,6 +35,8 @@ interface SlideCanvasProps {
   openLoadStyle: () => void;
   tokens?: ThemeTokens;
   variants?: ComponentVariant[];
+  /** Whether to display the slide sequencer */
+  showSequencer?: boolean;
 }
 
 export default function SlideCanvas({
@@ -61,15 +63,18 @@ export default function SlideCanvas({
   openLoadStyle,
   tokens,
   variants,
+  showSequencer = true,
 }: SlideCanvasProps) {
   return (
     <Flex gap={6} alignItems="flex-start">
-      <SlideSequencer
-        slides={slides}
-        setSlides={setSlides as any}
-        selectedSlideId={selectedSlideId}
-        onSelect={selectSlide}
-      />
+      {showSequencer && (
+        <SlideSequencer
+          slides={slides}
+          setSlides={setSlides as any}
+          selectedSlideId={selectedSlideId}
+          onSelect={selectSlide}
+        />
+      )}
       {selectedSlideId && selectedSlide && (
         <Grid gap={4} flex={1} templateColumns="1fr 300px">
           <Box

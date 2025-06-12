@@ -86,6 +86,7 @@ export default function ThemeCanvas({
         handleDropElement={editor.handleDropElement}
         openSaveStyle={() => setIsSaveStyleOpen(true)}
         openLoadStyle={() => {}}
+        showSequencer={false}
       />
       {editor.selectedElement && (
         <SaveStyleModal
