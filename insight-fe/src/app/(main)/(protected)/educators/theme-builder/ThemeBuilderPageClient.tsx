@@ -130,9 +130,15 @@ export default function ThemeBuilderPageClient() {
   const { data: collectionsData, refetch: refetchCollections } = useQuery(
     GET_STYLE_COLLECTIONS
   );
-  const [fetchPalettes, { data: palettesData }] =
-    useLazyQuery(GET_COLOR_PALETTES);
-  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS);
+  const [fetchPalettes, { data: palettesData }] = useLazyQuery(
+    GET_COLOR_PALETTES,
+    {
+      fetchPolicy: "network-only",
+    },
+  );
+  const [fetchGroups, { data: groupsData }] = useLazyQuery(GET_STYLE_GROUPS, {
+    fetchPolicy: "network-only",
+  });
   const [createTheme, { loading: saving }] = useMutation(CREATE_THEME, {
     onCompleted: () => {
       setThemeName("");
