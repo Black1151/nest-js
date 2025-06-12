@@ -627,7 +627,7 @@ export default function ThemeBuilderPageClient() {
                 data: {
                   name,
                   collectionId: selectedCollectionId as number,
-                  element: selectedElementType,
+                  element: ELEMENT_TYPE_TO_ENUM[selectedElementType],
                 },
               },
             });
