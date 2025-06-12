@@ -1,17 +1,45 @@
 # Theming Guide
 
-This project uses a small design system built on top of Chakra UI.  Themes define design tokens that the Lesson Builder consumes when rendering content.  Each theme links to a color palette which supplies its foundation tokens and may include component variants.
+This project uses a small design system built on top of Chakra UI. Themes define
+design tokens that the Lesson Builder consumes when rendering content. Every
+theme links to a **color palette** which supplies its foundation tokens and may
+include component variants.
 
 ## Foundation vs. Semantic Tokens
 
-* **Foundation tokens** represent the raw building blocks such as color values.  They live under the `colors` key and are created from the palette associated with the theme.  Each palette color becomes a foundation token keyed by its name.
-* **Semantic tokens** reference foundation tokens by name.  They describe how colors are used (for example `colors.brand.primary`).  Because the references are by name, swapping palettes automatically updates the colors without changing component styles.
+* **Foundation tokens** represent the raw building blocks such as color values.
+  They live under the `colors` key and are generated from the palette attached
+  to the theme. Each entry in the palette becomes a foundation token keyed by its
+  `name`.
+* **Semantic tokens** reference foundation tokens by name. They map concepts like
+  `colors.brand.primary` to a specific foundation token such as `colors.brand`.
+  Because only the token name is stored, selecting a new palette instantly
+  updates every semantic reference without touching component styles.
+
+For example a semantic token might map a usage like `colors.brand.primary` to a
+palette color named `brand`:
+
+```json
+{
+  "semanticTokens": {
+    "colors": {
+      "brand": {
+        "primary": "colors.brand"
+      }
+    }
+  }
+}
+```
 
 The helper `tokenColor()` resolves semantic references to their underlying hex values.
 
 ## Component Variants
 
-Component variants allow authors to define preconfigured props for common components.  A variant links a base component (for example `Button`) with a set of default props.  Variants can also have an `accessibleName` for screen readers.
+Component variants allow authors to define preconfigured props for common
+components. A variant links a base component (for example `Button`) with a set
+of default props and can include an optional `accessibleName` for screen
+readers. Variants are typically created directly from the canvas by enabling
+**Save as Variant** when saving a styled element.
 
 When the Lesson Builder renders an element it looks up the variant by `variantId` and merges the stored props with the element's current configuration.
 
@@ -20,7 +48,10 @@ When the Lesson Builder renders an element it looks up the variant by `variantId
 Lessons reference a theme which in turn references a default color palette.  The Lesson Builder fetches the theme, palette and any component variants so that the editor can show the correct colors and options.
 
 * **Themes** contain the token definitions and are versioned.  Upgrading a theme bumps the `version` field so lessons can opt in to newer design tokens.
-* **Color palettes** are collections of named color values.  Each palette stores entries like `{ name: "brand", value: "#3182CE" }`.  When a palette is attached to a theme these names become the foundation tokens under `colors`, so selecting a different palette instantly updates every semantic reference.
+* **Color palettes** store named color values. Each entry has a `name` and a
+  `value` (a hex code). When a palette is attached to a theme these names become
+  the foundation tokens under `colors`, so selecting a different palette
+  instantly updates every semantic reference.
 
 ```json
 {
@@ -46,11 +77,30 @@ When used by a theme these palette values become foundation tokens:
 }
 ```
 
+A theme stores these tokens alongside an identifier for its default palette:
+
+```json
+{
+  "id": 3,
+  "name": "My Theme",
+  "defaultPaletteId": 1,
+  "foundationTokens": {
+    "colors": {
+      "brand": "#3182CE",
+      "accent": "#DD6B20"
+    }
+  },
+  "semanticTokens": { /* ... */ }
+}
+```
+
 ## Creating or Upgrading a Theme
 
 1. Create a **color palette** with your named hex values.
 2. Build your **semantic token** map referencing those palette names (for example `colors.brand.primary` &rarr; `colors.brand`).
-3. Define any **component variants** your theme requires.
+3. Define any **component variants** your theme requires. The easiest way is to
+   design an element on the canvas and enable **Save as Variant** when saving the
+   style.
 4. Use the `createTheme` mutation to store the theme, supplying the palette id.  The palette colors become the foundation tokens automatically.
 5. When a new theme version is available call `upgradeLessonTheme` or `upgradeThemeVersion` to apply the latest tokens to existing lessons.
 
@@ -67,7 +117,9 @@ tokens.
    color token for text or background values.
 3. Once you are satisfied, click **Save Element Style** and pick a **style
    group** in which to store the style.
-4. Optionally enable **Save as Variant** to create a component variant from the element's current props.
+4. Optionally enable **Save as Variant** to turn the element's current props
+   into a reusable variant. This canvas-based flow is the primary way to create
+   component variants.
 
 Saving styles under a group ties them to your theme. When the theme's tokens are
 updated, every lesson using a style from that group automatically receives the
