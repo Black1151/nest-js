@@ -3,7 +3,7 @@
 import { Box } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
-import SlideToolbar from "../lesson/slide/SlideToolbar";
+import ThemeSlideToolbar from "./ThemeSlideToolbar";
 import SlideCanvas from "../lesson/slide/SlideCanvas";
 import SaveStyleModal from "../lesson/modals/SaveStyleModal";
 import {
@@ -20,6 +20,20 @@ interface ThemeCanvasProps {
   onSaveStyle?: (data: { name: string; groupId: number | null }) => void;
   /** Notifies when the selected element on the canvas changes */
   onSelectedElementChange?: (el: SlideElementDnDItemProps | null) => void;
+  /** Palette dropdown options */
+  paletteOptions: { label: string; value: string }[];
+  selectedPaletteId: number | "";
+  onSelectPalette: (id: number | "") => void;
+  onCreatePalette: () => void;
+  onEditPalette: () => void;
+  onDeletePalette: () => void;
+  /** Style group dropdown options */
+  groupOptions: { label: string; value: string }[];
+  selectedGroupId: number | "";
+  onSelectGroup: (id: number | "") => void;
+  onCreateGroup: () => void;
+  onEditGroup: () => void;
+  onDeleteGroup: () => void;
 }
 
 const AVAILABLE_ELEMENTS = [
@@ -34,12 +48,23 @@ export default function ThemeCanvas({
   collectionId,
   onSaveStyle,
   onSelectedElementChange,
+  paletteOptions,
+  selectedPaletteId,
+  onSelectPalette,
+  onCreatePalette,
+  onEditPalette,
+  onDeletePalette,
+  groupOptions,
+  selectedGroupId,
+  onSelectGroup,
+  onCreateGroup,
+  onEditGroup,
+  onDeleteGroup,
 }: ThemeCanvasProps) {
   const [isSaveStyleOpen, setIsSaveStyleOpen] = useState(false);
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null,
   );
-  const [selectedGroupId, setSelectedGroupId] = useState<number | "">("");
 
   const editor = useLessonEditorState();
 
@@ -50,18 +75,22 @@ export default function ThemeCanvas({
 
   return (
     <Box>
-      <SlideToolbar
+      <ThemeSlideToolbar
         availableElements={AVAILABLE_ELEMENTS}
-        styleGroups={styleGroups}
-        selectedCollectionId={collectionId ?? ""}
-        selectedThemeId=""
-        onSelectTheme={() => {}}
-        selectedPaletteId=""
-        onSelectPalette={() => {}}
+        paletteOptions={paletteOptions}
+        selectedPaletteId={selectedPaletteId}
+        onSelectPalette={onSelectPalette}
+        onCreatePalette={onCreatePalette}
+        onEditPalette={onEditPalette}
+        onDeletePalette={onDeletePalette}
         selectedElementType={selectedElementType}
         onSelectElement={setSelectedElementType}
+        groupOptions={groupOptions}
         selectedGroupId={selectedGroupId}
-        onSelectGroup={setSelectedGroupId}
+        onSelectGroup={onSelectGroup}
+        onCreateGroup={onCreateGroup}
+        onEditGroup={onEditGroup}
+        onDeleteGroup={onDeleteGroup}
         styleItems={[]}
       />
       <SlideCanvas

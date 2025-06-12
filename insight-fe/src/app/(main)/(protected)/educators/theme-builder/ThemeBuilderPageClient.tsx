@@ -29,12 +29,16 @@ import {
   CREATE_COLOR_PALETTE,
   UPDATE_COLOR_PALETTE,
   DELETE_COLOR_PALETTE,
+  CREATE_STYLE_GROUP,
+  UPDATE_STYLE_GROUP,
+  DELETE_STYLE_GROUP,
   CREATE_COMPONENT_VARIANT,
 } from "@/graphql/lesson";
 import { PageElementType } from "@/__generated__/schema-types";
 import SaveStyleModal from "@/components/lesson/modals/SaveStyleModal";
 import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollectionModal";
 import AddColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModal";
+import AddStyleGroupModal from "@/components/lesson/modals/AddStyleGroupModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
 import { Plus, Trash2 } from "lucide-react";
@@ -66,12 +70,16 @@ export default function ThemeBuilderPageClient() {
     }[]
   >([]);
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | "">("");
+  const [selectedGroupId, setSelectedGroupId] = useState<number | "">("");
   const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
   const [isEditCollectionOpen, setIsEditCollectionOpen] = useState(false);
   const [isDeleteCollectionOpen, setIsDeleteCollectionOpen] = useState(false);
   const [isAddPaletteOpen, setIsAddPaletteOpen] = useState(false);
   const [isEditPaletteOpen, setIsEditPaletteOpen] = useState(false);
   const [isDeletePaletteOpen, setIsDeletePaletteOpen] = useState(false);
+  const [isAddGroupOpen, setIsAddGroupOpen] = useState(false);
+  const [isEditGroupOpen, setIsEditGroupOpen] = useState(false);
+  const [isDeleteGroupOpen, setIsDeleteGroupOpen] = useState(false);
 
   const collectionOptions = useMemo(
     () => styleCollections.map((c) => ({ label: c.name, value: String(c.id) })),
@@ -81,6 +89,11 @@ export default function ThemeBuilderPageClient() {
   const paletteOptions = useMemo(
     () => colorPalettes.map((p) => ({ label: p.name, value: String(p.id) })),
     [colorPalettes],
+  );
+
+  const groupOptions = useMemo(
+    () => styleGroups.map((g) => ({ label: g.name, value: String(g.id) })),
+    [styleGroups],
   );
 
   const selectedCollection = useMemo(
@@ -97,6 +110,14 @@ export default function ThemeBuilderPageClient() {
         ? undefined
         : colorPalettes.find((p) => p.id === selectedPaletteId),
     [colorPalettes, selectedPaletteId],
+  );
+
+  const selectedGroup = useMemo(
+    () =>
+      selectedGroupId === ""
+        ? undefined
+        : styleGroups.find((g) => g.id === selectedGroupId),
+    [styleGroups, selectedGroupId],
   );
 
   const [selectedElementType, setSelectedElementType] = useState<string>("text");
@@ -136,6 +157,11 @@ export default function ThemeBuilderPageClient() {
   const [deletePalette, { loading: deletingPalette }] = useMutation(
     DELETE_COLOR_PALETTE,
   );
+  const [createGroup] = useMutation(CREATE_STYLE_GROUP);
+  const [updateGroup] = useMutation(UPDATE_STYLE_GROUP);
+  const [deleteGroup, { loading: deletingGroup }] = useMutation(
+    DELETE_STYLE_GROUP,
+  );
   const [createStyle] = useMutation(CREATE_STYLE);
   const [createVariant] = useMutation(CREATE_COMPONENT_VARIANT);
 
@@ -172,6 +198,7 @@ export default function ThemeBuilderPageClient() {
       });
     } else {
       setStyleGroups([]);
+      setSelectedGroupId("");
     }
   }, [selectedCollectionId, selectedElementType]);
 
@@ -180,6 +207,12 @@ export default function ThemeBuilderPageClient() {
       setStyleGroups(groupsData.getAllStyleGroup);
     }
   }, [groupsData]);
+
+  useEffect(() => {
+    if (!styleGroups.find((g) => g.id === selectedGroupId)) {
+      setSelectedGroupId("");
+    }
+  }, [styleGroups]);
 
   const tokens = useMemo(
     () => ({
@@ -231,6 +264,18 @@ export default function ThemeBuilderPageClient() {
         collectionId={
           selectedCollectionId === "" ? undefined : (selectedCollectionId as number)
         }
+        paletteOptions={paletteOptions}
+        selectedPaletteId={selectedPaletteId}
+        onSelectPalette={setSelectedPaletteId}
+        onCreatePalette={() => setIsAddPaletteOpen(true)}
+        onEditPalette={() => setIsEditPaletteOpen(true)}
+        onDeletePalette={() => setIsDeletePaletteOpen(true)}
+        groupOptions={groupOptions}
+        selectedGroupId={selectedGroupId}
+        onSelectGroup={setSelectedGroupId}
+        onCreateGroup={() => setIsAddGroupOpen(true)}
+        onEditGroup={() => setIsEditGroupOpen(true)}
+        onDeleteGroup={() => setIsDeleteGroupOpen(true)}
         onSaveStyle={async ({ name, groupId }) => {
           if (selectedCollectionId === "") return;
           await createStyle({
@@ -561,6 +606,73 @@ export default function ThemeBuilderPageClient() {
             setIsDeleteCollectionOpen(false);
           }}
           isLoading={deletingCollection}
+        />
+      )}
+
+      {isAddGroupOpen && selectedCollectionId !== "" && (
+        <AddStyleGroupModal
+          key="add-group"
+          isOpen={isAddGroupOpen}
+          onClose={() => setIsAddGroupOpen(false)}
+          onSave={async (name) => {
+            if (selectedCollectionId === "" || !selectedElementType) return;
+            const { data } = await createGroup({
+              variables: {
+                data: {
+                  name,
+                  collectionId: selectedCollectionId as number,
+                  element: selectedElementType,
+                },
+              },
+            });
+            if (data?.createStyleGroup) {
+              setStyleGroups((g) => [...g, data.createStyleGroup]);
+              setSelectedGroupId(data.createStyleGroup.id);
+            }
+          }}
+        />
+      )}
+
+      {isEditGroupOpen && selectedGroupId !== "" && (
+        <AddStyleGroupModal
+          key={`edit-group-${selectedGroupId}`}
+          isOpen={isEditGroupOpen}
+          onClose={() => setIsEditGroupOpen(false)}
+          initialName={selectedGroup?.name ?? ""}
+          title="Update Style Group"
+          confirmLabel="Update"
+          onSave={async (name) => {
+            if (selectedGroupId === "") return;
+            const { data } = await updateGroup({
+              variables: { data: { id: selectedGroupId as number, name } },
+            });
+            if (data?.updateStyleGroup) {
+              setStyleGroups((g) =>
+                g.map((grp) =>
+                  grp.id === selectedGroupId
+                    ? { ...grp, name: data.updateStyleGroup.name }
+                    : grp,
+                ),
+              );
+            }
+          }}
+        />
+      )}
+
+      {isDeleteGroupOpen && (
+        <ConfirmationModal
+          isOpen={isDeleteGroupOpen}
+          onClose={() => setIsDeleteGroupOpen(false)}
+          action="delete group"
+          bodyText="Are you sure you want to delete this group?"
+          onConfirm={async () => {
+            if (selectedGroupId === "") return;
+            await deleteGroup({ variables: { data: { id: selectedGroupId } } });
+            setStyleGroups((g) => g.filter((grp) => grp.id !== selectedGroupId));
+            setSelectedGroupId("");
+            setIsDeleteGroupOpen(false);
+          }}
+          isLoading={deletingGroup}
         />
       )}
 
