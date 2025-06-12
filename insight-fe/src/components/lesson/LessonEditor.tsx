@@ -237,10 +237,11 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
     if (foundation.colors && paletteData?.getColorPalette?.colors) {
       const keys = Object.keys(foundation.colors);
       const merged: Record<string, string> = {};
-      keys.forEach((key, idx) => {
-        merged[key] =
-          paletteData.getColorPalette.colors[idx]?.value ??
-          foundation.colors[key];
+      keys.forEach((key) => {
+        const found = paletteData.getColorPalette.colors.find(
+          (c: { name: string; value: string }) => c.name === key,
+        );
+        merged[key] = found?.value ?? foundation.colors[key];
       });
       foundation.colors = merged;
     }

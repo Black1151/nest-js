@@ -41,9 +41,11 @@ export default function LessonPreviewModal({
   if (foundation?.colors && paletteData?.getColorPalette?.colors) {
     const keys = Object.keys(foundation.colors);
     const merged: Record<string, string> = {};
-    keys.forEach((k, idx) => {
-      merged[k] =
-        paletteData.getColorPalette.colors[idx]?.value ?? foundation.colors[k];
+    keys.forEach((k) => {
+      const found = paletteData.getColorPalette.colors.find(
+        (c: { name: string; value: string }) => c.name === k,
+      );
+      merged[k] = found?.value ?? foundation.colors[k];
     });
     foundation.colors = merged;
   }
