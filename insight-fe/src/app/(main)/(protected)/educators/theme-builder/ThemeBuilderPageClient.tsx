@@ -155,7 +155,12 @@ export default function ThemeBuilderPageClient() {
 
   useEffect(() => {
     if (collectionsData?.getAllStyleCollection) {
-      setStyleCollections(collectionsData.getAllStyleCollection);
+      setStyleCollections(
+        collectionsData.getAllStyleCollection.map((c: any) => ({
+          ...c,
+          id: Number(c.id),
+        }))
+      );
     }
   }, [collectionsData]);
 
@@ -172,7 +177,12 @@ export default function ThemeBuilderPageClient() {
 
   useEffect(() => {
     if (palettesData?.getAllColorPalette) {
-      setColorPalettes(palettesData.getAllColorPalette);
+      setColorPalettes(
+        palettesData.getAllColorPalette.map((p: any) => ({
+          ...p,
+          id: Number(p.id),
+        }))
+      );
     }
   }, [palettesData]);
 
@@ -206,7 +216,12 @@ export default function ThemeBuilderPageClient() {
 
   useEffect(() => {
     if (groupsData?.getAllStyleGroup) {
-      setStyleGroups(groupsData.getAllStyleGroup);
+      setStyleGroups(
+        groupsData.getAllStyleGroup.map((g: any) => ({
+          ...g,
+          id: Number(g.id),
+        }))
+      );
     }
   }, [groupsData]);
 
