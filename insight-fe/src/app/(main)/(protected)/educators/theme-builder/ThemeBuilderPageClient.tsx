@@ -161,6 +161,7 @@ export default function ThemeBuilderPageClient() {
 
   useEffect(() => {
     if (selectedCollectionId !== "") {
+      setSelectedPaletteId("");
       fetchPalettes({
         variables: { collectionId: String(selectedCollectionId) },
       });
@@ -168,7 +169,7 @@ export default function ThemeBuilderPageClient() {
       setColorPalettes([]);
       setSelectedPaletteId("");
     }
-  }, [selectedCollectionId]);
+  }, [selectedCollectionId, fetchPalettes]);
 
   useEffect(() => {
     if (palettesData?.getAllColorPalette) {
