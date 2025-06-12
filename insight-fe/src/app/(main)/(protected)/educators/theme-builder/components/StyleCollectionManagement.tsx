@@ -1,6 +1,6 @@
 "use client";
 
-import { Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 
@@ -14,7 +14,13 @@ import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-p
 import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollectionModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
-export default function StyleCollectionManagement() {
+interface StyleCollectionManagementProps {
+  onSelectCollection: (id: number | null) => void;
+}
+
+export default function StyleCollectionManagement({
+  onSelectCollection,
+}: StyleCollectionManagementProps) {
   const { data, refetch } = useQuery(GET_STYLE_COLLECTIONS);
   const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
   const [updateCollection] = useMutation(UPDATE_STYLE_COLLECTION);
@@ -29,6 +35,12 @@ export default function StyleCollectionManagement() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    if (selectedId) {
+      onSelectCollection(selectedId);
+    }
+  }, [selectedId]);
 
   useEffect(() => {
     if (data?.getAllStyleCollection) {
@@ -48,7 +60,7 @@ export default function StyleCollectionManagement() {
   }));
 
   return (
-    <Box p={4}>
+    <Flex flex={1} p={4} w="100%">
       <CrudDropdown
         options={options}
         value={selectedId}
@@ -119,6 +131,6 @@ export default function StyleCollectionManagement() {
         }}
         isLoading={deleting}
       />
-    </Box>
+    </Flex>
   );
 }
