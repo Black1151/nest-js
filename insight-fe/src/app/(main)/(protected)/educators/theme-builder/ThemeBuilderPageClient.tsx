@@ -35,7 +35,6 @@ import {
   CREATE_COMPONENT_VARIANT,
 } from "@/graphql/lesson";
 import { PageElementType } from "@/__generated__/schema-types";
-import SaveStyleModal from "@/components/lesson/modals/SaveStyleModal";
 import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollectionModal";
 import AddColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModal";
 import AddStyleGroupModal from "@/components/lesson/modals/AddStyleGroupModal";
@@ -552,19 +551,22 @@ export default function ThemeBuilderPageClient() {
       </Button>
 
       {isAddCollectionOpen && (
-        <SaveStyleModal
+        <AddStyleCollectionModal
           isOpen={isAddCollectionOpen}
           onClose={() => setIsAddCollectionOpen(false)}
-          collections={styleCollections}
-          elementType={null as any}
-          groups={[]}
-          onSave={() => {}}
-          onAddCollection={(collection) => {
-            setStyleCollections((cols) => [...cols, collection]);
-            setSelectedCollectionId(collection.id);
-            refetchCollections();
+          onSave={async (name) => {
+            const { data } = await createCollection({
+              variables: { data: { name } },
+            });
+            if (data?.createStyleCollection) {
+              setStyleCollections((cols) => [
+                ...cols,
+                data.createStyleCollection,
+              ]);
+              setSelectedCollectionId(data.createStyleCollection.id);
+              refetchCollections();
+            }
           }}
-          onAddGroup={() => {}}
         />
       )}
 
