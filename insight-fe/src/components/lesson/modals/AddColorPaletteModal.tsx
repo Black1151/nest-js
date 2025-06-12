@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Button,
   HStack,
@@ -45,6 +45,7 @@ export default function ColorPaletteModal({
   title = "Add Color Palette",
   confirmLabel = "Save",
 }: ColorPaletteModalProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(initialName);
   const [colors, setColors] = useState<string[]>(
     initialColors.length > 0 ? initialColors : ["#000000"]
@@ -92,6 +93,7 @@ export default function ColorPaletteModal({
       isOpen={isOpen}
       onClose={onClose}
       title={title}
+      initialFocusRef={inputRef}
       footer={
         <HStack>
           <Button
@@ -138,6 +140,8 @@ export default function ColorPaletteModal({
     >
       <VStack align="stretch" spacing={2}>
         <Input
+          ref={inputRef}
+          autoFocus
           placeholder="Palette name"
           value={name}
           onChange={(e) => setName(e.target.value)}
