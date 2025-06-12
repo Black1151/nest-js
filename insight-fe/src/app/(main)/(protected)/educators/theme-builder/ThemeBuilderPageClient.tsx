@@ -129,9 +129,7 @@ export default function ThemeBuilderPageClient() {
   const [selectedElementType, setSelectedElementType] =
     useState<string>("text");
 
-  const [semanticColors, setSemanticColors] = useState<
-    { name: string; ref: string }[]
-  >([]);
+  const [semanticColors, setSemanticColors] = useState<Record<string, string>>({});
   const [variants, setVariants] = useState<
     { name: string; base: string; accessible: string; props: string }[]
   >([]);
@@ -185,6 +183,20 @@ export default function ThemeBuilderPageClient() {
       setColorPalettes(palettesData.getAllColorPalette);
     }
   }, [palettesData]);
+
+  useEffect(() => {
+    if (selectedPalette) {
+      setSemanticColors((prev) => {
+        const map: Record<string, string> = {};
+        selectedPalette.colors.forEach(({ name }) => {
+          map[name] = prev[name] ?? "";
+        });
+        return map;
+      });
+    } else {
+      setSemanticColors({});
+    }
+  }, [selectedPalette]);
 
   useEffect(() => {
     if (selectedCollectionId !== "" && selectedElementType) {
@@ -293,58 +305,21 @@ export default function ThemeBuilderPageClient() {
         <Text fontWeight="bold" mt={4} mb={2}>
           Semantic Colors
         </Text>
-        {semanticColors.map((c, idx) => (
-          <HStack key={idx} mb={2} align="center">
+        {selectedPalette?.colors.map((fc) => (
+          <HStack key={fc.name} mb={2} align="center">
+            <Text w="100px">{fc.name}</Text>
             <Input
               placeholder="semantic name"
-              value={c.name}
+              value={semanticColors[fc.name] ?? ""}
               onChange={(e) =>
-                setSemanticColors((arr) =>
-                  arr.map((it, i) =>
-                    i === idx ? { ...it, name: e.target.value } : it
-                  )
-                )
-              }
-            />
-            <Select
-              placeholder="Foundation token"
-              value={c.ref}
-              onChange={(e) =>
-                setSemanticColors((arr) =>
-                  arr.map((it, i) =>
-                    i === idx ? { ...it, ref: e.target.value } : it
-                  )
-                )
-              }
-            >
-              {selectedPalette?.colors.map((fc) => (
-                <option key={fc.name} value={fc.name}>
-                  {fc.name}
-                </option>
-              ))}
-            </Select>
-            <IconButton
-              aria-label="remove"
-              size="sm"
-              icon={<Trash2 size={16} />}
-              onClick={() =>
-                setSemanticColors((arr) => arr.filter((_, i) => i !== idx))
+                setSemanticColors((map) => ({
+                  ...map,
+                  [fc.name]: e.target.value,
+                }))
               }
             />
           </HStack>
         ))}
-        <Button
-          leftIcon={<Plus size={16} />}
-          size="sm"
-          onClick={() =>
-            setSemanticColors((arr) => [
-              ...arr,
-              { name: "", ref: selectedPalette?.colors[0]?.name || "" },
-            ])
-          }
-        >
-          Add Semantic Token
-        </Button>
       </Box>
 
       <Box>
@@ -438,9 +413,8 @@ export default function ThemeBuilderPageClient() {
             if (name) (fTokens.colors as any)[name] = value;
           });
           const sTokens: Record<string, any> = { colors: {} };
-          semanticColors.forEach((c) => {
-            if (c.name && c.ref)
-              (sTokens.colors as any)[c.name] = `colors.${c.ref}`;
+          Object.entries(semanticColors).forEach(([ref, name]) => {
+            if (name) (sTokens.colors as any)[name] = `colors.${ref}`;
           });
           const { data } = await createTheme({
             variables: {
