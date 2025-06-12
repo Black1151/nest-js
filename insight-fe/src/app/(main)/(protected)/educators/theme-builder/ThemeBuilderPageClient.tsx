@@ -60,7 +60,7 @@ export default function ThemeBuilderPageClient() {
     }[]
   >([]);
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | "">(
-    "",
+    ""
   );
   const [colorPalettes, setColorPalettes] = useState<
     {
@@ -81,19 +81,26 @@ export default function ThemeBuilderPageClient() {
   const [isEditGroupOpen, setIsEditGroupOpen] = useState(false);
   const [isDeleteGroupOpen, setIsDeleteGroupOpen] = useState(false);
 
+  const [styleGroups, setStyleGroups] = useState<
+    {
+      id: number;
+      name: string;
+    }[]
+  >([]);
+
   const collectionOptions = useMemo(
     () => styleCollections.map((c) => ({ label: c.name, value: String(c.id) })),
-    [styleCollections],
+    [styleCollections]
   );
 
   const paletteOptions = useMemo(
     () => colorPalettes.map((p) => ({ label: p.name, value: String(p.id) })),
-    [colorPalettes],
+    [colorPalettes]
   );
 
   const groupOptions = useMemo(
     () => styleGroups.map((g) => ({ label: g.name, value: String(g.id) })),
-    [styleGroups],
+    [styleGroups]
   );
 
   const selectedCollection = useMemo(
@@ -101,7 +108,7 @@ export default function ThemeBuilderPageClient() {
       selectedCollectionId === ""
         ? undefined
         : styleCollections.find((c) => c.id === selectedCollectionId),
-    [styleCollections, selectedCollectionId],
+    [styleCollections, selectedCollectionId]
   );
 
   const selectedPalette = useMemo(
@@ -109,7 +116,7 @@ export default function ThemeBuilderPageClient() {
       selectedPaletteId === ""
         ? undefined
         : colorPalettes.find((p) => p.id === selectedPaletteId),
-    [colorPalettes, selectedPaletteId],
+    [colorPalettes, selectedPaletteId]
   );
 
   const selectedGroup = useMemo(
@@ -117,10 +124,11 @@ export default function ThemeBuilderPageClient() {
       selectedGroupId === ""
         ? undefined
         : styleGroups.find((g) => g.id === selectedGroupId),
-    [styleGroups, selectedGroupId],
+    [styleGroups, selectedGroupId]
   );
 
-  const [selectedElementType, setSelectedElementType] = useState<string>("text");
+  const [selectedElementType, setSelectedElementType] =
+    useState<string>("text");
 
   const [foundationColors, setFoundationColors] = useState<
     { name: string; value: string }[]
@@ -131,13 +139,9 @@ export default function ThemeBuilderPageClient() {
   const [variants, setVariants] = useState<
     { name: string; base: string; accessible: string; props: string }[]
   >([]);
-  const [styleGroups, setStyleGroups] = useState<{
-    id: number;
-    name: string;
-  }[]>([]);
 
   const { data: collectionsData, refetch: refetchCollections } = useQuery(
-    GET_STYLE_COLLECTIONS,
+    GET_STYLE_COLLECTIONS
   );
   const [fetchPalettes, { data: palettesData }] =
     useLazyQuery(GET_COLOR_PALETTES);
@@ -150,18 +154,16 @@ export default function ThemeBuilderPageClient() {
   const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
   const [updateCollection] = useMutation(UPDATE_STYLE_COLLECTION);
   const [deleteCollection, { loading: deletingCollection }] = useMutation(
-    DELETE_STYLE_COLLECTION,
+    DELETE_STYLE_COLLECTION
   );
   const [createPalette] = useMutation(CREATE_COLOR_PALETTE);
   const [updatePalette] = useMutation(UPDATE_COLOR_PALETTE);
-  const [deletePalette, { loading: deletingPalette }] = useMutation(
-    DELETE_COLOR_PALETTE,
-  );
+  const [deletePalette, { loading: deletingPalette }] =
+    useMutation(DELETE_COLOR_PALETTE);
   const [createGroup] = useMutation(CREATE_STYLE_GROUP);
   const [updateGroup] = useMutation(UPDATE_STYLE_GROUP);
-  const [deleteGroup, { loading: deletingGroup }] = useMutation(
-    DELETE_STYLE_GROUP,
-  );
+  const [deleteGroup, { loading: deletingGroup }] =
+    useMutation(DELETE_STYLE_GROUP);
   const [createStyle] = useMutation(CREATE_STYLE);
   const [createVariant] = useMutation(CREATE_COMPONENT_VARIANT);
 
@@ -217,17 +219,18 @@ export default function ThemeBuilderPageClient() {
   const tokens = useMemo(
     () => ({
       foundationTokens: {
-        colors: Object.fromEntries(foundationColors.map((c) => [c.name, c.value])),
+        colors: Object.fromEntries(
+          foundationColors.map((c) => [c.name, c.value])
+        ),
       },
       semanticTokens: {
         colors: Object.fromEntries(
-          semanticColors.map((c) => [c.name, `colors.${c.ref}`]),
+          semanticColors.map((c) => [c.name, `colors.${c.ref}`])
         ),
       },
     }),
-    [foundationColors, semanticColors],
+    [foundationColors, semanticColors]
   );
-
 
   return (
     <Stack spacing={4}>
@@ -247,7 +250,7 @@ export default function ThemeBuilderPageClient() {
             value={selectedCollectionId}
             onChange={(e) =>
               setSelectedCollectionId(
-                e.target.value === "" ? "" : parseInt(e.target.value, 10),
+                e.target.value === "" ? "" : parseInt(e.target.value, 10)
               )
             }
             onCreate={() => setIsAddCollectionOpen(true)}
@@ -262,7 +265,9 @@ export default function ThemeBuilderPageClient() {
       <ThemeCanvas
         styleGroups={styleGroups}
         collectionId={
-          selectedCollectionId === "" ? undefined : (selectedCollectionId as number)
+          selectedCollectionId === ""
+            ? undefined
+            : (selectedCollectionId as number)
         }
         paletteOptions={paletteOptions}
         selectedPaletteId={selectedPaletteId}
@@ -314,8 +319,8 @@ export default function ThemeBuilderPageClient() {
               onChange={(e) =>
                 setFoundationColors((arr) =>
                   arr.map((it, i) =>
-                    i === idx ? { ...it, name: e.target.value } : it,
-                  ),
+                    i === idx ? { ...it, name: e.target.value } : it
+                  )
                 )
               }
             />
@@ -328,8 +333,8 @@ export default function ThemeBuilderPageClient() {
               onChange={(e) =>
                 setFoundationColors((arr) =>
                   arr.map((it, i) =>
-                    i === idx ? { ...it, value: e.target.value } : it,
-                  ),
+                    i === idx ? { ...it, value: e.target.value } : it
+                  )
                 )
               }
             />
@@ -369,8 +374,8 @@ export default function ThemeBuilderPageClient() {
               onChange={(e) =>
                 setSemanticColors((arr) =>
                   arr.map((it, i) =>
-                    i === idx ? { ...it, name: e.target.value } : it,
-                  ),
+                    i === idx ? { ...it, name: e.target.value } : it
+                  )
                 )
               }
             />
@@ -380,8 +385,8 @@ export default function ThemeBuilderPageClient() {
               onChange={(e) =>
                 setSemanticColors((arr) =>
                   arr.map((it, i) =>
-                    i === idx ? { ...it, ref: e.target.value } : it,
-                  ),
+                    i === idx ? { ...it, ref: e.target.value } : it
+                  )
                 )
               }
             >
@@ -428,8 +433,8 @@ export default function ThemeBuilderPageClient() {
                 onChange={(e) =>
                   setVariants((arr) =>
                     arr.map((it, i) =>
-                      i === idx ? { ...it, name: e.target.value } : it,
-                    ),
+                      i === idx ? { ...it, name: e.target.value } : it
+                    )
                   )
                 }
               />
@@ -439,8 +444,8 @@ export default function ThemeBuilderPageClient() {
                 onChange={(e) =>
                   setVariants((arr) =>
                     arr.map((it, i) =>
-                      i === idx ? { ...it, base: e.target.value } : it,
-                    ),
+                      i === idx ? { ...it, base: e.target.value } : it
+                    )
                   )
                 }
               />
@@ -452,8 +457,8 @@ export default function ThemeBuilderPageClient() {
               onChange={(e) =>
                 setVariants((arr) =>
                   arr.map((it, i) =>
-                    i === idx ? { ...it, accessible: e.target.value } : it,
-                  ),
+                    i === idx ? { ...it, accessible: e.target.value } : it
+                  )
                 )
               }
             />
@@ -464,8 +469,8 @@ export default function ThemeBuilderPageClient() {
               onChange={(e) =>
                 setVariants((arr) =>
                   arr.map((it, i) =>
-                    i === idx ? { ...it, props: e.target.value } : it,
-                  ),
+                    i === idx ? { ...it, props: e.target.value } : it
+                  )
                 )
               }
             />
@@ -473,7 +478,9 @@ export default function ThemeBuilderPageClient() {
               aria-label="remove"
               size="sm"
               icon={<Trash2 size={16} />}
-              onClick={() => setVariants((arr) => arr.filter((_, i) => i !== idx))}
+              onClick={() =>
+                setVariants((arr) => arr.filter((_, i) => i !== idx))
+              }
             />
           </Box>
         ))}
@@ -490,7 +497,6 @@ export default function ThemeBuilderPageClient() {
           Add Variant
         </Button>
       </Box>
-
 
       <Button
         colorScheme="blue"
@@ -578,8 +584,8 @@ export default function ThemeBuilderPageClient() {
                 cols.map((c) =>
                   c.id === selectedCollectionId
                     ? { ...c, name: data.updateStyleCollection.name }
-                    : c,
-                ),
+                    : c
+                )
               );
             }
           }}
@@ -598,7 +604,7 @@ export default function ThemeBuilderPageClient() {
               variables: { data: { id: selectedCollectionId } },
             });
             setStyleCollections((cols) =>
-              cols.filter((c) => c.id !== selectedCollectionId),
+              cols.filter((c) => c.id !== selectedCollectionId)
             );
             setSelectedCollectionId("");
             setColorPalettes([]);
@@ -651,8 +657,8 @@ export default function ThemeBuilderPageClient() {
                 g.map((grp) =>
                   grp.id === selectedGroupId
                     ? { ...grp, name: data.updateStyleGroup.name }
-                    : grp,
-                ),
+                    : grp
+                )
               );
             }
           }}
@@ -668,7 +674,9 @@ export default function ThemeBuilderPageClient() {
           onConfirm={async () => {
             if (selectedGroupId === "") return;
             await deleteGroup({ variables: { data: { id: selectedGroupId } } });
-            setStyleGroups((g) => g.filter((grp) => grp.id !== selectedGroupId));
+            setStyleGroups((g) =>
+              g.filter((grp) => grp.id !== selectedGroupId)
+            );
             setSelectedGroupId("");
             setIsDeleteGroupOpen(false);
           }}
@@ -704,7 +712,7 @@ export default function ThemeBuilderPageClient() {
           confirmLabel="Update"
           onSave={(palette) => {
             setColorPalettes((p) =>
-              p.map((col) => (col.id === palette.id ? palette : col)),
+              p.map((col) => (col.id === palette.id ? palette : col))
             );
           }}
         />
@@ -718,9 +726,11 @@ export default function ThemeBuilderPageClient() {
           bodyText="Are you sure you want to delete this palette?"
           onConfirm={async () => {
             if (selectedPaletteId === "") return;
-            await deletePalette({ variables: { data: { id: selectedPaletteId } } });
+            await deletePalette({
+              variables: { data: { id: selectedPaletteId } },
+            });
             setColorPalettes((p) =>
-              p.filter((col) => col.id !== selectedPaletteId),
+              p.filter((col) => col.id !== selectedPaletteId)
             );
             setSelectedPaletteId("");
             setIsDeletePaletteOpen(false);
@@ -728,7 +738,6 @@ export default function ThemeBuilderPageClient() {
           isLoading={deletingPalette}
         />
       )}
-
     </Stack>
   );
 }
