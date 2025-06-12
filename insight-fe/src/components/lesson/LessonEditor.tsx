@@ -322,7 +322,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
             styleGroups={styleGroups}
             selectedCollectionId={selectedCollectionId}
             selectedElement={editor.selectedElement}
-            onSave={async ({ name, groupId }) => {
+            onSave={async ({ name, groupId, asVariant }) => {
               const collectionId = selectedCollectionId as number;
               if (!editor.selectedElement) return;
               await createStyle({

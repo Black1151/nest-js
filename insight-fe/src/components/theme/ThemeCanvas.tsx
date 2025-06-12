@@ -2,6 +2,7 @@
 
 import { Box } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { useMutation } from "@apollo/client";
 
 import ThemeSlideToolbar from "./ThemeSlideToolbar";
 import SlideCanvas from "../lesson/slide/SlideCanvas";
@@ -10,6 +11,7 @@ import {
   useLessonEditorState,
 } from "../lesson/hooks/useLessonEditorState";
 import { SlideElementDnDItemProps } from "../DnD/cards/SlideElementDnDCard";
+import { CREATE_COMPONENT_VARIANT } from "@/graphql/lesson";
 
 interface ThemeCanvasProps {
   /** Groups available when saving styles */
@@ -65,6 +67,7 @@ export default function ThemeCanvas({
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null,
   );
+  const [createVariant] = useMutation(CREATE_COMPONENT_VARIANT);
 
   const editor = useLessonEditorState();
 
@@ -124,8 +127,22 @@ export default function ThemeCanvas({
           collectionId={collectionId as number}
           elementType={editor.selectedElement.type}
           groups={styleGroups}
-          onSave={(data) => {
-            onSaveStyle?.(data);
+          onSave={async (data) => {
+            onSaveStyle?.({ name: data.name, groupId: data.groupId });
+            if (data.asVariant && editor.selectedElement) {
+              try {
+                await createVariant({
+                  variables: {
+                    data: {
+                      name: data.name,
+                      props: editor.selectedElement,
+                    },
+                  },
+                });
+              } catch (e) {
+                console.error(e);
+              }
+            }
             setIsSaveStyleOpen(false);
           }}
         />
