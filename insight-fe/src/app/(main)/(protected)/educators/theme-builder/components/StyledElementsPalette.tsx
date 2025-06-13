@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLazyQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { GET_STYLES_WITH_CONFIG_BY_GROUP } from "@/graphql/lesson";
 import DnDPalette from "@/components/DnD/DnDPalette";
 import {
@@ -21,23 +21,21 @@ export default function StyledElementsPalette({
   groupId,
 }: StyledElementsPaletteProps) {
   const [items, setItems] = useState<SlideElementDnDItemProps[]>([]);
-  const [fetchStyles, { data }] = useLazyQuery(GET_STYLES_WITH_CONFIG_BY_GROUP, {
+  const { data } = useQuery(GET_STYLES_WITH_CONFIG_BY_GROUP, {
+    variables: {
+      collectionId: String(collectionId),
+      element: elementType ?? "",
+      groupId: String(groupId),
+    },
+    skip: collectionId === null || !elementType || groupId === null,
     fetchPolicy: "network-only",
   });
 
   useEffect(() => {
-    if (collectionId !== null && elementType && groupId !== null) {
-      fetchStyles({
-        variables: {
-          collectionId: String(collectionId),
-          element: elementType,
-          groupId: String(groupId),
-        },
-      });
-    } else {
+    if (collectionId === null || !elementType || groupId === null) {
       setItems([]);
     }
-  }, [collectionId, elementType, groupId, fetchStyles]);
+  }, [collectionId, elementType, groupId]);
 
   useEffect(() => {
     if (data?.getAllStyle) {
