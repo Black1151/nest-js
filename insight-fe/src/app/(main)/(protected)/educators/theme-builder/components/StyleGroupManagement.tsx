@@ -17,6 +17,7 @@ import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 interface StyleGroupManagementProps {
   collectionId: number | null;
   elementType: string | null;
+  onSelectGroup?: (id: number | null) => void;
 }
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
@@ -30,6 +31,7 @@ const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
 export default function StyleGroupManagement({
   collectionId,
   elementType,
+  onSelectGroup,
 }: StyleGroupManagementProps) {
   const { data, refetch } = useQuery(GET_STYLE_GROUPS, {
     variables: {
@@ -49,6 +51,10 @@ export default function StyleGroupManagement({
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    onSelectGroup?.(selectedId === "" ? null : selectedId);
+  }, [selectedId, onSelectGroup]);
 
   useEffect(() => {
     if (data?.getAllStyleGroup) {
