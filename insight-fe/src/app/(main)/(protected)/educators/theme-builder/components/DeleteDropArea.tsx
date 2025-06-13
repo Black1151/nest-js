@@ -18,6 +18,7 @@ export default function DeleteDropArea({ onDrop }: DeleteDropAreaProps) {
     return dropTargetForElements({
       element: ref.current,
       canDrop: ({ source }) => source.data.type === "card",
+      getData: () => ({ type: "delete" }),
       getIsSticky: () => true,
       onDragEnter: () => setIsOver(true),
       onDragLeave: () => setIsOver(false),
@@ -35,6 +36,8 @@ export default function DeleteDropArea({ onDrop }: DeleteDropAreaProps) {
       ref={ref}
       mt={2}
       p={4}
+      w="full"
+      minW="250px"
       borderWidth="2px"
       borderStyle="dashed"
       borderColor={isOver ? "red.400" : "gray.300"}
@@ -44,6 +47,7 @@ export default function DeleteDropArea({ onDrop }: DeleteDropAreaProps) {
       justifyContent="center"
       bg={isOver ? "red.50" : "transparent"}
       color={isOver ? "red.500" : "gray.500"}
+      transition="background-color 0.2s ease, border-color 0.2s ease"
     >
       <Icon as={Trash2} boxSize={6} />
     </Box>

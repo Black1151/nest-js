@@ -29,6 +29,11 @@ export function useBoardDnD<TCard extends BaseCardDnD>(
           const { location, source } = args;
           if (!location.current.dropTargets.length) return;
 
+          // If the drop target is a delete zone, let that handler manage it
+          if (location.current.dropTargets.some((t) => t.data.type === "delete")) {
+            return;
+          }
+
           // Column drop handling
           if (source.data.type === "column") {
             const board = getBoard();
