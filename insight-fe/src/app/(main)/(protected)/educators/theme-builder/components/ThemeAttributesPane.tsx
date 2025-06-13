@@ -17,6 +17,8 @@ interface ThemeAttributesPaneProps {
   onUpdateColumn: (col: ColumnType<SlideElementDnDItemProps>) => void;
   onUpdateBoard: (board: BoardRow) => void;
   onSave: () => void;
+  onClone?: () => void;
+  onDelete?: () => void;
 }
 
 export default function ThemeAttributesPane({
@@ -29,6 +31,8 @@ export default function ThemeAttributesPane({
   onUpdateColumn,
   onUpdateBoard,
   onSave,
+  onClone,
+  onDelete,
 }: ThemeAttributesPaneProps) {
   return (
     <Box p={4} borderWidth="1px" borderRadius="md" minW="250px">
@@ -42,6 +46,8 @@ export default function ThemeAttributesPane({
         <ElementAttributesPane
           element={element}
           onChange={onUpdateElement}
+          onClone={onClone}
+          onDelete={onDelete}
           colorPalettes={colorPalettes}
           selectedPaletteId={selectedPaletteId}
         />

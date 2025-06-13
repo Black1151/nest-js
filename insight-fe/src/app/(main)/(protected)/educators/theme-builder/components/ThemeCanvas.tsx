@@ -94,6 +94,58 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     setBoards((bs) => bs.map((b) => (b.id === updated.id ? updated : b)));
   };
 
+  const cloneElement = () => {
+    if (!selectedElementId) return;
+    setColumnMap((prev) => {
+      const newMap = { ...prev };
+      for (const board of boards) {
+        for (const colId of board.orderedColumnIds) {
+          const col = newMap[colId];
+          const idx = col.items.findIndex((i) => i.id === selectedElementId);
+          if (idx !== -1) {
+            const orig = col.items[idx];
+            const copy = { ...orig, id: crypto.randomUUID() };
+            newMap[colId] = {
+              ...col,
+              items: [
+                ...col.items.slice(0, idx + 1),
+                copy,
+                ...col.items.slice(idx + 1),
+              ],
+            };
+            return newMap;
+          }
+        }
+      }
+      return newMap;
+    });
+  };
+
+  const deleteElement = () => {
+    if (!selectedElementId) return;
+    setColumnMap((prev) => {
+      const newMap = { ...prev };
+      for (const board of boards) {
+        for (const colId of board.orderedColumnIds) {
+          const col = newMap[colId];
+          const idx = col.items.findIndex((i) => i.id === selectedElementId);
+          if (idx !== -1) {
+            newMap[colId] = {
+              ...col,
+              items: [
+                ...col.items.slice(0, idx),
+                ...col.items.slice(idx + 1),
+              ],
+            };
+            return newMap;
+          }
+        }
+      }
+      return newMap;
+    });
+    setSelectedElementId(null);
+  };
+
   const handleDropElement = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const raw = e.dataTransfer.getData("text/plain");
@@ -277,6 +329,8 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
         onUpdateColumn={updateColumn}
         onUpdateBoard={updateBoard}
         onSave={() => setIsSaveOpen(true)}
+        onClone={cloneElement}
+        onDelete={deleteElement}
         colorPalettes={colorPalettes}
         selectedPaletteId={paletteId ?? ""}
       />
