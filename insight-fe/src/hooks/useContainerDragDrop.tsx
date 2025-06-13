@@ -63,6 +63,10 @@ export function useContainerDragDrop(
         if (source.data.type !== "board") return;
         if (!location.current.dropTargets.length) return;
 
+        if (location.current.dropTargets.some((t) => t.data.type === "delete")) {
+          return;
+        }
+
         const startIndex = boards.findIndex(
           (b) => b.id === source.data.boardId
         );
@@ -115,6 +119,10 @@ export function useContainerDragDrop(
       onDrop: ({ source, location }) => {
         if (source.data.type !== "column") return;
         if (!location.current.dropTargets.length) return;
+
+        if (location.current.dropTargets.some((t) => t.data.type === "delete")) {
+          return;
+        }
 
         const columnId = source.data.columnId as string;
 

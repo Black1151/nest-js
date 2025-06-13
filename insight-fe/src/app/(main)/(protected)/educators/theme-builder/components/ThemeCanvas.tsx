@@ -169,6 +169,62 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     }
   };
 
+  const deleteColumnById = (id: string) => {
+    setColumnMap((prev) => {
+      if (!prev[id]) return prev;
+      const column = prev[id];
+      const newMap = { ...prev };
+      delete newMap[id];
+      if (
+        selectedElementId &&
+        column.items.some((i) => i.id === selectedElementId)
+      ) {
+        setSelectedElementId(null);
+      }
+      return newMap;
+    });
+    setBoards((prev) =>
+      prev
+        .map((b) => ({
+          ...b,
+          orderedColumnIds: b.orderedColumnIds.filter((cid) => cid !== id),
+        }))
+        .filter((b) => b.orderedColumnIds.length > 0)
+    );
+    if (selectedColumnId === id) {
+      setSelectedColumnId(null);
+    }
+  };
+
+  const deleteBoardById = (id: string) => {
+    setBoards((prev) => {
+      if (prev.length <= 1) return prev;
+      const board = prev.find((b) => b.id === id);
+      if (!board) return prev;
+      setColumnMap((map) => {
+        const newMap = { ...map };
+        for (const colId of board.orderedColumnIds) {
+          const column = map[colId];
+          if (
+            selectedElementId &&
+            column?.items.some((i) => i.id === selectedElementId)
+          ) {
+            setSelectedElementId(null);
+          }
+          if (selectedColumnId === colId) {
+            setSelectedColumnId(null);
+          }
+          delete newMap[colId];
+        }
+        return newMap;
+      });
+      if (selectedBoardId === id) {
+        setSelectedBoardId(null);
+      }
+      return prev.filter((b) => b.id !== id);
+    });
+  };
+
   const deleteElement = () => {
     if (!selectedElementId) return;
     deleteElementById(selectedElementId);
@@ -411,7 +467,11 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           colorPalettes={colorPalettes}
           selectedPaletteId={paletteId ?? ""}
         />
-        <DeleteDropArea onDrop={deleteElementById} />
+        <DeleteDropArea
+          onDropCard={deleteElementById}
+          onDropColumn={deleteColumnById}
+          onDropBoard={deleteBoardById}
+        />
       </VStack>
       {isSaveOpen && selectedElement && collectionId !== null && (
         <SaveElementModal
