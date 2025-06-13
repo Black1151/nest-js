@@ -8,7 +8,10 @@ import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnD
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createInitialBoard } from "@/components/lesson/slide/SlideSequencer";
 import { availableFonts } from "@/theme/fonts";
-import { defaultColumnWrapperStyles } from "@/components/lesson/defaultStyles";
+import {
+  defaultColumnWrapperStyles,
+  defaultBoardWrapperStyles,
+} from "@/components/lesson/defaultStyles";
 import ThemeAttributesPane from "./ThemeAttributesPane";
 import SaveElementModal from "./SaveElementModal";
 import { CREATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
@@ -179,6 +182,54 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
       /* ignore */
     }
     if (!type) return;
+    if (type === "row") {
+      const columnId = `col-${crypto.randomUUID()}`;
+      const boardId = crypto.randomUUID();
+      const newColumn: ColumnType<SlideElementDnDItemProps> = {
+        title: "",
+        columnId,
+        styles: { container: { border: "1px dashed gray", width: "100%" } },
+        wrapperStyles: { ...defaultColumnWrapperStyles },
+        items: [],
+        spacing: 0,
+      };
+      setColumnMap((prev) => ({ ...prev, [columnId]: newColumn }));
+      setBoards((b) => [
+        ...b,
+        {
+          id: boardId,
+          orderedColumnIds: [columnId],
+          wrapperStyles: { ...defaultBoardWrapperStyles },
+          spacing: 0,
+        },
+      ]);
+      return;
+    }
+
+    if (type === "column") {
+      const target = document.elementFromPoint(e.clientX, e.clientY);
+      const boardEl = target?.closest("[data-board-id]") as HTMLElement | null;
+      const boardId = boardEl?.dataset.boardId || boards[0]?.id;
+      if (!boardId) return;
+      const columnId = `col-${crypto.randomUUID()}`;
+      const newColumn: ColumnType<SlideElementDnDItemProps> = {
+        title: "",
+        columnId,
+        styles: { container: { border: "1px dashed gray", width: "100%" } },
+        wrapperStyles: { ...defaultColumnWrapperStyles },
+        items: [],
+        spacing: 0,
+      };
+      setColumnMap((prev) => ({ ...prev, [columnId]: newColumn }));
+      setBoards((prev) =>
+        prev.map((b) =>
+          b.id === boardId
+            ? { ...b, orderedColumnIds: [...b.orderedColumnIds, columnId] }
+            : b
+        )
+      );
+      return;
+    }
     const target = document.elementFromPoint(e.clientX, e.clientY);
     const columnEl = target?.closest("[data-column-id]") as HTMLElement | null;
     const dropColumnId = columnEl?.dataset.columnId;
@@ -260,7 +311,7 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const type = e.dataTransfer.getData("text/plain");
-    if (!type) return;
+    if (!type || type === "column" || type === "row") return;
     const target = document.elementFromPoint(e.clientX, e.clientY);
     const columnEl = target?.closest("[data-column-id]") as HTMLElement | null;
     const dropColumnId = columnEl?.dataset.columnId;
