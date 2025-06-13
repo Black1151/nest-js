@@ -33,6 +33,24 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
+
+  const selectElement = (id: string | null) => {
+    setSelectedElementId(id);
+    setSelectedColumnId(null);
+    setSelectedBoardId(null);
+  };
+
+  const selectColumn = (id: string | null) => {
+    setSelectedColumnId(id);
+    setSelectedElementId(null);
+    setSelectedBoardId(null);
+  };
+
+  const selectBoard = (id: string | null) => {
+    setSelectedBoardId(id);
+    setSelectedElementId(null);
+    setSelectedColumnId(null);
+  };
   const [isSaveOpen, setIsSaveOpen] = useState(false);
 
   const [createStyle] = useMutation(CREATE_STYLE);
@@ -314,11 +332,11 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           onChange={handleChange}
           dropIndicator={dropIndicator}
           selectedElementId={selectedElementId}
-          onSelectElement={(id) => setSelectedElementId(id)}
+          onSelectElement={selectElement}
           selectedColumnId={selectedColumnId}
-          onSelectColumn={(id) => setSelectedColumnId(id)}
+          onSelectColumn={selectColumn}
           selectedBoardId={selectedBoardId}
-          onSelectBoard={(id) => setSelectedBoardId(id)}
+          onSelectBoard={selectBoard}
         />
       </Box>
       <ThemeAttributesPane
