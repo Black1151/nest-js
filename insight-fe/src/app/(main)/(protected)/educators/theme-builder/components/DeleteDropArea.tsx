@@ -49,6 +49,7 @@ export default function DeleteDropArea({
   return (
     <Box
       ref={ref}
+      data-delete-area
       mt={2}
       p={4}
       w="full"
