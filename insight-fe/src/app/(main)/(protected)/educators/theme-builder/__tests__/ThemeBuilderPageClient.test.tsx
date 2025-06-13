@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeBuilderPageClient } from '../ThemeBuilderPageClient';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 
 jest.mock('@apollo/client');
 
@@ -65,6 +65,7 @@ jest.mock('@/components/DnD/DnDPalette', () => (props: any) => {
 describe('ThemeBuilderPageClient', () => {
   beforeEach(() => {
     (useLazyQuery as jest.Mock).mockReturnValue([jest.fn(), { data: { getAllStyle: [] } }]);
+    (useQuery as jest.Mock).mockReturnValue({ data: { getAllStyle: [] } });
     collectionProps = null;
     paletteProps = null;
     availableProps = null;
