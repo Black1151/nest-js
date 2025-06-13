@@ -276,7 +276,9 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     if (type === "column") {
       const target = document.elementFromPoint(e.clientX, e.clientY);
       const boardEl = target?.closest("[data-board-id]") as HTMLElement | null;
-      const boardId = boardEl?.dataset.boardId || boards[0]?.id;
+      const deleteArea = target?.closest("[data-delete-area]");
+      if (!boardEl || deleteArea) return;
+      const boardId = boardEl.dataset.boardId;
       if (!boardId) return;
       const columnId = `col-${crypto.randomUUID()}`;
       const colConfig = config as Partial<

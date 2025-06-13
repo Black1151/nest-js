@@ -131,8 +131,11 @@ export function useContainerDragDrop(
         );
         if (startBoardIdx === -1) return;
 
-        const target = location.current.dropTargets[0];
-        const targetColumnId = target.data.columnId as string;
+        const targetRecord = location.current.dropTargets.find(
+          (t) => typeof t.data.columnId === "string"
+        );
+        if (!targetRecord) return;
+        const targetColumnId = targetRecord.data.columnId as string;
         const destBoardIdx = boards.findIndex((b) =>
           b.orderedColumnIds.includes(targetColumnId)
         );
