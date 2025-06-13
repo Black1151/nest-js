@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack, IconButton } from "@chakra-ui/react";
+import { Box, IconButton } from "@chakra-ui/react";
 import { useState, useRef } from "react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
@@ -11,7 +11,7 @@ import { ColumnType, ColumnMap } from "@/components/DnD/types";
 import { createRegistry } from "@/components/DnD/registry";
 
 import { useCallback } from "react";
-import { X, Plus, GripVertical } from "lucide-react";
+import { GripVertical } from "lucide-react";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { type Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
@@ -45,14 +45,6 @@ interface SlideElementsBoardProps {
   onSelectBoard?: () => void;
 }
 
-const COLUMN_COLORS = [
-  "red.300",
-  "green.300",
-  "blue.300",
-  "orange.300",
-  "purple.300",
-  "teal.300",
-];
 
 export default function SlideElementsBoard({
   boardId,
@@ -80,7 +72,6 @@ export default function SlideElementsBoard({
   const boardRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
-  const [showControls, setShowControls] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
   useBoardDragDrop(
@@ -92,24 +83,6 @@ export default function SlideElementsBoard({
     setIsDragging
   );
 
-  const addColumn = () => {
-    const idx = orderedColumnIds.length;
-    const color = COLUMN_COLORS[idx % COLUMN_COLORS.length];
-    const id = `col-${crypto.randomUUID()}` as const;
-
-    const newColumn: ColumnType<SlideElementDnDItemProps> = {
-      title: "",
-      columnId: id,
-      styles: {
-        container: { border: "1px dashed gray", width: "100%" },
-      },
-      wrapperStyles: { ...defaultColumnWrapperStyles },
-      items: [],
-      spacing: 0,
-    };
-
-    onChange({ ...columnMap, [id]: newColumn }, [...orderedColumnIds, id]);
-  };
 
   const deleteColumn = (columnId: string) => {
     if (orderedColumnIds.length <= 1) return;
@@ -169,7 +142,6 @@ export default function SlideElementsBoard({
         left={0}
         role="group"
         zIndex={1}
-        onMouseLeave={() => setShowControls(false)}
       >
         <IconButton
           ref={dragHandleRef}
@@ -181,42 +153,8 @@ export default function SlideElementsBoard({
           onClick={() => {
             if (isDragging) return;
             onSelectBoard?.();
-            setShowControls((v) => !v);
           }}
         />
-        <HStack
-          justify="flex-start"
-          bg="gray.100"
-          px={2}
-          py={1}
-          borderRadius="md"
-          spacing={1}
-          cursor="grab"
-          position="absolute"
-          top={0}
-          left={0}
-          transform={showControls ? "translateY(0)" : "translateY(-100%)"}
-          transition="transform 0.2s"
-        >
-          {onRemoveBoard && (
-            <IconButton
-              aria-label="Delete container"
-              icon={<X size={12} />}
-              size="xs"
-              variant="ghost"
-              colorScheme="red"
-              onClick={onRemoveBoard}
-            />
-          )}
-          <IconButton
-            aria-label="Add column"
-            icon={<Plus size={12} />}
-            size="xs"
-            variant="ghost"
-            colorScheme="teal"
-            onClick={addColumn}
-          />
-        </HStack>
       </Box>
       <ElementWrapper
         styles={wrapperStyles}
