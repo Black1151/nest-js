@@ -19,6 +19,8 @@ import { CREATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   text: "Text",
+  row: "Row",
+  column: "Column",
   table: "Table",
   image: "Image",
   video: "Video",
@@ -55,7 +57,7 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     setSelectedElementId(null);
     setSelectedColumnId(null);
   };
-  const [isSaveOpen, setIsSaveOpen] = useState(false);
+  const [saveTarget, setSaveTarget] = useState<'element' | 'column' | 'row' | null>(null);
 
   const [createStyle] = useMutation(CREATE_STYLE);
 
@@ -234,12 +236,12 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     e.preventDefault();
     const raw = e.dataTransfer.getData("text/plain");
     let type = raw;
-    let config: SlideElementDnDItemProps | null = null;
+    let config: any = null;
     try {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === "object") {
         type = parsed.type;
-        config = parsed.config as SlideElementDnDItemProps;
+        config = parsed.config as any;
       }
     } catch {
       /* ignore */
@@ -256,14 +258,16 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
         items: [],
         spacing: 0,
       };
+      const boardConfig = config as Partial<BoardRow> | null;
       setColumnMap((prev) => ({ ...prev, [columnId]: newColumn }));
       setBoards((b) => [
         ...b,
         {
           id: boardId,
           orderedColumnIds: [columnId],
-          wrapperStyles: { ...defaultBoardWrapperStyles },
-          spacing: 0,
+          wrapperStyles:
+            boardConfig?.wrapperStyles ?? { ...defaultBoardWrapperStyles },
+          spacing: boardConfig?.spacing ?? 0,
         },
       ]);
       return;
@@ -277,13 +281,20 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
       const boardId = boardEl.dataset.boardId;
       if (!boardId) return;
       const columnId = `col-${crypto.randomUUID()}`;
+      const colConfig = config as Partial<
+        ColumnType<SlideElementDnDItemProps>
+      > | null;
       const newColumn: ColumnType<SlideElementDnDItemProps> = {
         title: "",
         columnId,
-        styles: { container: { border: "1px dashed gray", width: "100%" } },
-        wrapperStyles: { ...defaultColumnWrapperStyles },
+        styles: colConfig?.styles ?? {
+          container: { border: "1px dashed gray", width: "100%" },
+        },
+        wrapperStyles: colConfig?.wrapperStyles ?? {
+          ...defaultColumnWrapperStyles,
+        },
         items: [],
-        spacing: 0,
+        spacing: colConfig?.spacing ?? 0,
       };
       setColumnMap((prev) => ({ ...prev, [columnId]: newColumn }));
       setBoards((prev) =>
@@ -416,19 +427,35 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
   const selectedBoard = selectedBoardId ? boards.find((b) => b.id === selectedBoardId) || null : null;
 
   const handleSave = async ({ name, groupId }: { name: string; groupId: number | null }) => {
-    if (!selectedElement || collectionId === null) return;
+    if (collectionId === null || !saveTarget) return;
+    let elementType: string;
+    let config: any;
+    if (saveTarget === 'element') {
+      if (!selectedElement) return;
+      elementType = selectedElement.type;
+      config = selectedElement;
+    } else if (saveTarget === 'column') {
+      if (!selectedColumn) return;
+      elementType = 'column';
+      config = selectedColumn;
+    } else {
+      if (!selectedBoard) return;
+      elementType = 'row';
+      config = selectedBoard;
+    }
+
     await createStyle({
       variables: {
         data: {
           name,
           collectionId,
           groupId: groupId ?? undefined,
-          element: ELEMENT_TYPE_TO_ENUM[selectedElement.type],
-          config: selectedElement,
+          element: ELEMENT_TYPE_TO_ENUM[elementType],
+          config,
         },
       },
     });
-    setIsSaveOpen(false);
+    setSaveTarget(null);
   };
 
   return (
@@ -463,7 +490,7 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           onUpdateElement={updateElement}
           onUpdateColumn={updateColumn}
           onUpdateBoard={updateBoard}
-          onSave={() => setIsSaveOpen(true)}
+          onSave={setSaveTarget}
           onClone={cloneElement}
           onDelete={deleteElement}
           colorPalettes={colorPalettes}
@@ -475,12 +502,16 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           onDropBoard={deleteBoardById}
         />
       </VStack>
-      {isSaveOpen && selectedElement && collectionId !== null && (
+      {saveTarget && collectionId !== null && (
         <SaveElementModal
-          isOpen={isSaveOpen}
-          onClose={() => setIsSaveOpen(false)}
+          isOpen={saveTarget !== null}
+          onClose={() => setSaveTarget(null)}
           collectionId={collectionId}
-          elementType={selectedElement.type}
+          elementType={
+            saveTarget === 'element'
+              ? selectedElement?.type || ''
+              : saveTarget
+          }
           onSave={handleSave}
         />
       )}

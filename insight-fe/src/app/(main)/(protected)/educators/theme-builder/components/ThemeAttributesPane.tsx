@@ -16,7 +16,7 @@ interface ThemeAttributesPaneProps {
   onUpdateElement: (el: SlideElementDnDItemProps) => void;
   onUpdateColumn: (col: ColumnType<SlideElementDnDItemProps>) => void;
   onUpdateBoard: (board: BoardRow) => void;
-  onSave: () => void;
+  onSave: (target: 'element' | 'column' | 'row') => void;
   onClone?: () => void;
   onDelete?: () => void;
 }
@@ -38,9 +38,21 @@ export default function ThemeAttributesPane({
     <Box p={4} borderWidth="1px" borderRadius="md" minW="250px">
       <HStack justify="space-between" mb={2}>
         <Text>Attributes</Text>
-        <Button size="xs" onClick={onSave} isDisabled={!element}>
-          Save Element
-        </Button>
+        {element && (
+          <Button size="xs" onClick={() => onSave('element')}>
+            Save Element
+          </Button>
+        )}
+        {column && (
+          <Button size="xs" onClick={() => onSave('column')}>
+            Save Column
+          </Button>
+        )}
+        {board && (
+          <Button size="xs" onClick={() => onSave('row')}>
+            Save Row
+          </Button>
+        )}
       </HStack>
       {element && (
         <ElementAttributesPane
