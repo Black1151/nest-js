@@ -12,6 +12,8 @@ let groupProps: any = null;
 let styledPaletteProps: any = null;
 let basePaletteProps: any = null;
 
+jest.mock('../components/ThemeCanvas', () => () => <div data-testid="canvas" />);
+
 jest.mock('../components/StyleCollectionManagement', () => (props: any) => {
   collectionProps = props;
   return (
@@ -80,5 +82,6 @@ describe('ThemeBuilderPageClient', () => {
     await userEvent.click(screen.getByTestId('group'));
     expect(styledPaletteProps.items).toEqual([]);
     expect(basePaletteProps.items.length).toBeGreaterThan(0);
+    expect(screen.getByTestId('canvas')).toBeInTheDocument();
   });
 });

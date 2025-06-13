@@ -7,6 +7,7 @@ import StyleGroupManagement from "./components/StyleGroupManagement";
 import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
 import BaseElementsPalette from "./components/BaseElementsPalette";
+import ThemeCanvas from "./components/ThemeCanvas";
 
 export const ThemeBuilderPageClient = () => {
   const [selectedCollectionId, setSelectedCollectionId] = useState<
@@ -44,6 +45,7 @@ export const ThemeBuilderPageClient = () => {
         />
         <BaseElementsPalette />
       </HStack>
+      <ThemeCanvas />
     </VStack>
   );
 };
