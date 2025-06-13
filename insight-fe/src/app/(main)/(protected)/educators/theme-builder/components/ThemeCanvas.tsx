@@ -19,6 +19,8 @@ import { CREATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   text: "Text",
+  row: "Row",
+  column: "Column",
   table: "Table",
   image: "Image",
   video: "Video",
@@ -55,7 +57,7 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     setSelectedElementId(null);
     setSelectedColumnId(null);
   };
-  const [isSaveOpen, setIsSaveOpen] = useState(false);
+  const [saveTarget, setSaveTarget] = useState<'element' | 'column' | 'row' | null>(null);
 
   const [createStyle] = useMutation(CREATE_STYLE);
 
@@ -414,19 +416,35 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
   const selectedBoard = selectedBoardId ? boards.find((b) => b.id === selectedBoardId) || null : null;
 
   const handleSave = async ({ name, groupId }: { name: string; groupId: number | null }) => {
-    if (!selectedElement || collectionId === null) return;
+    if (collectionId === null || !saveTarget) return;
+    let elementType: string;
+    let config: any;
+    if (saveTarget === 'element') {
+      if (!selectedElement) return;
+      elementType = selectedElement.type;
+      config = selectedElement;
+    } else if (saveTarget === 'column') {
+      if (!selectedColumn) return;
+      elementType = 'column';
+      config = selectedColumn;
+    } else {
+      if (!selectedBoard) return;
+      elementType = 'row';
+      config = selectedBoard;
+    }
+
     await createStyle({
       variables: {
         data: {
           name,
           collectionId,
           groupId: groupId ?? undefined,
-          element: ELEMENT_TYPE_TO_ENUM[selectedElement.type],
-          config: selectedElement,
+          element: ELEMENT_TYPE_TO_ENUM[elementType],
+          config,
         },
       },
     });
-    setIsSaveOpen(false);
+    setSaveTarget(null);
   };
 
   return (
@@ -461,7 +479,7 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           onUpdateElement={updateElement}
           onUpdateColumn={updateColumn}
           onUpdateBoard={updateBoard}
-          onSave={() => setIsSaveOpen(true)}
+          onSave={setSaveTarget}
           onClone={cloneElement}
           onDelete={deleteElement}
           colorPalettes={colorPalettes}
@@ -473,12 +491,16 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           onDropBoard={deleteBoardById}
         />
       </VStack>
-      {isSaveOpen && selectedElement && collectionId !== null && (
+      {saveTarget && collectionId !== null && (
         <SaveElementModal
-          isOpen={isSaveOpen}
-          onClose={() => setIsSaveOpen(false)}
+          isOpen={saveTarget !== null}
+          onClose={() => setSaveTarget(null)}
           collectionId={collectionId}
-          elementType={selectedElement.type}
+          elementType={
+            saveTarget === 'element'
+              ? selectedElement?.type || ''
+              : saveTarget
+          }
           onSave={handleSave}
         />
       )}

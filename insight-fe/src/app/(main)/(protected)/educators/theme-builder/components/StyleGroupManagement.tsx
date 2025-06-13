@@ -22,6 +22,8 @@ interface StyleGroupManagementProps {
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   text: "Text",
+  row: "Row",
+  column: "Column",
   table: "Table",
   image: "Image",
   video: "Video",

@@ -6,6 +6,8 @@ export enum PageElementType {
   Image = 'image',
   Video = 'video',
   Quiz = 'quiz',
+  Column = 'column',
+  Row = 'row',
 }
 
 registerEnumType(PageElementType, { name: 'PageElementType' });

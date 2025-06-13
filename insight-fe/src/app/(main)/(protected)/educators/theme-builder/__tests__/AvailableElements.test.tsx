@@ -5,6 +5,8 @@ describe('AvailableElements', () => {
   it('renders all element buttons', () => {
     render(<AvailableElements selectedType={null} onSelect={() => {}} />);
     expect(screen.getByRole('button', { name: 'Text' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Row' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Column' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Table' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Image' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Video' })).toBeInTheDocument();
