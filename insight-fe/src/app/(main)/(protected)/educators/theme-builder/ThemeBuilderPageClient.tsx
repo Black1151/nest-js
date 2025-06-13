@@ -45,7 +45,7 @@ export const ThemeBuilderPageClient = () => {
         />
         <BaseElementsPalette />
       </HStack>
-      <ThemeCanvas />
+      <ThemeCanvas collectionId={selectedCollectionId} />
     </VStack>
   );
 };

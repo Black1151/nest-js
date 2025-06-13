@@ -1,19 +1,40 @@
 "use client";
 
-import { Box } from "@chakra-ui/react";
+import { Box, HStack } from "@chakra-ui/react";
 import { useState } from "react";
 import SlideElementsContainer, { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
-import { ColumnMap } from "@/components/DnD/types";
+import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createInitialBoard } from "@/components/lesson/slide/SlideSequencer";
 import { availableFonts } from "@/theme/fonts";
 import { defaultColumnWrapperStyles } from "@/components/lesson/defaultStyles";
+import ThemeAttributesPane from "./ThemeAttributesPane";
+import SaveElementModal from "./SaveElementModal";
+import { useMutation } from "@apollo/client";
+import { CREATE_STYLE } from "@/graphql/lesson";
 
-export default function ThemeCanvas() {
+const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
+  text: "Text",
+  table: "Table",
+  image: "Image",
+  video: "Video",
+  quiz: "Quiz",
+};
+interface ThemeCanvasProps {
+  collectionId: number | null;
+}
+
+export default function ThemeCanvas({ collectionId }: ThemeCanvasProps) {
   const initial = createInitialBoard();
   const [columnMap, setColumnMap] = useState<ColumnMap<SlideElementDnDItemProps>>(initial.columnMap);
   const [boards, setBoards] = useState<BoardRow[]>(initial.boards);
   const [dropIndicator, setDropIndicator] = useState<{ columnId: string; index: number } | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
+  const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
+  const [isSaveOpen, setIsSaveOpen] = useState(false);
+
+  const [createStyle] = useMutation(CREATE_STYLE);
 
   const handleChange = (
     map: ColumnMap<SlideElementDnDItemProps>,
@@ -21,6 +42,34 @@ export default function ThemeCanvas() {
   ) => {
     setColumnMap(map);
     setBoards(b);
+  };
+
+  const updateElement = (updated: SlideElementDnDItemProps) => {
+    setColumnMap((prev) => {
+      const newMap = { ...prev };
+      for (const board of boards) {
+        for (const colId of board.orderedColumnIds) {
+          const col = newMap[colId];
+          const idx = col.items.findIndex((i) => i.id === updated.id);
+          if (idx !== -1) {
+            newMap[colId] = {
+              ...col,
+              items: [...col.items.slice(0, idx), updated, ...col.items.slice(idx + 1)],
+            };
+            return newMap;
+          }
+        }
+      }
+      return newMap;
+    });
+  };
+
+  const updateColumn = (updated: ColumnType<SlideElementDnDItemProps>) => {
+    setColumnMap((prev) => ({ ...prev, [updated.columnId]: updated }));
+  };
+
+  const updateBoard = (updated: BoardRow) => {
+    setBoards((bs) => bs.map((b) => (b.id === updated.id ? updated : b)));
   };
 
   const handleDropElement = (e: React.DragEvent<HTMLDivElement>) => {
@@ -143,20 +192,79 @@ export default function ThemeCanvas() {
     setDropIndicator({ columnId: dropColumnId, index: insertIndex });
   };
 
+  const selectedElement = (() => {
+    if (!selectedElementId) return null;
+    for (const board of boards) {
+      for (const colId of board.orderedColumnIds) {
+        const col = columnMap[colId];
+        const item = col.items.find((i) => i.id === selectedElementId);
+        if (item) return item;
+      }
+    }
+    return null;
+  })();
+
+  const selectedColumn = selectedColumnId ? columnMap[selectedColumnId] || null : null;
+  const selectedBoard = selectedBoardId ? boards.find((b) => b.id === selectedBoardId) || null : null;
+
+  const handleSave = async ({ name, groupId }: { name: string; groupId: number | null }) => {
+    if (!selectedElement || collectionId === null) return;
+    await createStyle({
+      variables: {
+        data: {
+          name,
+          collectionId,
+          groupId: groupId ?? undefined,
+          element: ELEMENT_TYPE_TO_ENUM[selectedElement.type],
+          config: selectedElement,
+        },
+      },
+    });
+    setIsSaveOpen(false);
+  };
+
   return (
-    <Box
+    <HStack
       w="100%"
       mt={4}
+      align="start"
       onDragOver={handleDragOver}
       onDrop={handleDropElement}
       onDragLeave={() => setDropIndicator(null)}
+      spacing={4}
     >
-      <SlideElementsContainer
-        columnMap={columnMap}
-        boards={boards}
-        onChange={handleChange}
-        dropIndicator={dropIndicator}
+      <Box flex="1">
+        <SlideElementsContainer
+          columnMap={columnMap}
+          boards={boards}
+          onChange={handleChange}
+          dropIndicator={dropIndicator}
+          selectedElementId={selectedElementId}
+          onSelectElement={(id) => setSelectedElementId(id)}
+          selectedColumnId={selectedColumnId}
+          onSelectColumn={(id) => setSelectedColumnId(id)}
+          selectedBoardId={selectedBoardId}
+          onSelectBoard={(id) => setSelectedBoardId(id)}
+        />
+      </Box>
+      <ThemeAttributesPane
+        element={selectedElement}
+        column={selectedColumn}
+        board={selectedBoard}
+        onUpdateElement={updateElement}
+        onUpdateColumn={updateColumn}
+        onUpdateBoard={updateBoard}
+        onSave={() => setIsSaveOpen(true)}
       />
-    </Box>
+      {isSaveOpen && selectedElement && collectionId !== null && (
+        <SaveElementModal
+          isOpen={isSaveOpen}
+          onClose={() => setIsSaveOpen(false)}
+          collectionId={collectionId}
+          elementType={selectedElement.type}
+          onSave={handleSave}
+        />
+      )}
+    </HStack>
   );
 }
