@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 
@@ -60,7 +60,8 @@ export default function StyleCollectionManagement({
   }));
 
   return (
-    <Flex flex={1} p={4} w="100%">
+    <Flex flex={1} p={4} w="100%" direction="column" align="start">
+      <Text fontSize="sm" mb={2}>Style Collections</Text>
       <CrudDropdown
         options={options}
         value={selectedId}
