@@ -15,14 +15,6 @@ interface StyledElementsPaletteProps {
   groupId: number | null;
 }
 
-const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
-  text: "Text",
-  table: "Table",
-  image: "Image",
-  video: "Video",
-  quiz: "Quiz",
-};
-
 export default function StyledElementsPalette({
   collectionId,
   elementType,
@@ -32,7 +24,7 @@ export default function StyledElementsPalette({
   const { data } = useQuery(GET_STYLES_WITH_CONFIG_BY_GROUP, {
     variables: {
       collectionId: String(collectionId),
-      element: elementType ? ELEMENT_TYPE_TO_ENUM[elementType] : "",
+      element: elementType ?? "",
       groupId: String(groupId),
     },
     skip: collectionId === null || !elementType || groupId === null,
