@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 
@@ -62,7 +62,8 @@ export default function ColorPaletteManagement({
   const isDisabled = collectionId === null;
 
   return (
-    <Flex flex={1} p={4} w="100%">
+    <Flex flex={1} p={4} w="100%" direction="column" align="start">
+      <Text fontSize="sm" mb={2}>Color Palettes</Text>
       <CrudDropdown
         options={options}
         value={selectedId}
