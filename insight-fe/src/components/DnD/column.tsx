@@ -16,7 +16,7 @@ import {
   Stack,
   IconButton,
 } from "@chakra-ui/react";
-import { X, GripVertical } from "lucide-react";
+import { GripVertical } from "lucide-react";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import {
   attachClosestEdge,
@@ -355,7 +355,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
               right={0}
               role="group"
               zIndex={1}
-              onMouseLeave={() => setShowControls(false)}
             >
               {enableColumnReorder && (
                 <IconButton
@@ -369,19 +368,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
                     if (isDragging) return;
                     onSelectColumn?.(columnId);
                   }}
-                />
-              )}
-              {onRemoveColumn && (
-                <IconButton
-                  aria-label="Remove column"
-                  icon={<X size={12} />}
-                  size="xs"
-                  variant="ghost"
-                  colorScheme="red"
-                  position="absolute"
-                  top={0}
-                  right={0}
-                  onClick={() => onRemoveColumn(columnId)}
                 />
               )}
             </Box>
