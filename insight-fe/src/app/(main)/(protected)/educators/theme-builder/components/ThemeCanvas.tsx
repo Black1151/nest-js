@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, HStack } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import SlideElementsContainer, { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
@@ -37,11 +37,20 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
 
   const [createStyle] = useMutation(CREATE_STYLE);
 
-  const { data: paletteData } = useQuery(GET_COLOR_PALETTES, {
-    variables: { collectionId: String(collectionId) },
-    skip: collectionId === null,
-    fetchPolicy: "network-only",
-  });
+  const { data: paletteData, refetch: refetchPalettes } = useQuery(
+    GET_COLOR_PALETTES,
+    {
+      variables: { collectionId: String(collectionId) },
+      skip: collectionId === null,
+      fetchPolicy: "network-only",
+    }
+  );
+
+  useEffect(() => {
+    if (collectionId !== null) {
+      refetchPalettes({ collectionId: String(collectionId) });
+    }
+  }, [collectionId, paletteId, refetchPalettes]);
 
   const colorPalettes = (paletteData?.getAllColorPalette || []).map((p: any) => ({
     id: Number(p.id),
