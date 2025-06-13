@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack } from "@chakra-ui/react";
+import { Box, HStack, VStack } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import SlideElementsContainer, { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
@@ -13,6 +13,7 @@ import {
   defaultBoardWrapperStyles,
 } from "@/components/lesson/defaultStyles";
 import ThemeAttributesPane from "./ThemeAttributesPane";
+import DeleteDropArea from "./DeleteDropArea";
 import SaveElementModal from "./SaveElementModal";
 import { CREATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
 
@@ -142,14 +143,13 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     });
   };
 
-  const deleteElement = () => {
-    if (!selectedElementId) return;
+  const deleteElementById = (id: string) => {
     setColumnMap((prev) => {
       const newMap = { ...prev };
       for (const board of boards) {
         for (const colId of board.orderedColumnIds) {
           const col = newMap[colId];
-          const idx = col.items.findIndex((i) => i.id === selectedElementId);
+          const idx = col.items.findIndex((i) => i.id === id);
           if (idx !== -1) {
             newMap[colId] = {
               ...col,
@@ -164,7 +164,14 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
       }
       return newMap;
     });
-    setSelectedElementId(null);
+    if (selectedElementId === id) {
+      setSelectedElementId(null);
+    }
+  };
+
+  const deleteElement = () => {
+    if (!selectedElementId) return;
+    deleteElementById(selectedElementId);
   };
 
   const handleDropElement = (e: React.DragEvent<HTMLDivElement>) => {
@@ -390,19 +397,22 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           onSelectBoard={selectBoard}
         />
       </Box>
-      <ThemeAttributesPane
-        element={selectedElement}
-        column={selectedColumn}
-        board={selectedBoard}
-        onUpdateElement={updateElement}
-        onUpdateColumn={updateColumn}
-        onUpdateBoard={updateBoard}
-        onSave={() => setIsSaveOpen(true)}
-        onClone={cloneElement}
-        onDelete={deleteElement}
-        colorPalettes={colorPalettes}
-        selectedPaletteId={paletteId ?? ""}
-      />
+      <VStack align="stretch">
+        <ThemeAttributesPane
+          element={selectedElement}
+          column={selectedColumn}
+          board={selectedBoard}
+          onUpdateElement={updateElement}
+          onUpdateColumn={updateColumn}
+          onUpdateBoard={updateBoard}
+          onSave={() => setIsSaveOpen(true)}
+          onClone={cloneElement}
+          onDelete={deleteElement}
+          colorPalettes={colorPalettes}
+          selectedPaletteId={paletteId ?? ""}
+        />
+        <DeleteDropArea onDrop={deleteElementById} />
+      </VStack>
       {isSaveOpen && selectedElement && collectionId !== null && (
         <SaveElementModal
           isOpen={isSaveOpen}
