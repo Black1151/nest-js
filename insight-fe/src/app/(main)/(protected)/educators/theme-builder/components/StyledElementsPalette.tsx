@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_STYLES_WITH_CONFIG_BY_GROUP } from "@/graphql/lesson";
 import DnDPalette from "@/components/DnD/DnDPalette";
+import { VStack, Text } from "@chakra-ui/react";
 import {
   SlideElementDnDItemProps,
   SlideElementDnDItem,
@@ -49,11 +50,16 @@ export default function StyledElementsPalette({
   }, [data]);
 
   return (
-    <DnDPalette
-      testId="styled"
-      items={items}
-      ItemComponent={SlideElementDnDItem}
-      getDragData={(item) => JSON.stringify({ type: item.type, config: item })}
-    />
+    <VStack align="start" w="100%">
+      <Text fontSize="sm" mb={2}>Styled Elements</Text>
+      <DnDPalette
+        testId="styled"
+        items={items}
+        ItemComponent={SlideElementDnDItem}
+        getDragData={(item) =>
+          JSON.stringify({ type: item.type, config: item })
+        }
+      />
+    </VStack>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import DnDPalette from "@/components/DnD/DnDPalette";
+import { VStack, Text } from "@chakra-ui/react";
 import {
   SlideElementDnDItemProps,
 } from "@/components/DnD/cards/SlideElementDnDCard";
@@ -28,11 +29,14 @@ const baseItems: SlideElementDnDItemProps[] = [
 
 export default function BaseElementsPalette() {
   return (
-    <DnDPalette
-      testId="base"
-      items={baseItems}
-      ItemComponent={BaseElementDnDItem}
-      getDragData={(item) => JSON.stringify({ type: item.type })}
-    />
+    <VStack align="start" w="100%">
+      <Text fontSize="sm" mb={2}>Base Elements</Text>
+      <DnDPalette
+        testId="base"
+        items={baseItems}
+        ItemComponent={BaseElementDnDItem}
+        getDragData={(item) => JSON.stringify({ type: item.type })}
+      />
+    </VStack>
   );
 }
