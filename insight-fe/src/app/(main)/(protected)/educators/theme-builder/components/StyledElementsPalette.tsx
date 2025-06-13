@@ -9,6 +9,8 @@ import {
   SlideElementDnDItemProps,
   SlideElementDnDItem,
 } from "@/components/DnD/cards/SlideElementDnDCard";
+import { ColumnType } from "@/components/DnD/types";
+import type { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
 
 interface StyledElementsPaletteProps {
   collectionId: number | null;
@@ -21,7 +23,9 @@ export default function StyledElementsPalette({
   elementType,
   groupId,
 }: StyledElementsPaletteProps) {
-  const [items, setItems] = useState<SlideElementDnDItemProps[]>([]);
+  const [items, setItems] = useState<
+    (SlideElementDnDItemProps | ColumnType<SlideElementDnDItemProps> | BoardRow)[]
+  >([]);
   const { data } = useQuery(GET_STYLES_WITH_CONFIG_BY_GROUP, {
     variables: {
       collectionId: String(collectionId),
@@ -40,14 +44,19 @@ export default function StyledElementsPalette({
 
   useEffect(() => {
     if (data?.getAllStyle) {
-      setItems(
-        data.getAllStyle.map((s: any) => ({
-          ...(s.config as SlideElementDnDItemProps),
-          id: crypto.randomUUID(),
-        }))
-      );
+      const mapped = data.getAllStyle.map((s: any) => {
+        const cfg = s.config as any;
+        if (elementType === "column") {
+          return { ...cfg, type: "column", id: crypto.randomUUID() };
+        }
+        if (elementType === "row") {
+          return { ...cfg, type: "row", id: crypto.randomUUID() };
+        }
+        return { ...(cfg as SlideElementDnDItemProps), id: crypto.randomUUID() };
+      });
+      setItems(mapped);
     }
-  }, [data]);
+  }, [data, elementType]);
 
   return (
     <VStack align="start" w="100%">

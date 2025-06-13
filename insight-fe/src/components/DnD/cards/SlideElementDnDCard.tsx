@@ -172,6 +172,22 @@ export const SlideElementDnDItem = ({
         </Table>
       </ElementWrapper>
     );
+  } else if (item.type === "column") {
+    content = (
+      <ElementWrapper styles={wrapperStyles} {...baseProps}>
+        <Text fontSize={14} fontWeight="bold">
+          Column
+        </Text>
+      </ElementWrapper>
+    );
+  } else if (item.type === "row") {
+    content = (
+      <ElementWrapper styles={wrapperStyles} {...baseProps}>
+        <Text fontSize={14} fontWeight="bold">
+          Row
+        </Text>
+      </ElementWrapper>
+    );
   } else if (item.type === "video") {
     content = (
       <ElementWrapper styles={wrapperStyles} {...baseProps}>

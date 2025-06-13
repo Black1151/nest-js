@@ -236,12 +236,12 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     e.preventDefault();
     const raw = e.dataTransfer.getData("text/plain");
     let type = raw;
-    let config: SlideElementDnDItemProps | null = null;
+    let config: any = null;
     try {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === "object") {
         type = parsed.type;
-        config = parsed.config as SlideElementDnDItemProps;
+        config = parsed.config as any;
       }
     } catch {
       /* ignore */
@@ -258,14 +258,16 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
         items: [],
         spacing: 0,
       };
+      const boardConfig = config as Partial<BoardRow> | null;
       setColumnMap((prev) => ({ ...prev, [columnId]: newColumn }));
       setBoards((b) => [
         ...b,
         {
           id: boardId,
           orderedColumnIds: [columnId],
-          wrapperStyles: { ...defaultBoardWrapperStyles },
-          spacing: 0,
+          wrapperStyles:
+            boardConfig?.wrapperStyles ?? { ...defaultBoardWrapperStyles },
+          spacing: boardConfig?.spacing ?? 0,
         },
       ]);
       return;
@@ -277,13 +279,20 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
       const boardId = boardEl?.dataset.boardId || boards[0]?.id;
       if (!boardId) return;
       const columnId = `col-${crypto.randomUUID()}`;
+      const colConfig = config as Partial<
+        ColumnType<SlideElementDnDItemProps>
+      > | null;
       const newColumn: ColumnType<SlideElementDnDItemProps> = {
         title: "",
         columnId,
-        styles: { container: { border: "1px dashed gray", width: "100%" } },
-        wrapperStyles: { ...defaultColumnWrapperStyles },
+        styles: colConfig?.styles ?? {
+          container: { border: "1px dashed gray", width: "100%" },
+        },
+        wrapperStyles: colConfig?.wrapperStyles ?? {
+          ...defaultColumnWrapperStyles,
+        },
         items: [],
-        spacing: 0,
+        spacing: colConfig?.spacing ?? 0,
       };
       setColumnMap((prev) => ({ ...prev, [columnId]: newColumn }));
       setBoards((prev) =>
