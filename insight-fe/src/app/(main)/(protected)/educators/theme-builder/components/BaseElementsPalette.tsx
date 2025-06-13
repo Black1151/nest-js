@@ -8,6 +8,8 @@ import BaseElementDnDItem from "@/components/DnD/cards/BaseElementDnDCard";
 
 const baseItems: SlideElementDnDItemProps[] = [
   { id: "base-text", type: "text" },
+  { id: "base-row", type: "row" },
+  { id: "base-column", type: "column" },
   {
     id: "base-table",
     type: "table",
