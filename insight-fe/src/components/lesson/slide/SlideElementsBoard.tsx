@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack, IconButton } from "@chakra-ui/react";
+import { Box, IconButton } from "@chakra-ui/react";
 import { useState, useRef } from "react";
 import { DnDBoardMain } from "@/components/DnD/DnDBoardMain";
 import {
@@ -80,7 +80,6 @@ export default function SlideElementsBoard({
   const boardRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
-  const [showControls, setShowControls] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
   useBoardDragDrop(
@@ -169,7 +168,6 @@ export default function SlideElementsBoard({
         left={0}
         role="group"
         zIndex={1}
-        onMouseLeave={() => setShowControls(false)}
       >
         <IconButton
           ref={dragHandleRef}
@@ -181,42 +179,26 @@ export default function SlideElementsBoard({
           onClick={() => {
             if (isDragging) return;
             onSelectBoard?.();
-            setShowControls((v) => !v);
           }}
         />
-        <HStack
-          justify="flex-start"
-          bg="gray.100"
-          px={2}
-          py={1}
-          borderRadius="md"
-          spacing={1}
-          cursor="grab"
-          position="absolute"
-          top={0}
-          left={0}
-          transform={showControls ? "translateY(0)" : "translateY(-100%)"}
-          transition="transform 0.2s"
-        >
-          {onRemoveBoard && (
-            <IconButton
-              aria-label="Delete container"
-              icon={<X size={12} />}
-              size="xs"
-              variant="ghost"
-              colorScheme="red"
-              onClick={onRemoveBoard}
-            />
-          )}
+        {onRemoveBoard && (
           <IconButton
-            aria-label="Add column"
-            icon={<Plus size={12} />}
+            aria-label="Delete container"
+            icon={<X size={12} />}
             size="xs"
             variant="ghost"
-            colorScheme="teal"
-            onClick={addColumn}
+            colorScheme="red"
+            onClick={onRemoveBoard}
           />
-        </HStack>
+        )}
+        <IconButton
+          aria-label="Add column"
+          icon={<Plus size={12} />}
+          size="xs"
+          variant="ghost"
+          colorScheme="teal"
+          onClick={addColumn}
+        />
       </Box>
       <ElementWrapper
         styles={wrapperStyles}

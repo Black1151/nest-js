@@ -12,7 +12,6 @@ import {
   Box,
   Flex,
   Heading,
-  HStack,
   Spinner,
   Stack,
   IconButton,
@@ -132,7 +131,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
 
   const [state, setState] = useState<State>(idle);
   const [isDragging, setIsDragging] = useState(false);
-  const [showControls, setShowControls] = useState(false);
 
   const { instanceId, registerColumn } = useBoardContext();
 
@@ -370,35 +368,22 @@ function ColumnBase<TCard extends BaseCardDnD>({
                   onClick={() => {
                     if (isDragging) return;
                     onSelectColumn?.(columnId);
-                    setShowControls((v) => !v);
                   }}
                 />
               )}
-              <HStack
-                justify="flex-end"
-                bg="gray.100"
-                px={2}
-                py={1}
-                borderRadius="md"
-                spacing={1}
-                cursor="grab"
-                position="absolute"
-                top={0}
-                right={0}
-                transform={showControls ? "translateY(0)" : "translateY(-100%)"}
-                transition="transform 0.2s"
-              >
-                {onRemoveColumn && (
-                  <IconButton
-                    aria-label="Remove column"
-                    icon={<X size={12} />}
-                    size="xs"
-                    variant="ghost"
-                    colorScheme="red"
-                    onClick={() => onRemoveColumn(columnId)}
-                  />
-                )}
-              </HStack>
+              {onRemoveColumn && (
+                <IconButton
+                  aria-label="Remove column"
+                  icon={<X size={12} />}
+                  size="xs"
+                  variant="ghost"
+                  colorScheme="red"
+                  position="absolute"
+                  top={0}
+                  right={0}
+                  onClick={() => onRemoveColumn(columnId)}
+                />
+              )}
             </Box>
 
             <Box ref={scrollableRef} sx={scrollContainerStyles}>
