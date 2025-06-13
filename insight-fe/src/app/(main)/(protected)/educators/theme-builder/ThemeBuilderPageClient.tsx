@@ -1,5 +1,5 @@
 "use client";
-import { HStack, VStack } from "@chakra-ui/react";
+import { Flex, HStack, VStack } from "@chakra-ui/react";
 import StyleCollectionManagement from "./components/StyleCollectionManagement";
 import { useState } from "react";
 import ColorPaletteManagement from "./components/ColorPaletteManagement";
@@ -17,7 +17,9 @@ export const ThemeBuilderPageClient = () => {
     null
   );
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
-  const [selectedPaletteId, setSelectedPaletteId] = useState<number | null>(null);
+  const [selectedPaletteId, setSelectedPaletteId] = useState<number | null>(
+    null
+  );
 
   return (
     <VStack w="100%">
@@ -42,12 +44,16 @@ export const ThemeBuilderPageClient = () => {
         />
       </HStack>
       <HStack w="100%" align="start" pt={4} spacing={4}>
-        <StyledElementsPalette
-          collectionId={selectedCollectionId}
-          elementType={selectedElementType}
-          groupId={selectedGroupId}
-        />
-        <BaseElementsPalette />
+        <Flex flex={1} width="50%" bg="blue.100" p={4}>
+          <BaseElementsPalette />
+        </Flex>
+        <Flex flex={1} width="50%" bg="green.100" p={4}>
+          <StyledElementsPalette
+            collectionId={selectedCollectionId}
+            elementType={selectedElementType}
+            groupId={selectedGroupId}
+          />
+        </Flex>
       </HStack>
       <ThemeCanvas
         collectionId={selectedCollectionId}
