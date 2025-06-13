@@ -17,6 +17,7 @@ export const ThemeBuilderPageClient = () => {
     null
   );
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
+  const [selectedPaletteId, setSelectedPaletteId] = useState<number | null>(null);
 
   return (
     <VStack w="100%">
@@ -24,7 +25,10 @@ export const ThemeBuilderPageClient = () => {
         <StyleCollectionManagement
           onSelectCollection={setSelectedCollectionId}
         />
-        <ColorPaletteManagement collectionId={selectedCollectionId} />
+        <ColorPaletteManagement
+          collectionId={selectedCollectionId}
+          onSelectPalette={setSelectedPaletteId}
+        />
       </HStack>
       <HStack w="100%">
         <AvailableElements
@@ -45,7 +49,10 @@ export const ThemeBuilderPageClient = () => {
         />
         <BaseElementsPalette />
       </HStack>
-      <ThemeCanvas collectionId={selectedCollectionId} />
+      <ThemeCanvas
+        collectionId={selectedCollectionId}
+        paletteId={selectedPaletteId}
+      />
     </VStack>
   );
 };

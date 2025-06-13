@@ -2,6 +2,7 @@
 
 import { Box, HStack } from "@chakra-ui/react";
 import { useState } from "react";
+import { useQuery, useMutation } from "@apollo/client";
 import SlideElementsContainer, { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
@@ -10,8 +11,7 @@ import { availableFonts } from "@/theme/fonts";
 import { defaultColumnWrapperStyles } from "@/components/lesson/defaultStyles";
 import ThemeAttributesPane from "./ThemeAttributesPane";
 import SaveElementModal from "./SaveElementModal";
-import { useMutation } from "@apollo/client";
-import { CREATE_STYLE } from "@/graphql/lesson";
+import { CREATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   text: "Text",
@@ -22,9 +22,10 @@ const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
 };
 interface ThemeCanvasProps {
   collectionId: number | null;
+  paletteId: number | null;
 }
 
-export default function ThemeCanvas({ collectionId }: ThemeCanvasProps) {
+export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProps) {
   const initial = createInitialBoard();
   const [columnMap, setColumnMap] = useState<ColumnMap<SlideElementDnDItemProps>>(initial.columnMap);
   const [boards, setBoards] = useState<BoardRow[]>(initial.boards);
@@ -35,6 +36,18 @@ export default function ThemeCanvas({ collectionId }: ThemeCanvasProps) {
   const [isSaveOpen, setIsSaveOpen] = useState(false);
 
   const [createStyle] = useMutation(CREATE_STYLE);
+
+  const { data: paletteData } = useQuery(GET_COLOR_PALETTES, {
+    variables: { collectionId: String(collectionId) },
+    skip: collectionId === null,
+    fetchPolicy: "network-only",
+  });
+
+  const colorPalettes = (paletteData?.getAllColorPalette || []).map((p: any) => ({
+    id: Number(p.id),
+    name: p.name,
+    colors: p.colors,
+  }));
 
   const handleChange = (
     map: ColumnMap<SlideElementDnDItemProps>,
@@ -255,6 +268,8 @@ export default function ThemeCanvas({ collectionId }: ThemeCanvasProps) {
         onUpdateColumn={updateColumn}
         onUpdateBoard={updateBoard}
         onSave={() => setIsSaveOpen(true)}
+        colorPalettes={colorPalettes}
+        selectedPaletteId={paletteId ?? ""}
       />
       {isSaveOpen && selectedElement && collectionId !== null && (
         <SaveElementModal

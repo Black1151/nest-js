@@ -11,6 +11,8 @@ interface ThemeAttributesPaneProps {
   element: SlideElementDnDItemProps | null;
   column: ColumnType<SlideElementDnDItemProps> | null;
   board: BoardRow | null;
+  colorPalettes: { id: number; name: string; colors: string[] }[];
+  selectedPaletteId: number | "";
   onUpdateElement: (el: SlideElementDnDItemProps) => void;
   onUpdateColumn: (col: ColumnType<SlideElementDnDItemProps>) => void;
   onUpdateBoard: (board: BoardRow) => void;
@@ -21,6 +23,8 @@ export default function ThemeAttributesPane({
   element,
   column,
   board,
+  colorPalettes,
+  selectedPaletteId,
   onUpdateElement,
   onUpdateColumn,
   onUpdateBoard,
@@ -34,9 +38,30 @@ export default function ThemeAttributesPane({
           Save Element
         </Button>
       </HStack>
-      {element && <ElementAttributesPane element={element} onChange={onUpdateElement} />}
-      {column && <ColumnAttributesPane column={column} onChange={onUpdateColumn} />}
-      {board && <BoardAttributesPane board={board} onChange={onUpdateBoard} />}
+      {element && (
+        <ElementAttributesPane
+          element={element}
+          onChange={onUpdateElement}
+          colorPalettes={colorPalettes}
+          selectedPaletteId={selectedPaletteId}
+        />
+      )}
+      {column && (
+        <ColumnAttributesPane
+          column={column}
+          onChange={onUpdateColumn}
+          colorPalettes={colorPalettes}
+          selectedPaletteId={selectedPaletteId}
+        />
+      )}
+      {board && (
+        <BoardAttributesPane
+          board={board}
+          onChange={onUpdateBoard}
+          colorPalettes={colorPalettes}
+          selectedPaletteId={selectedPaletteId}
+        />
+      )}
     </Box>
   );
 }
