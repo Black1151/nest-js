@@ -11,10 +11,12 @@ import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface ColorPaletteManagementProps {
   collectionId: number | null;
+  onSelectPalette?: (id: number | null) => void;
 }
 
 export default function ColorPaletteManagement({
   collectionId,
+  onSelectPalette,
 }: ColorPaletteManagementProps) {
   const { data, refetch } = useQuery(GET_COLOR_PALETTES, {
     variables: { collectionId: String(collectionId) },
@@ -31,6 +33,10 @@ export default function ColorPaletteManagement({
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    onSelectPalette?.(selectedId === "" ? null : selectedId);
+  }, [selectedId, onSelectPalette]);
 
   useEffect(() => {
     if (data?.getAllColorPalette) {

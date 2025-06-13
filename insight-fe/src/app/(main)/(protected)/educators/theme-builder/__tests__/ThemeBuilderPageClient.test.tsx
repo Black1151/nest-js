@@ -11,8 +11,12 @@ let availableProps: any = null;
 let groupProps: any = null;
 let styledPaletteProps: any = null;
 let basePaletteProps: any = null;
+let canvasProps: any = null;
 
-jest.mock('../components/ThemeCanvas', () => () => <div data-testid="canvas" />);
+jest.mock('../components/ThemeCanvas', () => (props: any) => {
+  canvasProps = props;
+  return <div data-testid="canvas" />;
+});
 
 jest.mock('../components/StyleCollectionManagement', () => (props: any) => {
   collectionProps = props;
@@ -67,11 +71,13 @@ describe('ThemeBuilderPageClient', () => {
     groupProps = null;
     styledPaletteProps = null;
     basePaletteProps = null;
+    canvasProps = null;
   });
 
   it('updates state based on child callbacks', async () => {
     render(<ThemeBuilderPageClient />);
     expect(paletteProps.collectionId).toBeNull();
+    expect(typeof paletteProps.onSelectPalette).toBe('function');
     expect(groupProps.collectionId).toBeNull();
     expect(groupProps.elementType).toBeNull();
     await userEvent.click(screen.getByTestId('collection'));
@@ -82,6 +88,8 @@ describe('ThemeBuilderPageClient', () => {
     await userEvent.click(screen.getByTestId('group'));
     expect(styledPaletteProps.items).toEqual([]);
     expect(basePaletteProps.items.length).toBeGreaterThan(0);
+    paletteProps.onSelectPalette(3);
+    expect(canvasProps.paletteId).toBe(3);
     expect(screen.getByTestId('canvas')).toBeInTheDocument();
   });
 });

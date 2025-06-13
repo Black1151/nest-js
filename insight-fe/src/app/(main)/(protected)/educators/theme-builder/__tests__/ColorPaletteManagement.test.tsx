@@ -33,4 +33,13 @@ describe('ColorPaletteManagement', () => {
     rerender(<ColorPaletteManagement collectionId={2} />);
     expect(dropdownProps.value).toBe('');
   });
+
+  it('calls onSelectPalette when a palette is selected', async () => {
+    const onSelect = jest.fn();
+    render(
+      <ColorPaletteManagement collectionId={1} onSelectPalette={onSelect} />,
+    );
+    await userEvent.selectOptions(screen.getByTestId('crud'), ['1']);
+    expect(onSelect).toHaveBeenCalledWith(1);
+  });
 });
