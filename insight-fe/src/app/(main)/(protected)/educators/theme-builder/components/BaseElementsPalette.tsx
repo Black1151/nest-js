@@ -3,8 +3,8 @@
 import DnDPalette from "@/components/DnD/DnDPalette";
 import {
   SlideElementDnDItemProps,
-  SlideElementDnDItem,
 } from "@/components/DnD/cards/SlideElementDnDCard";
+import BaseElementDnDItem from "@/components/DnD/cards/BaseElementDnDCard";
 
 const baseItems: SlideElementDnDItemProps[] = [
   { id: "base-text", type: "text" },
@@ -29,7 +29,7 @@ export default function BaseElementsPalette() {
     <DnDPalette
       testId="base"
       items={baseItems}
-      ItemComponent={SlideElementDnDItem}
+      ItemComponent={BaseElementDnDItem}
       getDragData={(item) => JSON.stringify({ type: item.type })}
     />
   );
