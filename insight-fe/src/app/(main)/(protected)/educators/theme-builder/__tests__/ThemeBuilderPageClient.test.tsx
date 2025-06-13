@@ -65,7 +65,13 @@ jest.mock('@/components/DnD/DnDPalette', () => (props: any) => {
 describe('ThemeBuilderPageClient', () => {
   beforeEach(() => {
     (useLazyQuery as jest.Mock).mockReturnValue([jest.fn(), { data: { getAllStyle: [] } }]);
-    (useQuery as jest.Mock).mockReturnValue({ data: { getAllStyle: [] } });
+    (useQuery as jest.Mock).mockReturnValue({
+      data: {
+        getAllStyle: [
+          { config: { type: 'text' } },
+        ],
+      },
+    });
     collectionProps = null;
     paletteProps = null;
     availableProps = null;
@@ -87,7 +93,7 @@ describe('ThemeBuilderPageClient', () => {
     await userEvent.click(screen.getByTestId('available'));
     expect(groupProps.elementType).toBe('text');
     await userEvent.click(screen.getByTestId('group'));
-    expect(styledPaletteProps.items).toEqual([]);
+    expect(styledPaletteProps.items.length).toBeGreaterThan(0);
     expect(basePaletteProps.items.length).toBeGreaterThan(0);
     paletteProps.onSelectPalette(3);
     expect(canvasProps.paletteId).toBe(3);
