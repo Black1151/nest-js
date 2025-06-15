@@ -1,8 +1,8 @@
 "use client";
 import { Flex, HStack, VStack, Button } from "@chakra-ui/react";
 import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { CREATE_LESSON } from "@/graphql/lesson";
+import { useMutation, useLazyQuery } from "@apollo/client";
+import { CREATE_LESSON, GET_LESSON, GET_THEME } from "@/graphql/lesson";
 import ThemeDropdown from "@/components/dropdowns/ThemeDropdown";
 import StyleGroupManagement from "./components/StyleGroupManagement";
 import { AvailableElements } from "./components/AvailableElements";
@@ -10,6 +10,7 @@ import StyledElementsPalette from "./components/StyledElementsPalette";
 import SlideCanvas from "./components/SlideCanvas";
 import SlideManager from "./components/SlideManager";
 import SaveLessonModal from "./components/SaveLessonModal";
+import LoadLessonModal from "./components/LoadLessonModal";
 import {
   Slide,
   createInitialBoard,
@@ -40,6 +41,9 @@ export const LessonBuilderPageClient = () => {
 
   const [createLesson] = useMutation(CREATE_LESSON);
   const [isSaveOpen, setIsSaveOpen] = useState(false);
+  const [isLoadOpen, setIsLoadOpen] = useState(false);
+  const [loadLessonQuery] = useLazyQuery(GET_LESSON);
+  const [getTheme] = useLazyQuery(GET_THEME);
 
   const prepareContent = () => {
     return {
@@ -80,6 +84,30 @@ export const LessonBuilderPageClient = () => {
         },
       },
     });
+  }; 
+
+  const handleLoad = async (lessonId: string) => {
+    const { data } = await loadLessonQuery({
+      variables: { data: { id: lessonId } },
+    });
+    if (!data?.getLesson) return;
+    const lesson = data.getLesson as any;
+    if (lesson.themeId) {
+      setSelectedThemeId(Number(lesson.themeId));
+      const themeRes = await getTheme({ variables: { id: String(lesson.themeId) } });
+      if (themeRes.data?.getTheme) {
+        setSelectedCollectionId(Number(themeRes.data.getTheme.styleCollectionId));
+        setSelectedPaletteId(Number(themeRes.data.getTheme.defaultPaletteId));
+      } else {
+        setSelectedCollectionId(null);
+        setSelectedPaletteId(null);
+      }
+    }
+    const loadedSlides = (lesson.content?.slides ?? []) as Slide[];
+    if (loadedSlides.length) {
+      setSlides(loadedSlides);
+      setSelectedSlideId(loadedSlides[0].id);
+    }
   };
 
   return (
@@ -141,6 +169,9 @@ export const LessonBuilderPageClient = () => {
           }
         />
       )}
+      <Button onClick={() => setIsLoadOpen(true)} colorScheme="teal" alignSelf="flex-start">
+        Load Lesson
+      </Button>
       <Button onClick={() => setIsSaveOpen(true)} colorScheme="teal" alignSelf="flex-start">
         Save Lesson
       </Button>
@@ -150,6 +181,14 @@ export const LessonBuilderPageClient = () => {
         onSave={(data) => {
           handleSave(data);
           setIsSaveOpen(false);
+        }}
+      />
+      <LoadLessonModal
+        isOpen={isLoadOpen}
+        onClose={() => setIsLoadOpen(false)}
+        onLoad={(id) => {
+          handleLoad(id);
+          setIsLoadOpen(false);
         }}
       />
     </VStack>
