@@ -26,6 +26,10 @@ export interface SlideElementDnDItemProps {
   id: string;
   type: string;
   /**
+   * ID of the style this element uses
+   */
+  styleId?: number;
+  /**
    * Text content for text elements
    */
   text?: string;
@@ -101,14 +105,14 @@ export const SlideElementDnDItem = ({
             item.animation.direction === "left"
               ? -50
               : item.animation.direction === "right"
-              ? 50
-              : 0,
+                ? 50
+                : 0,
           y:
             item.animation.direction === "top"
               ? -50
               : item.animation.direction === "bottom"
-              ? 50
-              : 0,
+                ? 50
+                : 0,
         },
         animate: { opacity: 1, x: 0, y: 0 },
         transition: { delay: item.animation.delay / 1000 },
