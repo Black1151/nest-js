@@ -3,7 +3,9 @@
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
-import SlideElementsContainer, { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
+import SlideElementsContainer, {
+  BoardRow,
+} from "@/components/lesson/slide/SlideElementsContainer";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { createInitialBoard } from "@/components/lesson/slide/SlideSequencer";
@@ -30,12 +32,22 @@ interface ThemeCanvasProps {
   paletteId: number | null;
 }
 
-export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProps) {
+export default function ThemeCanvas({
+  collectionId,
+  paletteId,
+}: ThemeCanvasProps) {
   const initial = createInitialBoard();
-  const [columnMap, setColumnMap] = useState<ColumnMap<SlideElementDnDItemProps>>(initial.columnMap);
+  const [columnMap, setColumnMap] = useState<
+    ColumnMap<SlideElementDnDItemProps>
+  >(initial.columnMap);
   const [boards, setBoards] = useState<BoardRow[]>(initial.boards);
-  const [dropIndicator, setDropIndicator] = useState<{ columnId: string; index: number } | null>(null);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [dropIndicator, setDropIndicator] = useState<{
+    columnId: string;
+    index: number;
+  } | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(
+    null,
+  );
   const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
 
@@ -57,14 +69,13 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     setSelectedColumnId(null);
   };
 
-
   const { data: paletteData, refetch: refetchPalettes } = useQuery(
     GET_COLOR_PALETTES,
     {
       variables: { collectionId: String(collectionId) },
       skip: collectionId === null,
       fetchPolicy: "network-only",
-    }
+    },
   );
 
   useEffect(() => {
@@ -73,15 +84,17 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     }
   }, [collectionId, paletteId, refetchPalettes]);
 
-  const colorPalettes = (paletteData?.getAllColorPalette || []).map((p: any) => ({
-    id: Number(p.id),
-    name: p.name,
-    colors: p.colors,
-  }));
+  const colorPalettes = (paletteData?.getAllColorPalette || []).map(
+    (p: any) => ({
+      id: Number(p.id),
+      name: p.name,
+      colors: p.colors,
+    }),
+  );
 
   const handleChange = (
     map: ColumnMap<SlideElementDnDItemProps>,
-    b: BoardRow[]
+    b: BoardRow[],
   ) => {
     setColumnMap(map);
     setBoards(b);
@@ -97,7 +110,11 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           if (idx !== -1) {
             newMap[colId] = {
               ...col,
-              items: [...col.items.slice(0, idx), updated, ...col.items.slice(idx + 1)],
+              items: [
+                ...col.items.slice(0, idx),
+                updated,
+                ...col.items.slice(idx + 1),
+              ],
             };
             return newMap;
           }
@@ -152,10 +169,7 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           if (idx !== -1) {
             newMap[colId] = {
               ...col,
-              items: [
-                ...col.items.slice(0, idx),
-                ...col.items.slice(idx + 1),
-              ],
+              items: [...col.items.slice(0, idx), ...col.items.slice(idx + 1)],
             };
             return newMap;
           }
@@ -188,7 +202,7 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
           ...b,
           orderedColumnIds: b.orderedColumnIds.filter((cid) => cid !== id),
         }))
-        .filter((b) => b.orderedColumnIds.length > 0)
+        .filter((b) => b.orderedColumnIds.length > 0),
     );
     if (selectedColumnId === id) {
       setSelectedColumnId(null);
@@ -262,8 +276,9 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
         {
           id: boardId,
           orderedColumnIds: [columnId],
-          wrapperStyles:
-            boardConfig?.wrapperStyles ?? { ...defaultBoardWrapperStyles },
+          wrapperStyles: boardConfig?.wrapperStyles ?? {
+            ...defaultBoardWrapperStyles,
+          },
           spacing: boardConfig?.spacing ?? 0,
         },
       ]);
@@ -298,8 +313,8 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
         prev.map((b) =>
           b.id === boardId
             ? { ...b, orderedColumnIds: [...b.orderedColumnIds, columnId] }
-            : b
-        )
+            : b,
+        ),
       );
       return;
     }
@@ -308,11 +323,14 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     const dropColumnId = columnEl?.dataset.columnId;
     setColumnMap((prev) => {
       const firstColumn = boards[0].orderedColumnIds[0];
-      const columnId = dropColumnId && prev[dropColumnId] ? dropColumnId : firstColumn;
+      const columnId =
+        dropColumnId && prev[dropColumnId] ? dropColumnId : firstColumn;
       const column = prev[columnId];
       let insertIndex = column.items.length;
       if (columnEl) {
-        const cards = Array.from(columnEl.querySelectorAll("[data-card-id]")) as HTMLElement[];
+        const cards = Array.from(
+          columnEl.querySelectorAll("[data-card-id]"),
+        ) as HTMLElement[];
         for (let i = 0; i < cards.length; i++) {
           const rect = cards[i].getBoundingClientRect();
           if (e.clientY < rect.top + rect.height / 2) {
@@ -322,7 +340,7 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
         }
       }
       const newEl: SlideElementDnDItemProps = config
-        ? { ...config, id: crypto.randomUUID() }
+        ? { ...config, id: crypto.randomUUID(), styleId: config.styleId }
         : {
             id: crypto.randomUUID(),
             type,
@@ -339,32 +357,32 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
                   },
                 }
               : type === "image"
-              ? { src: "https://via.placeholder.com/150" }
-              : type === "video"
-              ? { url: "" }
-              : type === "quiz"
-              ? { title: "Untitled Quiz", description: "", questions: [] }
-              : type === "table"
-              ? {
-                  table: {
-                    rows: 2,
-                    cols: 2,
-                    cells: Array.from({ length: 2 }, () =>
-                      Array.from({ length: 2 }, () => ({
-                        text: "Cell",
-                        styles: {
-                          color: "#000000",
-                          fontSize: "14px",
-                          fontFamily: availableFonts[0].fontFamily,
-                          fontWeight: "normal",
-                          lineHeight: "1.2",
-                          textAlign: "left",
-                        },
-                      }))
-                    ),
-                  },
-                }
-              : {}),
+                ? { src: "https://via.placeholder.com/150" }
+                : type === "video"
+                  ? { url: "" }
+                  : type === "quiz"
+                    ? { title: "Untitled Quiz", description: "", questions: [] }
+                    : type === "table"
+                      ? {
+                          table: {
+                            rows: 2,
+                            cols: 2,
+                            cells: Array.from({ length: 2 }, () =>
+                              Array.from({ length: 2 }, () => ({
+                                text: "Cell",
+                                styles: {
+                                  color: "#000000",
+                                  fontSize: "14px",
+                                  fontFamily: availableFonts[0].fontFamily,
+                                  fontWeight: "normal",
+                                  lineHeight: "1.2",
+                                  textAlign: "left",
+                                },
+                              })),
+                            ),
+                          },
+                        }
+                      : {}),
             wrapperStyles: { ...defaultColumnWrapperStyles },
             animation: undefined,
           };
@@ -396,7 +414,9 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     if (!column) return;
     let insertIndex = column.items.length;
     if (columnEl) {
-      const cards = Array.from(columnEl.querySelectorAll("[data-card-id]")) as HTMLElement[];
+      const cards = Array.from(
+        columnEl.querySelectorAll("[data-card-id]"),
+      ) as HTMLElement[];
       for (let i = 0; i < cards.length; i++) {
         const rect = cards[i].getBoundingClientRect();
         if (e.clientY < rect.top + rect.height / 2) {
@@ -420,8 +440,12 @@ export default function ThemeCanvas({ collectionId, paletteId }: ThemeCanvasProp
     return null;
   })();
 
-  const selectedColumn = selectedColumnId ? columnMap[selectedColumnId] || null : null;
-  const selectedBoard = selectedBoardId ? boards.find((b) => b.id === selectedBoardId) || null : null;
+  const selectedColumn = selectedColumnId
+    ? columnMap[selectedColumnId] || null
+    : null;
+  const selectedBoard = selectedBoardId
+    ? boards.find((b) => b.id === selectedBoardId) || null
+    : null;
 
   return (
     <HStack

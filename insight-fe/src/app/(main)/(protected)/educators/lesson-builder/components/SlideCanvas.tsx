@@ -3,7 +3,9 @@
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
-import SlideElementsContainer, { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
+import SlideElementsContainer, {
+  BoardRow,
+} from "@/components/lesson/slide/SlideElementsContainer";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
 import { availableFonts } from "@/theme/fonts";
@@ -31,7 +33,7 @@ interface SlideCanvasProps {
   boards: BoardRow[];
   onChange: (
     map: ColumnMap<SlideElementDnDItemProps>,
-    boards: BoardRow[]
+    boards: BoardRow[],
   ) => void;
 }
 
@@ -44,8 +46,13 @@ export default function SlideCanvas({
 }: SlideCanvasProps) {
   const [localMap, setLocalMap] = useState(columnMap);
   const [localBoards, setLocalBoards] = useState(boards);
-  const [dropIndicator, setDropIndicator] = useState<{ columnId: string; index: number } | null>(null);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [dropIndicator, setDropIndicator] = useState<{
+    columnId: string;
+    index: number;
+  } | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(
+    null,
+  );
   const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
 
@@ -54,7 +61,10 @@ export default function SlideCanvas({
     setLocalBoards(boards);
   }, [columnMap, boards]);
 
-  const handleExternalChange = (map: ColumnMap<SlideElementDnDItemProps>, b: BoardRow[]) => {
+  const handleExternalChange = (
+    map: ColumnMap<SlideElementDnDItemProps>,
+    b: BoardRow[],
+  ) => {
     setLocalMap(map);
     setLocalBoards(b);
     onChange(map, b);
@@ -78,12 +88,14 @@ export default function SlideCanvas({
     setSelectedColumnId(null);
   };
 
-
-  const { data: paletteData, refetch: refetchPalettes } = useQuery(GET_COLOR_PALETTES, {
-    variables: { collectionId: String(collectionId) },
-    skip: collectionId === null,
-    fetchPolicy: "network-only",
-  });
+  const { data: paletteData, refetch: refetchPalettes } = useQuery(
+    GET_COLOR_PALETTES,
+    {
+      variables: { collectionId: String(collectionId) },
+      skip: collectionId === null,
+      fetchPolicy: "network-only",
+    },
+  );
 
   useEffect(() => {
     if (collectionId !== null) {
@@ -91,15 +103,17 @@ export default function SlideCanvas({
     }
   }, [collectionId, paletteId, refetchPalettes]);
 
-  const colorPalettes = (paletteData?.getAllColorPalette || []).map((p: any) => ({
-    id: Number(p.id),
-    name: p.name,
-    colors: p.colors,
-  }));
+  const colorPalettes = (paletteData?.getAllColorPalette || []).map(
+    (p: any) => ({
+      id: Number(p.id),
+      name: p.name,
+      colors: p.colors,
+    }),
+  );
 
   const handleChange = (
     map: ColumnMap<SlideElementDnDItemProps>,
-    b: BoardRow[]
+    b: BoardRow[],
   ) => {
     handleExternalChange(map, b);
   };
@@ -114,7 +128,11 @@ export default function SlideCanvas({
           if (idx !== -1) {
             newMap[colId] = {
               ...col,
-              items: [...col.items.slice(0, idx), updated, ...col.items.slice(idx + 1)],
+              items: [
+                ...col.items.slice(0, idx),
+                updated,
+                ...col.items.slice(idx + 1),
+              ],
             };
             handleExternalChange(newMap, localBoards);
             return newMap;
@@ -154,7 +172,11 @@ export default function SlideCanvas({
             const copy = { ...orig, id: crypto.randomUUID() };
             newMap[colId] = {
               ...col,
-              items: [...col.items.slice(0, idx + 1), copy, ...col.items.slice(idx + 1)],
+              items: [
+                ...col.items.slice(0, idx + 1),
+                copy,
+                ...col.items.slice(idx + 1),
+              ],
             };
             handleExternalChange(newMap, localBoards);
             return newMap;
@@ -195,13 +217,18 @@ export default function SlideCanvas({
       const column = prev[id];
       const newMap = { ...prev };
       delete newMap[id];
-      if (selectedElementId && column.items.some((i) => i.id === selectedElementId)) {
+      if (
+        selectedElementId &&
+        column.items.some((i) => i.id === selectedElementId)
+      ) {
         setSelectedElementId(null);
       }
-      const updatedBoards = localBoards.map((b) => ({
-        ...b,
-        orderedColumnIds: b.orderedColumnIds.filter((cid) => cid !== id),
-      })).filter((b) => b.orderedColumnIds.length > 0);
+      const updatedBoards = localBoards
+        .map((b) => ({
+          ...b,
+          orderedColumnIds: b.orderedColumnIds.filter((cid) => cid !== id),
+        }))
+        .filter((b) => b.orderedColumnIds.length > 0);
       setLocalBoards(updatedBoards);
       handleExternalChange(newMap, updatedBoards);
       if (selectedColumnId === id) {
@@ -219,7 +246,10 @@ export default function SlideCanvas({
       const newMap = { ...localMap };
       for (const colId of board.orderedColumnIds) {
         const column = localMap[colId];
-        if (selectedElementId && column?.items.some((i) => i.id === selectedElementId)) {
+        if (
+          selectedElementId &&
+          column?.items.some((i) => i.id === selectedElementId)
+        ) {
           setSelectedElementId(null);
         }
         if (selectedColumnId === colId) {
@@ -274,7 +304,9 @@ export default function SlideCanvas({
         {
           id: boardId,
           orderedColumnIds: [columnId],
-          wrapperStyles: boardConfig?.wrapperStyles ?? { ...defaultBoardWrapperStyles },
+          wrapperStyles: boardConfig?.wrapperStyles ?? {
+            ...defaultBoardWrapperStyles,
+          },
           spacing: boardConfig?.spacing ?? 0,
         },
       ];
@@ -293,18 +325,26 @@ export default function SlideCanvas({
       const boardId = boardEl.dataset.boardId;
       if (!boardId) return;
       const columnId = `col-${crypto.randomUUID()}`;
-      const colConfig = config as Partial<ColumnType<SlideElementDnDItemProps>> | null;
+      const colConfig = config as Partial<
+        ColumnType<SlideElementDnDItemProps>
+      > | null;
       const newColumn: ColumnType<SlideElementDnDItemProps> = {
         title: "",
         columnId,
-        styles: colConfig?.styles ?? { container: { border: "1px dashed gray", width: "100%" } },
-        wrapperStyles: colConfig?.wrapperStyles ?? { ...defaultColumnWrapperStyles },
+        styles: colConfig?.styles ?? {
+          container: { border: "1px dashed gray", width: "100%" },
+        },
+        wrapperStyles: colConfig?.wrapperStyles ?? {
+          ...defaultColumnWrapperStyles,
+        },
         items: [],
         spacing: colConfig?.spacing ?? 0,
       };
       const newMap = { ...localMap, [columnId]: newColumn };
       const newBoards = localBoards.map((b) =>
-        b.id === boardId ? { ...b, orderedColumnIds: [...b.orderedColumnIds, columnId] } : b
+        b.id === boardId
+          ? { ...b, orderedColumnIds: [...b.orderedColumnIds, columnId] }
+          : b,
       );
       setLocalBoards(newBoards);
       setLocalMap(newMap);
@@ -315,11 +355,14 @@ export default function SlideCanvas({
     const columnEl = target?.closest("[data-column-id]") as HTMLElement | null;
     const dropColumnId = columnEl?.dataset.columnId;
     const firstColumn = localBoards[0].orderedColumnIds[0];
-    const columnId = dropColumnId && localMap[dropColumnId] ? dropColumnId : firstColumn;
+    const columnId =
+      dropColumnId && localMap[dropColumnId] ? dropColumnId : firstColumn;
     const column = localMap[columnId];
     let insertIndex = column.items.length;
     if (columnEl) {
-      const cards = Array.from(columnEl.querySelectorAll("[data-card-id]")) as HTMLElement[];
+      const cards = Array.from(
+        columnEl.querySelectorAll("[data-card-id]"),
+      ) as HTMLElement[];
       for (let i = 0; i < cards.length; i++) {
         const rect = cards[i].getBoundingClientRect();
         if (e.clientY < rect.top + rect.height / 2) {
@@ -330,7 +373,7 @@ export default function SlideCanvas({
     }
 
     const newEl: SlideElementDnDItemProps = config
-      ? { ...config, id: crypto.randomUUID() }
+      ? { ...config, id: crypto.randomUUID(), styleId: config.styleId }
       : {
           id: crypto.randomUUID(),
           type,
@@ -347,39 +390,43 @@ export default function SlideCanvas({
                 },
               }
             : type === "image"
-            ? { src: "https://via.placeholder.com/150" }
-            : type === "video"
-            ? { url: "" }
-            : type === "quiz"
-            ? { title: "Untitled Quiz", description: "", questions: [] }
-            : type === "table"
-            ? {
-                table: {
-                  rows: 2,
-                  cols: 2,
-                  cells: Array.from({ length: 2 }, () =>
-                    Array.from({ length: 2 }, () => ({
-                      text: "Cell",
-                      styles: {
-                        color: "#000000",
-                        fontSize: "14px",
-                        fontFamily: availableFonts[0].fontFamily,
-                        fontWeight: "normal",
-                        lineHeight: "1.2",
-                        textAlign: "left",
-                      },
-                    }))
-                  ),
-                },
-              }
-            : {}),
+              ? { src: "https://via.placeholder.com/150" }
+              : type === "video"
+                ? { url: "" }
+                : type === "quiz"
+                  ? { title: "Untitled Quiz", description: "", questions: [] }
+                  : type === "table"
+                    ? {
+                        table: {
+                          rows: 2,
+                          cols: 2,
+                          cells: Array.from({ length: 2 }, () =>
+                            Array.from({ length: 2 }, () => ({
+                              text: "Cell",
+                              styles: {
+                                color: "#000000",
+                                fontSize: "14px",
+                                fontFamily: availableFonts[0].fontFamily,
+                                fontWeight: "normal",
+                                lineHeight: "1.2",
+                                textAlign: "left",
+                              },
+                            })),
+                          ),
+                        },
+                      }
+                    : {}),
           wrapperStyles: { ...defaultColumnWrapperStyles },
           animation: undefined,
         };
 
     const updatedColumn = {
       ...column,
-      items: [...column.items.slice(0, insertIndex), newEl, ...column.items.slice(insertIndex)],
+      items: [
+        ...column.items.slice(0, insertIndex),
+        newEl,
+        ...column.items.slice(insertIndex),
+      ],
     };
 
     const newMap = { ...localMap, [columnId]: updatedColumn };
@@ -403,7 +450,9 @@ export default function SlideCanvas({
     if (!column) return;
     let insertIndex = column.items.length;
     if (columnEl) {
-      const cards = Array.from(columnEl.querySelectorAll("[data-card-id]")) as HTMLElement[];
+      const cards = Array.from(
+        columnEl.querySelectorAll("[data-card-id]"),
+      ) as HTMLElement[];
       for (let i = 0; i < cards.length; i++) {
         const rect = cards[i].getBoundingClientRect();
         if (e.clientY < rect.top + rect.height / 2) {
@@ -427,8 +476,12 @@ export default function SlideCanvas({
     return null;
   })();
 
-  const selectedColumn = selectedColumnId ? localMap[selectedColumnId] || null : null;
-  const selectedBoard = selectedBoardId ? localBoards.find((b) => b.id === selectedBoardId) || null : null;
+  const selectedColumn = selectedColumnId
+    ? localMap[selectedColumnId] || null
+    : null;
+  const selectedBoard = selectedBoardId
+    ? localBoards.find((b) => b.id === selectedBoardId) || null
+    : null;
 
   return (
     <VStack
@@ -464,4 +517,3 @@ export default function SlideCanvas({
     </VStack>
   );
 }
-

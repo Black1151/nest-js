@@ -24,7 +24,11 @@ export default function StyledElementsPalette({
   groupId,
 }: StyledElementsPaletteProps) {
   const [items, setItems] = useState<
-    (SlideElementDnDItemProps | ColumnType<SlideElementDnDItemProps> | BoardRow)[]
+    (
+      | SlideElementDnDItemProps
+      | ColumnType<SlideElementDnDItemProps>
+      | BoardRow
+    )[]
   >([]);
   const { data } = useQuery(GET_STYLES_WITH_CONFIG_BY_GROUP, {
     variables: {
@@ -52,7 +56,11 @@ export default function StyledElementsPalette({
         if (elementType === "row") {
           return { ...cfg, type: "row", id: crypto.randomUUID() };
         }
-        return { ...(cfg as SlideElementDnDItemProps), id: crypto.randomUUID() };
+        return {
+          ...(cfg as SlideElementDnDItemProps),
+          id: crypto.randomUUID(),
+          styleId: Number(s.id),
+        };
       });
       setItems(mapped);
     }
@@ -60,7 +68,9 @@ export default function StyledElementsPalette({
 
   return (
     <VStack align="start" w="100%">
-      <Text fontSize="sm" mb={2}>Styled Elements</Text>
+      <Text fontSize="sm" mb={2}>
+        Styled Elements
+      </Text>
       <DnDPalette
         testId="styled"
         items={items}
