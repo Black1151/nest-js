@@ -67,9 +67,7 @@ describe('ThemeBuilderPageClient', () => {
     (useLazyQuery as jest.Mock).mockReturnValue([jest.fn(), { data: { getAllStyle: [] } }]);
     (useQuery as jest.Mock).mockReturnValue({
       data: {
-        getAllStyle: [
-          { config: { type: 'text' } },
-        ],
+        getAllTheme: [],
       },
     });
     collectionProps = null;

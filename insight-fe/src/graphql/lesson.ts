@@ -207,6 +207,17 @@ export const GET_THEMES = gql`
   }
 `;
 
+export const GET_ALL_THEMES = gql`
+  query GetAllThemes {
+    getAllTheme(data: { all: true }) {
+      id
+      name
+      styleCollectionId
+      defaultPaletteId
+    }
+  }
+`;
+
 export const GET_THEME = gql`
   query GetTheme($id: String!) {
     getTheme(data: { id: $id }) {

@@ -12,11 +12,13 @@ import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 interface ColorPaletteManagementProps {
   collectionId: number | null;
   onSelectPalette?: (id: number | null) => void;
+  selectedId?: number | null;
 }
 
 export default function ColorPaletteManagement({
   collectionId,
   onSelectPalette,
+  selectedId,
 }: ColorPaletteManagementProps) {
   const { data, refetch } = useQuery(GET_COLOR_PALETTES, {
     variables: { collectionId: String(collectionId) },
@@ -29,14 +31,20 @@ export default function ColorPaletteManagement({
   const [palettes, setPalettes] = useState<
     { id: number; name: string; colors: string[] }[]
   >([]);
-  const [selectedId, setSelectedId] = useState<number | "">("");
+  const [selectedState, setSelectedState] = useState<number | "">("");
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   useEffect(() => {
-    onSelectPalette?.(selectedId === "" ? null : selectedId);
-  }, [selectedId, onSelectPalette]);
+    if (selectedId !== undefined) {
+      setSelectedState(selectedId === null ? "" : selectedId);
+    }
+  }, [selectedId]);
+
+  useEffect(() => {
+    onSelectPalette?.(selectedState === "" ? null : selectedState);
+  }, [selectedState, onSelectPalette]);
 
   useEffect(() => {
     if (data?.getAllColorPalette) {
@@ -52,12 +60,14 @@ export default function ColorPaletteManagement({
     }
   }, [data]);
 
-  // Clear selected palette when collection changes
+  // Clear selected palette when collection changes unless externally provided
   useEffect(() => {
-    setSelectedId("");
-  }, [collectionId]);
+    if (selectedId === undefined) {
+      setSelectedState("");
+    }
+  }, [collectionId, selectedId]);
 
-  const selected = palettes.find((p) => p.id === selectedId);
+  const selected = palettes.find((p) => p.id === selectedState);
   const options = palettes.map((p) => ({ label: p.name, value: String(p.id) }));
   const isDisabled = collectionId === null;
 
@@ -66,17 +76,17 @@ export default function ColorPaletteManagement({
       <Text fontSize="sm" mb={2}>Color Palettes</Text>
       <CrudDropdown
         options={options}
-        value={selectedId}
+        value={selectedState}
         onChange={(e) =>
-          setSelectedId(
+          setSelectedState(
             e.target.value === "" ? "" : parseInt(e.target.value, 10)
           )
         }
         onCreate={() => setIsAddOpen(true)}
         onUpdate={() => setIsEditOpen(true)}
         onDelete={() => setIsDeleteOpen(true)}
-        isUpdateDisabled={selectedId === ""}
-        isDeleteDisabled={selectedId === ""}
+        isUpdateDisabled={selectedState === ""}
+        isDeleteDisabled={selectedState === ""}
         isDisabled={isDisabled}
       />
 
@@ -94,7 +104,7 @@ export default function ColorPaletteManagement({
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
         collectionId={collectionId === null ? 0 : (collectionId as number)}
-        paletteId={selectedId === "" ? undefined : selectedId}
+        paletteId={selectedState === "" ? undefined : selectedState}
         initialName={selected?.name ?? ""}
         initialColors={selected?.colors ?? []}
         title="Update Color Palette"
@@ -113,10 +123,10 @@ export default function ColorPaletteManagement({
         action="delete palette"
         bodyText="Are you sure you want to delete this palette?"
         onConfirm={async () => {
-          if (selectedId === "") return;
-          await deletePalette({ variables: { data: { id: selectedId } } });
-          setPalettes((ps) => ps.filter((p) => p.id !== selectedId));
-          setSelectedId("");
+          if (selectedState === "") return;
+          await deletePalette({ variables: { data: { id: selectedState } } });
+          setPalettes((ps) => ps.filter((p) => p.id !== selectedState));
+          setSelectedState("");
           setIsDeleteOpen(false);
           refetch();
         }}

@@ -16,10 +16,12 @@ import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface StyleCollectionManagementProps {
   onSelectCollection: (id: number | null) => void;
+  selectedId?: number | null;
 }
 
 export default function StyleCollectionManagement({
   onSelectCollection,
+  selectedId,
 }: StyleCollectionManagementProps) {
   const { data, refetch } = useQuery(GET_STYLE_COLLECTIONS);
   const [createCollection] = useMutation(CREATE_STYLE_COLLECTION);
@@ -31,16 +33,16 @@ export default function StyleCollectionManagement({
   const [collections, setCollections] = useState<
     { id: number; name: string }[]
   >([]);
-  const [selectedId, setSelectedId] = useState<number | "">("");
+  const [selectedState, setSelectedState] = useState<number | "">("");
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   useEffect(() => {
-    if (selectedId) {
-      onSelectCollection(selectedId);
+    if (selectedState) {
+      onSelectCollection(selectedState);
     }
-  }, [selectedId]);
+  }, [selectedState]);
 
   useEffect(() => {
     if (data?.getAllStyleCollection) {
@@ -53,7 +55,13 @@ export default function StyleCollectionManagement({
     }
   }, [data]);
 
-  const selected = collections.find((c) => c.id === selectedId);
+  useEffect(() => {
+    if (selectedId !== undefined) {
+      setSelectedState(selectedId === null ? "" : selectedId);
+    }
+  }, [selectedId]);
+
+  const selected = collections.find((c) => c.id === selectedState);
   const options = collections.map((c) => ({
     label: c.name,
     value: String(c.id),
@@ -64,17 +72,17 @@ export default function StyleCollectionManagement({
       <Text fontSize="sm" mb={2}>Style Collections</Text>
       <CrudDropdown
         options={options}
-        value={selectedId}
+        value={selectedState}
         onChange={(e) =>
-          setSelectedId(
+          setSelectedState(
             e.target.value === "" ? "" : parseInt(e.target.value, 10)
           )
         }
         onCreate={() => setIsAddOpen(true)}
         onUpdate={() => setIsEditOpen(true)}
         onDelete={() => setIsDeleteOpen(true)}
-        isUpdateDisabled={selectedId === ""}
-        isDeleteDisabled={selectedId === ""}
+        isUpdateDisabled={selectedState === ""}
+        isDeleteDisabled={selectedState === ""}
       />
 
       <AddStyleCollectionModal
@@ -88,7 +96,7 @@ export default function StyleCollectionManagement({
           if (created) {
             const coll = { id: Number(created.id), name: created.name };
             setCollections((c) => [...c, coll]);
-            setSelectedId(coll.id);
+            setSelectedState(coll.id);
             refetch();
           }
         }}
@@ -101,15 +109,15 @@ export default function StyleCollectionManagement({
         confirmLabel="Update"
         initialName={selected?.name ?? ""}
         onSave={async (name) => {
-          if (selectedId === "") return;
+          if (selectedState === "") return;
           const { data: res } = await updateCollection({
-            variables: { data: { id: selectedId, name } },
+            variables: { data: { id: selectedState, name } },
           });
           const updated = res?.updateStyleCollection;
           if (updated) {
             setCollections((cs) =>
               cs.map((c) =>
-                c.id === selectedId ? { id: c.id, name: updated.name } : c
+                c.id === selectedState ? { id: c.id, name: updated.name } : c
               )
             );
             refetch();
@@ -123,10 +131,10 @@ export default function StyleCollectionManagement({
         action="delete collection"
         bodyText="Are you sure you want to delete this collection?"
         onConfirm={async () => {
-          if (selectedId === "") return;
-          await deleteCollection({ variables: { data: { id: selectedId } } });
-          setCollections((cs) => cs.filter((c) => c.id !== selectedId));
-          setSelectedId("");
+          if (selectedState === "") return;
+          await deleteCollection({ variables: { data: { id: selectedState } } });
+          setCollections((cs) => cs.filter((c) => c.id !== selectedState));
+          setSelectedState("");
           setIsDeleteOpen(false);
           refetch();
         }}
