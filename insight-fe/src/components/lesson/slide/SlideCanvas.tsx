@@ -1,6 +1,6 @@
 "use client";
 
-  import { Flex, Grid, Box, Text, HStack, Button } from "@chakra-ui/react";
+import { Grid, Box, Text, HStack, Button, Stack } from "@chakra-ui/react";
 
 import BoardAttributesPane from "../attributes-pane/BoardAttributesPane";
 import { ColumnType } from "@/components/DnD/types";
@@ -34,7 +34,8 @@ interface SlideCanvasProps {
   openLoadStyle: () => void;
   colorPalettes: { id: number; name: string; colors: string[] }[];
   selectedPaletteId: number | "";
-} 
+  deleteSlide: (id: string) => void;
+}
 
 export default function SlideCanvas({
   slides,
@@ -60,14 +61,17 @@ export default function SlideCanvas({
   openLoadStyle,
   colorPalettes,
   selectedPaletteId,
+  deleteSlide,
 }: SlideCanvasProps) {
   return (
-    <Flex gap={6} alignItems="flex-start">
+    <Stack gap={4} alignItems="flex-start">
       <SlideSequencer
+        orientation="horizontal"
         slides={slides}
         setSlides={setSlides as any}
         selectedSlideId={selectedSlideId}
         onSelect={selectSlide}
+        onDelete={deleteSlide}
       />
       {selectedSlideId && selectedSlide && (
         <Grid gap={4} flex={1} templateColumns="1fr 300px">
@@ -144,6 +148,6 @@ export default function SlideCanvas({
           </Box>
         </Grid>
       )}
-    </Flex>
+    </Stack>
   );
 }

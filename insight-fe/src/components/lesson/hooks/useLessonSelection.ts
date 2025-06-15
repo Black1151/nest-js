@@ -36,7 +36,8 @@ export type Action =
       slideId: string;
       boardId: string;
       updater: (board: BoardRow) => BoardRow;
-    };
+    }
+  | { type: "deleteSlide"; slideId: string };
 
 function reducer(state: LessonState, action: Action): LessonState {
   switch (action.type) {
@@ -99,6 +100,17 @@ function reducer(state: LessonState, action: Action): LessonState {
             : s
         ),
       };
+    case "deleteSlide":
+      if (state.slides.length <= 1) return state;
+      const filtered = state.slides.filter((s) => s.id !== action.slideId);
+      return {
+        ...state,
+        slides: filtered,
+        selectedSlideId:
+          state.selectedSlideId === action.slideId
+            ? filtered[0]?.id ?? null
+            : state.selectedSlideId,
+      };
     default:
       return state;
   }
@@ -154,6 +166,11 @@ export function useLessonSelection(ref?: React.Ref<LessonEditorHandle>) {
     [dispatch]
   );
 
+  const deleteSlide = useCallback(
+    (id: string) => dispatch({ type: "deleteSlide", slideId: id }),
+    [dispatch]
+  );
+
   const selectedSlide = useMemo(
     () => state.slides.find((s) => s.id === state.selectedSlideId) || null,
     [state.slides, state.selectedSlideId]
@@ -195,5 +212,6 @@ export function useLessonSelection(ref?: React.Ref<LessonEditorHandle>) {
     selectedElement,
     selectedColumn,
     selectedBoard,
+    deleteSlide,
   };
 }

@@ -70,6 +70,8 @@ interface SlideItemProps {
   instanceId: symbol;
   onSelect: (id: string) => void;
   isSelected: boolean;
+  onDelete?: (id: string) => void;
+  orientation: "vertical" | "horizontal";
 }
 
 function SlideItem({
@@ -77,6 +79,8 @@ function SlideItem({
   instanceId,
   onSelect,
   isSelected,
+  onDelete,
+  orientation,
 }: SlideItemProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
@@ -105,7 +109,8 @@ function SlideItem({
             {
               input,
               element,
-              allowedEdges: ["top", "bottom"],
+              allowedEdges:
+                orientation === "horizontal" ? ["left", "right"] : ["top", "bottom"],
             }
           ),
         onDragEnter: (args) =>
@@ -128,6 +133,20 @@ function SlideItem({
       cursor="grab"
       onClick={() => onSelect(slide.id)}
     >
+      {onDelete && (
+        <Button
+          size="xs"
+          position="absolute"
+          top="2px"
+          right="2px"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(slide.id);
+          }}
+        >
+          X
+        </Button>
+      )}
       {slide.title}
       {closestEdge && <DropIndicator edge={closestEdge} gap="4px" />}
     </Box>
@@ -139,6 +158,8 @@ export interface SlideSequencerProps {
   setSlides: React.Dispatch<React.SetStateAction<Slide[]>>;
   selectedSlideId: string | null;
   onSelect: (id: string) => void;
+  onDelete?: (id: string) => void;
+  orientation?: "vertical" | "horizontal";
 }
 
 export default function SlideSequencer({
@@ -146,6 +167,8 @@ export default function SlideSequencer({
   setSlides,
   selectedSlideId,
   onSelect,
+  onDelete,
+  orientation = "vertical",
 }: SlideSequencerProps) {
   const counter = useRef(slides.length + 1);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -169,14 +192,19 @@ export default function SlideSequencer({
   }, [setSlides]);
 
   // Setup drop targets and reorder logic via dedicated hook
-  useSlideDnD(containerRef, slides, setSlides, instanceId);
+  useSlideDnD(containerRef, slides, setSlides, instanceId, orientation);
 
   return (
-    <Stack spacing={4}>
+    <Stack spacing={4} direction={orientation === "horizontal" ? "row" : "column"}>
       <Button onClick={addSlide} colorScheme="teal" alignSelf="flex-start">
         Add Slide
       </Button>
-      <Stack ref={containerRef} gap={2}>
+      <Stack
+        ref={containerRef}
+        gap={2}
+        direction={orientation === "horizontal" ? "row" : "column"}
+        overflowX={orientation === "horizontal" ? "auto" : "visible"}
+      >
         {slides.map((slide) => (
           <SlideItem
             key={slide.id}
@@ -184,6 +212,8 @@ export default function SlideSequencer({
             instanceId={instanceId.current}
             onSelect={onSelect}
             isSelected={selectedSlideId === slide.id}
+            onDelete={onDelete}
+            orientation={orientation}
           />
         ))}
       </Stack>

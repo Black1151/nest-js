@@ -20,7 +20,8 @@ export function useSlideDnD(
   containerRef: RefObject<HTMLDivElement>,
   slides: Slide[],
   setSlides: React.Dispatch<React.SetStateAction<Slide[]>>,
-  instanceId: React.MutableRefObject<symbol>
+  instanceId: React.MutableRefObject<symbol>,
+  axis: "vertical" | "horizontal" = "vertical"
 ) {
   // Register the container to accept slide drops
   useEffect(() => {
@@ -54,7 +55,7 @@ export function useSlideDnD(
             startIndex,
             indexOfTarget: slides.length - 1,
             closestEdgeOfTarget: null,
-            axis: "vertical",
+            axis,
           });
           setSlides((prev) => reorder({ list: prev, startIndex, finishIndex: destinationIndex }));
           return;
@@ -70,11 +71,11 @@ export function useSlideDnD(
             startIndex,
             indexOfTarget,
             closestEdgeOfTarget,
-            axis: "vertical",
+            axis,
           });
           setSlides((prev) => reorder({ list: prev, startIndex, finishIndex: destinationIndex }));
         }
       },
     });
-  }, [instanceId, slides, setSlides]);
+  }, [instanceId, slides, setSlides, axis]);
 }

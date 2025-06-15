@@ -386,6 +386,7 @@ const LessonEditor = forwardRef<LessonEditorHandle>(function LessonEditor(
         openLoadStyle={() => setIsLoadStyleOpen(true)}
         colorPalettes={colorPalettes}
         selectedPaletteId={selectedPaletteId}
+        deleteSlide={editor.deleteSlide}
       />
 
       <StyleModals

@@ -26,6 +26,7 @@ export function useLessonEditorState(
     selectElement: selection.selectElement,
     selectColumn: selection.selectColumn,
     selectBoard: selection.selectBoard,
+    deleteSlide: selection.deleteSlide,
     selectedSlide: selection.selectedSlide,
     selectedElement: selection.selectedElement,
     selectedColumn: selection.selectedColumn,
