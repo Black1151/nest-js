@@ -6,7 +6,9 @@ import StyleGroupManagement from "./components/StyleGroupManagement";
 import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
 import BaseElementsPalette from "./components/BaseElementsPalette";
-import ThemeCanvas from "./components/ThemeCanvas";
+import SlideCanvas from "./components/SlideCanvas";
+import SlideManager from "./components/SlideManager";
+import { Slide, createInitialBoard } from "@/components/lesson/slide/SlideSequencer";
 
 export const LessonBuilderPageClient = () => {
   const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
@@ -18,6 +20,16 @@ export const LessonBuilderPageClient = () => {
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | null>(
     null
   );
+  const initial = createInitialBoard();
+  const [slides, setSlides] = useState<Slide[]>([
+    {
+      id: crypto.randomUUID(),
+      title: "Slide 1",
+      columnMap: initial.columnMap,
+      boards: initial.boards,
+    },
+  ]);
+  const [selectedSlideId, setSelectedSlideId] = useState<string>(slides[0].id);
 
   return (
     <VStack w="100%">
@@ -60,10 +72,27 @@ export const LessonBuilderPageClient = () => {
           />
         </Flex>
       </HStack>
-      <ThemeCanvas
-        collectionId={selectedCollectionId}
-        paletteId={selectedPaletteId}
+      <SlideManager
+        slides={slides}
+        setSlides={setSlides}
+        selectedSlideId={selectedSlideId}
+        onSelectSlide={setSelectedSlideId}
       />
+      {slides.length > 0 && (
+        <SlideCanvas
+          collectionId={selectedCollectionId}
+          paletteId={selectedPaletteId}
+          columnMap={slides.find((s) => s.id === selectedSlideId)!.columnMap}
+          boards={slides.find((s) => s.id === selectedSlideId)!.boards}
+          onChange={(map, b) =>
+            setSlides((prev) =>
+              prev.map((s) =>
+                s.id === selectedSlideId ? { ...s, columnMap: map, boards: b } : s
+              )
+            )
+          }
+        />
+      )}
     </VStack>
   );
 };
