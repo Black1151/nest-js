@@ -11,7 +11,6 @@ import {
   defaultColumnWrapperStyles,
   defaultBoardWrapperStyles,
 } from "@/components/lesson/defaultStyles";
-import ThemeAttributesPane from "./ThemeAttributesPane";
 import DeleteDropArea from "./DeleteDropArea";
 import { GET_COLOR_PALETTES } from "@/graphql/lesson";
 
@@ -432,7 +431,7 @@ export default function SlideCanvas({
   const selectedBoard = selectedBoardId ? localBoards.find((b) => b.id === selectedBoardId) || null : null;
 
   return (
-    <HStack
+    <VStack
       w="100%"
       mt={4}
       align="start"
@@ -441,7 +440,14 @@ export default function SlideCanvas({
       onDragLeave={() => setDropIndicator(null)}
       spacing={4}
     >
-      <Box flex="1">
+      <HStack w="100%" justify="flex-end">
+        <DeleteDropArea
+          onDropCard={deleteElementById}
+          onDropColumn={deleteColumnById}
+          onDropBoard={deleteBoardById}
+        />
+      </HStack>
+      <Box w="100%">
         <SlideElementsContainer
           columnMap={localMap}
           boards={localBoards}
@@ -455,26 +461,7 @@ export default function SlideCanvas({
           onSelectBoard={selectBoard}
         />
       </Box>
-      <VStack align="stretch">
-        <ThemeAttributesPane
-          element={selectedElement}
-          column={selectedColumn}
-          board={selectedBoard}
-          onUpdateElement={updateElement}
-          onUpdateColumn={updateColumn}
-          onUpdateBoard={updateBoard}
-          onClone={cloneElement}
-          onDelete={deleteElement}
-          colorPalettes={colorPalettes}
-          selectedPaletteId={paletteId ?? ""}
-        />
-        <DeleteDropArea
-          onDropCard={deleteElementById}
-          onDropColumn={deleteColumnById}
-          onDropBoard={deleteBoardById}
-        />
-      </VStack>
-    </HStack>
+    </VStack>
   );
 }
 
