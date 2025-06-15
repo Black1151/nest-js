@@ -88,7 +88,7 @@ export const LessonBuilderPageClient = () => {
 
   const handleLoad = async (lessonId: string) => {
     const { data } = await loadLessonQuery({
-      variables: { data: { id: lessonId } },
+      variables: { data: { id: Number(lessonId) } },
     });
     if (!data?.getLesson) return;
     const lesson = data.getLesson as any;
