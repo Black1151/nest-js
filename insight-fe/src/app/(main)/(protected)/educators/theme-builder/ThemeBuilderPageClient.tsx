@@ -10,8 +10,8 @@ import BaseElementsPalette from "./components/BaseElementsPalette";
 import ThemeCanvas from "./components/ThemeCanvas";
 import SaveThemeModal from "./components/SaveThemeModal";
 import LoadThemeModal, { ThemeInfo } from "./components/LoadThemeModal";
-import { useLazyQuery, useMutation } from "@apollo/client";
-import { GET_THEMES, CREATE_THEME } from "@/graphql/lesson";
+import { useQuery, useMutation } from "@apollo/client";
+import { GET_ALL_THEMES, CREATE_THEME } from "@/graphql/lesson";
 
 export const ThemeBuilderPageClient = () => {
   const [selectedCollectionId, setSelectedCollectionId] = useState<
@@ -28,16 +28,8 @@ export const ThemeBuilderPageClient = () => {
   const [isLoadThemeOpen, setIsLoadThemeOpen] = useState(false);
   const [themes, setThemes] = useState<ThemeInfo[]>([]);
 
-  const [fetchThemes, { data: themesData }] = useLazyQuery(GET_THEMES);
+  const { data: themesData } = useQuery(GET_ALL_THEMES);
   const [createTheme] = useMutation(CREATE_THEME);
-
-  useEffect(() => {
-    if (selectedCollectionId !== null) {
-      fetchThemes({ variables: { collectionId: String(selectedCollectionId) } });
-    } else {
-      setThemes([]);
-    }
-  }, [selectedCollectionId, fetchThemes]);
 
   useEffect(() => {
     if (themesData?.getAllTheme) {
@@ -87,10 +79,12 @@ export const ThemeBuilderPageClient = () => {
       <HStack flex={1} w="100%" align="start">
         <StyleCollectionManagement
           onSelectCollection={setSelectedCollectionId}
+          selectedId={selectedCollectionId}
         />
         <ColorPaletteManagement
           collectionId={selectedCollectionId}
           onSelectPalette={setSelectedPaletteId}
+          selectedId={selectedPaletteId}
         />
       </HStack>
       <HStack w="100%">
