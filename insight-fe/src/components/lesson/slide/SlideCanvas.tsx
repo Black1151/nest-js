@@ -65,14 +65,6 @@ export default function SlideCanvas({
 }: SlideCanvasProps) {
   return (
     <Stack gap={4} alignItems="flex-start">
-      <SlideSequencer
-        orientation="horizontal"
-        slides={slides}
-        setSlides={setSlides as any}
-        selectedSlideId={selectedSlideId}
-        onSelect={selectSlide}
-        onDelete={deleteSlide}
-      />
       {selectedSlideId && selectedSlide && (
         <Grid gap={4} flex={1} templateColumns="1fr 300px">
           <Box
@@ -148,6 +140,14 @@ export default function SlideCanvas({
           </Box>
         </Grid>
       )}
+      <SlideSequencer
+        orientation="horizontal"
+        slides={slides}
+        setSlides={setSlides as any}
+        selectedSlideId={selectedSlideId}
+        onSelect={selectSlide}
+        onDelete={deleteSlide}
+      />
     </Stack>
   );
 }
