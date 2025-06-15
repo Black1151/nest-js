@@ -1,8 +1,7 @@
 "use client";
 import { Flex, HStack, VStack } from "@chakra-ui/react";
-import StyleCollectionManagement from "./components/StyleCollectionManagement";
 import { useState } from "react";
-import ColorPaletteManagement from "./components/ColorPaletteManagement";
+import ThemeDropdown from "@/components/dropdowns/ThemeDropdown";
 import StyleGroupManagement from "./components/StyleGroupManagement";
 import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
@@ -10,9 +9,8 @@ import BaseElementsPalette from "./components/BaseElementsPalette";
 import ThemeCanvas from "./components/ThemeCanvas";
 
 export const LessonBuilderPageClient = () => {
-  const [selectedCollectionId, setSelectedCollectionId] = useState<
-    number | null
-  >(null);
+  const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
+  const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null
   );
@@ -24,12 +22,19 @@ export const LessonBuilderPageClient = () => {
   return (
     <VStack w="100%">
       <HStack flex={1} w="100%" align="start">
-        <StyleCollectionManagement
-          onSelectCollection={setSelectedCollectionId}
-        />
-        <ColorPaletteManagement
-          collectionId={selectedCollectionId}
-          onSelectPalette={setSelectedPaletteId}
+        <ThemeDropdown
+          value={selectedThemeId ? String(selectedThemeId) : null}
+          onChange={(theme) => {
+            if (theme) {
+              setSelectedThemeId(theme.id);
+              setSelectedCollectionId(theme.styleCollectionId);
+              setSelectedPaletteId(theme.defaultPaletteId);
+            } else {
+              setSelectedThemeId(null);
+              setSelectedCollectionId(null);
+              setSelectedPaletteId(null);
+            }
+          }}
         />
       </HStack>
       <HStack w="100%">
