@@ -5,7 +5,6 @@ import ThemeDropdown from "@/components/dropdowns/ThemeDropdown";
 import StyleGroupManagement from "./components/StyleGroupManagement";
 import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
-import BaseElementsPalette from "./components/BaseElementsPalette";
 import SlideCanvas from "./components/SlideCanvas";
 import SlideManager from "./components/SlideManager";
 import { Slide, createInitialBoard } from "@/components/lesson/slide/SlideSequencer";
@@ -61,10 +60,7 @@ export const LessonBuilderPageClient = () => {
         />
       </HStack>
       <HStack w="100%" align="start" pt={4} spacing={4}>
-        <Flex flex={1} width="50%" bg="blue.100" p={4}>
-          <BaseElementsPalette />
-        </Flex>
-        <Flex flex={1} width="50%" bg="green.100" p={4}>
+        <Flex flex={1} bg="green.100" p={4}>
           <StyledElementsPalette
             collectionId={selectedCollectionId}
             elementType={selectedElementType}

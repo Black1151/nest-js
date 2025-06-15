@@ -2,7 +2,7 @@
 
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import SlideElementsContainer, { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
 import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnMap, ColumnType } from "@/components/DnD/types";
@@ -13,8 +13,7 @@ import {
 } from "@/components/lesson/defaultStyles";
 import ThemeAttributesPane from "./ThemeAttributesPane";
 import DeleteDropArea from "./DeleteDropArea";
-import SaveElementModal from "./SaveElementModal";
-import { CREATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
+import { GET_COLOR_PALETTES } from "@/graphql/lesson";
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   text: "Text",
@@ -79,9 +78,6 @@ export default function SlideCanvas({
     setSelectedElementId(null);
     setSelectedColumnId(null);
   };
-  const [saveTarget, setSaveTarget] = useState<"element" | "column" | "row" | null>(null);
-
-  const [createStyle] = useMutation(CREATE_STYLE);
 
   const { data: paletteData, refetch: refetchPalettes } = useQuery(GET_COLOR_PALETTES, {
     variables: { collectionId: String(collectionId) },
@@ -434,38 +430,6 @@ export default function SlideCanvas({
   const selectedColumn = selectedColumnId ? localMap[selectedColumnId] || null : null;
   const selectedBoard = selectedBoardId ? localBoards.find((b) => b.id === selectedBoardId) || null : null;
 
-  const handleSave = async ({ name, groupId }: { name: string; groupId: number | null }) => {
-    if (collectionId === null || !saveTarget) return;
-    let elementType: string;
-    let config: any;
-    if (saveTarget === "element") {
-      if (!selectedElement) return;
-      elementType = selectedElement.type;
-      config = selectedElement;
-    } else if (saveTarget === "column") {
-      if (!selectedColumn) return;
-      elementType = "column";
-      config = selectedColumn;
-    } else {
-      if (!selectedBoard) return;
-      elementType = "row";
-      config = selectedBoard;
-    }
-
-    await createStyle({
-      variables: {
-        data: {
-          name,
-          collectionId,
-          groupId: groupId ?? undefined,
-          element: ELEMENT_TYPE_TO_ENUM[elementType],
-          config,
-        },
-      },
-    });
-    setSaveTarget(null);
-  };
-
   return (
     <HStack
       w="100%"
@@ -498,7 +462,6 @@ export default function SlideCanvas({
           onUpdateElement={updateElement}
           onUpdateColumn={updateColumn}
           onUpdateBoard={updateBoard}
-          onSave={setSaveTarget}
           onClone={cloneElement}
           onDelete={deleteElement}
           colorPalettes={colorPalettes}
@@ -510,17 +473,6 @@ export default function SlideCanvas({
           onDropBoard={deleteBoardById}
         />
       </VStack>
-      {saveTarget && collectionId !== null && (
-        <SaveElementModal
-          isOpen={saveTarget !== null}
-          onClose={() => setSaveTarget(null)}
-          collectionId={collectionId}
-          elementType={
-            saveTarget === "element" ? selectedElement?.type || "" : saveTarget
-          }
-          onSave={handleSave}
-        />
-      )}
     </HStack>
   );
 }
