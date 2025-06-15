@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, In } from 'typeorm';
 import { BaseService } from 'src/common/base.service';
 import { StyleEntity } from './style.entity';
 import { CreateStyleInput, UpdateStyleInput } from './style.inputs';
@@ -36,5 +36,10 @@ export class StyleService extends BaseService<
       ...(groupId ? [{ relation: 'group', ids: [groupId] }] : []),
     ];
     return super.update({ ...rest, relationIds: relations } as any);
+  }
+
+  async findByIds(ids: number[]): Promise<StyleEntity[]> {
+    if (!ids?.length) return [];
+    return this.repo.find({ where: { id: In(ids) } });
   }
 }
