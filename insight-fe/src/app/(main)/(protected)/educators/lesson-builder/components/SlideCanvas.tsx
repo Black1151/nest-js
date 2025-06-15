@@ -318,76 +318,77 @@ export default function SlideCanvas({
     const target = document.elementFromPoint(e.clientX, e.clientY);
     const columnEl = target?.closest("[data-column-id]") as HTMLElement | null;
     const dropColumnId = columnEl?.dataset.columnId;
-    setLocalMap((prev) => {
-      const firstColumn = localBoards[0].orderedColumnIds[0];
-      const columnId = dropColumnId && prev[dropColumnId] ? dropColumnId : firstColumn;
-      const column = prev[columnId];
-      let insertIndex = column.items.length;
-      if (columnEl) {
-        const cards = Array.from(columnEl.querySelectorAll("[data-card-id]")) as HTMLElement[];
-        for (let i = 0; i < cards.length; i++) {
-          const rect = cards[i].getBoundingClientRect();
-          if (e.clientY < rect.top + rect.height / 2) {
-            insertIndex = i;
-            break;
-          }
+    const firstColumn = localBoards[0].orderedColumnIds[0];
+    const columnId = dropColumnId && localMap[dropColumnId] ? dropColumnId : firstColumn;
+    const column = localMap[columnId];
+    let insertIndex = column.items.length;
+    if (columnEl) {
+      const cards = Array.from(columnEl.querySelectorAll("[data-card-id]")) as HTMLElement[];
+      for (let i = 0; i < cards.length; i++) {
+        const rect = cards[i].getBoundingClientRect();
+        if (e.clientY < rect.top + rect.height / 2) {
+          insertIndex = i;
+          break;
         }
       }
-      const newEl: SlideElementDnDItemProps = config
-        ? { ...config, id: crypto.randomUUID() }
-        : {
-            id: crypto.randomUUID(),
-            type,
-            ...(type === "text"
-              ? {
-                  text: "Sample Text",
-                  styles: {
-                    color: "#000000",
-                    fontSize: "16px",
-                    fontFamily: availableFonts[0].fontFamily,
-                    fontWeight: "normal",
-                    lineHeight: "1.2",
-                    textAlign: "left",
-                  },
-                }
-              : type === "image"
-              ? { src: "https://via.placeholder.com/150" }
-              : type === "video"
-              ? { url: "" }
-              : type === "quiz"
-              ? { title: "Untitled Quiz", description: "", questions: [] }
-              : type === "table"
-              ? {
-                  table: {
-                    rows: 2,
-                    cols: 2,
-                    cells: Array.from({ length: 2 }, () =>
-                      Array.from({ length: 2 }, () => ({
-                        text: "Cell",
-                        styles: {
-                          color: "#000000",
-                          fontSize: "14px",
-                          fontFamily: availableFonts[0].fontFamily,
-                          fontWeight: "normal",
-                          lineHeight: "1.2",
-                          textAlign: "left",
-                        },
-                      }))
-                    ),
-                  },
-                }
-              : {}),
-            wrapperStyles: { ...defaultColumnWrapperStyles },
-            animation: undefined,
-          };
-      const updatedColumn = {
-        ...column,
-        items: [...column.items.slice(0, insertIndex), newEl, ...column.items.slice(insertIndex)],
-      };
-      const newMap = { ...prev, [columnId]: updatedColumn };
-      handleExternalChange(newMap, localBoards);
-      return newMap;
-    });
+    }
+
+    const newEl: SlideElementDnDItemProps = config
+      ? { ...config, id: crypto.randomUUID() }
+      : {
+          id: crypto.randomUUID(),
+          type,
+          ...(type === "text"
+            ? {
+                text: "Sample Text",
+                styles: {
+                  color: "#000000",
+                  fontSize: "16px",
+                  fontFamily: availableFonts[0].fontFamily,
+                  fontWeight: "normal",
+                  lineHeight: "1.2",
+                  textAlign: "left",
+                },
+              }
+            : type === "image"
+            ? { src: "https://via.placeholder.com/150" }
+            : type === "video"
+            ? { url: "" }
+            : type === "quiz"
+            ? { title: "Untitled Quiz", description: "", questions: [] }
+            : type === "table"
+            ? {
+                table: {
+                  rows: 2,
+                  cols: 2,
+                  cells: Array.from({ length: 2 }, () =>
+                    Array.from({ length: 2 }, () => ({
+                      text: "Cell",
+                      styles: {
+                        color: "#000000",
+                        fontSize: "14px",
+                        fontFamily: availableFonts[0].fontFamily,
+                        fontWeight: "normal",
+                        lineHeight: "1.2",
+                        textAlign: "left",
+                      },
+                    }))
+                  ),
+                },
+              }
+            : {}),
+          wrapperStyles: { ...defaultColumnWrapperStyles },
+          animation: undefined,
+        };
+
+    const updatedColumn = {
+      ...column,
+      items: [...column.items.slice(0, insertIndex), newEl, ...column.items.slice(insertIndex)],
+    };
+
+    const newMap = { ...localMap, [columnId]: updatedColumn };
+    setLocalMap(newMap);
+    handleExternalChange(newMap, localBoards);
     setDropIndicator(null);
   };
 
