@@ -9,6 +9,7 @@ import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
 import SlideCanvas from "./components/SlideCanvas";
 import SlideManager from "./components/SlideManager";
+import SaveLessonModal from "./components/SaveLessonModal";
 import {
   Slide,
   createInitialBoard,
@@ -38,6 +39,7 @@ export const LessonBuilderPageClient = () => {
   const [selectedSlideId, setSelectedSlideId] = useState<string>(slides[0].id);
 
   const [createLesson] = useMutation(CREATE_LESSON);
+  const [isSaveOpen, setIsSaveOpen] = useState(false);
 
   const prepareContent = () => {
     return {
@@ -56,13 +58,25 @@ export const LessonBuilderPageClient = () => {
     };
   };
 
-  const handleSave = async () => {
+  const handleSave = async ({
+    name,
+    subjectId,
+    topicId,
+  }: {
+    name: string;
+    subjectId: string;
+    topicId: string;
+  }) => {
     await createLesson({
       variables: {
         data: {
-          title: "Untitled Lesson",
+          title: name,
           themeId: selectedThemeId,
           content: prepareContent(),
+          relationIds: [
+            { relation: "subject", ids: [Number(subjectId)] },
+            { relation: "topic", ids: [Number(topicId)] },
+          ],
         },
       },
     });
@@ -127,9 +141,17 @@ export const LessonBuilderPageClient = () => {
           }
         />
       )}
-      <Button onClick={handleSave} colorScheme="teal" alignSelf="flex-start">
+      <Button onClick={() => setIsSaveOpen(true)} colorScheme="teal" alignSelf="flex-start">
         Save Lesson
       </Button>
+      <SaveLessonModal
+        isOpen={isSaveOpen}
+        onClose={() => setIsSaveOpen(false)}
+        onSave={(data) => {
+          handleSave(data);
+          setIsSaveOpen(false);
+        }}
+      />
     </VStack>
   );
 };
