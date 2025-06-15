@@ -49,7 +49,14 @@ export const LessonBuilderPageClient = () => {
   const [loadLessonQuery] = useLazyQuery(GET_LESSON);
   const [getTheme] = useLazyQuery(GET_THEME);
 
-  const deserializeSlides = (data: any[]): Slide[] => {
+  const deserializeSlides = (data: any): Slide[] => {
+    if (typeof data === "string") {
+      try {
+        data = JSON.parse(data);
+      } catch {
+        return [];
+      }
+    }
     if (!Array.isArray(data)) return [];
     return data.map((slide) => {
       const columnMap: Record<string, any> = {};
@@ -135,17 +142,34 @@ export const LessonBuilderPageClient = () => {
       variables: { data: { id: lessonId } },
     });
     if (!data?.getLesson) return;
-    const lesson = data.getLesson as any;
+    const lessonRaw = data.getLesson as any;
+    const lesson = {
+      ...lessonRaw,
+      content:
+        typeof lessonRaw.content === "string"
+          ? JSON.parse(lessonRaw.content)
+          : lessonRaw.content,
+    } as any;
     if (lesson.themeId) {
       setSelectedThemeId(Number(lesson.themeId));
       const themeRes = await getTheme({ variables: { id: String(lesson.themeId) } });
       if (themeRes.data?.getTheme) {
         setSelectedCollectionId(Number(themeRes.data.getTheme.styleCollectionId));
         setSelectedPaletteId(Number(themeRes.data.getTheme.defaultPaletteId));
+        setSelectedElementType(null);
+        setSelectedGroupId(null);
       } else {
         setSelectedCollectionId(null);
         setSelectedPaletteId(null);
+        setSelectedElementType(null);
+        setSelectedGroupId(null);
       }
+    } else {
+      setSelectedThemeId(null);
+      setSelectedCollectionId(null);
+      setSelectedPaletteId(null);
+      setSelectedElementType(null);
+      setSelectedGroupId(null);
     }
     const loadedSlides = deserializeSlides(lesson.content?.slides ?? []);
     if (loadedSlides.length) {
