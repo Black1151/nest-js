@@ -15,6 +15,10 @@ import {
   Slide,
   createInitialBoard,
 } from "@/components/lesson/slide/SlideSequencer";
+import {
+  defaultBoardWrapperStyles,
+  defaultColumnWrapperStyles,
+} from "@/components/lesson/defaultStyles";
 
 export const LessonBuilderPageClient = () => {
   const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
@@ -44,6 +48,53 @@ export const LessonBuilderPageClient = () => {
   const [isLoadOpen, setIsLoadOpen] = useState(false);
   const [loadLessonQuery] = useLazyQuery(GET_LESSON);
   const [getTheme] = useLazyQuery(GET_THEME);
+
+  const deserializeSlides = (data: any): Slide[] => {
+    if (typeof data === "string") {
+      try {
+        data = JSON.parse(data);
+      } catch {
+        return [];
+      }
+    }
+    if (!Array.isArray(data)) return [];
+    return data.map((slide) => {
+      const columnMap: Record<string, any> = {};
+      if (slide.columnMap) {
+        Object.entries(slide.columnMap).forEach(([cid, col]: any) => {
+          columnMap[cid] = {
+            title: col.title || "",
+            columnId: col.columnId || cid,
+            styles:
+              col.styles || {
+                container: { border: "1px dashed gray", width: "100%" },
+              },
+            wrapperStyles: {
+              ...defaultColumnWrapperStyles,
+              ...(col.wrapperStyles || {}),
+            },
+            items: (col.items || []).map((it: any) => ({ ...it })),
+            spacing: col.spacing ?? 0,
+          };
+        });
+      }
+      const boards = (slide.boards || []).map((b: any) => ({
+        id: b.id || crypto.randomUUID(),
+        orderedColumnIds: b.orderedColumnIds || [],
+        wrapperStyles: {
+          ...defaultBoardWrapperStyles,
+          ...(b.wrapperStyles || {}),
+        },
+        spacing: b.spacing ?? 0,
+      }));
+      return {
+        id: slide.id || crypto.randomUUID(),
+        title: slide.title || "",
+        columnMap,
+        boards,
+      } as Slide;
+    });
+  };
 
   const prepareContent = () => {
     return {
@@ -91,22 +142,49 @@ export const LessonBuilderPageClient = () => {
       variables: { data: { id: Number(lessonId) } },
     });
     if (!data?.getLesson) return;
-    const lesson = data.getLesson as any;
+    const lessonRaw = data.getLesson as any;
+    const lesson = {
+      ...lessonRaw,
+      content:
+        typeof lessonRaw.content === "string"
+          ? JSON.parse(lessonRaw.content)
+          : lessonRaw.content,
+    } as any;
     if (lesson.themeId) {
       setSelectedThemeId(Number(lesson.themeId));
       const themeRes = await getTheme({ variables: { id: String(lesson.themeId) } });
       if (themeRes.data?.getTheme) {
         setSelectedCollectionId(Number(themeRes.data.getTheme.styleCollectionId));
         setSelectedPaletteId(Number(themeRes.data.getTheme.defaultPaletteId));
+        setSelectedElementType(null);
+        setSelectedGroupId(null);
       } else {
         setSelectedCollectionId(null);
         setSelectedPaletteId(null);
+        setSelectedElementType(null);
+        setSelectedGroupId(null);
       }
+    } else {
+      setSelectedThemeId(null);
+      setSelectedCollectionId(null);
+      setSelectedPaletteId(null);
+      setSelectedElementType(null);
+      setSelectedGroupId(null);
     }
-    const loadedSlides = (lesson.content?.slides ?? []) as Slide[];
+    const loadedSlides = deserializeSlides(lesson.content?.slides ?? []);
     if (loadedSlides.length) {
       setSlides(loadedSlides);
       setSelectedSlideId(loadedSlides[0].id);
+    } else {
+      const init = createInitialBoard();
+      const first = {
+        id: crypto.randomUUID(),
+        title: "Slide 1",
+        columnMap: init.columnMap,
+        boards: init.boards,
+      } as Slide;
+      setSlides([first]);
+      setSelectedSlideId(first.id);
     }
   };
 
