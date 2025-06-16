@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button, Stack, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { BaseModal } from "@/components/modals/BaseModal";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import YearGroupDropdown from "@/components/dropdowns/YearGroupDropdown";
 import SubjectDropdown from "@/components/dropdowns/SubjectDropdown";
 import TopicDropdown from "@/components/dropdowns/TopicDropdown";
@@ -9,25 +10,54 @@ import TopicDropdown from "@/components/dropdowns/TopicDropdown";
 interface SaveLessonModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: { name: string; yearGroupId: string; subjectId: string; topicId: string }) => void;
+  onSave: (data: {
+    name: string;
+    yearGroupId?: string;
+    subjectId?: string;
+    topicId?: string;
+  }) => void;
+  initialName?: string;
+  /**
+   * When true, the modal acts as a simple confirmation dialog
+   * for updating an existing lesson instead of collecting
+   * creation details.
+   */
+  isExisting?: boolean;
 }
 
-export default function SaveLessonModal({ isOpen, onClose, onSave }: SaveLessonModalProps) {
+export default function SaveLessonModal({
+  isOpen,
+  onClose,
+  onSave,
+  initialName,
+  isExisting = false,
+}: SaveLessonModalProps) {
   const [name, setName] = useState("");
   const [yearGroupId, setYearGroupId] = useState<string | null>(null);
   const [subjectId, setSubjectId] = useState<string | null>(null);
   const [topicId, setTopicId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      setName("");
-      setYearGroupId(null);
-      setSubjectId(null);
-      setTopicId(null);
-    }
-  }, [isOpen]);
+    if (!isOpen) return;
+    setName(initialName ?? "");
+    setYearGroupId(null);
+    setSubjectId(null);
+    setTopicId(null);
+  }, [isOpen, initialName]);
 
   const isValid = !!name && !!yearGroupId && !!subjectId && !!topicId;
+
+  if (isExisting) {
+    return (
+      <ConfirmationModal
+        isOpen={isOpen}
+        onClose={onClose}
+        action="update lesson"
+        bodyText="Are you sure you want to update this lesson?"
+        onConfirm={() => onSave({ name })}
+      />
+    );
+  }
 
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} title="Save Lesson">
