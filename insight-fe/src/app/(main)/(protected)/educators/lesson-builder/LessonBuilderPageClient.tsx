@@ -11,6 +11,7 @@ import SlideCanvas from "./components/SlideCanvas";
 import SlideManager from "./components/SlideManager";
 import SaveLessonModal from "./components/SaveLessonModal";
 import LoadLessonModal from "./components/LoadLessonModal";
+import PreviewLessonModal from "./components/PreviewLessonModal";
 import {
   Slide,
   createInitialBoard,
@@ -42,6 +43,7 @@ export const LessonBuilderPageClient = () => {
   const [createLesson] = useMutation(CREATE_LESSON);
   const [isSaveOpen, setIsSaveOpen] = useState(false);
   const [isLoadOpen, setIsLoadOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [loadLessonQuery] = useLazyQuery(GET_LESSON);
   const [getTheme] = useLazyQuery(GET_THEME);
 
@@ -175,6 +177,9 @@ export const LessonBuilderPageClient = () => {
       <Button onClick={() => setIsSaveOpen(true)} colorScheme="teal" alignSelf="flex-start">
         Save Lesson
       </Button>
+      <Button onClick={() => setIsPreviewOpen(true)} colorScheme="teal" alignSelf="flex-start">
+        Preview Lesson
+      </Button>
       <SaveLessonModal
         isOpen={isSaveOpen}
         onClose={() => setIsSaveOpen(false)}
@@ -190,6 +195,11 @@ export const LessonBuilderPageClient = () => {
           handleLoad(id);
           setIsLoadOpen(false);
         }}
+      />
+      <PreviewLessonModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        slides={slides}
       />
     </VStack>
   );
