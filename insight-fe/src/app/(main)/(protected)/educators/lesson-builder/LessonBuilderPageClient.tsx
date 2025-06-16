@@ -73,25 +73,29 @@ export const LessonBuilderPageClient = () => {
     topicId,
   }: {
     name: string;
-    subjectId: string;
-    topicId: string;
+    subjectId?: string;
+    topicId?: string;
   }) => {
-    const variables = {
+    const base = {
       title: name,
       themeId: selectedThemeId,
       content: prepareContent(),
-      relationIds: [
-        { relation: "subject", ids: [Number(subjectId)] },
-        { relation: "topic", ids: [Number(topicId)] },
-      ],
     };
+
     if (lessonId) {
-      await updateLesson({
-        variables: { data: { id: lessonId, ...variables } },
-      });
+      await updateLesson({ variables: { data: { id: lessonId, ...base } } });
     } else {
+      if (!subjectId || !topicId) return;
       const { data } = await createLesson({
-        variables: { data: variables },
+        variables: {
+          data: {
+            ...base,
+            relationIds: [
+              { relation: "subject", ids: [Number(subjectId)] },
+              { relation: "topic", ids: [Number(topicId)] },
+            ],
+          },
+        },
       });
       if (data?.createLesson?.id) {
         setLessonId(Number(data.createLesson.id));
@@ -203,6 +207,7 @@ export const LessonBuilderPageClient = () => {
           setIsSaveOpen(false);
         }}
         initialName={lessonName ?? undefined}
+        isExisting={lessonId !== null}
       />
       <LoadLessonModal
         isOpen={isLoadOpen}
