@@ -10,6 +10,7 @@ import BaseElementsPalette from "./components/BaseElementsPalette";
 import ThemeCanvas from "./components/ThemeCanvas";
 import SaveThemeModal from "./components/SaveThemeModal";
 import LoadThemeModal, { ThemeInfo } from "./components/LoadThemeModal";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_ALL_THEMES, CREATE_THEME, UPDATE_THEME } from "@/graphql/lesson";
 
@@ -25,6 +26,7 @@ export const ThemeBuilderPageClient = () => {
     null
   );
   const [isSaveThemeOpen, setIsSaveThemeOpen] = useState(false);
+  const [isConfirmUpdateOpen, setIsConfirmUpdateOpen] = useState(false);
   const [isLoadThemeOpen, setIsLoadThemeOpen] = useState(false);
   const [themes, setThemes] = useState<ThemeInfo[]>([]);
   const [loadedTheme, setLoadedTheme] = useState<ThemeInfo | null>(null);
@@ -141,7 +143,12 @@ export const ThemeBuilderPageClient = () => {
       </HStack>
       <HStack w="100%" justify="flex-end" pt={2}>
         <Button onClick={() => setIsLoadThemeOpen(true)}>Load Theme</Button>
-        <Button colorScheme="blue" onClick={() => setIsSaveThemeOpen(true)}>
+        <Button
+          colorScheme="blue"
+          onClick={() =>
+            loadedTheme ? setIsConfirmUpdateOpen(true) : setIsSaveThemeOpen(true)
+          }
+        >
           Save Theme
         </Button>
       </HStack>
@@ -152,10 +159,21 @@ export const ThemeBuilderPageClient = () => {
       <SaveThemeModal
         isOpen={isSaveThemeOpen}
         onClose={() => setIsSaveThemeOpen(false)}
-        initialName={loadedTheme?.name ?? ""}
         onSave={(name) => {
           handleSaveTheme(name);
           setIsSaveThemeOpen(false);
+        }}
+      />
+      <ConfirmationModal
+        isOpen={isConfirmUpdateOpen}
+        onClose={() => setIsConfirmUpdateOpen(false)}
+        action="update theme"
+        bodyText="Are you sure you want to update this theme?"
+        onConfirm={() => {
+          if (loadedTheme) {
+            handleSaveTheme(loadedTheme.name);
+          }
+          setIsConfirmUpdateOpen(false);
         }}
       />
       <LoadThemeModal
