@@ -32,6 +32,10 @@ jest.mock('../components/ColorPaletteManagement', () => (props: any) => {
   return <div data-testid="palette" />;
 });
 
+jest.mock('@/components/modals/ConfirmationModal', () => (props: any) => {
+  return <div data-testid="confirm" {...props} />;
+});
+
 jest.mock('../components/AvailableElements', () => ({ onSelect, selectedType }: any) => {
   availableProps = { onSelect, selectedType };
   return (
@@ -96,5 +100,46 @@ describe('ThemeBuilderPageClient', () => {
     paletteProps.onSelectPalette(3);
     expect(canvasProps.paletteId).toBe(3);
     expect(screen.getByTestId('canvas')).toBeInTheDocument();
+  });
+
+  it('shows the loaded theme name', async () => {
+    (useQuery as jest.Mock).mockReturnValue({
+      data: {
+        getAllTheme: [
+          { id: 1, name: 'Loaded', styleCollectionId: 1, defaultPaletteId: 2 },
+        ],
+      },
+    });
+
+    render(<ThemeBuilderPageClient />);
+    await userEvent.click(screen.getByText('Load Theme'));
+    await userEvent.selectOptions(
+      screen.getByLabelText('Select Theme'),
+      '1'
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Load' }));
+
+    expect(screen.getByTestId('theme-name')).toHaveTextContent('Loaded');
+  });
+
+  it('shows confirm modal when saving a loaded theme', async () => {
+    (useQuery as jest.Mock).mockReturnValue({
+      data: {
+        getAllTheme: [
+          { id: 1, name: 'Loaded', styleCollectionId: 1, defaultPaletteId: 2 },
+        ],
+      },
+    });
+
+    render(<ThemeBuilderPageClient />);
+    await userEvent.click(screen.getByText('Load Theme'));
+    await userEvent.selectOptions(
+      screen.getByLabelText('Select Theme'),
+      '1'
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Load' }));
+    await userEvent.click(screen.getByText('Save Theme'));
+
+    expect(screen.getByTestId('confirm')).toBeInTheDocument();
   });
 });
