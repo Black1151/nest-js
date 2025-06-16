@@ -132,6 +132,14 @@ export const CREATE_LESSON = gql`
   }
 `;
 
+export const UPDATE_LESSON = gql`
+  mutation UpdateLesson($data: UpdateLessonInput!) {
+    updateLesson(data: $data) {
+      id
+    }
+  }
+`;
+
 export const GET_LESSON = gql`
   query GetLesson($data: IdInput!) {
     getLesson(data: $data) {
