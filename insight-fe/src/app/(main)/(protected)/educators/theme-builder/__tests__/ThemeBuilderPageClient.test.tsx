@@ -97,4 +97,24 @@ describe('ThemeBuilderPageClient', () => {
     expect(canvasProps.paletteId).toBe(3);
     expect(screen.getByTestId('canvas')).toBeInTheDocument();
   });
+
+  it('shows the loaded theme name', async () => {
+    (useQuery as jest.Mock).mockReturnValue({
+      data: {
+        getAllTheme: [
+          { id: 1, name: 'Loaded', styleCollectionId: 1, defaultPaletteId: 2 },
+        ],
+      },
+    });
+
+    render(<ThemeBuilderPageClient />);
+    await userEvent.click(screen.getByText('Load Theme'));
+    await userEvent.selectOptions(
+      screen.getByLabelText('Select Theme'),
+      '1'
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Load' }));
+
+    expect(screen.getByTestId('theme-name')).toHaveTextContent('Loaded');
+  });
 });
