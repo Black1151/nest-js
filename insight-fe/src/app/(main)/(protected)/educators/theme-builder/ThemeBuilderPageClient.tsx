@@ -1,5 +1,5 @@
 "use client";
-import { Flex, HStack, VStack, Button } from "@chakra-ui/react";
+import { Flex, HStack, VStack, Button, Heading } from "@chakra-ui/react";
 import StyleCollectionManagement from "./components/StyleCollectionManagement";
 import { useState, useEffect } from "react";
 import ColorPaletteManagement from "./components/ColorPaletteManagement";
@@ -11,7 +11,7 @@ import ThemeCanvas from "./components/ThemeCanvas";
 import SaveThemeModal from "./components/SaveThemeModal";
 import LoadThemeModal, { ThemeInfo } from "./components/LoadThemeModal";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_ALL_THEMES, CREATE_THEME } from "@/graphql/lesson";
+import { GET_ALL_THEMES, CREATE_THEME, UPDATE_THEME } from "@/graphql/lesson";
 
 export const ThemeBuilderPageClient = () => {
   const [selectedCollectionId, setSelectedCollectionId] = useState<
@@ -27,9 +27,11 @@ export const ThemeBuilderPageClient = () => {
   const [isSaveThemeOpen, setIsSaveThemeOpen] = useState(false);
   const [isLoadThemeOpen, setIsLoadThemeOpen] = useState(false);
   const [themes, setThemes] = useState<ThemeInfo[]>([]);
+  const [loadedTheme, setLoadedTheme] = useState<ThemeInfo | null>(null);
 
   const { data: themesData } = useQuery(GET_ALL_THEMES);
   const [createTheme] = useMutation(CREATE_THEME);
+  const [updateTheme] = useMutation(UPDATE_THEME);
 
   useEffect(() => {
     if (themesData?.getAllTheme) {
@@ -46,36 +48,63 @@ export const ThemeBuilderPageClient = () => {
 
   const handleSaveTheme = async (name: string) => {
     if (selectedCollectionId === null || selectedPaletteId === null) return;
-    const { data } = await createTheme({
-      variables: {
-        data: {
-          name,
-          styleCollectionId: selectedCollectionId,
-          defaultPaletteId: selectedPaletteId,
+    if (loadedTheme) {
+      const { data } = await updateTheme({
+        variables: {
+          data: {
+            id: loadedTheme.id,
+            name,
+            styleCollectionId: selectedCollectionId,
+            defaultPaletteId: selectedPaletteId,
+          },
         },
-      },
-    });
-    const created = data?.createTheme;
-    if (created) {
-      setThemes((ts) => [
-        ...ts,
-        {
+      });
+      const updated = data?.updateTheme;
+      if (updated) {
+        const theme = {
+          id: Number(updated.id),
+          name: updated.name,
+          styleCollectionId: updated.styleCollectionId,
+          defaultPaletteId: updated.defaultPaletteId,
+        };
+        setThemes((ts) => ts.map((t) => (t.id === theme.id ? theme : t)));
+        setLoadedTheme(theme);
+      }
+    } else {
+      const { data } = await createTheme({
+        variables: {
+          data: {
+            name,
+            styleCollectionId: selectedCollectionId,
+            defaultPaletteId: selectedPaletteId,
+          },
+        },
+      });
+      const created = data?.createTheme;
+      if (created) {
+        const theme = {
           id: Number(created.id),
           name: created.name,
           styleCollectionId: created.styleCollectionId,
           defaultPaletteId: created.defaultPaletteId,
-        },
-      ]);
+        };
+        setThemes((ts) => [...ts, theme]);
+        setLoadedTheme(theme);
+      }
     }
   };
 
   const handleLoadTheme = (theme: ThemeInfo) => {
     setSelectedCollectionId(theme.styleCollectionId);
     setSelectedPaletteId(theme.defaultPaletteId);
+    setLoadedTheme(theme);
   };
 
   return (
     <VStack w="100%">
+      <Heading size="md" data-testid="theme-name">
+        {loadedTheme ? loadedTheme.name : "New Theme"}
+      </Heading>
       <HStack flex={1} w="100%" align="start">
         <StyleCollectionManagement
           onSelectCollection={setSelectedCollectionId}
@@ -123,6 +152,7 @@ export const ThemeBuilderPageClient = () => {
       <SaveThemeModal
         isOpen={isSaveThemeOpen}
         onClose={() => setIsSaveThemeOpen(false)}
+        initialName={loadedTheme?.name ?? ""}
         onSave={(name) => {
           handleSaveTheme(name);
           setIsSaveThemeOpen(false);

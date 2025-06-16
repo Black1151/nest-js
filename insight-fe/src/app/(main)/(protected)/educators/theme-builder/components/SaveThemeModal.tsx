@@ -7,20 +7,22 @@ interface SaveThemeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (name: string) => void;
+  initialName?: string;
 }
 
 export default function SaveThemeModal({
   isOpen,
   onClose,
   onSave,
+  initialName = "",
 }: SaveThemeModalProps) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(initialName);
 
   useEffect(() => {
     if (isOpen) {
-      setName("");
+      setName(initialName);
     }
-  }, [isOpen]);
+  }, [isOpen, initialName]);
 
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} title="Save Theme">
