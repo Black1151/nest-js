@@ -1,8 +1,8 @@
 "use client";
-import { Flex, HStack, VStack, Button } from "@chakra-ui/react";
+import { Flex, HStack, VStack, Button, Heading } from "@chakra-ui/react";
 import { useState } from "react";
 import { useMutation, useLazyQuery } from "@apollo/client";
-import { CREATE_LESSON, GET_LESSON, GET_THEME } from "@/graphql/lesson";
+import { CREATE_LESSON, UPDATE_LESSON, GET_LESSON, GET_THEME } from "@/graphql/lesson";
 import ThemeDropdown from "@/components/dropdowns/ThemeDropdown";
 import StyleGroupManagement from "./components/StyleGroupManagement";
 import { AvailableElements } from "./components/AvailableElements";
@@ -29,6 +29,8 @@ export const LessonBuilderPageClient = () => {
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | null>(
     null,
   );
+  const [lessonId, setLessonId] = useState<number | null>(null);
+  const [lessonName, setLessonName] = useState<string | null>(null);
   const initial = createInitialBoard();
   const [slides, setSlides] = useState<Slide[]>([
     {
@@ -41,6 +43,7 @@ export const LessonBuilderPageClient = () => {
   const [selectedSlideId, setSelectedSlideId] = useState<string>(slides[0].id);
 
   const [createLesson] = useMutation(CREATE_LESSON);
+  const [updateLesson] = useMutation(UPDATE_LESSON);
   const [isSaveOpen, setIsSaveOpen] = useState(false);
   const [isLoadOpen, setIsLoadOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -73,20 +76,29 @@ export const LessonBuilderPageClient = () => {
     subjectId: string;
     topicId: string;
   }) => {
-    await createLesson({
-      variables: {
-        data: {
-          title: name,
-          themeId: selectedThemeId,
-          content: prepareContent(),
-          relationIds: [
-            { relation: "subject", ids: [Number(subjectId)] },
-            { relation: "topic", ids: [Number(topicId)] },
-          ],
-        },
-      },
-    });
-  }; 
+    const variables = {
+      title: name,
+      themeId: selectedThemeId,
+      content: prepareContent(),
+      relationIds: [
+        { relation: "subject", ids: [Number(subjectId)] },
+        { relation: "topic", ids: [Number(topicId)] },
+      ],
+    };
+    if (lessonId) {
+      await updateLesson({
+        variables: { data: { id: lessonId, ...variables } },
+      });
+    } else {
+      const { data } = await createLesson({
+        variables: { data: variables },
+      });
+      if (data?.createLesson?.id) {
+        setLessonId(Number(data.createLesson.id));
+      }
+    }
+    setLessonName(name);
+  };
 
   const handleLoad = async (lessonId: string) => {
     const { data } = await loadLessonQuery({
@@ -94,6 +106,8 @@ export const LessonBuilderPageClient = () => {
     });
     if (!data?.getLesson) return;
     const lesson = data.getLesson as any;
+    setLessonId(Number(lesson.id));
+    setLessonName(lesson.title);
     if (lesson.themeId) {
       setSelectedThemeId(Number(lesson.themeId));
       const themeRes = await getTheme({ variables: { id: String(lesson.themeId) } });
@@ -114,6 +128,7 @@ export const LessonBuilderPageClient = () => {
 
   return (
     <VStack w="100%">
+      {lessonName && <Heading size="md">{lessonName}</Heading>}
       <HStack flex={1} w="100%" align="start">
         <ThemeDropdown
           value={selectedThemeId ? String(selectedThemeId) : null}
@@ -187,6 +202,7 @@ export const LessonBuilderPageClient = () => {
           handleSave(data);
           setIsSaveOpen(false);
         }}
+        initialName={lessonName ?? undefined}
       />
       <LoadLessonModal
         isOpen={isLoadOpen}

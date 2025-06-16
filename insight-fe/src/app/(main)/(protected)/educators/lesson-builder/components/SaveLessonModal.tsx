@@ -9,10 +9,16 @@ import TopicDropdown from "@/components/dropdowns/TopicDropdown";
 interface SaveLessonModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: { name: string; yearGroupId: string; subjectId: string; topicId: string }) => void;
+  onSave: (data: {
+    name: string;
+    yearGroupId: string;
+    subjectId: string;
+    topicId: string;
+  }) => void;
+  initialName?: string;
 }
 
-export default function SaveLessonModal({ isOpen, onClose, onSave }: SaveLessonModalProps) {
+export default function SaveLessonModal({ isOpen, onClose, onSave, initialName }: SaveLessonModalProps) {
   const [name, setName] = useState("");
   const [yearGroupId, setYearGroupId] = useState<string | null>(null);
   const [subjectId, setSubjectId] = useState<string | null>(null);
@@ -20,12 +26,12 @@ export default function SaveLessonModal({ isOpen, onClose, onSave }: SaveLessonM
 
   useEffect(() => {
     if (isOpen) {
-      setName("");
+      setName(initialName ?? "");
       setYearGroupId(null);
       setSubjectId(null);
       setTopicId(null);
     }
-  }, [isOpen]);
+  }, [isOpen, initialName]);
 
   const isValid = !!name && !!yearGroupId && !!subjectId && !!topicId;
 
