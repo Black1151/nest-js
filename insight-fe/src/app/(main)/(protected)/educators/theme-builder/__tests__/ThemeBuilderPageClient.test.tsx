@@ -65,6 +65,9 @@ describe('ThemeBuilderPageClient', () => {
 
   it('updates state based on child callbacks', async () => {
     render(<ThemeBuilderPageClient />);
+    await userEvent.click(screen.getByTestId('create-new'));
+    await userEvent.type(screen.getByRole('textbox'), 'Test');
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(typeof paletteProps.onSelectPalette).toBe('function');
     await userEvent.click(screen.getByTestId('available'));
     expect(styledPaletteProps.items.length).toBeGreaterThan(0);
@@ -84,11 +87,8 @@ describe('ThemeBuilderPageClient', () => {
     });
 
     render(<ThemeBuilderPageClient />);
-    await userEvent.click(screen.getByText('Load Theme'));
-    await userEvent.selectOptions(
-      screen.getByLabelText('Select Theme'),
-      '1'
-    );
+    await userEvent.click(screen.getByTestId('modify-existing'));
+    await userEvent.selectOptions(screen.getByPlaceholderText('Select theme'), '1');
     await userEvent.click(screen.getByRole('button', { name: 'Load' }));
 
     expect(screen.getByTestId('theme-name')).toHaveTextContent('Loaded');
@@ -104,11 +104,8 @@ describe('ThemeBuilderPageClient', () => {
     });
 
     render(<ThemeBuilderPageClient />);
-    await userEvent.click(screen.getByText('Load Theme'));
-    await userEvent.selectOptions(
-      screen.getByLabelText('Select Theme'),
-      '1'
-    );
+    await userEvent.click(screen.getByTestId('modify-existing'));
+    await userEvent.selectOptions(screen.getByPlaceholderText('Select theme'), '1');
     await userEvent.click(screen.getByRole('button', { name: 'Load' }));
     await userEvent.click(screen.getByText('Save Theme'));
 
