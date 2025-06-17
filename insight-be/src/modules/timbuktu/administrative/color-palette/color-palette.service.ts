@@ -19,33 +19,21 @@ export class ColorPaletteService extends BaseService<
   }
 
   async create(data: CreateColorPaletteInput): Promise<ColorPaletteEntity> {
-    const { collectionId, relationIds = [], ...rest } = data;
-    const relations = [
-      ...relationIds,
-      { relation: 'collection', ids: [collectionId] },
-    ];
+    const { themeId, relationIds = [], ...rest } = data;
+    const relations = [...relationIds, { relation: 'theme', ids: [themeId] }];
     return super.create({ ...rest, relationIds: relations } as any);
   }
 
   async update(data: UpdateColorPaletteInput): Promise<ColorPaletteEntity> {
-    const { collectionId, relationIds = [], ...rest } = data;
+    const { themeId, relationIds = [], ...rest } = data;
     const relations = [
       ...relationIds,
-      ...(collectionId ? [{ relation: 'collection', ids: [collectionId] }] : []),
+      ...(themeId ? [{ relation: 'theme', ids: [themeId] }] : []),
     ];
     return super.update({ ...rest, relationIds: relations } as any);
   }
 
-  async findAll(
-    opts: FindAllOpts & { collectionId?: number },
-  ): Promise<ColorPaletteEntity[]> {
-    const { collectionId, filters = [], ...rest } = opts;
-    const finalFilters = [
-      ...filters,
-      ...(collectionId
-        ? [{ column: 'collectionId', value: collectionId }]
-        : []),
-    ];
-    return super.findAll({ ...rest, filters: finalFilters });
+  async findAll(opts: FindAllOpts): Promise<ColorPaletteEntity[]> {
+    return super.findAll(opts);
   }
 }

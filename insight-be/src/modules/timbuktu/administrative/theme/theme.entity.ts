@@ -22,6 +22,10 @@ export class ThemeEntity extends AbstractBaseEntity {
   @OneToMany(() => StyleEntity, (style) => style.theme)
   styles?: StyleEntity[];
 
+  @Field(() => [ColorPaletteEntity], { nullable: true })
+  @OneToMany(() => ColorPaletteEntity, (palette) => palette.theme)
+  colorPalettes?: ColorPaletteEntity[];
+
   @Field(() => ColorPaletteEntity)
   @ManyToOne(() => ColorPaletteEntity, { nullable: false })
   @JoinColumn({ name: 'default_palette_id' })
@@ -31,5 +35,4 @@ export class ThemeEntity extends AbstractBaseEntity {
   @Column({ name: 'default_palette_id' })
   @RelationId((theme: ThemeEntity) => theme.defaultPalette)
   defaultPaletteId!: number;
-
 }
