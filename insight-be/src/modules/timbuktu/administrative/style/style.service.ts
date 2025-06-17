@@ -19,21 +19,19 @@ export class StyleService extends BaseService<
   }
 
   async create(data: CreateStyleInput): Promise<StyleEntity> {
-    const { collectionId, groupId, relationIds = [], ...rest } = data;
+    const { themeId, relationIds = [], ...rest } = data;
     const relations = [
       ...relationIds,
-      { relation: 'collection', ids: [collectionId] },
-      ...(groupId ? [{ relation: 'group', ids: [groupId] }] : []),
+      { relation: 'theme', ids: [themeId] },
     ];
     return super.create({ ...rest, relationIds: relations } as any);
   }
 
   async update(data: UpdateStyleInput): Promise<StyleEntity> {
-    const { collectionId, groupId, relationIds = [], ...rest } = data;
+    const { themeId, relationIds = [], ...rest } = data;
     const relations = [
       ...relationIds,
-      ...(collectionId ? [{ relation: 'collection', ids: [collectionId] }] : []),
-      ...(groupId ? [{ relation: 'group', ids: [groupId] }] : []),
+      ...(themeId ? [{ relation: 'theme', ids: [themeId] }] : []),
     ];
     return super.update({ ...rest, relationIds: relations } as any);
   }

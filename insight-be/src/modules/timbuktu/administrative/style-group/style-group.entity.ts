@@ -1,7 +1,6 @@
-import { Column, Entity, ManyToOne, OneToMany, RelationId, JoinColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId, JoinColumn } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { AbstractBaseEntity } from 'src/common/base.entity';
-import { StyleEntity } from '../style/style.entity';
 import { PageElementType } from '../style/page-element-type';
 import { StyleCollectionEntity } from '../style-collection/style-collection.entity';
 
@@ -28,7 +27,4 @@ export class StyleGroupEntity extends AbstractBaseEntity {
   @RelationId((group: StyleGroupEntity) => group.collection)
   collectionId!: number;
 
-  @Field(() => [StyleEntity], { nullable: true })
-  @OneToMany(() => StyleEntity, (style) => style.group)
-  styles?: StyleEntity[];
 }
