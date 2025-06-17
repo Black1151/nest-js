@@ -19,27 +19,18 @@ export class ThemeService extends BaseService<
   }
 
   async create(data: CreateThemeInput): Promise<ThemeEntity> {
-    const { styleCollectionId, defaultPaletteId, relationIds = [], ...rest } = data;
+    const { defaultPaletteId, relationIds = [], ...rest } = data;
     const relations = [
       ...relationIds,
-      { relation: 'styleCollection', ids: [styleCollectionId] },
       { relation: 'defaultPalette', ids: [defaultPaletteId] },
     ];
     return super.create({ ...rest, relationIds: relations } as any);
   }
 
   async update(data: UpdateThemeInput): Promise<ThemeEntity> {
-    const {
-      styleCollectionId,
-      defaultPaletteId,
-      relationIds = [],
-      ...rest
-    } = data;
+    const { defaultPaletteId, relationIds = [], ...rest } = data;
     const relations = [
       ...relationIds,
-      ...(styleCollectionId
-        ? [{ relation: 'styleCollection', ids: [styleCollectionId] }]
-        : []),
       ...(defaultPaletteId
         ? [{ relation: 'defaultPalette', ids: [defaultPaletteId] }]
         : []),
