@@ -5,8 +5,10 @@ import { useLazyQuery, useQuery } from '@apollo/client';
 
 jest.mock('@apollo/client');
 
+let collectionProps: any = null;
 let paletteProps: any = null;
 let availableProps: any = null;
+let groupProps: any = null;
 let styledPaletteProps: any = null;
 let basePaletteProps: any = null;
 let canvasProps: any = null;
@@ -16,6 +18,14 @@ jest.mock('../components/ThemeCanvas', () => (props: any) => {
   return <div data-testid="canvas" />;
 });
 
+jest.mock('../components/StyleCollectionManagement', () => (props: any) => {
+  collectionProps = props;
+  return (
+    <button data-testid="collection" onClick={() => props.onSelectCollection(1)}>
+      collection
+    </button>
+  );
+});
 
 jest.mock('../components/ColorPaletteManagement', () => (props: any) => {
   paletteProps = props;
@@ -35,6 +45,14 @@ jest.mock('../components/AvailableElements', () => ({ onSelect, selectedType }: 
   );
 });
 
+jest.mock('../components/StyleGroupManagement', () => (props: any) => {
+  groupProps = props;
+  return (
+    <button data-testid="group" onClick={() => props.onSelectGroup(2)}>
+      group
+    </button>
+  );
+});
 
 jest.mock('@/components/DnD/DnDPalette', () => (props: any) => {
   if (props.testId === 'styled') {
@@ -56,8 +74,10 @@ describe('ThemeBuilderPageClient', () => {
         getAllTheme: [],
       },
     });
+    collectionProps = null;
     paletteProps = null;
     availableProps = null;
+    groupProps = null;
     styledPaletteProps = null;
     basePaletteProps = null;
     canvasProps = null;
@@ -65,8 +85,16 @@ describe('ThemeBuilderPageClient', () => {
 
   it('updates state based on child callbacks', async () => {
     render(<ThemeBuilderPageClient />);
+    expect(paletteProps.collectionId).toBeNull();
     expect(typeof paletteProps.onSelectPalette).toBe('function');
+    expect(groupProps.collectionId).toBeNull();
+    expect(groupProps.elementType).toBeNull();
+    await userEvent.click(screen.getByTestId('collection'));
+    expect(paletteProps.collectionId).toBe(1);
+    expect(groupProps.collectionId).toBe(1);
     await userEvent.click(screen.getByTestId('available'));
+    expect(groupProps.elementType).toBe('text');
+    await userEvent.click(screen.getByTestId('group'));
     expect(styledPaletteProps.items.length).toBeGreaterThan(0);
     expect(basePaletteProps.items.length).toBeGreaterThan(0);
     paletteProps.onSelectPalette(3);
@@ -78,7 +106,7 @@ describe('ThemeBuilderPageClient', () => {
     (useQuery as jest.Mock).mockReturnValue({
       data: {
         getAllTheme: [
-          { id: 1, name: 'Loaded', defaultPaletteId: 2 },
+          { id: 1, name: 'Loaded', styleCollectionId: 1, defaultPaletteId: 2 },
         ],
       },
     });
@@ -98,7 +126,7 @@ describe('ThemeBuilderPageClient', () => {
     (useQuery as jest.Mock).mockReturnValue({
       data: {
         getAllTheme: [
-          { id: 1, name: 'Loaded', defaultPaletteId: 2 },
+          { id: 1, name: 'Loaded', styleCollectionId: 1, defaultPaletteId: 2 },
         ],
       },
     });

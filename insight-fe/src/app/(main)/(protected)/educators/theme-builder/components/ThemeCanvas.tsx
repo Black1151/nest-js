@@ -29,12 +29,12 @@ const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   quiz: "Quiz",
 };
 interface ThemeCanvasProps {
-  themeId: number | null;
+  collectionId: number | null;
   paletteId: number | null;
 }
 
 export default function ThemeCanvas({
-  themeId,
+  collectionId,
   paletteId,
 }: ThemeCanvasProps) {
   const initial = createInitialBoard();
@@ -78,14 +78,17 @@ export default function ThemeCanvas({
   const { data: paletteData, refetch: refetchPalettes } = useQuery(
     GET_COLOR_PALETTES,
     {
-      variables: { collectionId: null },
+      variables: { collectionId: String(collectionId) },
+      skip: collectionId === null,
       fetchPolicy: "network-only",
     },
   );
 
   useEffect(() => {
-    refetchPalettes({ collectionId: null });
-  }, [paletteId, refetchPalettes]);
+    if (collectionId !== null) {
+      refetchPalettes({ collectionId: String(collectionId) });
+    }
+  }, [collectionId, paletteId, refetchPalettes]);
 
   const colorPalettes = (paletteData?.getAllColorPalette || []).map(
     (p: any) => ({
@@ -450,8 +453,14 @@ export default function ThemeCanvas({
     ? boards.find((b) => b.id === selectedBoardId) || null
     : null;
 
-  const handleSave = async (name: string) => {
-    if (themeId === null || !saveTarget) return;
+  const handleSave = async ({
+    name,
+    groupId,
+  }: {
+    name: string;
+    groupId: number | null;
+  }) => {
+    if (collectionId === null || !saveTarget) return;
     let elementType: string;
     let config: any;
     if (saveTarget === "element") {
@@ -472,7 +481,8 @@ export default function ThemeCanvas({
       variables: {
         data: {
           name,
-          themeId,
+          collectionId,
+          groupId: groupId ?? undefined,
           element: ELEMENT_TYPE_TO_ENUM[elementType],
           config,
         },
@@ -525,10 +535,14 @@ export default function ThemeCanvas({
           onDropBoard={deleteBoardById}
         />
       </VStack>
-      {saveTarget && themeId !== null && (
+      {saveTarget && collectionId !== null && (
         <SaveElementModal
           isOpen={saveTarget !== null}
           onClose={() => setSaveTarget(null)}
+          collectionId={collectionId}
+          elementType={
+            saveTarget === "element" ? selectedElement?.type || "" : saveTarget
+          }
           onSave={handleSave}
         />
       )}
