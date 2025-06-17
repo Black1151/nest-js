@@ -21,8 +21,7 @@ export default function ColorPaletteManagement({
   selectedId,
 }: ColorPaletteManagementProps) {
   const { data, refetch } = useQuery(GET_COLOR_PALETTES, {
-    variables: { collectionId: String(collectionId) },
-    skip: collectionId === null,
+    variables: { collectionId: collectionId === null ? null : String(collectionId) },
     fetchPolicy: "network-only",
   });
   const [deletePalette, { loading: deleting }] =
@@ -69,7 +68,7 @@ export default function ColorPaletteManagement({
 
   const selected = palettes.find((p) => p.id === selectedState);
   const options = palettes.map((p) => ({ label: p.name, value: String(p.id) }));
-  const isDisabled = collectionId === null;
+  const isDisabled = false;
 
   return (
     <Flex flex={1} p={4} w="100%" direction="column" align="start">

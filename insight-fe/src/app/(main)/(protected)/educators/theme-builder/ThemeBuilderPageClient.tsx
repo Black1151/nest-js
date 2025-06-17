@@ -1,9 +1,7 @@
 "use client";
 import { Flex, HStack, VStack, Button, Heading } from "@chakra-ui/react";
-import StyleCollectionManagement from "./components/StyleCollectionManagement";
 import { useState, useEffect } from "react";
 import ColorPaletteManagement from "./components/ColorPaletteManagement";
-import StyleGroupManagement from "./components/StyleGroupManagement";
 import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
 import BaseElementsPalette from "./components/BaseElementsPalette";
@@ -15,13 +13,9 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_ALL_THEMES, CREATE_THEME, UPDATE_THEME } from "@/graphql/lesson";
 
 export const ThemeBuilderPageClient = () => {
-  const [selectedCollectionId, setSelectedCollectionId] = useState<
-    number | null
-  >(null);
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null
   );
-  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | null>(
     null
   );
@@ -41,7 +35,6 @@ export const ThemeBuilderPageClient = () => {
         themesData.getAllTheme.map((t: any) => ({
           id: Number(t.id),
           name: t.name,
-          styleCollectionId: t.styleCollectionId,
           defaultPaletteId: t.defaultPaletteId,
         }))
       );
@@ -49,14 +42,13 @@ export const ThemeBuilderPageClient = () => {
   }, [themesData]);
 
   const handleSaveTheme = async (name: string) => {
-    if (selectedCollectionId === null || selectedPaletteId === null) return;
+    if (selectedPaletteId === null) return;
     if (loadedTheme) {
       const { data } = await updateTheme({
         variables: {
           data: {
             id: loadedTheme.id,
             name,
-            styleCollectionId: selectedCollectionId,
             defaultPaletteId: selectedPaletteId,
           },
         },
@@ -66,7 +58,6 @@ export const ThemeBuilderPageClient = () => {
         const theme = {
           id: Number(updated.id),
           name: updated.name,
-          styleCollectionId: updated.styleCollectionId,
           defaultPaletteId: updated.defaultPaletteId,
         };
         setThemes((ts) => ts.map((t) => (t.id === theme.id ? theme : t)));
@@ -77,7 +68,6 @@ export const ThemeBuilderPageClient = () => {
         variables: {
           data: {
             name,
-            styleCollectionId: selectedCollectionId,
             defaultPaletteId: selectedPaletteId,
           },
         },
@@ -87,7 +77,6 @@ export const ThemeBuilderPageClient = () => {
         const theme = {
           id: Number(created.id),
           name: created.name,
-          styleCollectionId: created.styleCollectionId,
           defaultPaletteId: created.defaultPaletteId,
         };
         setThemes((ts) => [...ts, theme]);
@@ -97,7 +86,6 @@ export const ThemeBuilderPageClient = () => {
   };
 
   const handleLoadTheme = (theme: ThemeInfo) => {
-    setSelectedCollectionId(theme.styleCollectionId);
     setSelectedPaletteId(theme.defaultPaletteId);
     setLoadedTheme(theme);
   };
@@ -108,12 +96,8 @@ export const ThemeBuilderPageClient = () => {
         {loadedTheme ? loadedTheme.name : "New Theme"}
       </Heading>
       <HStack flex={1} w="100%" align="start">
-        <StyleCollectionManagement
-          onSelectCollection={setSelectedCollectionId}
-          selectedId={selectedCollectionId}
-        />
         <ColorPaletteManagement
-          collectionId={selectedCollectionId}
+          collectionId={null}
           onSelectPalette={setSelectedPaletteId}
           selectedId={selectedPaletteId}
         />
@@ -123,11 +107,6 @@ export const ThemeBuilderPageClient = () => {
           selectedType={selectedElementType}
           onSelect={setSelectedElementType}
         />
-        <StyleGroupManagement
-          collectionId={selectedCollectionId}
-          elementType={selectedElementType}
-          onSelectGroup={setSelectedGroupId}
-        />
       </HStack>
       <HStack w="100%" align="start" pt={4} spacing={4}>
         <Flex flex={1} width="50%" bg="blue.100" p={4}>
@@ -135,9 +114,8 @@ export const ThemeBuilderPageClient = () => {
         </Flex>
         <Flex flex={1} width="50%" bg="green.100" p={4}>
           <StyledElementsPalette
-            collectionId={selectedCollectionId}
+            themeId={loadedTheme ? loadedTheme.id : null}
             elementType={selectedElementType}
-            groupId={selectedGroupId}
           />
         </Flex>
       </HStack>
@@ -152,10 +130,7 @@ export const ThemeBuilderPageClient = () => {
           Save Theme
         </Button>
       </HStack>
-      <ThemeCanvas
-        collectionId={selectedCollectionId}
-        paletteId={selectedPaletteId}
-      />
+      <ThemeCanvas themeId={loadedTheme ? loadedTheme.id : null} paletteId={selectedPaletteId} />
       <SaveThemeModal
         isOpen={isSaveThemeOpen}
         onClose={() => setIsSaveThemeOpen(false)}

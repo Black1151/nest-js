@@ -83,13 +83,13 @@ export const DELETE_STYLE_COLLECTION = gql`
   }
 `;
 
-export const GET_STYLES_WITH_CONFIG = gql`
-  query GetStylesWithConfig($collectionId: String!, $element: String!) {
+export const GET_THEME_STYLES = gql`
+  query GetThemeStyles($themeId: String!, $element: String!) {
     getAllStyle(
       data: {
         all: true
         filters: [
-          { column: "collectionId", value: $collectionId }
+          { column: "themeId", value: $themeId }
           { column: "element", value: $element }
         ]
       }
@@ -101,28 +101,6 @@ export const GET_STYLES_WITH_CONFIG = gql`
   }
 `;
 
-export const GET_STYLES_WITH_CONFIG_BY_GROUP = gql`
-  query GetStylesWithConfigByGroup(
-    $collectionId: String!
-    $element: String!
-    $groupId: String!
-  ) {
-    getAllStyle(
-      data: {
-        all: true
-        filters: [
-          { column: "collectionId", value: $collectionId }
-          { column: "element", value: $element }
-          { column: "groupId", value: $groupId }
-        ]
-      }
-    ) {
-      id
-      name
-      config
-    }
-  }
-`;
 
 export const CREATE_LESSON = gql`
   mutation CreateLesson($data: CreateLessonInput!) {
@@ -152,10 +130,8 @@ export const GET_LESSON = gql`
 `;
 
 export const GET_COLOR_PALETTES = gql`
-  query GetColorPalettes($collectionId: String!) {
-    getAllColorPalette(
-      data: { all: true, filters: [{ column: "collectionId", value: $collectionId }] }
-    ) {
+  query GetColorPalettes($collectionId: String) {
+    getAllColorPalette(data: { all: true, collectionId: $collectionId }) {
       id
       name
       colors
@@ -200,16 +176,10 @@ export const DELETE_COLOR_PALETTE = gql`
 `;
 
 export const GET_THEMES = gql`
-  query GetThemes($collectionId: String!) {
-    getAllTheme(
-      data: {
-        all: true
-        filters: [{ column: "styleCollectionId", value: $collectionId }]
-      }
-    ) {
+  query GetThemes {
+    getAllTheme(data: { all: true }) {
       id
       name
-      styleCollectionId
       defaultPaletteId
     }
   }
@@ -220,7 +190,6 @@ export const GET_ALL_THEMES = gql`
     getAllTheme(data: { all: true }) {
       id
       name
-      styleCollectionId
       defaultPaletteId
     }
   }
@@ -231,7 +200,6 @@ export const GET_THEME = gql`
     getTheme(data: { id: $id }) {
       id
       name
-      styleCollectionId
       defaultPaletteId
     }
   }
@@ -242,7 +210,6 @@ export const CREATE_THEME = gql`
     createTheme(data: $data) {
       id
       name
-      styleCollectionId
       defaultPaletteId
     }
   }
@@ -253,7 +220,6 @@ export const UPDATE_THEME = gql`
     updateTheme(data: $data) {
       id
       name
-      styleCollectionId
       defaultPaletteId
     }
   }
