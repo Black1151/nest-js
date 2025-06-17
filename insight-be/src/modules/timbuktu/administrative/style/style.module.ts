@@ -4,11 +4,10 @@ import { StyleEntity } from './style.entity';
 import { StyleResolver } from './style.resolver';
 import { StyleService } from './style.service';
 import { StyleCollectionEntity } from '../style-collection/style-collection.entity';
-import { StyleGroupEntity } from '../style-group/style-group.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([StyleEntity, StyleCollectionEntity, StyleGroupEntity]),
+    TypeOrmModule.forFeature([StyleEntity, StyleCollectionEntity]),
   ],
   providers: [StyleService, StyleResolver],
   exports: [StyleService],
