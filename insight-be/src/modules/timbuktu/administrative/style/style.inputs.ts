@@ -15,7 +15,10 @@ export class CreateStyleInput extends HasRelationsInput {
   config: Record<string, any>;
 
   @Field(() => ID)
-  themeId: number;
+  collectionId: number;
+
+  @Field(() => ID, { nullable: true })
+  groupId?: number;
 }
 
 @InputType()
@@ -24,5 +27,5 @@ export class UpdateStyleInput extends PartialType(CreateStyleInput) {
   id: number;
 
   @Field(() => ID, { nullable: true })
-  themeId?: number;
+  groupId?: number;
 }

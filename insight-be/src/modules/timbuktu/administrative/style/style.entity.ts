@@ -2,7 +2,8 @@ import { Column, Entity, ManyToOne, RelationId, JoinColumn } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { AbstractBaseEntity } from 'src/common/base.entity';
-import { ThemeEntity } from '../theme/theme.entity';
+import { StyleCollectionEntity } from '../style-collection/style-collection.entity';
+import { StyleGroupEntity } from '../style-group/style-group.entity';
 import { PageElementType } from './page-element-type';
 
 @ObjectType()
@@ -20,13 +21,25 @@ export class StyleEntity extends AbstractBaseEntity {
   @Column({ type: 'jsonb' })
   config: Record<string, any>;
 
-  @Field(() => ThemeEntity)
-  @ManyToOne(() => ThemeEntity, (theme) => theme.styles, { nullable: false })
-  @JoinColumn({ name: 'theme_id' })
-  theme!: ThemeEntity;
+  @Field(() => StyleCollectionEntity)
+  @ManyToOne(() => StyleCollectionEntity, (collection) => collection.styles, {
+    nullable: false,
+  })
+  @JoinColumn({ name: 'collection_id' })
+  collection!: StyleCollectionEntity;
 
   @Field(() => ID)
-  @Column({ name: 'theme_id' })
-  @RelationId((style: StyleEntity) => style.theme)
-  themeId!: number;
+  @Column({ name: 'collection_id' })
+  @RelationId((style: StyleEntity) => style.collection)
+  collectionId!: number;
+
+  @Field(() => StyleGroupEntity, { nullable: true })
+  @ManyToOne(() => StyleGroupEntity, (group) => group.styles, { nullable: true })
+  @JoinColumn({ name: 'group_id' })
+  group?: StyleGroupEntity;
+
+  @Field(() => ID, { nullable: true })
+  @Column({ name: 'group_id', nullable: true })
+  @RelationId((style: StyleEntity) => style.group)
+  groupId?: number;
 }
