@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { GET_STYLES_WITH_CONFIG_BY_GROUP } from "@/graphql/lesson";
+import { GET_STYLES_WITH_CONFIG } from "@/graphql/lesson";
 import DnDPalette from "@/components/DnD/DnDPalette";
 import { VStack, Text } from "@chakra-ui/react";
 import {
@@ -15,13 +15,11 @@ import type { BoardRow } from "@/components/lesson/slide/SlideElementsContainer"
 interface StyledElementsPaletteProps {
   collectionId: number | null;
   elementType: string | null;
-  groupId: number | null;
 }
 
 export default function StyledElementsPalette({
   collectionId,
   elementType,
-  groupId,
 }: StyledElementsPaletteProps) {
   const [items, setItems] = useState<
     (
@@ -30,21 +28,20 @@ export default function StyledElementsPalette({
       | BoardRow
     )[]
   >([]);
-  const { data } = useQuery(GET_STYLES_WITH_CONFIG_BY_GROUP, {
+  const { data } = useQuery(GET_STYLES_WITH_CONFIG, {
     variables: {
       collectionId: String(collectionId),
       element: elementType ?? "",
-      groupId: String(groupId),
     },
-    skip: collectionId === null || !elementType || groupId === null,
+    skip: collectionId === null || !elementType,
     fetchPolicy: "network-only",
   });
 
   useEffect(() => {
-    if (collectionId === null || !elementType || groupId === null) {
+    if (collectionId === null || !elementType) {
       setItems([]);
     }
-  }, [collectionId, elementType, groupId]);
+  }, [collectionId, elementType]);
 
   useEffect(() => {
     if (data?.getAllStyle) {

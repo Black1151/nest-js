@@ -453,13 +453,7 @@ export default function ThemeCanvas({
     ? boards.find((b) => b.id === selectedBoardId) || null
     : null;
 
-  const handleSave = async ({
-    name,
-    groupId,
-  }: {
-    name: string;
-    groupId: number | null;
-  }) => {
+  const handleSave = async ({ name }: { name: string }) => {
     if (collectionId === null || !saveTarget) return;
     let elementType: string;
     let config: any;
@@ -482,7 +476,6 @@ export default function ThemeCanvas({
         data: {
           name,
           collectionId,
-          groupId: groupId ?? undefined,
           element: ELEMENT_TYPE_TO_ENUM[elementType],
           config,
         },

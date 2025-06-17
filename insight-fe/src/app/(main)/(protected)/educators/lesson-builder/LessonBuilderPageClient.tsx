@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { CREATE_LESSON, UPDATE_LESSON, GET_LESSON, GET_THEME } from "@/graphql/lesson";
 import ThemeDropdown from "@/components/dropdowns/ThemeDropdown";
-import StyleGroupManagement from "./components/StyleGroupManagement";
 import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
 import SlideCanvas from "./components/SlideCanvas";
@@ -25,7 +24,6 @@ export const LessonBuilderPageClient = () => {
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null,
   );
-  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | null>(
     null,
   );
@@ -154,17 +152,11 @@ export const LessonBuilderPageClient = () => {
           selectedType={selectedElementType}
           onSelect={setSelectedElementType}
         />
-        <StyleGroupManagement
-          collectionId={selectedCollectionId}
-          elementType={selectedElementType}
-          onSelectGroup={setSelectedGroupId}
-        />
       </HStack>
       <Flex w="100%" align="start" pt={4} bg="green.100" p={4}>
         <StyledElementsPalette
           collectionId={selectedCollectionId}
           elementType={selectedElementType}
-          groupId={selectedGroupId}
         />
       </Flex>
       <SlideManager
