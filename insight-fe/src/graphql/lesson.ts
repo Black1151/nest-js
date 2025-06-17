@@ -1,15 +1,5 @@
 import { gql } from "@apollo/client";
 
-export const GET_STYLE_COLLECTIONS = gql`
-  query GetStyleCollections {
-    getAllStyleCollection(data: { all: true }) {
-      id
-      name
-    }
-  }
-`;
-
-
 export const CREATE_STYLE = gql`
   mutation CreateStyle($data: CreateStyleInput!) {
     createStyle(data: $data) {
@@ -20,29 +10,6 @@ export const CREATE_STYLE = gql`
 `;
 
 
-export const CREATE_STYLE_COLLECTION = gql`
-  mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {
-    createStyleCollection(data: $data) {
-      id
-      name
-    }
-  }
-`;
-
-export const UPDATE_STYLE_COLLECTION = gql`
-  mutation UpdateStyleCollection($data: UpdateStyleCollectionInput!) {
-    updateStyleCollection(data: $data) {
-      id
-      name
-    }
-  }
-`;
-
-export const DELETE_STYLE_COLLECTION = gql`
-  mutation DeleteStyleCollection($data: IdInput!) {
-    deleteStyleCollection(data: $data)
-  }
-`;
 
 export const GET_STYLES_WITH_CONFIG = gql`
   query GetStylesWithConfig($collectionId: String!, $element: String!) {

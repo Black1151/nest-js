@@ -1,6 +1,5 @@
 "use client";
 import { Flex, HStack, VStack, Button, Heading } from "@chakra-ui/react";
-import StyleCollectionManagement from "./components/StyleCollectionManagement";
 import { useState, useEffect } from "react";
 import ColorPaletteManagement from "./components/ColorPaletteManagement";
 import { AvailableElements } from "./components/AvailableElements";
@@ -107,10 +106,6 @@ export const ThemeBuilderPageClient = () => {
         {loadedTheme ? loadedTheme.name : "New Theme"}
       </Heading>
       <HStack flex={1} w="100%" align="start">
-        <StyleCollectionManagement
-          onSelectCollection={setSelectedCollectionId}
-          selectedId={selectedCollectionId}
-        />
         <ColorPaletteManagement
           collectionId={selectedCollectionId}
           onSelectPalette={setSelectedPaletteId}
