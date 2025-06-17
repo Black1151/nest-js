@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, RelationId, JoinColumn } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { AbstractBaseEntity } from 'src/common/base.entity';
-import { StyleCollectionEntity } from '../style-collection/style-collection.entity';
+import { ThemeEntity } from '../theme/theme.entity';
 import { PageElementType } from './page-element-type';
 
 @ObjectType()
@@ -20,16 +20,16 @@ export class StyleEntity extends AbstractBaseEntity {
   @Column({ type: 'jsonb' })
   config: Record<string, any>;
 
-  @Field(() => StyleCollectionEntity)
-  @ManyToOne(() => StyleCollectionEntity, (collection) => collection.styles, {
+  @Field(() => ThemeEntity)
+  @ManyToOne(() => ThemeEntity, (theme) => theme.styles, {
     nullable: false,
   })
-  @JoinColumn({ name: 'collection_id' })
-  collection!: StyleCollectionEntity;
+  @JoinColumn({ name: 'theme_id' })
+  theme!: ThemeEntity;
 
   @Field(() => ID)
-  @Column({ name: 'collection_id' })
-  @RelationId((style: StyleEntity) => style.collection)
-  collectionId!: number;
+  @Column({ name: 'theme_id' })
+  @RelationId((style: StyleEntity) => style.theme)
+  themeId!: number;
 
 }

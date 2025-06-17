@@ -34,11 +34,11 @@ export class ColorPaletteResolver extends BaseColorPaletteResolver {
     @Args('data', { type: () => FindAllColorPaletteInput })
     data: FindAllColorPaletteInput,
   ): Promise<ColorPaletteEntity[]> {
-    const { collectionId, filters = [], ...rest } = data;
+    const { themeId, filters = [], ...rest } = data;
     const finalFilters = [
       ...filters,
-      ...(collectionId
-        ? [{ column: 'collectionId', value: collectionId }]
+      ...(themeId
+        ? [{ column: 'themeId', value: themeId }]
         : []),
     ];
     return this.paletteService.findAll({ ...rest, filters: finalFilters });
