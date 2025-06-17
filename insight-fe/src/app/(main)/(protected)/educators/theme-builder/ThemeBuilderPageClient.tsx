@@ -1,6 +1,5 @@
 "use client";
 import { Flex, HStack, VStack, Button, Heading } from "@chakra-ui/react";
-import StyleCollectionManagement from "./components/StyleCollectionManagement";
 import { useState, useEffect } from "react";
 import ColorPaletteManagement from "./components/ColorPaletteManagement";
 import { AvailableElements } from "./components/AvailableElements";
@@ -14,9 +13,6 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_ALL_THEMES, CREATE_THEME, UPDATE_THEME } from "@/graphql/lesson";
 
 export const ThemeBuilderPageClient = () => {
-  const [selectedCollectionId, setSelectedCollectionId] = useState<
-    number | null
-  >(null);
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null
   );
@@ -47,14 +43,13 @@ export const ThemeBuilderPageClient = () => {
   }, [themesData]);
 
   const handleSaveTheme = async (name: string) => {
-    if (selectedCollectionId === null || selectedPaletteId === null) return;
+    if (selectedPaletteId === null) return;
     if (loadedTheme) {
       const { data } = await updateTheme({
         variables: {
           data: {
             id: loadedTheme.id,
             name,
-            styleCollectionId: selectedCollectionId,
             defaultPaletteId: selectedPaletteId,
           },
         },
@@ -75,7 +70,6 @@ export const ThemeBuilderPageClient = () => {
         variables: {
           data: {
             name,
-            styleCollectionId: selectedCollectionId,
             defaultPaletteId: selectedPaletteId,
           },
         },
@@ -95,7 +89,6 @@ export const ThemeBuilderPageClient = () => {
   };
 
   const handleLoadTheme = (theme: ThemeInfo) => {
-    setSelectedCollectionId(theme.styleCollectionId);
     setSelectedPaletteId(theme.defaultPaletteId);
     setLoadedTheme(theme);
   };
@@ -106,12 +99,8 @@ export const ThemeBuilderPageClient = () => {
         {loadedTheme ? loadedTheme.name : "New Theme"}
       </Heading>
       <HStack flex={1} w="100%" align="start">
-        <StyleCollectionManagement
-          onSelectCollection={setSelectedCollectionId}
-          selectedId={selectedCollectionId}
-        />
         <ColorPaletteManagement
-          collectionId={selectedCollectionId}
+          themeId={loadedTheme ? loadedTheme.id : null}
           onSelectPalette={setSelectedPaletteId}
           selectedId={selectedPaletteId}
         />
@@ -128,7 +117,7 @@ export const ThemeBuilderPageClient = () => {
         </Flex>
         <Flex flex={1} width="50%" bg="green.100" p={4}>
           <StyledElementsPalette
-            collectionId={selectedCollectionId}
+            themeId={loadedTheme ? loadedTheme.id : null}
             elementType={selectedElementType}
           />
         </Flex>
@@ -144,10 +133,7 @@ export const ThemeBuilderPageClient = () => {
           Save Theme
         </Button>
       </HStack>
-      <ThemeCanvas
-        collectionId={selectedCollectionId}
-        paletteId={selectedPaletteId}
-      />
+      <ThemeCanvas themeId={loadedTheme ? loadedTheme.id : null} paletteId={selectedPaletteId} />
       <SaveThemeModal
         isOpen={isSaveThemeOpen}
         onClose={() => setIsSaveThemeOpen(false)}

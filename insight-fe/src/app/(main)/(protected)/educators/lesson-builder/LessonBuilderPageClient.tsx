@@ -18,9 +18,6 @@ import {
 
 export const LessonBuilderPageClient = () => {
   const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
-  const [selectedCollectionId, setSelectedCollectionId] = useState<
-    number | null
-  >(null);
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null,
   );
@@ -114,10 +111,8 @@ export const LessonBuilderPageClient = () => {
       setSelectedThemeId(Number(lesson.themeId));
       const themeRes = await getTheme({ variables: { id: String(lesson.themeId) } });
       if (themeRes.data?.getTheme) {
-        setSelectedCollectionId(Number(themeRes.data.getTheme.styleCollectionId));
         setSelectedPaletteId(Number(themeRes.data.getTheme.defaultPaletteId));
       } else {
-        setSelectedCollectionId(null);
         setSelectedPaletteId(null);
       }
     }
@@ -137,11 +132,9 @@ export const LessonBuilderPageClient = () => {
           onChange={(theme) => {
             if (theme) {
               setSelectedThemeId(theme.id);
-              setSelectedCollectionId(theme.styleCollectionId);
               setSelectedPaletteId(theme.defaultPaletteId);
             } else {
               setSelectedThemeId(null);
-              setSelectedCollectionId(null);
               setSelectedPaletteId(null);
             }
           }}
@@ -155,7 +148,7 @@ export const LessonBuilderPageClient = () => {
       </HStack>
       <Flex w="100%" align="start" pt={4} bg="green.100" p={4}>
         <StyledElementsPalette
-          collectionId={selectedCollectionId}
+          themeId={selectedThemeId}
           elementType={selectedElementType}
         />
       </Flex>
@@ -167,7 +160,7 @@ export const LessonBuilderPageClient = () => {
       />
       {slides.length > 0 && (
         <SlideCanvas
-          collectionId={selectedCollectionId}
+          themeId={selectedThemeId}
           paletteId={selectedPaletteId}
           columnMap={slides.find((s) => s.id === selectedSlideId)!.columnMap}
           boards={slides.find((s) => s.id === selectedSlideId)!.boards}

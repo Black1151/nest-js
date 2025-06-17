@@ -22,7 +22,7 @@ import {
 interface ColorPaletteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  collectionId: number;
+  themeId: number;
   onSave?: (palette: { id: number; name: string; colors: string[] }) => void;
   /** Pre-populated palette name */
   initialName?: string;
@@ -39,7 +39,7 @@ interface ColorPaletteModalProps {
 export default function ColorPaletteModal({
   isOpen,
   onClose,
-  collectionId,
+  themeId,
   onSave,
   initialName = "",
   initialColors = DEFAULT_COLORS,
@@ -103,7 +103,7 @@ export default function ColorPaletteModal({
               if (paletteId) {
                 const { data } = await updatePalette({
                   variables: {
-                    data: { id: paletteId, name, colors },
+                    data: { id: paletteId, name, colors, themeId },
                   },
                 });
                 if (data?.updateColorPalette) {
@@ -116,7 +116,7 @@ export default function ColorPaletteModal({
               } else {
                 const { data } = await createPalette({
                   variables: {
-                    data: { name, colors, collectionId },
+                    data: { name, colors, themeId },
                   },
                 });
                 if (data?.createColorPalette) {

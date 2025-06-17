@@ -1,15 +1,5 @@
 import { gql } from "@apollo/client";
 
-export const GET_STYLE_COLLECTIONS = gql`
-  query GetStyleCollections {
-    getAllStyleCollection(data: { all: true }) {
-      id
-      name
-    }
-  }
-`;
-
-
 export const CREATE_STYLE = gql`
   mutation CreateStyle($data: CreateStyleInput!) {
     createStyle(data: $data) {
@@ -19,38 +9,13 @@ export const CREATE_STYLE = gql`
   }
 `;
 
-
-export const CREATE_STYLE_COLLECTION = gql`
-  mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {
-    createStyleCollection(data: $data) {
-      id
-      name
-    }
-  }
-`;
-
-export const UPDATE_STYLE_COLLECTION = gql`
-  mutation UpdateStyleCollection($data: UpdateStyleCollectionInput!) {
-    updateStyleCollection(data: $data) {
-      id
-      name
-    }
-  }
-`;
-
-export const DELETE_STYLE_COLLECTION = gql`
-  mutation DeleteStyleCollection($data: IdInput!) {
-    deleteStyleCollection(data: $data)
-  }
-`;
-
 export const GET_STYLES_WITH_CONFIG = gql`
-  query GetStylesWithConfig($collectionId: String!, $element: String!) {
+  query GetStylesWithConfig($themeId: String!, $element: String!) {
     getAllStyle(
       data: {
         all: true
         filters: [
-          { column: "collectionId", value: $collectionId }
+          { column: "themeId", value: $themeId }
           { column: "element", value: $element }
         ]
       }
@@ -91,9 +56,9 @@ export const GET_LESSON = gql`
 `;
 
 export const GET_COLOR_PALETTES = gql`
-  query GetColorPalettes($collectionId: String!) {
+  query GetColorPalettes($themeId: String!) {
     getAllColorPalette(
-      data: { all: true, filters: [{ column: "collectionId", value: $collectionId }] }
+      data: { all: true, filters: [{ column: "themeId", value: $themeId }] }
     ) {
       id
       name
@@ -138,28 +103,11 @@ export const DELETE_COLOR_PALETTE = gql`
   }
 `;
 
-export const GET_THEMES = gql`
-  query GetThemes($collectionId: String!) {
-    getAllTheme(
-      data: {
-        all: true
-        filters: [{ column: "styleCollectionId", value: $collectionId }]
-      }
-    ) {
-      id
-      name
-      styleCollectionId
-      defaultPaletteId
-    }
-  }
-`;
-
 export const GET_ALL_THEMES = gql`
   query GetAllThemes {
     getAllTheme(data: { all: true }) {
       id
       name
-      styleCollectionId
       defaultPaletteId
     }
   }
@@ -170,7 +118,6 @@ export const GET_THEME = gql`
     getTheme(data: { id: $id }) {
       id
       name
-      styleCollectionId
       defaultPaletteId
     }
   }
@@ -181,7 +128,6 @@ export const CREATE_THEME = gql`
     createTheme(data: $data) {
       id
       name
-      styleCollectionId
       defaultPaletteId
     }
   }
@@ -192,7 +138,6 @@ export const UPDATE_THEME = gql`
     updateTheme(data: $data) {
       id
       name
-      styleCollectionId
       defaultPaletteId
     }
   }

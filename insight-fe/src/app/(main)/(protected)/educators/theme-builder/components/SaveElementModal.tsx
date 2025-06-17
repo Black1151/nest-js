@@ -6,7 +6,6 @@ import { BaseModal } from "@/components/modals/BaseModal";
 interface SaveElementModalProps {
   isOpen: boolean;
   onClose: () => void;
-  collectionId: number;
   elementType: string;
   onSave: (data: { name: string }) => void;
 }
@@ -14,7 +13,6 @@ interface SaveElementModalProps {
 export default function SaveElementModal({
   isOpen,
   onClose,
-  collectionId,
   elementType,
   onSave,
 }: SaveElementModalProps) {
