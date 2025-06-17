@@ -22,7 +22,9 @@ export class ThemeService extends BaseService<
     const { defaultPaletteId, relationIds = [], ...rest } = data;
     const relations = [
       ...relationIds,
-      { relation: 'defaultPalette', ids: [defaultPaletteId] },
+      ...(defaultPaletteId
+        ? [{ relation: 'defaultPalette', ids: [defaultPaletteId] }]
+        : []),
     ];
     return super.create({ ...rest, relationIds: relations } as any);
   }
