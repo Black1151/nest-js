@@ -11,6 +11,7 @@ let availableProps: any = null;
 let styledPaletteProps: any = null;
 let basePaletteProps: any = null;
 let canvasProps: any = null;
+let themeProps: any = null;
 
 jest.mock('../components/ThemeCanvas', () => (props: any) => {
   canvasProps = props;
@@ -29,6 +30,11 @@ jest.mock('../components/StyleCollectionManagement', () => (props: any) => {
 jest.mock('../components/ColorPaletteManagement', () => (props: any) => {
   paletteProps = props;
   return <div data-testid="palette" />;
+});
+
+jest.mock('../components/ThemeManagement', () => (props: any) => {
+  themeProps = props;
+  return <div data-testid="theme-mgmt" />;
 });
 
 jest.mock('@/components/modals/ConfirmationModal', () => (props: any) => {
@@ -67,6 +73,7 @@ describe('ThemeBuilderPageClient', () => {
     });
     collectionProps = null;
     paletteProps = null;
+    themeProps = null;
     availableProps = null;
     styledPaletteProps = null;
     basePaletteProps = null;
