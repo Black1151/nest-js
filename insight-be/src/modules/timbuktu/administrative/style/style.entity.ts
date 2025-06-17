@@ -3,7 +3,6 @@ import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { AbstractBaseEntity } from 'src/common/base.entity';
 import { StyleCollectionEntity } from '../style-collection/style-collection.entity';
-import { StyleGroupEntity } from '../style-group/style-group.entity';
 import { PageElementType } from './page-element-type';
 
 @ObjectType()
@@ -33,13 +32,4 @@ export class StyleEntity extends AbstractBaseEntity {
   @RelationId((style: StyleEntity) => style.collection)
   collectionId!: number;
 
-  @Field(() => StyleGroupEntity, { nullable: true })
-  @ManyToOne(() => StyleGroupEntity, (group) => group.styles, { nullable: true })
-  @JoinColumn({ name: 'group_id' })
-  group?: StyleGroupEntity;
-
-  @Field(() => ID, { nullable: true })
-  @Column({ name: 'group_id', nullable: true })
-  @RelationId((style: StyleEntity) => style.group)
-  groupId?: number;
 }
