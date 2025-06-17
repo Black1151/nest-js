@@ -9,22 +9,6 @@ export const GET_STYLE_COLLECTIONS = gql`
   }
 `;
 
-export const GET_STYLE_GROUPS = gql`
-  query GetStyleGroups($collectionId: String!, $element: String!) {
-    getAllStyleGroup(
-      data: {
-        all: true
-        filters: [
-          { column: "collectionId", value: $collectionId }
-          { column: "element", value: $element }
-        ]
-      }
-    ) {
-      id
-      name
-    }
-  }
-`;
 
 export const CREATE_STYLE = gql`
   mutation CreateStyle($data: CreateStyleInput!) {
@@ -35,29 +19,6 @@ export const CREATE_STYLE = gql`
   }
 `;
 
-export const CREATE_STYLE_GROUP = gql`
-  mutation CreateStyleGroup($data: CreateStyleGroupInput!) {
-    createStyleGroup(data: $data) {
-      id
-      name
-    }
-  }
-`;
-
-export const UPDATE_STYLE_GROUP = gql`
-  mutation UpdateStyleGroup($data: UpdateStyleGroupInput!) {
-    updateStyleGroup(data: $data) {
-      id
-      name
-    }
-  }
-`;
-
-export const DELETE_STYLE_GROUP = gql`
-  mutation DeleteStyleGroup($data: IdInput!) {
-    deleteStyleGroup(data: $data)
-  }
-`;
 
 export const CREATE_STYLE_COLLECTION = gql`
   mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {
@@ -101,28 +62,6 @@ export const GET_STYLES_WITH_CONFIG = gql`
   }
 `;
 
-export const GET_STYLES_WITH_CONFIG_BY_GROUP = gql`
-  query GetStylesWithConfigByGroup(
-    $collectionId: String!
-    $element: String!
-    $groupId: String!
-  ) {
-    getAllStyle(
-      data: {
-        all: true
-        filters: [
-          { column: "collectionId", value: $collectionId }
-          { column: "element", value: $element }
-          { column: "groupId", value: $groupId }
-        ]
-      }
-    ) {
-      id
-      name
-      config
-    }
-  }
-`;
 
 export const CREATE_LESSON = gql`
   mutation CreateLesson($data: CreateLessonInput!) {
