@@ -8,6 +8,7 @@ import SimpleDropdown from "./SimpleDropdown";
 export interface ThemeOption {
   id: number;
   name: string;
+  styleCollectionId: number;
   defaultPaletteId: number;
 }
 
@@ -24,6 +25,7 @@ export default function ThemeDropdown({ value, onChange }: ThemeDropdownProps) {
       (data?.getAllTheme ?? []).map((t: any) => ({
         id: Number(t.id),
         name: t.name,
+        styleCollectionId: Number(t.styleCollectionId),
         defaultPaletteId: Number(t.defaultPaletteId),
       })),
     [data]

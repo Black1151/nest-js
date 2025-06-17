@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, JoinColumn, RelationId } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { AbstractBaseEntity } from 'src/common/base.entity';
-import { ThemeEntity } from '../theme/theme.entity';
+import { StyleCollectionEntity } from '../style-collection/style-collection.entity';
 
 @ObjectType()
 @Entity('color_palettes')
@@ -14,13 +14,13 @@ export class ColorPaletteEntity extends AbstractBaseEntity {
   @Column({ type: 'jsonb' })
   colors: string[];
 
-  @Field(() => ThemeEntity)
-  @ManyToOne(() => ThemeEntity, (theme) => theme.colorPalettes, { nullable: false })
-  @JoinColumn({ name: 'theme_id' })
-  theme!: ThemeEntity;
+  @Field(() => StyleCollectionEntity)
+  @ManyToOne(() => StyleCollectionEntity, (collection) => collection.colorPalettes, { nullable: false })
+  @JoinColumn({ name: 'collection_id' })
+  collection!: StyleCollectionEntity;
 
   @Field(() => ID)
-  @Column({ name: 'theme_id' })
-  @RelationId((palette: ColorPaletteEntity) => palette.theme)
-  themeId!: number;
+  @Column({ name: 'collection_id' })
+  @RelationId((palette: ColorPaletteEntity) => palette.collection)
+  collectionId!: number;
 }
