@@ -7,9 +7,6 @@ export class CreateThemeInput extends HasRelationsInput {
   name: string;
 
   @Field(() => ID)
-  styleCollectionId: number;
-
-  @Field(() => ID)
   defaultPaletteId: number;
 
 }
