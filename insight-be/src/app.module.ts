@@ -31,9 +31,7 @@ import { QuizModule } from './modules/timbuktu/administrative/quiz/quiz.module';
 import { SubjectModule } from './modules/timbuktu/administrative/subject/subject.module';
 import { YearGroupModule } from './modules/timbuktu/administrative/year-group/year-group.module';
 import { TopicModule } from './modules/timbuktu/administrative/topic/topic.module';
-import { StyleCollectionModule } from './modules/timbuktu/administrative/style-collection/style-collection.module';
 import { StyleModule } from './modules/timbuktu/administrative/style/style.module';
-import { StyleGroupModule } from './modules/timbuktu/administrative/style-group/style-group.module';
 import { ColorPaletteModule } from './modules/timbuktu/administrative/color-palette/color-palette.module';
 import { AssignmentSubmissionModule } from './modules/timbuktu/administrative/assignment-submission/assignment-submission.model';
 import { AssignmentModule } from './modules/timbuktu/administrative/assignment/assignment.module';
@@ -48,9 +46,7 @@ import { SubjectEntity } from './modules/timbuktu/administrative/subject/subject
 import { YearGroupEntity } from './modules/timbuktu/administrative/year-group/year-group.entity';
 import { TopicEntity } from './modules/timbuktu/administrative/topic/topic.entity';
 import { ClassLessonEntity } from './modules/timbuktu/administrative/pivot-tables/class-lesson/class-lesson.entity';
-import { StyleCollectionEntity } from './modules/timbuktu/administrative/style-collection/style-collection.entity';
 import { StyleEntity } from './modules/timbuktu/administrative/style/style.entity';
-import { StyleGroupEntity } from './modules/timbuktu/administrative/style-group/style-group.entity';
 import { ColorPaletteEntity } from './modules/timbuktu/administrative/color-palette/color-palette.entity';
 import { ThemeModule } from './modules/timbuktu/administrative/theme/theme.module';
 import { ThemeEntity } from './modules/timbuktu/administrative/theme/theme.entity';
@@ -93,9 +89,7 @@ import { ThemeEntity } from './modules/timbuktu/administrative/theme/theme.entit
         AssignmentSubmissionEntity,
         AssignmentEntity,
         ClassLessonEntity,
-        StyleCollectionEntity,
         StyleEntity,
-        StyleGroupEntity,
         ColorPaletteEntity,
         ThemeEntity,
       ],
@@ -117,9 +111,7 @@ import { ThemeEntity } from './modules/timbuktu/administrative/theme/theme.entit
     YearGroupModule,
     SubjectModule,
     TopicModule,
-    StyleCollectionModule,
     StyleModule,
-    StyleGroupModule,
     ColorPaletteModule,
     ThemeModule,
     ClassModule,
