@@ -17,7 +17,7 @@ import {
 import ThemeAttributesPane from "./ThemeAttributesPane";
 import DeleteDropArea from "./DeleteDropArea";
 import SaveElementModal from "./SaveElementModal";
-import { CREATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
+import { CREATE_STYLE, UPDATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   text: "Text",
@@ -74,6 +74,7 @@ export default function ThemeCanvas({
   >(null);
 
   const [createStyle] = useMutation(CREATE_STYLE);
+  const [updateStyle] = useMutation(UPDATE_STYLE);
 
   const { data: paletteData, refetch: refetchPalettes } = useQuery(
     GET_COLOR_PALETTES,
@@ -477,17 +478,32 @@ export default function ThemeCanvas({
       config = selectedBoard;
     }
 
-    await createStyle({
-      variables: {
-        data: {
-          name,
-          collectionId,
-          groupId: groupId ?? undefined,
-          element: ELEMENT_TYPE_TO_ENUM[elementType],
-          config,
+    if (saveTarget === "element" && selectedElement?.styleId) {
+      await updateStyle({
+        variables: {
+          data: {
+            id: selectedElement.styleId,
+            name,
+            collectionId,
+            groupId: groupId ?? undefined,
+            element: ELEMENT_TYPE_TO_ENUM[elementType],
+            config,
+          },
         },
-      },
-    });
+      });
+    } else {
+      await createStyle({
+        variables: {
+          data: {
+            name,
+            collectionId,
+            groupId: groupId ?? undefined,
+            element: ELEMENT_TYPE_TO_ENUM[elementType],
+            config,
+          },
+        },
+      });
+    }
     setSaveTarget(null);
   };
 
