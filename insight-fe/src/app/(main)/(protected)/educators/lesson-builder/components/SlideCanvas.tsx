@@ -27,7 +27,7 @@ const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
 };
 
 interface SlideCanvasProps {
-  collectionId: number | null;
+  themeId: number | null;
   paletteId: number | null;
   columnMap: ColumnMap<SlideElementDnDItemProps>;
   boards: BoardRow[];
@@ -38,7 +38,7 @@ interface SlideCanvasProps {
 }
 
 export default function SlideCanvas({
-  collectionId,
+  themeId,
   paletteId,
   columnMap,
   boards,
@@ -91,17 +91,17 @@ export default function SlideCanvas({
   const { data: paletteData, refetch: refetchPalettes } = useQuery(
     GET_COLOR_PALETTES,
     {
-      variables: { collectionId: String(collectionId) },
-      skip: collectionId === null,
+      variables: { themeId: String(themeId) },
+      skip: themeId === null,
       fetchPolicy: "network-only",
     },
   );
 
   useEffect(() => {
-    if (collectionId !== null) {
-      refetchPalettes({ collectionId: String(collectionId) });
+    if (themeId !== null) {
+      refetchPalettes({ themeId: String(themeId) });
     }
-  }, [collectionId, paletteId, refetchPalettes]);
+  }, [themeId, paletteId, refetchPalettes]);
 
   const colorPalettes = (paletteData?.getAllColorPalette || []).map(
     (p: any) => ({

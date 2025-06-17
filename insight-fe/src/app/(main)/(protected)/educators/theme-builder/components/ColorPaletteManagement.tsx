@@ -10,19 +10,19 @@ import ColorPaletteModal from "@/components/lesson/modals/AddColorPaletteModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface ColorPaletteManagementProps {
-  collectionId: number | null;
+  themeId: number | null;
   onSelectPalette?: (id: number | null) => void;
   selectedId?: number | null;
 }
 
 export default function ColorPaletteManagement({
-  collectionId,
+  themeId,
   onSelectPalette,
   selectedId,
 }: ColorPaletteManagementProps) {
   const { data, refetch } = useQuery(GET_COLOR_PALETTES, {
-    variables: { collectionId: String(collectionId) },
-    skip: collectionId === null,
+    variables: { themeId: String(themeId) },
+    skip: themeId === null,
     fetchPolicy: "network-only",
   });
   const [deletePalette, { loading: deleting }] =
@@ -60,16 +60,16 @@ export default function ColorPaletteManagement({
     }
   }, [data]);
 
-  // Clear selected palette when collection changes unless externally provided
+  // Clear selected palette when theme changes unless externally provided
   useEffect(() => {
     if (selectedId === undefined) {
       setSelectedState("");
     }
-  }, [collectionId, selectedId]);
+  }, [themeId, selectedId]);
 
   const selected = palettes.find((p) => p.id === selectedState);
   const options = palettes.map((p) => ({ label: p.name, value: String(p.id) }));
-  const isDisabled = collectionId === null;
+  const isDisabled = themeId === null;
 
   return (
     <Flex flex={1} p={4} w="100%" direction="column" align="start">
@@ -93,7 +93,7 @@ export default function ColorPaletteManagement({
       <ColorPaletteModal
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        collectionId={collectionId === null ? 0 : (collectionId as number)}
+        themeId={themeId === null ? 0 : (themeId as number)}
         onSave={async (palette) => {
           setPalettes((ps) => [...ps, palette]);
           refetch();
@@ -103,7 +103,7 @@ export default function ColorPaletteManagement({
       <ColorPaletteModal
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
-        collectionId={collectionId === null ? 0 : (collectionId as number)}
+        themeId={themeId === null ? 0 : (themeId as number)}
         paletteId={selectedState === "" ? undefined : selectedState}
         initialName={selected?.name ?? ""}
         initialColors={selected?.colors ?? []}

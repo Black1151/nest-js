@@ -5,7 +5,6 @@ import { useLazyQuery, useQuery } from '@apollo/client';
 
 jest.mock('@apollo/client');
 
-let collectionProps: any = null;
 let paletteProps: any = null;
 let availableProps: any = null;
 let styledPaletteProps: any = null;
@@ -17,14 +16,6 @@ jest.mock('../components/ThemeCanvas', () => (props: any) => {
   return <div data-testid="canvas" />;
 });
 
-jest.mock('../components/StyleCollectionManagement', () => (props: any) => {
-  collectionProps = props;
-  return (
-    <button data-testid="collection" onClick={() => props.onSelectCollection(1)}>
-      collection
-    </button>
-  );
-});
 
 jest.mock('../components/ColorPaletteManagement', () => (props: any) => {
   paletteProps = props;
@@ -65,7 +56,6 @@ describe('ThemeBuilderPageClient', () => {
         getAllTheme: [],
       },
     });
-    collectionProps = null;
     paletteProps = null;
     availableProps = null;
     styledPaletteProps = null;
@@ -75,10 +65,8 @@ describe('ThemeBuilderPageClient', () => {
 
   it('updates state based on child callbacks', async () => {
     render(<ThemeBuilderPageClient />);
-    expect(paletteProps.collectionId).toBeNull();
+    expect(paletteProps.themeId).toBeNull();
     expect(typeof paletteProps.onSelectPalette).toBe('function');
-    await userEvent.click(screen.getByTestId('collection'));
-    expect(paletteProps.collectionId).toBe(1);
     await userEvent.click(screen.getByTestId('available'));
     expect(styledPaletteProps.items.length).toBeGreaterThan(0);
     expect(basePaletteProps.items.length).toBeGreaterThan(0);
@@ -91,7 +79,7 @@ describe('ThemeBuilderPageClient', () => {
     (useQuery as jest.Mock).mockReturnValue({
       data: {
         getAllTheme: [
-          { id: 1, name: 'Loaded', styleCollectionId: 1, defaultPaletteId: 2 },
+          { id: 1, name: 'Loaded', defaultPaletteId: 2 },
         ],
       },
     });
@@ -111,7 +99,7 @@ describe('ThemeBuilderPageClient', () => {
     (useQuery as jest.Mock).mockReturnValue({
       data: {
         getAllTheme: [
-          { id: 1, name: 'Loaded', styleCollectionId: 1, defaultPaletteId: 2 },
+          { id: 1, name: 'Loaded', defaultPaletteId: 2 },
         ],
       },
     });

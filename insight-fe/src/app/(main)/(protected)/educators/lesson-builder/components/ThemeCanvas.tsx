@@ -28,12 +28,12 @@ const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   quiz: "Quiz",
 };
 interface ThemeCanvasProps {
-  collectionId: number | null;
+  themeId: number | null;
   paletteId: number | null;
 }
 
 export default function ThemeCanvas({
-  collectionId,
+  themeId,
   paletteId,
 }: ThemeCanvasProps) {
   const initial = createInitialBoard();
@@ -72,17 +72,17 @@ export default function ThemeCanvas({
   const { data: paletteData, refetch: refetchPalettes } = useQuery(
     GET_COLOR_PALETTES,
     {
-      variables: { collectionId: String(collectionId) },
-      skip: collectionId === null,
+      variables: { themeId: String(themeId) },
+      skip: themeId === null,
       fetchPolicy: "network-only",
     },
   );
 
   useEffect(() => {
-    if (collectionId !== null) {
-      refetchPalettes({ collectionId: String(collectionId) });
+    if (themeId !== null) {
+      refetchPalettes({ themeId: String(themeId) });
     }
-  }, [collectionId, paletteId, refetchPalettes]);
+  }, [themeId, paletteId, refetchPalettes]);
 
   const colorPalettes = (paletteData?.getAllColorPalette || []).map(
     (p: any) => ({

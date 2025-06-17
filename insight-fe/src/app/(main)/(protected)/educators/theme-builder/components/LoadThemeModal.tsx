@@ -6,7 +6,6 @@ import { BaseModal } from "@/components/modals/BaseModal";
 export interface ThemeInfo {
   id: number;
   name: string;
-  styleCollectionId: number;
   defaultPaletteId: number;
 }
 

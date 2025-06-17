@@ -13,12 +13,12 @@ import { ColumnType } from "@/components/DnD/types";
 import type { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
 
 interface StyledElementsPaletteProps {
-  collectionId: number | null;
+  themeId: number | null;
   elementType: string | null;
 }
 
 export default function StyledElementsPalette({
-  collectionId,
+  themeId,
   elementType,
 }: StyledElementsPaletteProps) {
   const [items, setItems] = useState<
@@ -30,18 +30,18 @@ export default function StyledElementsPalette({
   >([]);
   const { data } = useQuery(GET_STYLES_WITH_CONFIG, {
     variables: {
-      collectionId: String(collectionId),
+      themeId: String(themeId),
       element: elementType ?? "",
     },
-    skip: collectionId === null || !elementType,
+    skip: themeId === null || !elementType,
     fetchPolicy: "network-only",
   });
 
   useEffect(() => {
-    if (collectionId === null || !elementType) {
+    if (themeId === null || !elementType) {
       setItems([]);
     }
-  }, [collectionId, elementType]);
+  }, [themeId, elementType]);
 
   useEffect(() => {
     if (data?.getAllStyle) {
