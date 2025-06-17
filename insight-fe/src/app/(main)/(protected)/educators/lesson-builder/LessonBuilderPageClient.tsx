@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { CREATE_LESSON, UPDATE_LESSON, GET_LESSON, GET_THEME } from "@/graphql/lesson";
 import ThemeDropdown from "@/components/dropdowns/ThemeDropdown";
-import StyleGroupManagement from "./components/StyleGroupManagement";
 import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
 import SlideCanvas from "./components/SlideCanvas";
@@ -19,13 +18,9 @@ import {
 
 export const LessonBuilderPageClient = () => {
   const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
-  const [selectedCollectionId, setSelectedCollectionId] = useState<
-    number | null
-  >(null);
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null,
   );
-  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
   const [selectedPaletteId, setSelectedPaletteId] = useState<number | null>(
     null,
   );
@@ -116,10 +111,8 @@ export const LessonBuilderPageClient = () => {
       setSelectedThemeId(Number(lesson.themeId));
       const themeRes = await getTheme({ variables: { id: String(lesson.themeId) } });
       if (themeRes.data?.getTheme) {
-        setSelectedCollectionId(Number(themeRes.data.getTheme.styleCollectionId));
         setSelectedPaletteId(Number(themeRes.data.getTheme.defaultPaletteId));
       } else {
-        setSelectedCollectionId(null);
         setSelectedPaletteId(null);
       }
     }
@@ -139,11 +132,9 @@ export const LessonBuilderPageClient = () => {
           onChange={(theme) => {
             if (theme) {
               setSelectedThemeId(theme.id);
-              setSelectedCollectionId(theme.styleCollectionId);
               setSelectedPaletteId(theme.defaultPaletteId);
             } else {
               setSelectedThemeId(null);
-              setSelectedCollectionId(null);
               setSelectedPaletteId(null);
             }
           }}
@@ -154,17 +145,11 @@ export const LessonBuilderPageClient = () => {
           selectedType={selectedElementType}
           onSelect={setSelectedElementType}
         />
-        <StyleGroupManagement
-          collectionId={selectedCollectionId}
-          elementType={selectedElementType}
-          onSelectGroup={setSelectedGroupId}
-        />
       </HStack>
       <Flex w="100%" align="start" pt={4} bg="green.100" p={4}>
         <StyledElementsPalette
-          collectionId={selectedCollectionId}
+          themeId={selectedThemeId}
           elementType={selectedElementType}
-          groupId={selectedGroupId}
         />
       </Flex>
       <SlideManager
@@ -175,7 +160,7 @@ export const LessonBuilderPageClient = () => {
       />
       {slides.length > 0 && (
         <SlideCanvas
-          collectionId={selectedCollectionId}
+          themeId={selectedThemeId}
           paletteId={selectedPaletteId}
           columnMap={slides.find((s) => s.id === selectedSlideId)!.columnMap}
           boards={slides.find((s) => s.id === selectedSlideId)!.boards}
