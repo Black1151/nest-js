@@ -35,7 +35,7 @@ export const ThemeBuilderPageClient = () => {
         themesData.getAllTheme.map((t: any) => ({
           id: Number(t.id),
           name: t.name,
-          defaultPaletteId: t.defaultPaletteId,
+          defaultPaletteId: Number(t.defaultPaletteId),
         }))
       );
     }
@@ -58,7 +58,7 @@ export const ThemeBuilderPageClient = () => {
         const theme = {
           id: Number(updated.id),
           name: updated.name,
-          defaultPaletteId: updated.defaultPaletteId,
+          defaultPaletteId: Number(updated.defaultPaletteId),
         };
         setThemes((ts) => ts.map((t) => (t.id === theme.id ? theme : t)));
         setLoadedTheme(theme);
@@ -77,7 +77,7 @@ export const ThemeBuilderPageClient = () => {
         const theme = {
           id: Number(created.id),
           name: created.name,
-          defaultPaletteId: created.defaultPaletteId,
+          defaultPaletteId: Number(created.defaultPaletteId),
         };
         setThemes((ts) => [...ts, theme]);
         setLoadedTheme(theme);
@@ -86,8 +86,8 @@ export const ThemeBuilderPageClient = () => {
   };
 
   const handleLoadTheme = (theme: ThemeInfo) => {
-    setSelectedPaletteId(theme.defaultPaletteId);
-    setLoadedTheme(theme);
+    setSelectedPaletteId(Number(theme.defaultPaletteId));
+    setLoadedTheme({ ...theme, defaultPaletteId: Number(theme.defaultPaletteId) });
   };
 
   return (
