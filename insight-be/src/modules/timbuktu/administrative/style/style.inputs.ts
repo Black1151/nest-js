@@ -15,7 +15,7 @@ export class CreateStyleInput extends HasRelationsInput {
   config: Record<string, any>;
 
   @Field(() => ID)
-  themeId: number;
+  collectionId: number;
 
 }
 
