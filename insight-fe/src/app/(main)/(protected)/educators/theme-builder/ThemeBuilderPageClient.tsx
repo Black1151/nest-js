@@ -9,7 +9,6 @@ import BaseElementsPalette from "./components/BaseElementsPalette";
 import ThemeCanvas from "./components/ThemeCanvas";
 import SaveThemeModal from "./components/SaveThemeModal";
 import LoadThemeModal, { ThemeInfo } from "./components/LoadThemeModal";
-import ThemeManagement from "./components/ThemeManagement";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_ALL_THEMES, CREATE_THEME, UPDATE_THEME } from "@/graphql/lesson";
@@ -115,17 +114,6 @@ export const ThemeBuilderPageClient = () => {
           collectionId={selectedCollectionId}
           onSelectPalette={setSelectedPaletteId}
           selectedId={selectedPaletteId}
-        />
-        <ThemeManagement
-          selectedId={loadedTheme?.id ?? null}
-          onSelectTheme={(id) => {
-            const theme = themes.find((t) => t.id === id);
-            if (theme) {
-              handleLoadTheme(theme);
-            } else {
-              setLoadedTheme(null);
-            }
-          }}
         />
       </HStack>
       <HStack w="100%">
