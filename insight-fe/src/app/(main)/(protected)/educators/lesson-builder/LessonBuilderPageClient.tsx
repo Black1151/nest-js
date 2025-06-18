@@ -3,7 +3,7 @@ import { Flex, HStack, VStack, Button, Heading } from "@chakra-ui/react";
 import { useState } from "react";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { CREATE_LESSON, UPDATE_LESSON, GET_LESSON, GET_THEME } from "@/graphql/lesson";
-import ThemeDropdown from "@/components/dropdowns/ThemeDropdown";
+import StyleCollectionDropdown from "@/components/dropdowns/StyleCollectionDropdown";
 import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
 import SlideCanvas from "./components/SlideCanvas";
@@ -17,7 +17,6 @@ import {
 } from "@/components/lesson/slide/SlideSequencer";
 
 export const LessonBuilderPageClient = () => {
-  const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
   const [selectedCollectionId, setSelectedCollectionId] = useState<
     number | null
   >(null);
@@ -76,7 +75,6 @@ export const LessonBuilderPageClient = () => {
   }) => {
     const base = {
       title: name,
-      themeId: selectedThemeId,
       content: prepareContent(),
     };
 
@@ -111,7 +109,6 @@ export const LessonBuilderPageClient = () => {
     setLessonId(Number(lesson.id));
     setLessonName(lesson.title);
     if (lesson.themeId) {
-      setSelectedThemeId(Number(lesson.themeId));
       const themeRes = await getTheme({ variables: { id: String(lesson.themeId) } });
       if (themeRes.data?.getTheme) {
         setSelectedCollectionId(Number(themeRes.data.getTheme.styleCollectionId));
@@ -132,17 +129,13 @@ export const LessonBuilderPageClient = () => {
     <VStack w="100%">
       {lessonName && <Heading size="md">{lessonName}</Heading>}
       <HStack flex={1} w="100%" align="start">
-        <ThemeDropdown
-          value={selectedThemeId ? String(selectedThemeId) : null}
-          onChange={(theme) => {
-            if (theme) {
-              setSelectedThemeId(theme.id);
-              setSelectedCollectionId(theme.styleCollectionId);
-              setSelectedPaletteId(theme.defaultPaletteId);
+        <StyleCollectionDropdown
+          value={selectedCollectionId ? String(selectedCollectionId) : null}
+          onChange={(collection) => {
+            if (collection) {
+              setSelectedCollectionId(collection.id);
             } else {
-              setSelectedThemeId(null);
               setSelectedCollectionId(null);
-              setSelectedPaletteId(null);
             }
           }}
         />
