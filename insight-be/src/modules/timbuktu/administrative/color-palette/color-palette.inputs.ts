@@ -10,7 +10,7 @@ export class CreateColorPaletteInput extends HasRelationsInput {
   colors: string[];
 
   @Field(() => ID)
-  themeId: number;
+  collectionId: number;
 }
 
 @InputType()
@@ -22,5 +22,5 @@ export class UpdateColorPaletteInput extends PartialType(CreateColorPaletteInput
 @InputType()
 export class FindAllColorPaletteInput extends FindAllInput {
   @Field(() => ID, { nullable: true })
-  themeId?: number;
+  collectionId?: number;
 }
