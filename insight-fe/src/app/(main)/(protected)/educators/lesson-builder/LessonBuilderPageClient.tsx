@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { CREATE_LESSON, UPDATE_LESSON, GET_LESSON, GET_THEME } from "@/graphql/lesson";
 import StyleCollectionDropdown from "@/components/dropdowns/StyleCollectionDropdown";
+import ColorPaletteDropdown from "@/components/dropdowns/ColorPaletteDropdown";
 import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
 import SlideCanvas from "./components/SlideCanvas";
@@ -128,7 +129,7 @@ export const LessonBuilderPageClient = () => {
   return (
     <VStack w="100%">
       {lessonName && <Heading size="md">{lessonName}</Heading>}
-      <HStack flex={1} w="100%" align="start">
+      <HStack flex={1} w="100%" align="start" spacing={4}>
         <StyleCollectionDropdown
           value={selectedCollectionId ? String(selectedCollectionId) : null}
           onChange={(collection) => {
@@ -137,7 +138,15 @@ export const LessonBuilderPageClient = () => {
             } else {
               setSelectedCollectionId(null);
             }
+            setSelectedPaletteId(null);
           }}
+        />
+        <ColorPaletteDropdown
+          collectionId={selectedCollectionId}
+          value={selectedPaletteId ? String(selectedPaletteId) : null}
+          onChange={(palette) =>
+            setSelectedPaletteId(palette ? palette.id : null)
+          }
         />
       </HStack>
       <HStack w="100%">
@@ -149,6 +158,7 @@ export const LessonBuilderPageClient = () => {
       <Flex w="100%" align="start" pt={4} bg="green.100" p={4}>
         <StyledElementsPalette
           collectionId={selectedCollectionId}
+          paletteId={selectedPaletteId}
           elementType={selectedElementType}
         />
       </Flex>
