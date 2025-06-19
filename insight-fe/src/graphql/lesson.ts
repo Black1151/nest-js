@@ -19,6 +19,15 @@ export const CREATE_STYLE = gql`
   }
 `;
 
+export const UPDATE_STYLE = gql`
+  mutation UpdateStyle($data: UpdateStyleInput!) {
+    updateStyle(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
 
 export const CREATE_STYLE_COLLECTION = gql`
   mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {
