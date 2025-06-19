@@ -354,6 +354,7 @@ export default function ThemeCanvas({
                 ? config.id
                 : crypto.randomUUID(),
             styleId: config.styleId,
+            styleName: config.styleName,
           }
         : {
             id: crypto.randomUUID(),
@@ -549,6 +550,11 @@ export default function ThemeCanvas({
           collectionId={collectionId}
           elementType={
             saveTarget === "element" ? selectedElement?.type || "" : saveTarget
+          }
+          defaultName={
+            saveTarget === "element" && selectedElement?.styleId
+              ? selectedElement.styleName
+              : undefined
           }
           onSave={handleSave}
         />

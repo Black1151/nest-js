@@ -47,17 +47,19 @@ export default function StyledElementsPalette({
     if (data?.getAllStyle) {
       const mapped = data.getAllStyle.map((s: any) => {
         const cfg = s.config as any;
-        if (elementType === "column") {
-          return { ...cfg, type: "column", id: crypto.randomUUID() };
-        }
-        if (elementType === "row") {
-          return { ...cfg, type: "row", id: crypto.randomUUID() };
-        }
-        return {
+        const base = {
           ...(cfg as SlideElementDnDItemProps),
           id: crypto.randomUUID(),
           styleId: Number(s.id),
-        };
+          styleName: s.name,
+        } as SlideElementDnDItemProps;
+        if (elementType === "column") {
+          return { ...base, type: "column" };
+        }
+        if (elementType === "row") {
+          return { ...base, type: "row" };
+        }
+        return { ...base };
       });
       setItems(mapped);
     }

@@ -30,6 +30,10 @@ export interface SlideElementDnDItemProps {
    */
   styleId?: number;
   /**
+   * Name of the style this element uses
+   */
+  styleName?: string;
+  /**
    * Text content for text elements
    */
   text?: string;
