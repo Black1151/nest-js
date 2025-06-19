@@ -16,12 +16,19 @@ interface StyledElementsPaletteProps {
   collectionId: number | null;
   elementType: string | null;
   groupId: number | null;
+  /**
+   * Map of style updates keyed by styleId. When provided, the palette will
+   * update the corresponding element configuration without refetching from
+   * the server.
+   */
+  styleUpdates?: Record<number, SlideElementDnDItemProps>;
 }
 
 export default function StyledElementsPalette({
   collectionId,
   elementType,
   groupId,
+  styleUpdates,
 }: StyledElementsPaletteProps) {
   const [items, setItems] = useState<
     (
@@ -65,6 +72,21 @@ export default function StyledElementsPalette({
       setItems(mapped);
     }
   }, [data, elementType]);
+
+  // Apply style updates coming from the canvas
+  useEffect(() => {
+    if (!styleUpdates) return;
+    setItems((prev) =>
+      prev.map((item) => {
+        const styleId = (item as any).styleId as number | undefined;
+        if (styleId && styleUpdates[styleId]) {
+          const { id: _ignore, ...rest } = styleUpdates[styleId];
+          return { ...item, ...rest, id: item.id } as typeof item;
+        }
+        return item;
+      }),
+    );
+  }, [styleUpdates]);
 
   return (
     <VStack align="start" w="100%">
