@@ -17,7 +17,7 @@ import {
 import ThemeAttributesPane from "./ThemeAttributesPane";
 import DeleteDropArea from "./DeleteDropArea";
 import SaveElementModal from "./SaveElementModal";
-import { CREATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
+import { CREATE_STYLE, UPDATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
 
 const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
   text: "Text",
@@ -74,6 +74,7 @@ export default function ThemeCanvas({
   >(null);
 
   const [createStyle] = useMutation(CREATE_STYLE);
+  const [updateStyle] = useMutation(UPDATE_STYLE);
 
   const { data: paletteData, refetch: refetchPalettes } = useQuery(
     GET_COLOR_PALETTES,
@@ -346,7 +347,15 @@ export default function ThemeCanvas({
         }
       }
       const newEl: SlideElementDnDItemProps = config
-        ? { ...config, id: crypto.randomUUID(), styleId: config.styleId }
+        ? {
+            ...config,
+            id:
+              collectionId !== null && config.styleId
+                ? config.id
+                : crypto.randomUUID(),
+            styleId: config.styleId,
+            styleName: config.styleName,
+          }
         : {
             id: crypto.randomUUID(),
             type,
@@ -471,16 +480,22 @@ export default function ThemeCanvas({
       config = selectedBoard;
     }
 
-    await createStyle({
-      variables: {
-        data: {
-          name,
-          collectionId,
-          element: ELEMENT_TYPE_TO_ENUM[elementType],
-          config,
-        },
+    const mutation =
+      saveTarget === "element" && selectedElement?.styleId
+        ? updateStyle
+        : createStyle;
+    const variables: any = {
+      data: {
+        name,
+        collectionId,
+        element: ELEMENT_TYPE_TO_ENUM[elementType],
+        config,
       },
-    });
+    };
+    if (mutation === updateStyle) {
+      variables.data.id = selectedElement!.styleId;
+    }
+    await mutation({ variables });
     setSaveTarget(null);
   };
 
@@ -535,6 +550,11 @@ export default function ThemeCanvas({
           collectionId={collectionId}
           elementType={
             saveTarget === "element" ? selectedElement?.type || "" : saveTarget
+          }
+          defaultName={
+            saveTarget === "element" && selectedElement?.styleId
+              ? selectedElement.styleName
+              : undefined
           }
           onSave={handleSave}
         />

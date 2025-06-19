@@ -8,6 +8,7 @@ interface SaveElementModalProps {
   onClose: () => void;
   collectionId: number;
   elementType: string;
+  defaultName?: string;
   onSave: (data: { name: string }) => void;
 }
 
@@ -16,15 +17,16 @@ export default function SaveElementModal({
   onClose,
   collectionId,
   elementType,
+  defaultName,
   onSave,
 }: SaveElementModalProps) {
   const [name, setName] = useState("");
 
   useEffect(() => {
     if (isOpen) {
-      setName("");
+      setName(defaultName ?? "");
     }
-  }, [isOpen]);
+  }, [isOpen, defaultName]);
 
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} title="Save Style">
