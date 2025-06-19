@@ -31,11 +31,18 @@ const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
 interface ThemeCanvasProps {
   collectionId: number | null;
   paletteId: number | null;
+  /**
+   * Callback fired when a styled element (one with a styleId) is updated.
+   * Provides the styleId and the updated element configuration so other
+   * components can sync their state.
+   */
+  onStyleUpdate?: (styleId: number, el: SlideElementDnDItemProps) => void;
 }
 
 export default function ThemeCanvas({
   collectionId,
   paletteId,
+  onStyleUpdate,
 }: ThemeCanvasProps) {
   const initial = createInitialBoard();
   const [columnMap, setColumnMap] = useState<
@@ -112,22 +119,29 @@ export default function ThemeCanvas({
       for (const board of boards) {
         for (const colId of board.orderedColumnIds) {
           const col = newMap[colId];
-          const idx = col.items.findIndex((i) => i.id === updated.id);
-          if (idx !== -1) {
-            newMap[colId] = {
-              ...col,
-              items: [
-                ...col.items.slice(0, idx),
-                updated,
-                ...col.items.slice(idx + 1),
-              ],
-            };
-            return newMap;
+          let changed = false;
+          const newItems = col.items.map((i) => {
+            if (i.id === updated.id) {
+              changed = true;
+              return updated;
+            }
+            if (updated.styleId && i.styleId === updated.styleId) {
+              changed = true;
+              const { id: _ignore, ...rest } = updated;
+              return { ...i, ...rest };
+            }
+            return i;
+          });
+          if (changed) {
+            newMap[colId] = { ...col, items: newItems };
           }
         }
       }
       return newMap;
     });
+    if (updated.styleId !== undefined) {
+      onStyleUpdate?.(updated.styleId, updated);
+    }
   };
 
   const updateColumn = (updated: ColumnType<SlideElementDnDItemProps>) => {
