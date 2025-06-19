@@ -49,7 +49,7 @@ export default function StyledElementsPalette({
         const cfg = s.config as any;
         const base = {
           ...(cfg as SlideElementDnDItemProps),
-          id: crypto.randomUUID(),
+          id: cfg.id,
           styleId: Number(s.id),
           styleName: s.name,
         } as SlideElementDnDItemProps;
