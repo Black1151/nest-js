@@ -15,11 +15,13 @@ import type { BoardRow } from "@/components/lesson/slide/SlideElementsContainer"
 interface StyledElementsPaletteProps {
   collectionId: number | null;
   elementType: string | null;
+  refreshKey?: number;
 }
 
 export default function StyledElementsPalette({
   collectionId,
   elementType,
+  refreshKey,
 }: StyledElementsPaletteProps) {
   const [items, setItems] = useState<
     (
@@ -28,7 +30,7 @@ export default function StyledElementsPalette({
       | BoardRow
     )[]
   >([]);
-  const { data } = useQuery(GET_STYLES_WITH_CONFIG, {
+  const { data, refetch } = useQuery(GET_STYLES_WITH_CONFIG, {
     variables: {
       collectionId: String(collectionId),
       element: elementType ?? "",
@@ -42,6 +44,12 @@ export default function StyledElementsPalette({
       setItems([]);
     }
   }, [collectionId, elementType]);
+
+  useEffect(() => {
+    if (refreshKey !== undefined) {
+      refetch();
+    }
+  }, [refreshKey, refetch]);
 
   useEffect(() => {
     if (data?.getAllStyle) {

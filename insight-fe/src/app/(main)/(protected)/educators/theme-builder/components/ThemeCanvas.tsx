@@ -31,11 +31,13 @@ const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
 interface ThemeCanvasProps {
   collectionId: number | null;
   paletteId: number | null;
+  onStyleSaved?: () => void;
 }
 
 export default function ThemeCanvas({
   collectionId,
   paletteId,
+  onStyleSaved,
 }: ThemeCanvasProps) {
   const initial = createInitialBoard();
   const [columnMap, setColumnMap] = useState<
@@ -495,7 +497,52 @@ export default function ThemeCanvas({
     if (mutation === updateStyle) {
       variables.data.id = selectedElement!.styleId;
     }
-    await mutation({ variables });
+    const { data } = await mutation({ variables });
+
+    if (saveTarget === "element" && selectedElement) {
+      if (mutation === createStyle) {
+        const created = data?.createStyle;
+        if (created) {
+          const updated = {
+            ...selectedElement,
+            styleId: Number(created.id),
+            styleName: created.name,
+          } as SlideElementDnDItemProps;
+          updateElement(updated);
+        }
+      } else {
+        const updated = data?.updateStyle;
+        if (updated) {
+          const styleId = selectedElement.styleId!;
+          const updatedSelected = { ...selectedElement, styleName: updated.name };
+          updateElement(updatedSelected);
+          setColumnMap((prev) => {
+            const newMap = { ...prev };
+            Object.keys(newMap).forEach((cid) => {
+              const col = newMap[cid];
+              newMap[cid] = {
+                ...col,
+                items: col.items.map((it) =>
+                  it.styleId === styleId
+                    ? {
+                        ...it,
+                        styles: updatedSelected.styles,
+                        wrapperStyles: updatedSelected.wrapperStyles,
+                        animation: updatedSelected.animation,
+                        table: updatedSelected.table,
+                        styleName: updated.name,
+                      }
+                    : it,
+                ),
+              };
+            });
+            return newMap;
+          });
+        }
+      }
+    }
+
+    onStyleSaved?.();
     setSaveTarget(null);
   };
 

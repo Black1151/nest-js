@@ -28,6 +28,7 @@ export const ThemeBuilderPageClient = () => {
   const [isLoadThemeOpen, setIsLoadThemeOpen] = useState(false);
   const [themes, setThemes] = useState<ThemeInfo[]>([]);
   const [loadedTheme, setLoadedTheme] = useState<ThemeInfo | null>(null);
+  const [stylesVersion, setStylesVersion] = useState(0);
 
   const { data: themesData } = useQuery(GET_ALL_THEMES);
   const [createTheme] = useMutation(CREATE_THEME);
@@ -130,6 +131,7 @@ export const ThemeBuilderPageClient = () => {
           <StyledElementsPalette
             collectionId={selectedCollectionId}
             elementType={selectedElementType}
+            refreshKey={stylesVersion}
           />
         </Flex>
       </HStack>
@@ -147,6 +149,7 @@ export const ThemeBuilderPageClient = () => {
       <ThemeCanvas
         collectionId={selectedCollectionId}
         paletteId={selectedPaletteId}
+        onStyleSaved={() => setStylesVersion((v) => v + 1)}
       />
       <SaveThemeModal
         isOpen={isSaveThemeOpen}
