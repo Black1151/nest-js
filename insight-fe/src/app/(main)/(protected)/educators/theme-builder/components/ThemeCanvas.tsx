@@ -295,9 +295,11 @@ export default function ThemeCanvas({
     }
 
     if (type === "column") {
-      const target = document.elementFromPoint(e.clientX, e.clientY);
-      const boardEl = target?.closest("[data-board-id]") as HTMLElement | null;
-      const deleteArea = target?.closest("[data-delete-area]");
+      const elements = document.elementsFromPoint(e.clientX, e.clientY);
+      const boardEl = elements
+        .map((el) => el.closest("[data-board-id]") as HTMLElement | null)
+        .find((el): el is HTMLElement => Boolean(el));
+      const deleteArea = elements.find((el) => el.closest("[data-delete-area]"));
       if (!boardEl || deleteArea) return;
       const boardId = boardEl.dataset.boardId;
       if (!boardId) return;
