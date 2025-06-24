@@ -30,12 +30,13 @@ export default function StyledElementsPalette({
       | BoardRow
     )[]
   >([]);
+  const shouldSkip = collectionId === null || !elementType;
   const { data, refetch } = useQuery(GET_STYLES_WITH_CONFIG, {
     variables: {
       collectionId: String(collectionId),
       element: elementType ?? "",
     },
-    skip: collectionId === null || !elementType,
+    skip: shouldSkip,
     fetchPolicy: "network-only",
   });
 
@@ -46,10 +47,10 @@ export default function StyledElementsPalette({
   }, [collectionId, elementType]);
 
   useEffect(() => {
-    if (refreshKey !== undefined) {
+    if (!shouldSkip && refreshKey !== undefined) {
       refetch();
     }
-  }, [refreshKey, refetch]);
+  }, [refreshKey, shouldSkip, refetch]);
 
   useEffect(() => {
     if (data?.getAllStyle) {
