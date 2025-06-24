@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_STYLES_WITH_CONFIG, DELETE_STYLE } from "@/graphql/lesson";
 import DnDPalette from "@/components/DnD/DnDPalette";
 import { VStack, Text, HStack } from "@chakra-ui/react";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import {
   SlideElementDnDItemProps,
   SlideElementDnDItem,
@@ -41,6 +42,8 @@ export default function StyledElementsPalette({
     fetchPolicy: "network-only",
   });
   const [deleteStyle] = useMutation(DELETE_STYLE);
+  const [styleIdToDelete, setStyleIdToDelete] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (collectionId === null || !elementType) {
@@ -76,9 +79,15 @@ export default function StyledElementsPalette({
     }
   }, [data, elementType]);
 
-  const handleDelete = async (id: number) => {
-    await deleteStyle({ variables: { data: { id } } });
-    setItems((prev) => prev.filter((it) => it.styleId !== id));
+  const handleRequestDelete = (id: number) => setStyleIdToDelete(id);
+
+  const confirmDelete = async () => {
+    if (styleIdToDelete === null) return;
+    setDeleting(true);
+    await deleteStyle({ variables: { data: { id: styleIdToDelete } } });
+    setItems((prev) => prev.filter((it) => it.styleId !== styleIdToDelete));
+    setDeleting(false);
+    setStyleIdToDelete(null);
   };
 
   return (
@@ -95,8 +104,16 @@ export default function StyledElementsPalette({
             JSON.stringify({ type: item.type, config: item })
           }
         />
-        <StyleDeleteDropArea onDrop={handleDelete} />
+        <StyleDeleteDropArea onDrop={handleRequestDelete} />
       </HStack>
+      <ConfirmationModal
+        isOpen={styleIdToDelete !== null}
+        onClose={() => setStyleIdToDelete(null)}
+        action="delete style"
+        bodyText="Are you sure you want to delete this styled element?"
+        onConfirm={confirmDelete}
+        isLoading={deleting}
+      />
     </VStack>
   );
 }

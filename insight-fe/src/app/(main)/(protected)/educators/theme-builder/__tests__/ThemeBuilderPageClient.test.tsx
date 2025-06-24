@@ -11,6 +11,7 @@ let availableProps: any = null;
 let styledPaletteProps: any = null;
 let basePaletteProps: any = null;
 let canvasProps: any = null;
+let deleteAreaProps: any = null;
 
 jest.mock('../components/ThemeCanvas', () => (props: any) => {
   canvasProps = props;
@@ -33,6 +34,11 @@ jest.mock('../components/ColorPaletteManagement', () => (props: any) => {
 
 jest.mock('@/components/modals/ConfirmationModal', () => (props: any) => {
   return <div data-testid="confirm" {...props} />;
+});
+
+jest.mock('../components/StyleDeleteDropArea', () => (props: any) => {
+  deleteAreaProps = props;
+  return <div data-testid="delete-area" />;
 });
 
 jest.mock('../components/AvailableElements', () => ({ onSelect, selectedType }: any) => {
@@ -72,6 +78,7 @@ describe('ThemeBuilderPageClient', () => {
     styledPaletteProps = null;
     basePaletteProps = null;
     canvasProps = null;
+    deleteAreaProps = null;
   });
 
   it('updates state based on child callbacks', async () => {
@@ -126,6 +133,12 @@ describe('ThemeBuilderPageClient', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Load' }));
     await userEvent.click(screen.getByText('Save Theme'));
 
+    expect(screen.getByTestId('confirm')).toBeInTheDocument();
+  });
+
+  it('shows confirm modal when dropping a style to delete', async () => {
+    render(<ThemeBuilderPageClient />);
+    deleteAreaProps.onDrop(5);
     expect(screen.getByTestId('confirm')).toBeInTheDocument();
   });
 });
