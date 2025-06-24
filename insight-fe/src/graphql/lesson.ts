@@ -28,6 +28,12 @@ export const UPDATE_STYLE = gql`
   }
 `;
 
+export const DELETE_STYLE = gql`
+  mutation DeleteStyle($data: IdInput!) {
+    deleteStyle(data: $data)
+  }
+`;
+
 
 export const CREATE_STYLE_COLLECTION = gql`
   mutation CreateStyleCollection($data: CreateStyleCollectionInput!) {

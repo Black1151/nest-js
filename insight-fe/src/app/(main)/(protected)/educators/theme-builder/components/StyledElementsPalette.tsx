@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
-import { GET_STYLES_WITH_CONFIG } from "@/graphql/lesson";
+import { useQuery, useMutation } from "@apollo/client";
+import { GET_STYLES_WITH_CONFIG, DELETE_STYLE } from "@/graphql/lesson";
 import DnDPalette from "@/components/DnD/DnDPalette";
-import { VStack, Text } from "@chakra-ui/react";
+import { VStack, Text, HStack } from "@chakra-ui/react";
 import {
   SlideElementDnDItemProps,
   SlideElementDnDItem,
 } from "@/components/DnD/cards/SlideElementDnDCard";
 import { ColumnType } from "@/components/DnD/types";
 import type { BoardRow } from "@/components/lesson/slide/SlideElementsContainer";
+import StyleDeleteDropArea from "./StyleDeleteDropArea";
 
 interface StyledElementsPaletteProps {
   collectionId: number | null;
@@ -39,6 +40,7 @@ export default function StyledElementsPalette({
     skip: shouldSkip,
     fetchPolicy: "network-only",
   });
+  const [deleteStyle] = useMutation(DELETE_STYLE);
 
   useEffect(() => {
     if (collectionId === null || !elementType) {
@@ -74,19 +76,27 @@ export default function StyledElementsPalette({
     }
   }, [data, elementType]);
 
+  const handleDelete = async (id: number) => {
+    await deleteStyle({ variables: { data: { id } } });
+    setItems((prev) => prev.filter((it) => it.styleId !== id));
+  };
+
   return (
     <VStack align="start" w="100%">
       <Text fontSize="sm" mb={2}>
         Styled Elements
       </Text>
-      <DnDPalette
-        testId="styled"
-        items={items}
-        ItemComponent={SlideElementDnDItem}
-        getDragData={(item) =>
-          JSON.stringify({ type: item.type, config: item })
-        }
-      />
+      <HStack align="start" w="100%" spacing={4}>
+        <DnDPalette
+          testId="styled"
+          items={items}
+          ItemComponent={SlideElementDnDItem}
+          getDragData={(item) =>
+            JSON.stringify({ type: item.type, config: item })
+          }
+        />
+        <StyleDeleteDropArea onDrop={handleDelete} />
+      </HStack>
     </VStack>
   );
 }

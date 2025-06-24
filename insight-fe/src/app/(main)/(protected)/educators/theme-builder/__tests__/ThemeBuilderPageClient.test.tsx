@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeBuilderPageClient } from '../ThemeBuilderPageClient';
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery, useQuery, useMutation } from '@apollo/client';
 
 jest.mock('@apollo/client');
 
@@ -65,6 +65,7 @@ describe('ThemeBuilderPageClient', () => {
         getAllTheme: [],
       },
     });
+    (useMutation as jest.Mock).mockReturnValue([jest.fn()]);
     collectionProps = null;
     paletteProps = null;
     availableProps = null;
