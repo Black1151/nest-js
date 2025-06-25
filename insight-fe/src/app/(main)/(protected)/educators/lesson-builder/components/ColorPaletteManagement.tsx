@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 
@@ -11,11 +11,13 @@ import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface ColorPaletteManagementProps {
   collectionId: number | null;
+  tokens: string[];
   onSelectPalette?: (id: number | null) => void;
 }
 
 export default function ColorPaletteManagement({
   collectionId,
+  tokens,
   onSelectPalette,
 }: ColorPaletteManagementProps) {
   const { data, refetch } = useQuery(GET_COLOR_PALETTES, {
@@ -27,7 +29,7 @@ export default function ColorPaletteManagement({
     useMutation(DELETE_COLOR_PALETTE);
 
   const [palettes, setPalettes] = useState<
-    { id: number; name: string; colors: string[] }[]
+    { id: number; name: string; colors: Record<string, string> }[]
   >([]);
   const [selectedId, setSelectedId] = useState<number | "">("");
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -84,6 +86,7 @@ export default function ColorPaletteManagement({
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
         collectionId={collectionId === null ? 0 : (collectionId as number)}
+        tokens={tokens}
         onSave={async (palette) => {
           setPalettes((ps) => [...ps, palette]);
           refetch();
@@ -96,7 +99,8 @@ export default function ColorPaletteManagement({
         collectionId={collectionId === null ? 0 : (collectionId as number)}
         paletteId={selectedId === "" ? undefined : selectedId}
         initialName={selected?.name ?? ""}
-        initialColors={selected?.colors ?? []}
+        tokens={tokens}
+        initialColors={selected?.colors ?? {}}
         title="Update Color Palette"
         confirmLabel="Update"
         onSave={async (palette) => {

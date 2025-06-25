@@ -5,6 +5,7 @@ export const GET_STYLE_COLLECTIONS = gql`
     getAllStyleCollection(data: { all: true }) {
       id
       name
+      colorTokens
     }
   }
 `;
@@ -64,6 +65,7 @@ export const CREATE_STYLE_COLLECTION = gql`
     createStyleCollection(data: $data) {
       id
       name
+      colorTokens
     }
   }
 `;
@@ -73,6 +75,7 @@ export const UPDATE_STYLE_COLLECTION = gql`
     updateStyleCollection(data: $data) {
       id
       name
+      colorTokens
     }
   }
 `;
