@@ -15,7 +15,7 @@ import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollecti
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface StyleCollectionManagementProps {
-  onSelectCollection: (id: number | null) => void;
+  onSelectCollection: (id: number | null, tokens: string[]) => void;
   selectedId?: number | null;
 }
 
@@ -40,9 +40,11 @@ export default function StyleCollectionManagement({
 
   useEffect(() => {
     if (selectedState) {
-      onSelectCollection(selectedState);
+      const tokens =
+        collections.find((c) => c.id === selectedState)?.tokens ?? [];
+      onSelectCollection(selectedState, tokens);
     }
-  }, [selectedState]);
+  }, [selectedState, collections]);
 
   useEffect(() => {
     if (data?.getAllStyleCollection) {

@@ -22,7 +22,7 @@ describe('StyleCollectionManagement', () => {
 
   it('provides collections as options', () => {
     render(
-      <StyleCollectionManagement onSelectCollection={() => {}} />
+      <StyleCollectionManagement onSelectCollection={(id, tokens) => {}} />
     );
     expect(dropdownProps.options).toEqual([{ label: 'Collection 1', value: '1' }]);
   });

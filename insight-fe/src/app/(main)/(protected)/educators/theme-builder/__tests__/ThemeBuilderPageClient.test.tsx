@@ -21,7 +21,10 @@ jest.mock('../components/ThemeCanvas', () => (props: any) => {
 jest.mock('../components/StyleCollectionManagement', () => (props: any) => {
   collectionProps = props;
   return (
-    <button data-testid="collection" onClick={() => props.onSelectCollection(1)}>
+    <button
+      data-testid="collection"
+      onClick={() => props.onSelectCollection(1, [])}
+    >
       collection
     </button>
   );
