@@ -1,4 +1,5 @@
 import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 import { HasRelationsInput, FindAllInput } from 'src/common/base.inputs';
 
 @InputType()
@@ -6,8 +7,8 @@ export class CreateColorPaletteInput extends HasRelationsInput {
   @Field()
   name: string;
 
-  @Field(() => [String])
-  colors: string[];
+  @Field(() => GraphQLJSONObject)
+  colors: Record<string, string>;
 
   @Field(() => ID)
   collectionId: number;
