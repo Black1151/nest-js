@@ -14,7 +14,9 @@ export class StyleCollectionEntity extends AbstractBaseEntity {
   @Field(() => [StyleEntity], { nullable: true })
   @OneToMany(() => StyleEntity, (style) => style.collection)
   styles?: StyleEntity[];
-
+  @Field(() => [String])
+  @Column({ type: 'jsonb', name: 'color_tokens' })
+  colorTokens: string[];
 
   @Field(() => [ColorPaletteEntity], { nullable: true })
   @OneToMany(() => ColorPaletteEntity, (palette) => palette.collection)
