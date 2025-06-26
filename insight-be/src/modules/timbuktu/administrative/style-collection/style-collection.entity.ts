@@ -11,6 +11,17 @@ export class StyleCollectionEntity extends AbstractBaseEntity {
   @Column()
   name: string;
 
+  /**
+   * List of color token names used for this style collection
+   */
+  @Field(() => [String])
+  @Column({
+    type: 'jsonb',
+    name: 'color_tokens',
+    default: () => '\'[]\'',
+  })
+  colorTokens!: string[];
+
   @Field(() => [StyleEntity], { nullable: true })
   @OneToMany(() => StyleEntity, (style) => style.collection)
   styles?: StyleEntity[];
