@@ -5,12 +5,14 @@ export class CreateStyleCollectionInput {
   @Field()
   name: string;
 
-  @Field(() => [String], { defaultValue: [] })
+  @Field(() => [String], { nullable: true })
   colorTokens?: string[];
 }
 
 @InputType()
-export class UpdateStyleCollectionInput extends PartialType(CreateStyleCollectionInput) {
+export class UpdateStyleCollectionInput extends PartialType(
+  CreateStyleCollectionInput,
+) {
   @Field(() => ID)
   id: number;
 }
