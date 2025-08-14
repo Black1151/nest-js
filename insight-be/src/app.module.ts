@@ -6,7 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/user/user.model';
 import { AuthModule } from './modules/auth-modules/auth/auth.module';
 import { LocalAuthModule } from './modules/auth-modules/local-auth/local-auth.module';
-import { OktaAuthModule } from './modules/auth-modules/okta-auth/okta-auth.module';
 import { GoogleAuthModule } from './modules/auth-modules/google-auth/google-auth.module';
 import { MicrosoftAuthModule } from './modules/auth-modules/microsoft-auth/microsoft-auth.module';
 import { ConfigModule } from '@nestjs/config';
@@ -108,9 +107,9 @@ import { ThemeEntity } from './modules/timbuktu/administrative/theme/theme.entit
     RbacModule,
     AuthModule,
     LocalAuthModule,
-    OktaAuthModule,
-    GoogleAuthModule,
-    MicrosoftAuthModule,
+    // OktaAuthModule,
+    // GoogleAuthModule,
+    // MicrosoftAuthModule,
     StudentProfileModule,
     EducatorProfileModule,
     KeyStageModule,

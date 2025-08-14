@@ -48,7 +48,7 @@ export class BootstrapSuperAdminService implements OnModuleInit {
 
     if (!superAdminUser) {
       const newAdminData: CreateUserRequestDto = {
-        firstName: process.env.SUPER_ADMIN_EMAIL!,
+        firstName: process.env.SUPER_ADMIN_FIRST_NAME!,
         lastName: process.env.SUPER_ADMIN_LAST_NAME!,
         email: process.env.SUPER_ADMIN_EMAIL!,
         password: process.env.SUPER_ADMIN_PASSWORD!,
