@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from "react";
 
-const DEFAULT_COLORS = ["#000000"];
+const DEFAULT_COLOR = "#000000";
 import {
   Button,
   HStack,
   Input,
   VStack,
-  IconButton,
+  Text,
 } from "@chakra-ui/react";
-import { Plus, Trash2 } from "lucide-react";
 import { BaseModal } from "@/components/modals/BaseModal";
 import { useMutation, useQuery } from "@apollo/client";
 import {
@@ -23,11 +22,12 @@ interface ColorPaletteModalProps {
   isOpen: boolean;
   onClose: () => void;
   collectionId: number;
-  onSave?: (palette: { id: number; name: string; colors: string[] }) => void;
+  tokens: string[];
+  onSave?: (palette: { id: number; name: string; colors: Record<string, string> }) => void;
   /** Pre-populated palette name */
   initialName?: string;
   /** Pre-populated list of colors */
-  initialColors?: string[];
+  initialColors?: Record<string, string>;
   /** Existing palette id for updates */
   paletteId?: number;
   /** Modal title */
@@ -40,17 +40,19 @@ export default function ColorPaletteModal({
   isOpen,
   onClose,
   collectionId,
+  tokens,
   onSave,
   initialName = "",
-  initialColors = DEFAULT_COLORS,
+  initialColors = {},
   paletteId,
   title = "Add Color Palette",
   confirmLabel = "Save",
 }: ColorPaletteModalProps) {
   const [name, setName] = useState(initialName);
-  const [colors, setColors] = useState<string[]>(
-    initialColors.length > 0 ? [...initialColors] : DEFAULT_COLORS
-  );
+  const [colors, setColors] = useState<Record<string, string>>(() => {
+    if (Object.keys(initialColors).length > 0) return { ...initialColors };
+    return Object.fromEntries(tokens.map((t) => [t, DEFAULT_COLOR]));
+  });
 
   const { data: paletteData } = useQuery(GET_COLOR_PALETTE, {
     variables: { id: String(paletteId) },
@@ -73,21 +75,20 @@ export default function ColorPaletteModal({
 
     if (paletteId && palette) {
       setName(palette.name);
-      setColors(palette.colors.length > 0 ? [...palette.colors] : DEFAULT_COLORS);
+      setColors({ ...palette.colors });
     } else {
       setName(initialName);
-      setColors(initialColors.length > 0 ? [...initialColors] : DEFAULT_COLORS);
+      setColors(
+        Object.keys(initialColors).length > 0
+          ? { ...initialColors }
+          : Object.fromEntries(tokens.map((t) => [t, DEFAULT_COLOR]))
+      );
     }
-  }, [isOpen, initialName, initialColors, paletteId, palette?.id]);
+  }, [isOpen, initialName, initialColors, paletteId, palette?.id, tokens]);
 
-  const handleColorChange = (idx: number, value: string) => {
-    setColors((cols) => cols.map((c, i) => (i === idx ? value : c)));
+  const handleColorChange = (token: string, value: string) => {
+    setColors((cols) => ({ ...cols, [token]: value }));
   };
-
-  const addColor = () => setColors((cols) => [...cols, "#000000"]);
-
-  const removeColor = (idx: number) =>
-    setColors((cols) => cols.filter((_, i) => i !== idx));
 
   return (
     <BaseModal
@@ -126,7 +127,7 @@ export default function ColorPaletteModal({
                     colors: data.createColorPalette.colors,
                   });
                   setName("");
-                  setColors(["#000000"]);
+                  setColors(Object.fromEntries(tokens.map((t) => [t, DEFAULT_COLOR])));
                 }
               }
               onClose();
@@ -144,27 +145,19 @@ export default function ColorPaletteModal({
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        {colors.map((color, idx) => (
-          <HStack key={idx}>
+        {tokens.map((t) => (
+          <HStack key={t}>
             <Input
               type="color"
-              value={color}
-              onChange={(e) => handleColorChange(idx, e.target.value)}
+              value={colors[t] ?? DEFAULT_COLOR}
+              onChange={(e) => handleColorChange(t, e.target.value)}
               w="40px"
               h="40px"
               p={0}
             />
-            <IconButton
-              aria-label="Remove color"
-              size="sm"
-              icon={<Trash2 size={16} />}
-              onClick={() => removeColor(idx)}
-            />
+            <Text>{t}</Text>
           </HStack>
         ))}
-        <Button leftIcon={<Plus size={16} />} size="sm" onClick={addColor}>
-          Add Color
-        </Button>
       </VStack>
     </BaseModal>
   );

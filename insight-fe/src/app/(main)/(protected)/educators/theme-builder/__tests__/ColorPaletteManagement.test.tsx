@@ -22,22 +22,22 @@ describe('ColorPaletteManagement', () => {
   });
 
   it('provides palettes as options', () => {
-    render(<ColorPaletteManagement collectionId={1} />);
+    render(<ColorPaletteManagement collectionId={1} tokens={[]} />);
     expect(dropdownProps.options).toEqual([{ label: 'Palette 1', value: '1' }]);
   });
 
   it('clears selection when collection changes', async () => {
-    const { rerender } = render(<ColorPaletteManagement collectionId={1} />);
+    const { rerender } = render(<ColorPaletteManagement collectionId={1} tokens={[]} />);
     await userEvent.selectOptions(screen.getByTestId('crud'), ['1']);
     expect(dropdownProps.value).toBe(1);
-    rerender(<ColorPaletteManagement collectionId={2} />);
+    rerender(<ColorPaletteManagement collectionId={2} tokens={[]} />);
     expect(dropdownProps.value).toBe('');
   });
 
   it('calls onSelectPalette when a palette is selected', async () => {
     const onSelect = jest.fn();
     render(
-      <ColorPaletteManagement collectionId={1} onSelectPalette={onSelect} />,
+      <ColorPaletteManagement collectionId={1} tokens={[]} onSelectPalette={onSelect} />,
     );
     await userEvent.selectOptions(screen.getByTestId('crud'), ['1']);
     expect(onSelect).toHaveBeenCalledWith(1);

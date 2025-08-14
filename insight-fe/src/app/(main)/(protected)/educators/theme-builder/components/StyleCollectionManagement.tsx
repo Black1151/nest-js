@@ -15,7 +15,7 @@ import AddStyleCollectionModal from "@/components/lesson/modals/AddStyleCollecti
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface StyleCollectionManagementProps {
-  onSelectCollection: (id: number | null) => void;
+  onSelectCollection: (id: number | null, tokens: string[]) => void;
   selectedId?: number | null;
 }
 
@@ -31,7 +31,7 @@ export default function StyleCollectionManagement({
   );
 
   const [collections, setCollections] = useState<
-    { id: number; name: string }[]
+    { id: number; name: string; tokens: string[] }[]
   >([]);
   const [selectedState, setSelectedState] = useState<number | "">("");
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -40,9 +40,11 @@ export default function StyleCollectionManagement({
 
   useEffect(() => {
     if (selectedState) {
-      onSelectCollection(selectedState);
+      const tokens =
+        collections.find((c) => c.id === selectedState)?.tokens ?? [];
+      onSelectCollection(selectedState, tokens);
     }
-  }, [selectedState]);
+  }, [selectedState, collections]);
 
   useEffect(() => {
     if (data?.getAllStyleCollection) {
@@ -50,6 +52,7 @@ export default function StyleCollectionManagement({
         data.getAllStyleCollection.map((c: any) => ({
           id: Number(c.id),
           name: c.name,
+          tokens: c.colorTokens ?? [],
         }))
       );
     }
@@ -88,13 +91,17 @@ export default function StyleCollectionManagement({
       <AddStyleCollectionModal
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        onSave={async (name) => {
+        onSave={async (name, tokens) => {
           const { data: res } = await createCollection({
-            variables: { data: { name } },
+            variables: { data: { name, tokens } },
           });
           const created = res?.createStyleCollection;
           if (created) {
-            const coll = { id: Number(created.id), name: created.name };
+            const coll = {
+              id: Number(created.id),
+              name: created.name,
+              tokens: created.colorTokens,
+            };
             setCollections((c) => [...c, coll]);
             setSelectedState(coll.id);
             refetch();
@@ -108,16 +115,19 @@ export default function StyleCollectionManagement({
         title="Update Style Collection"
         confirmLabel="Update"
         initialName={selected?.name ?? ""}
-        onSave={async (name) => {
+        initialTokens={selected?.tokens ?? []}
+        onSave={async (name, tokens) => {
           if (selectedState === "") return;
           const { data: res } = await updateCollection({
-            variables: { data: { id: selectedState, name } },
+            variables: { data: { id: selectedState, name, tokens } },
           });
           const updated = res?.updateStyleCollection;
           if (updated) {
             setCollections((cs) =>
               cs.map((c) =>
-                c.id === selectedState ? { id: c.id, name: updated.name } : c
+                c.id === selectedState
+                  ? { id: c.id, name: updated.name, tokens: updated.colorTokens }
+                  : c
               )
             );
             refetch();

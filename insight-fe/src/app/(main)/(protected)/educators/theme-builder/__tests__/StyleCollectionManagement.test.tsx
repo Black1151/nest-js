@@ -15,13 +15,15 @@ jest.mock('@/components/modals/ConfirmationModal', () => () => <div data-testid=
 
 describe('StyleCollectionManagement', () => {
   beforeEach(() => {
-    (useQuery as jest.Mock).mockReturnValue({ data: { getAllStyleCollection: [ { id: '1', name: 'Collection 1' } ] }, refetch: jest.fn() });
+    (useQuery as jest.Mock).mockReturnValue({ data: { getAllStyleCollection: [ { id: '1', name: 'Collection 1', colorTokens: [] } ] }, refetch: jest.fn() });
     (useMutation as jest.Mock).mockReturnValue([jest.fn(), { loading: false }]);
     dropdownProps = null;
   });
 
   it('provides collections as options', () => {
-    render(<StyleCollectionManagement onSelectCollection={() => {}} />);
+    render(
+      <StyleCollectionManagement onSelectCollection={(id, tokens) => {}} />
+    );
     expect(dropdownProps.options).toEqual([{ label: 'Collection 1', value: '1' }]);
   });
 });

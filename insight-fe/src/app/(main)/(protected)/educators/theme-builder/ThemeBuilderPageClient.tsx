@@ -18,6 +18,7 @@ export const ThemeBuilderPageClient = () => {
   const [selectedCollectionId, setSelectedCollectionId] = useState<
     number | null
   >(null);
+  const [collectionTokens, setCollectionTokens] = useState<string[]>([]);
   const [selectedElementType, setSelectedElementType] = useState<string | null>(
     null
   );
@@ -109,11 +110,15 @@ export const ThemeBuilderPageClient = () => {
       </Heading>
       <HStack flex={1} w="100%" align="start">
         <StyleCollectionManagement
-          onSelectCollection={setSelectedCollectionId}
+          onSelectCollection={(id, tokens) => {
+            setSelectedCollectionId(id);
+            setCollectionTokens(tokens);
+          }}
           selectedId={selectedCollectionId}
         />
         <ColorPaletteManagement
           collectionId={selectedCollectionId}
+          tokens={collectionTokens}
           onSelectPalette={setSelectedPaletteId}
           selectedId={selectedPaletteId}
         />

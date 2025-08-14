@@ -4,6 +4,9 @@ import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
 export class CreateStyleCollectionInput {
   @Field()
   name: string;
+
+  @Field(() => [String])
+  tokens: string[];
 }
 
 @InputType()
