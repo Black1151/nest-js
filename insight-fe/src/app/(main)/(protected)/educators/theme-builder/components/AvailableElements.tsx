@@ -1,19 +1,9 @@
 import { Button, HStack, Text, VStack } from "@chakra-ui/react";
-
-/// this should be standardised with lesson editor
-const AVAILABLE_ELEMENTS = [
-  { type: "text", label: "Text" },
-  { type: "row", label: "Row" },
-  { type: "column", label: "Column" },
-  { type: "table", label: "Table" },
-  { type: "image", label: "Image" },
-  { type: "video", label: "Video" },
-  { type: "quiz", label: "Quiz" },
-];
+import { AVAILABLE_ELEMENTS, AvailableElementType } from "./constants";
 
 interface AvailableElementsProps {
-  selectedType: string | null;
-  onSelect: (type: string) => void;
+  selectedType: AvailableElementType | null;
+  onSelect: (type: AvailableElementType) => void;
 }
 
 export const AvailableElements = ({

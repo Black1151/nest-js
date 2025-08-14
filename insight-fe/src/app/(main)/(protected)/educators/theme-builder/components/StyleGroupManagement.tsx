@@ -12,6 +12,7 @@ import {
 } from "@/graphql/lesson";
 import CrudDropdown from "@/app/(main)/(protected)/administration/coordination-panel/_components/dropdowns/CrudDropdown";
 import AddStyleGroupModal from "@/components/lesson/modals/AddStyleGroupModal";
+import { ELEMENT_TYPE_TO_ENUM } from "./constants";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface StyleGroupManagementProps {
@@ -20,15 +21,7 @@ interface StyleGroupManagementProps {
   onSelectGroup?: (id: number | null) => void;
 }
 
-const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
-  text: "Text",
-  row: "Row",
-  column: "Column",
-  table: "Table",
-  image: "Image",
-  video: "Video",
-  quiz: "Quiz",
-};
+// Centralized in constants.ts
 
 export default function StyleGroupManagement({
   collectionId,

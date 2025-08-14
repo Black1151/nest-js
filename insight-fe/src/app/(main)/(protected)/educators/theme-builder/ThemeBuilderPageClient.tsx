@@ -13,12 +13,20 @@ import LoadThemeModal, { ThemeInfo } from "./components/LoadThemeModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_ALL_THEMES, CREATE_THEME, UPDATE_THEME } from "@/graphql/lesson";
+import { AvailableElementType } from "./components/constants";
+
+const mapTheme = (t: any): ThemeInfo => ({
+  id: Number(t.id),
+  name: t.name,
+  styleCollectionId: t.styleCollectionId,
+  defaultPaletteId: t.defaultPaletteId,
+});
 
 export const ThemeBuilderPageClient = () => {
   const [selectedCollectionId, setSelectedCollectionId] = useState<
     number | null
   >(null);
-  const [selectedElementType, setSelectedElementType] = useState<string | null>(
+  const [selectedElementType, setSelectedElementType] = useState<AvailableElementType | null>(
     null
   );
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
@@ -37,62 +45,30 @@ export const ThemeBuilderPageClient = () => {
 
   useEffect(() => {
     if (themesData?.getAllTheme) {
-      setThemes(
-        themesData.getAllTheme.map((t: any) => ({
-          id: Number(t.id),
-          name: t.name,
-          styleCollectionId: t.styleCollectionId,
-          defaultPaletteId: t.defaultPaletteId,
-        }))
-      );
+      setThemes(themesData.getAllTheme.map(mapTheme));
     }
   }, [themesData]);
 
   const handleSaveTheme = async (name: string) => {
     if (selectedCollectionId === null || selectedPaletteId === null) return;
-    if (loadedTheme) {
-      const { data } = await updateTheme({
-        variables: {
-          data: {
-            id: loadedTheme.id,
-            name,
-            styleCollectionId: selectedCollectionId,
-            defaultPaletteId: selectedPaletteId,
-          },
-        },
-      });
-      const updated = data?.updateTheme;
-      if (updated) {
-        const theme = {
-          id: Number(updated.id),
-          name: updated.name,
-          styleCollectionId: updated.styleCollectionId,
-          defaultPaletteId: updated.defaultPaletteId,
-        };
-        setThemes((ts) => ts.map((t) => (t.id === theme.id ? theme : t)));
-        setLoadedTheme(theme);
-      }
-    } else {
-      const { data } = await createTheme({
-        variables: {
-          data: {
-            name,
-            styleCollectionId: selectedCollectionId,
-            defaultPaletteId: selectedPaletteId,
-          },
-        },
-      });
-      const created = data?.createTheme;
-      if (created) {
-        const theme = {
-          id: Number(created.id),
-          name: created.name,
-          styleCollectionId: created.styleCollectionId,
-          defaultPaletteId: created.defaultPaletteId,
-        };
-        setThemes((ts) => [...ts, theme]);
-        setLoadedTheme(theme);
-      }
+    const variables = {
+      data: {
+        name,
+        styleCollectionId: selectedCollectionId,
+        defaultPaletteId: selectedPaletteId,
+        ...(loadedTheme ? { id: loadedTheme.id } : {}),
+      },
+    };
+    const { data } = loadedTheme
+      ? await updateTheme({ variables })
+      : await createTheme({ variables });
+    const result = loadedTheme ? data?.updateTheme : data?.createTheme;
+    if (result) {
+      const theme = mapTheme(result);
+      setThemes((ts) =>
+        loadedTheme ? ts.map((t) => (t.id === theme.id ? theme : t)) : [...ts, theme]
+      );
+      setLoadedTheme(theme);
     }
   };
 

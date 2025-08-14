@@ -17,17 +17,10 @@ import {
 import ThemeAttributesPane from "./ThemeAttributesPane";
 import DeleteDropArea from "./DeleteDropArea";
 import SaveElementModal from "./SaveElementModal";
+import { ELEMENT_TYPE_TO_ENUM } from "./constants";
 import { CREATE_STYLE, GET_COLOR_PALETTES } from "@/graphql/lesson";
 
-const ELEMENT_TYPE_TO_ENUM: Record<string, string> = {
-  text: "Text",
-  row: "Row",
-  column: "Column",
-  table: "Table",
-  image: "Image",
-  video: "Video",
-  quiz: "Quiz",
-};
+// Centralized in constants.ts
 interface ThemeCanvasProps {
   collectionId: number | null;
   paletteId: number | null;
@@ -38,6 +31,89 @@ export default function ThemeCanvas({
   paletteId,
 }: ThemeCanvasProps) {
   const initial = createInitialBoard();
+  const parseDragData = (raw: string): { type: string; config: any | null } => {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        return { type: parsed.type, config: parsed.config ?? null };
+      }
+    } catch {
+      /* ignore */
+    }
+    return { type: raw, config: null };
+  };
+
+  const computeInsertIndex = (
+    columnEl: HTMLElement | null,
+    clientY: number,
+    defaultIndex: number,
+  ): number => {
+    if (!columnEl) return defaultIndex;
+    const cards = Array.from(
+      columnEl.querySelectorAll("[data-card-id]"),
+    ) as HTMLElement[];
+    for (let i = 0; i < cards.length; i++) {
+      const rect = cards[i].getBoundingClientRect();
+      if (clientY < rect.top + rect.height / 2) {
+        return i;
+      }
+    }
+    return defaultIndex;
+  };
+
+  const createDefaultElement = (
+    type: string,
+    config: any | null,
+  ): SlideElementDnDItemProps => {
+    if (config) {
+      return { ...config, id: crypto.randomUUID(), styleId: config.styleId };
+    }
+    return {
+      id: crypto.randomUUID(),
+      type,
+      ...(type === "text"
+        ? {
+            text: "Sample Text",
+            styles: {
+              color: "#000000",
+              fontSize: "16px",
+              fontFamily: availableFonts[0].fontFamily,
+              fontWeight: "normal",
+              lineHeight: "1.2",
+              textAlign: "left",
+            },
+          }
+        : type === "image"
+          ? { src: "https://via.placeholder.com/150" }
+          : type === "video"
+            ? { url: "" }
+            : type === "quiz"
+              ? { title: "Untitled Quiz", description: "", questions: [] }
+              : type === "table"
+                ? {
+                    table: {
+                      rows: 2,
+                      cols: 2,
+                      cells: Array.from({ length: 2 }, () =>
+                        Array.from({ length: 2 }, () => ({
+                          text: "Cell",
+                          styles: {
+                            color: "#000000",
+                            fontSize: "14px",
+                            fontFamily: availableFonts[0].fontFamily,
+                            fontWeight: "normal",
+                            lineHeight: "1.2",
+                            textAlign: "left",
+                          },
+                        })),
+                      ),
+                    },
+                  }
+                : {}),
+      wrapperStyles: { ...defaultColumnWrapperStyles },
+      animation: undefined,
+    };
+  };
   const [columnMap, setColumnMap] = useState<
     ColumnMap<SlideElementDnDItemProps>
   >(initial.columnMap);
@@ -251,18 +327,7 @@ export default function ThemeCanvas({
 
   const handleDropElement = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const raw = e.dataTransfer.getData("text/plain");
-    let type = raw;
-    let config: any = null;
-    try {
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === "object") {
-        type = parsed.type;
-        config = parsed.config as any;
-      }
-    } catch {
-      /* ignore */
-    }
+    const { type, config } = parseDragData(e.dataTransfer.getData("text/plain"));
     if (!type) return;
     if (type === "row") {
       const columnId = `col-${crypto.randomUUID()}`;
@@ -332,66 +397,8 @@ export default function ThemeCanvas({
       const columnId =
         dropColumnId && prev[dropColumnId] ? dropColumnId : firstColumn;
       const column = prev[columnId];
-      let insertIndex = column.items.length;
-      if (columnEl) {
-        const cards = Array.from(
-          columnEl.querySelectorAll("[data-card-id]"),
-        ) as HTMLElement[];
-        for (let i = 0; i < cards.length; i++) {
-          const rect = cards[i].getBoundingClientRect();
-          if (e.clientY < rect.top + rect.height / 2) {
-            insertIndex = i;
-            break;
-          }
-        }
-      }
-      const newEl: SlideElementDnDItemProps = config
-        ? { ...config, id: crypto.randomUUID(), styleId: config.styleId }
-        : {
-            id: crypto.randomUUID(),
-            type,
-            ...(type === "text"
-              ? {
-                  text: "Sample Text",
-                  styles: {
-                    color: "#000000",
-                    fontSize: "16px",
-                    fontFamily: availableFonts[0].fontFamily,
-                    fontWeight: "normal",
-                    lineHeight: "1.2",
-                    textAlign: "left",
-                  },
-                }
-              : type === "image"
-                ? { src: "https://via.placeholder.com/150" }
-                : type === "video"
-                  ? { url: "" }
-                  : type === "quiz"
-                    ? { title: "Untitled Quiz", description: "", questions: [] }
-                    : type === "table"
-                      ? {
-                          table: {
-                            rows: 2,
-                            cols: 2,
-                            cells: Array.from({ length: 2 }, () =>
-                              Array.from({ length: 2 }, () => ({
-                                text: "Cell",
-                                styles: {
-                                  color: "#000000",
-                                  fontSize: "14px",
-                                  fontFamily: availableFonts[0].fontFamily,
-                                  fontWeight: "normal",
-                                  lineHeight: "1.2",
-                                  textAlign: "left",
-                                },
-                              })),
-                            ),
-                          },
-                        }
-                      : {}),
-            wrapperStyles: { ...defaultColumnWrapperStyles },
-            animation: undefined,
-          };
+      const insertIndex = computeInsertIndex(columnEl, e.clientY, column.items.length);
+      const newEl = createDefaultElement(type, config);
       const updatedColumn = {
         ...column,
         items: [
@@ -418,19 +425,7 @@ export default function ThemeCanvas({
     }
     const column = columnMap[dropColumnId];
     if (!column) return;
-    let insertIndex = column.items.length;
-    if (columnEl) {
-      const cards = Array.from(
-        columnEl.querySelectorAll("[data-card-id]"),
-      ) as HTMLElement[];
-      for (let i = 0; i < cards.length; i++) {
-        const rect = cards[i].getBoundingClientRect();
-        if (e.clientY < rect.top + rect.height / 2) {
-          insertIndex = i;
-          break;
-        }
-      }
-    }
+    const insertIndex = computeInsertIndex(columnEl, e.clientY, column.items.length);
     setDropIndicator({ columnId: dropColumnId, index: insertIndex });
   };
 
