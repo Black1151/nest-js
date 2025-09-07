@@ -138,32 +138,6 @@ export default function ThemeCanvas({
     setBoards((bs) => bs.map((b) => (b.id === updated.id ? updated : b)));
   };
 
-  const cloneElement = () => {
-    if (!selectedElementId) return;
-    setColumnMap((prev) => {
-      const newMap = { ...prev };
-      for (const board of boards) {
-        for (const colId of board.orderedColumnIds) {
-          const col = newMap[colId];
-          const idx = col.items.findIndex((i) => i.id === selectedElementId);
-          if (idx !== -1) {
-            const orig = col.items[idx];
-            const copy = { ...orig, id: crypto.randomUUID() };
-            newMap[colId] = {
-              ...col,
-              items: [
-                ...col.items.slice(0, idx + 1),
-                copy,
-                ...col.items.slice(idx + 1),
-              ],
-            };
-            return newMap;
-          }
-        }
-      }
-      return newMap;
-    });
-  };
 
   const deleteElementById = (id: string) => {
     setColumnMap((prev) => {
@@ -244,10 +218,6 @@ export default function ThemeCanvas({
     });
   };
 
-  const deleteElement = () => {
-    if (!selectedElementId) return;
-    deleteElementById(selectedElementId);
-  };
 
   const handleDropElement = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -524,8 +494,6 @@ export default function ThemeCanvas({
           onUpdateColumn={updateColumn}
           onUpdateBoard={updateBoard}
           onSave={setSaveTarget}
-          onClone={cloneElement}
-          onDelete={deleteElement}
           colorPalettes={colorPalettes}
           selectedPaletteId={paletteId ?? ""}
         />
