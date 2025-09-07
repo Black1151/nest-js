@@ -137,7 +137,7 @@ export function PermissionGroupPermissionDnd({
         styles: {
           container: { border: "3px dashed teal", width: "100%" },
           header: { bg: "teal.600", color: "white" },
-          card: { bg: "teal.100", _hover: { bg: "teal.200" } },
+          card: { bg: "teal.100" },
         },
         sortBy: (i) => i.name,
         sortDirection: "asc",
@@ -149,7 +149,7 @@ export function PermissionGroupPermissionDnd({
         styles: {
           container: { border: "3px dashed gray", width: "100%" },
           header: { bg: "gray.700", color: "white" },
-          card: { bg: "gray.200", _hover: { bg: "gray.300" } },
+          card: { bg: "gray.200" },
         },
         sortBy: (i) => i.name,
         sortDirection: "asc",

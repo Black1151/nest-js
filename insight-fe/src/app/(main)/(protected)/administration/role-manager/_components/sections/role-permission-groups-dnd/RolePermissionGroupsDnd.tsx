@@ -144,7 +144,7 @@ export function RolePermissionGroupsDnd({
         styles: {
           container: { border: "3px dashed orange", width: "300px" },
           header: { bg: "orange.500", color: "white" },
-          card: { bg: "orange.200", _hover: { bg: "orange.300" } },
+          card: { bg: "orange.200" },
         },
         items: permissionGroupsAssignedToRole,
         sortBy: (i) => i.name,
@@ -156,7 +156,7 @@ export function RolePermissionGroupsDnd({
         styles: {
           container: { border: "3px dashed purple", width: "300px" },
           header: { bg: "purple.500", color: "white" },
-          card: { bg: "purple.200", _hover: { bg: "purple.300" } },
+          card: { bg: "purple.200" },
         },
         items: permissionGroupsNotAssignedToRole,
         sortBy: (i) => i.name,
