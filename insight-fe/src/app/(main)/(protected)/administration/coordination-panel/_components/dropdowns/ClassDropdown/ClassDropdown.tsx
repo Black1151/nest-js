@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useMemo, useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation, gql } from "@apollo/client";
 import { typedGql } from "@/zeus/typedDocumentNode";
 import { $ } from "@/zeus";
 
@@ -9,6 +9,7 @@ import { BaseModal } from "@/components/modals/BaseModal";
 import CrudDropdown from "../CrudDropdown";
 import CreateClassForm from "./forms/CreateClassForm";
 import UpdateClassForm from "./forms/UpdateClassForm";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 /* -------------------------------------------------------------------------- */
 /* GraphQL document                                                           */
@@ -19,6 +20,12 @@ const GET_CLASSES_BY_YEAR_SUBJECT = typedGql("query")({
     { id: true, name: true },
   ],
 } as const);
+
+const DELETE_CLASS = gql`
+  mutation DeleteClass($data: IdInput!) {
+    deleteClass(data: $data)
+  }
+`;
 
 /* -------------------------------------------------------------------------- */
 /* Component                                                                  */
@@ -38,6 +45,7 @@ export function ClassDropdown({
 }: ClassDropdownProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   /* ------------------------------ variables ------------------------------ */
   const variables = useMemo(
@@ -59,6 +67,14 @@ export function ClassDropdown({
   const { data, loading, refetch } = useQuery(GET_CLASSES_BY_YEAR_SUBJECT, {
     variables,
     skip: !(yearGroupId && subjectId),
+  });
+
+  const [deleteClass, { loading: deleting }] = useMutation(DELETE_CLASS, {
+    onCompleted: () => {
+      setIsDeleteOpen(false);
+      onChange(null);
+      refetch();
+    },
   });
 
   const classes =
@@ -83,9 +99,9 @@ export function ClassDropdown({
         }
         onCreate={() => setIsModalOpen(true)}
         onUpdate={() => setIsUpdateOpen(true)}
-        onDelete={() => {}}
+        onDelete={() => setIsDeleteOpen(true)}
         isUpdateDisabled={!value}
-        isDeleteDisabled
+        isDeleteDisabled={!value}
         isDisabled={!(yearGroupId && subjectId)}
       />
 
@@ -118,6 +134,19 @@ export function ClassDropdown({
           }}
         />
       </BaseModal>
+
+      <ConfirmationModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        action="delete class"
+        bodyText="Are you sure you want to delete this class?"
+        onConfirm={() => {
+          if (value) {
+            deleteClass({ variables: { data: { id: Number(value) } } });
+          }
+        }}
+        isLoading={deleting}
+      />
     </>
   );
 }
