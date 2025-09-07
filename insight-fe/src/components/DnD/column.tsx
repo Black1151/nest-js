@@ -70,7 +70,6 @@ const cardOverStyles = { bg: "blue.50" };
 const isDraggingStyles = { opacity: 0.4 };
 
 const scrollContainerStyles = {
-  height: "100%",
   overflowY: "auto",
   py: 1,
   flex: 1,
@@ -79,10 +78,10 @@ const scrollContainerStyles = {
 
 const cardListStyles = {
   boxSizing: "border-box",
-  minHeight: "100%",
   px: 1,
   pb: 6,
   overflowY: "auto",
+  pb: 2,
 };
 
 // ------------------------------------------------------------------
@@ -349,7 +348,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
             overflow="hidden"
             sx={isDragging ? isDraggingStyles : undefined}
             spacing={0}
-            height="100%"
           >
             <Box
               position="absolute"

@@ -23,6 +23,7 @@ const Board = forwardRef<HTMLDivElement, BoardProps>(
         display="flex"
         justifyContent="center"
         flexDirection="row"
+        alignItems="flex-start"
         ref={ref}
         gap={spacing}
         flex={1}
