@@ -1,18 +1,57 @@
-import { Roboto, Lato, Montserrat, Open_Sans } from 'next/font/google'
-
-const roboto = Roboto({ subsets: ['latin'], weight: ['400'] })
-const lato = Lato({ subsets: ['latin'], weight: ['400'] })
-const montserrat = Montserrat({ subsets: ['latin'], weight: ['400'] })
-const openSans = Open_Sans({ subsets: ['latin'], weight: ['400'] })
-
 export const availableFonts = [
-  { label: 'Roboto', fontFamily: roboto.style.fontFamily },
-  { label: 'Lato', fontFamily: lato.style.fontFamily },
-  { label: 'Montserrat', fontFamily: montserrat.style.fontFamily },
-  { label: 'Open Sans', fontFamily: openSans.style.fontFamily },
-]
+  { label: 'Roboto', fontFamily: 'Roboto' },
+  { label: 'Lato', fontFamily: 'Lato' },
+  { label: 'Montserrat', fontFamily: 'Montserrat' },
+  { label: 'Open Sans', fontFamily: 'Open Sans' },
+  { label: 'Oswald', fontFamily: 'Oswald' },
+  { label: 'Slabo 27px', fontFamily: 'Slabo 27px' },
+  { label: 'Source Sans Pro', fontFamily: 'Source Sans Pro' },
+  { label: 'Raleway', fontFamily: 'Raleway' },
+  { label: 'Poppins', fontFamily: 'Poppins' },
+  { label: 'Roboto Condensed', fontFamily: 'Roboto Condensed' },
+  { label: 'Roboto Slab', fontFamily: 'Roboto Slab' },
+  { label: 'PT Sans', fontFamily: 'PT Sans' },
+  { label: 'Merriweather', fontFamily: 'Merriweather' },
+  { label: 'Nunito', fontFamily: 'Nunito' },
+  { label: 'Ubuntu', fontFamily: 'Ubuntu' },
+  { label: 'Fira Sans', fontFamily: 'Fira Sans' },
+  { label: 'Playfair Display', fontFamily: 'Playfair Display' },
+  { label: 'Titillium Web', fontFamily: 'Titillium Web' },
+  { label: 'Indie Flower', fontFamily: 'Indie Flower' },
+  { label: 'Dancing Script', fontFamily: 'Dancing Script' },
+  { label: 'Inconsolata', fontFamily: 'Inconsolata' },
+  { label: 'Bebas Neue', fontFamily: 'Bebas Neue' },
+  { label: 'Arimo', fontFamily: 'Arimo' },
+  { label: 'Noto Sans', fontFamily: 'Noto Sans' },
+  { label: 'Noto Serif', fontFamily: 'Noto Serif' },
+  { label: 'Tinos', fontFamily: 'Tinos' },
+  { label: 'Yanone Kaffeesatz', fontFamily: 'Yanone Kaffeesatz' },
+  { label: 'Cabin', fontFamily: 'Cabin' },
+  { label: 'Bitter', fontFamily: 'Bitter' },
+  { label: 'Fjalla One', fontFamily: 'Fjalla One' },
+  { label: 'Hind', fontFamily: 'Hind' },
+  { label: 'Libre Baskerville', fontFamily: 'Libre Baskerville' },
+  { label: 'Work Sans', fontFamily: 'Work Sans' },
+  { label: 'Cairo', fontFamily: 'Cairo' },
+  { label: 'Heebo', fontFamily: 'Heebo' },
+  { label: 'Lora', fontFamily: 'Lora' },
+  { label: 'Mukta', fontFamily: 'Mukta' },
+  { label: 'Quicksand', fontFamily: 'Quicksand' },
+  { label: 'Rubik', fontFamily: 'Rubik' },
+  { label: 'IBM Plex Sans', fontFamily: 'IBM Plex Sans' },
+  { label: 'Noto Sans JP', fontFamily: 'Noto Sans JP' },
+  { label: 'Barlow', fontFamily: 'Barlow' },
+  { label: 'Inter', fontFamily: 'Inter' },
+  { label: 'Manrope', fontFamily: 'Manrope' },
+  { label: 'Mulish', fontFamily: 'Mulish' },
+  { label: 'PT Serif', fontFamily: 'PT Serif' },
+  { label: 'Asap', fontFamily: 'Asap' },
+  { label: 'Cinzel', fontFamily: 'Cinzel' },
+  { label: 'Josefin Sans', fontFamily: 'Josefin Sans' },
+  { label: 'Anton', fontFamily: 'Anton' },
+];
 
 export const chakraFonts = {
-  heading: roboto.style.fontFamily,
-  body: roboto.style.fontFamily,
-}
+  heading: 'Roboto',
+  body: 'Roboto',
+};
