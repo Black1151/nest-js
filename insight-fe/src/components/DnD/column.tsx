@@ -12,12 +12,11 @@ import {
   Box,
   Flex,
   Heading,
-  HStack,
   Spinner,
   Stack,
   IconButton,
 } from "@chakra-ui/react";
-import { X, GripVertical } from "lucide-react";
+import { GripVertical } from "lucide-react";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import {
   attachClosestEdge,
@@ -132,7 +131,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
 
   const [state, setState] = useState<State>(idle);
   const [isDragging, setIsDragging] = useState(false);
-  const [showControls, setShowControls] = useState(false);
 
   const { instanceId, registerColumn } = useBoardContext();
 
@@ -357,7 +355,6 @@ function ColumnBase<TCard extends BaseCardDnD>({
               right={0}
               role="group"
               zIndex={1}
-              onMouseLeave={() => setShowControls(false)}
             >
               {enableColumnReorder && (
                 <IconButton
@@ -370,35 +367,9 @@ function ColumnBase<TCard extends BaseCardDnD>({
                   onClick={() => {
                     if (isDragging) return;
                     onSelectColumn?.(columnId);
-                    setShowControls((v) => !v);
                   }}
                 />
               )}
-              <HStack
-                justify="flex-end"
-                bg="gray.100"
-                px={2}
-                py={1}
-                borderRadius="md"
-                spacing={1}
-                cursor="grab"
-                position="absolute"
-                top={0}
-                right={0}
-                transform={showControls ? "translateY(0)" : "translateY(-100%)"}
-                transition="transform 0.2s"
-              >
-                {onRemoveColumn && (
-                  <IconButton
-                    aria-label="Remove column"
-                    icon={<X size={12} />}
-                    size="xs"
-                    variant="ghost"
-                    colorScheme="red"
-                    onClick={() => onRemoveColumn(columnId)}
-                  />
-                )}
-              </HStack>
             </Box>
 
             <Box ref={scrollableRef} sx={scrollContainerStyles}>
