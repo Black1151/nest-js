@@ -8,6 +8,7 @@ import { AvailableElements } from "./components/AvailableElements";
 import StyledElementsPalette from "./components/StyledElementsPalette";
 import BaseElementsPalette from "./components/BaseElementsPalette";
 import ThemeCanvas from "./components/ThemeCanvas";
+import { SlideElementDnDItemProps } from "@/components/DnD/cards/SlideElementDnDCard";
 import SaveThemeModal from "./components/SaveThemeModal";
 import LoadThemeModal, { ThemeInfo } from "./components/LoadThemeModal";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
@@ -30,6 +31,12 @@ export const ThemeBuilderPageClient = () => {
   const [isLoadThemeOpen, setIsLoadThemeOpen] = useState(false);
   const [themes, setThemes] = useState<ThemeInfo[]>([]);
   const [loadedTheme, setLoadedTheme] = useState<ThemeInfo | null>(null);
+  // Keeps track of styled element updates so the palette can stay in sync
+  const [styleUpdates, setStyleUpdates] = useState<Record<number, SlideElementDnDItemProps>>({});
+
+  const handleStyleUpdate = (styleId: number, el: SlideElementDnDItemProps) => {
+    setStyleUpdates((prev) => ({ ...prev, [styleId]: el }));
+  };
 
   const { data: themesData } = useQuery(GET_ALL_THEMES);
   const [createTheme] = useMutation(CREATE_THEME);
@@ -138,6 +145,7 @@ export const ThemeBuilderPageClient = () => {
             collectionId={selectedCollectionId}
             elementType={selectedElementType}
             groupId={selectedGroupId}
+            styleUpdates={styleUpdates}
           />
         </Flex>
       </HStack>
@@ -155,6 +163,7 @@ export const ThemeBuilderPageClient = () => {
       <ThemeCanvas
         collectionId={selectedCollectionId}
         paletteId={selectedPaletteId}
+        onStyleUpdate={handleStyleUpdate}
       />
       <SaveThemeModal
         isOpen={isSaveThemeOpen}
